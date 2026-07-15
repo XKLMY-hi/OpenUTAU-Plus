@@ -47,20 +47,79 @@
       <ListBox.Styles>
         <Style Selector="ListBoxItem">
           <Setter Property="Height" Value="48" />
-          <Setter Property="Padding" Value="16,0" />
+          <Setter Property="Padding" Value="12,0" />
           <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
+        <Style Selector="Path.prefsIcon">
+          <Setter Property="Width" Value="16"/>
+          <Setter Property="Height" Value="16"/>
+          <Setter Property="Stretch" Value="Uniform"/>
+          <Setter Property="Stroke" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+          <Setter Property="StrokeThickness" Value="1.5"/>
+          <Setter Property="VerticalAlignment" Value="Center"/>
+          <Setter Property="Margin" Value="0,0,10,0"/>
+        </Style>
       </ListBox.Styles>
-      <ListBoxItem Content="{DynamicResource prefs.general}"/>
-      <ListBoxItem Content="{DynamicResource prefs.playback}"/>
-      <ListBoxItem Content="{DynamicResource prefs.paths}"/>
-      <ListBoxItem Content="{DynamicResource prefs.editing}"/>
-      <ListBoxItem Content="{DynamicResource prefs.rendering}"/>
-      <ListBoxItem Content="{DynamicResource prefs.appearance}"/>
-      <ListBoxItem Content="{DynamicResource prefs.utau}"/>
-      <ListBoxItem Content="{DynamicResource prefs.diffsinger}"/>
-      <ListBoxItem Content="{DynamicResource prefs.advanced}"/>
-      <ListBoxItem Content="OpenUTAU Plus"/>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-monitor}"/>
+            <TextBlock Text="{DynamicResource prefs.general}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-play}"/>
+            <TextBlock Text="{DynamicResource prefs.playback}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-folder-open}"/>
+            <TextBlock Text="{DynamicResource prefs.paths}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-pencil}"/>
+            <TextBlock Text="{DynamicResource prefs.editing}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-equalizer}"/>
+            <TextBlock Text="{DynamicResource prefs.rendering}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-palette}"/>
+            <TextBlock Text="{DynamicResource prefs.appearance}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-user}"/>
+            <TextBlock Text="{DynamicResource prefs.utau}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-sparkles}"/>
+            <TextBlock Text="{DynamicResource prefs.diffsinger}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-wrench}"/>
+            <TextBlock Text="{DynamicResource prefs.advanced}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
+      <ListBoxItem>
+          <StackPanel Orientation="Horizontal">
+            <Path Classes="prefsIcon" Data="{StaticResource icon-plus}"/>
+            <TextBlock Text="OpenUTAU Plus" VerticalAlignment="Center"/>
+          </StackPanel>
+        </ListBoxItem>
     </ListBox>
     <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
       <Carousel Name="PageCarousel" Margin="10" HorizontalAlignment="Stretch" 
@@ -83,10 +142,6 @@
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.advanced.beta}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding Beta}"/>
-          </Grid>
           <TextBlock Classes="restart"/>
         </StackPanel>
         
@@ -363,24 +418,24 @@
         <StackPanel>
           <TextBlock Text="OpenUTAU Plus" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
 
-          <TextBlock Text="VST Plugin Scan Paths" FontWeight="SemiBold" Margin="0,10,0,4"/>
-          <TextBlock Text="Additional folders to scan for VST/VST3 plugins:"
+          <TextBlock Text="{DynamicResource prefs.vst.title}" FontWeight="SemiBold" Margin="0,10,0,4"/>
+          <TextBlock Text="{DynamicResource prefs.vst.scanpaths}"
                      FontSize="11" Opacity="0.7" Margin="0,0,0,6"/>
           <ListBox Name="VstPathsList" MinHeight="60" MaxHeight="100"
                    ItemsSource="{Binding VstScanPaths}"/>
           <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,4,0,0">
             <TextBox Grid.Column="0" Name="NewVstPath" Watermark="C:\Path\To\VST\Plugins"
                      VerticalAlignment="Center"/>
-            <Button Grid.Column="1" Content="Add" Margin="6,0,2,0" Click="AddVstPath"/>
-            <Button Grid.Column="2" Content="Remove" Click="RemoveVstPath"/>
+            <Button Grid.Column="1" Content="{DynamicResource prefs.vst.add}" Margin="6,0,2,0" Click="AddVstPath"/>
+            <Button Grid.Column="2" Content="{DynamicResource prefs.vst.remove}" Click="RemoveVstPath"/>
           </Grid>
 
-          <TextBlock Text="Discovered Plugins" FontWeight="SemiBold" Margin="0,16,0,4"/>
+          <TextBlock Text="{DynamicResource prefs.vst.discovered}" FontWeight="SemiBold" Margin="0,16,0,4"/>
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Grid.Column="0" FontSize="11" Opacity="0.7"
                        Text="{Binding VstPluginCount, StringFormat={}{0} plugin(s) found}"
                        VerticalAlignment="Center"/>
-            <Button Grid.Column="1" Content="Rescan" Click="RescanVstPlugins"/>
+            <Button Grid.Column="1" Content="{DynamicResource prefs.vst.rescan}" Click="RescanVstPlugins"/>
           </Grid>
           <ListBox Name="VstPluginsList" MinHeight="80" MaxHeight="150"
                    ItemsSource="{Binding VstKnownPlugins}"/>

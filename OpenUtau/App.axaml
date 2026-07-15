@@ -7,6 +7,7 @@
   </Application.DataTemplates>
   <Application.Resources>
     <ResourceDictionary>
+      <CornerRadius x:Key="OverlayCornerRadius">6</CornerRadius>
       <ResourceInclude x:Key="strings-en-US" Source="/Strings/Strings.axaml"/>
       <ResourceInclude x:Key="strings-de-DE" Source="/Strings/Strings.de-DE.axaml"/>
       <ResourceInclude x:Key="strings-es-ES" Source="/Strings/Strings.es-ES.axaml"/>
@@ -30,6 +31,7 @@
       <ResourceInclude x:Key="themes-custom" Source="/Colors/CustomTheme.axaml"/>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Colors/Brushes.axaml"/>
+        <ResourceInclude Source="/Assets/Icons.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

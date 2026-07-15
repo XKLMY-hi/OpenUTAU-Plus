@@ -85,26 +85,26 @@
         <!-- EQ -->
         <Border Grid.Column="0" Classes="column">
           <StackPanel Spacing="3">
-            <TextBlock Classes="section" Text="EQ"/>
+            <TextBlock Classes="section" Text="{DynamicResource mixfx.eq}"/>
             <ComboBox HorizontalAlignment="Stretch" Margin="0,0,0,4"
                       ItemsSource="{Binding EqPresets}" SelectedItem="{Binding SelectedEq}"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Low (dB)"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.eq.low}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding EqLowDb, StringFormat={}{0:+0.0;-0.0;0.0}}"/>
             </Grid>
             <Slider Minimum="-12" Maximum="12" Value="{Binding EqLowDb}" TickFrequency="0.5"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Mid Freq"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.eq.midfreq}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding EqMidFreq, StringFormat={}{0:F0} Hz}"/>
             </Grid>
             <Slider Minimum="200" Maximum="6000" Value="{Binding EqMidFreq}" TickFrequency="50"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Mid (dB)"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.eq.mid}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding EqMidDb, StringFormat={}{0:+0.0;-0.0;0.0}}"/>
             </Grid>
             <Slider Minimum="-12" Maximum="12" Value="{Binding EqMidDb}" TickFrequency="0.5"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="High (dB)"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.eq.high}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding EqHighDb, StringFormat={}{0:+0.0;-0.0;0.0}}"/>
             </Grid>
             <Slider Minimum="-12" Maximum="12" Value="{Binding EqHighDb}" TickFrequency="0.5"/>
@@ -114,21 +114,21 @@
         <!-- Compressor -->
         <Border Grid.Column="2" Classes="column">
           <StackPanel Spacing="3">
-            <TextBlock Classes="section" Text="Compressor"/>
+            <TextBlock Classes="section" Text="{DynamicResource mixfx.compressor}"/>
             <ComboBox HorizontalAlignment="Stretch" Margin="0,0,0,4"
                       ItemsSource="{Binding CompPresets}" SelectedItem="{Binding SelectedComp}"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Threshold"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.comp.threshold}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding CompThresholdDb, StringFormat={}{0:F1} dB}"/>
             </Grid>
             <Slider Minimum="-40" Maximum="0" Value="{Binding CompThresholdDb}" TickFrequency="1"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Ratio"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.comp.ratio}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding CompRatio, StringFormat={}{0:F1}:1}"/>
             </Grid>
             <Slider Minimum="1" Maximum="20" Value="{Binding CompRatio}" TickFrequency="0.1"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Makeup"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.comp.makeup}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding CompMakeupDb, StringFormat={}{0:F1} dB}"/>
             </Grid>
             <Slider Minimum="0" Maximum="12" Value="{Binding CompMakeupDb}" TickFrequency="0.1"/>
@@ -138,26 +138,26 @@
         <!-- Reverb -->
         <Border Grid.Column="4" Classes="column">
           <StackPanel Spacing="3">
-            <TextBlock Classes="section" Text="Reverb"/>
+            <TextBlock Classes="section" Text="{DynamicResource mixfx.reverb}"/>
             <ComboBox HorizontalAlignment="Stretch" Margin="0,0,0,4"
                       ItemsSource="{Binding ReverbPresets}" SelectedItem="{Binding SelectedReverb}"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Size"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.reverb.size}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding ReverbSize, StringFormat={}{0:F2}}"/>
             </Grid>
             <Slider Minimum="0" Maximum="1" Value="{Binding ReverbSize}" TickFrequency="0.01"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Damp"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.reverb.damp}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding ReverbDamp, StringFormat={}{0:F2}}"/>
             </Grid>
             <Slider Minimum="0" Maximum="1" Value="{Binding ReverbDamp}" TickFrequency="0.01"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Wet"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.reverb.wet}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding ReverbWet, StringFormat={}{0:F2}}"/>
             </Grid>
             <Slider Minimum="0" Maximum="2" Value="{Binding ReverbWet}" TickFrequency="0.01"/>
             <Grid ColumnDefinitions="*,Auto">
-              <TextBlock Grid.Column="0" Classes="lbl" Text="Pre-Delay"/>
+              <TextBlock Grid.Column="0" Classes="lbl" Text="{DynamicResource mixfx.reverb.predelay}"/>
               <TextBlock Grid.Column="1" Classes="val" Text="{Binding ReverbPreDelayMs, StringFormat={}{0:F0} ms}"/>
             </Grid>
             <Slider Minimum="0" Maximum="200" Value="{Binding ReverbPreDelayMs}" TickFrequency="1"/>

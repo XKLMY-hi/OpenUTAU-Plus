@@ -670,4 +670,452 @@ Curve Type
   <system:String x:Key="mixfx.library.delete">删除</system:String>
   <system:String x:Key="mixfx.library.default">默认</system:String>
   <system:String x:Key="tracks.mixfx">效果...</system:String>
+
+  <!-- ============================================================
+       Button keys (从 Strings.axaml 补充)
+       ============================================================ -->
+  <system:String x:Key="button.apply">应用</system:String>
+  <system:String x:Key="button.cancel">取消</system:String>
+  <system:String x:Key="button.no">否</system:String>
+  <system:String x:Key="button.off">关</system:String>
+  <system:String x:Key="button.ok">确定</system:String>
+  <system:String x:Key="button.on">开</system:String>
+  <system:String x:Key="button.open">打开</system:String>
+  <system:String x:Key="button.remove">移除</system:String>
+  <system:String x:Key="button.reset">重置</system:String>
+  <system:String x:Key="button.save">保存</system:String>
+  <system:String x:Key="button.select">选择</system:String>
+  <system:String x:Key="button.yes">是</system:String>
+
+  <!-- ============================================================
+       Command keys (撤销历史中的操作描述)
+       ============================================================ -->
+  <system:String x:Key="command.batch.lyric">批量编辑歌词</system:String>
+  <system:String x:Key="command.batch.note">批量编辑音符</system:String>
+  <system:String x:Key="command.batch.plugin">应用插件编辑</system:String>
+  <system:String x:Key="command.batch.reset">批量重置</system:String>
+  <system:String x:Key="command.exp.edit">编辑表情</system:String>
+  <system:String x:Key="command.exp.paste">粘贴表情曲线</system:String>
+  <system:String x:Key="command.exp.reset">重置表情</system:String>
+  <system:String x:Key="command.import.audio">导入音频</system:String>
+  <system:String x:Key="command.import.track">导入轨道</system:String>
+  <system:String x:Key="command.note.add">添加音符</system:String>
+  <system:String x:Key="command.note.delete">删除音符</system:String>
+  <system:String x:Key="command.note.edit">编辑音符</system:String>
+  <system:String x:Key="command.note.lyric">编辑歌词</system:String>
+  <system:String x:Key="command.note.move">移动音符</system:String>
+  <system:String x:Key="command.note.paste">粘贴音符</system:String>
+  <system:String x:Key="command.note.split">分割音符</system:String>
+  <system:String x:Key="command.parameter.paste">粘贴参数</system:String>
+  <system:String x:Key="command.part.add">添加片段</system:String>
+  <system:String x:Key="command.part.delete">删除片段</system:String>
+  <system:String x:Key="command.part.edit">编辑片段</system:String>
+  <system:String x:Key="command.part.fadein">编辑片段淡入</system:String>
+  <system:String x:Key="command.part.fadeout">编辑片段淡出</system:String>
+  <system:String x:Key="command.part.move">移动片段</system:String>
+  <system:String x:Key="command.part.paste">粘贴片段</system:String>
+  <system:String x:Key="command.part.transcribe">音频转写为音符片段</system:String>
+  <system:String x:Key="command.phoneme.edit">编辑音素</system:String>
+  <system:String x:Key="command.phoneme.reset">重置音素</system:String>
+  <system:String x:Key="command.pitch.add">添加音高锚点</system:String>
+  <system:String x:Key="command.pitch.delete">删除音高锚点</system:String>
+  <system:String x:Key="command.pitch.draw">绘制音高线</system:String>
+  <system:String x:Key="command.pitch.edit">编辑音高</system:String>
+  <system:String x:Key="command.pitch.editpoint">编辑音高锚点</system:String>
+  <system:String x:Key="command.pitch.reset">重置音高</system:String>
+  <system:String x:Key="command.project.exp">编辑工程表情</system:String>
+  <system:String x:Key="command.project.key">改变工程调性</system:String>
+  <system:String x:Key="command.project.tempo">编辑曲速</system:String>
+  <system:String x:Key="command.project.timesignature">编辑节拍</system:String>
+  <system:String x:Key="command.property.edit">编辑音符属性</system:String>
+  <system:String x:Key="command.property.reset">重置音符属性</system:String>
+  <system:String x:Key="command.track.add">添加轨道</system:String>
+  <system:String x:Key="command.track.delete">删除轨道</system:String>
+  <system:String x:Key="command.track.duplicate">复制轨道</system:String>
+  <system:String x:Key="command.track.exp">编辑轨道表情</system:String>
+  <system:String x:Key="command.track.order">编辑轨道顺序</system:String>
+  <system:String x:Key="command.track.remapvc">重映射音色</system:String>
+  <system:String x:Key="command.track.setting">改变轨道设置</system:String>
+  <system:String x:Key="command.track.singer">改变轨道歌手</system:String>
+  <system:String x:Key="command.vibrato.edit">编辑颤音</system:String>
+
+  <!-- ============================================================
+       Context menu keys
+       ============================================================ -->
+  <system:String x:Key="context.note.clearcache">清除短语缓存</system:String>
+  <system:String x:Key="context.part.merge">合并片段</system:String>
+  <system:String x:Key="context.part.split">在播放头处分割片段</system:String>
+  <system:String x:Key="context.pitch.shape">曲线形状</system:String>
+  <system:String x:Key="context.pitch.smooth">平滑</system:String>
+
+  <!-- ============================================================
+       Dialog keys
+       ============================================================ -->
+  <system:String x:Key="dialogs.merge.caption">合并片段</system:String>
+  <system:String x:Key="dialogs.merge.multitracks">不同轨道上的片段无法合并。</system:String>
+  <system:String x:Key="dialogs.splitpart.caption">分割片段</system:String>
+  <system:String x:Key="dialogs.splitpart.intheway">有音符与播放头位置重叠。是否在播放头之后最近的无音符位置继续分割？</system:String>
+  <system:String x:Key="dialogs.voicecolorremapping.error">该歌手没有音色</system:String>
+  <system:String x:Key="dialogs.transcribe.rmvpe.notfound">RMVPE 未安装。请从包管理器安装。</system:String>
+
+  <!-- ============================================================
+       Error keys
+       ============================================================ -->
+  <system:String x:Key="errors.expression.customDefault">工程/轨道默认值必须在最小值和最大值之间</system:String>
+  <system:String x:Key="errors.failed.importustandothers">无法打开工程文件。它同时包含 ust 和其他文件格式。</system:String>
+  <system:String x:Key="errors.failed.importustflags">以下未定义的标志未导入：</system:String>
+  <system:String x:Key="errors.failed.transcribe.rmvpe">加载 RMVPE ONNX 模型失败。请从包管理器安装，或将 rmvpe.onnx 放入 {0}</system:String>
+
+  <!-- ============================================================
+       Exe setup keys
+       ============================================================ -->
+  <system:String x:Key="exesetup.installing">正在安装"{0}"…</system:String>
+  <system:String x:Key="exesetup.linux">在 Linux 上使用 exe 重采样器或 wavtool：
+1. 从 {0} 安装 Wine
+2. 在 偏好设置 → 高级 → Wine 路径 中设置 Wine 路径</system:String>
+  <system:String x:Key="exesetup.mac">在 macOS 上使用 exe 重采样器或 wavtool：
+1. 使用以下命令安装 Wine
+2. 在 偏好设置 → 高级 → Wine 路径 中设置 Wine 路径</system:String>
+  <system:String x:Key="exesetup.resampler">安装为重采样器</system:String>
+  <system:String x:Key="exesetup.title">安装 Exe 文件</system:String>
+  <system:String x:Key="exesetup.wavtool">安装为 Wavtool</system:String>
+
+  <!-- ============================================================
+       Expression keys
+       ============================================================ -->
+  <system:String x:Key="exps.project">工程表情</system:String>
+  <system:String x:Key="exps.projectdefault">工程默认值</system:String>
+  <system:String x:Key="exps.skipoutput">当值为系统默认值时跳过 flag 输出</system:String>
+  <system:String x:Key="exps.systemdefault">系统默认值</system:String>
+  <system:String x:Key="exps.track">轨道表情（覆盖）</system:String>
+  <system:String x:Key="exps.trackdefault">轨道默认值</system:String>
+
+  <!-- ============================================================
+       Languages
+       ============================================================ -->
+  <system:String x:Key="languages.fil">菲律宾语</system:String>
+
+  <!-- ============================================================
+       Lyrics keys
+       ============================================================ -->
+  <system:String x:Key="lyrics.applyselected">仅应用于选中的音符</system:String>
+  <system:String x:Key="lyrics.nonote">没有音符！</system:String>
+
+  <!-- ============================================================
+       Menu keys
+       ============================================================ -->
+  <system:String x:Key="menu.edit.pasteplainnotes">粘贴为纯音符</system:String>
+  <system:String x:Key="menu.tools.layout.reset">重置布局</system:String>
+  <system:String x:Key="menu.tools.packages">包管理…</system:String>
+
+  <!-- ============================================================
+       Merge voicebank keys
+       ============================================================ -->
+  <system:String x:Key="mergevoicebank.back">上一步</system:String>
+  <system:String x:Key="mergevoicebank.error">合并歌手失败。</system:String>
+  <system:String x:Key="mergevoicebank.merge">合并</system:String>
+  <system:String x:Key="mergevoicebank.next">下一步</system:String>
+  <system:String x:Key="mergevoicebank.selectsinger">此工具将把另一个声库作为新的音色合并到当前声库中。
+选择要合并到当前声库的声库</system:String>
+  <system:String x:Key="mergevoicebank.setfolder">为复制的文件夹设置新名称。</system:String>
+  <system:String x:Key="mergevoicebank.setsubbank">为子库设置新的前缀和后缀。
+语法：前缀,后缀</system:String>
+  <system:String x:Key="mergevoicebank.setvoicecolor">为音色设置新名称（显示在 CLR 表情中）。</system:String>
+  <system:String x:Key="mergevoicebank.title">合并声库</system:String>
+
+  <!-- ============================================================
+       Note defaults keys
+       ============================================================ -->
+  <system:String x:Key="notedefaults.lyric.enter">按回车键时</system:String>
+  <system:String x:Key="notedefaults.lyric.knife">使用分割工具时</system:String>
+
+  <!-- ============================================================
+       Note property keys
+       ============================================================ -->
+  <system:String x:Key="noteproperty.phonemizer">音素器</system:String>
+  <system:String x:Key="noteproperty.parent.phonemizer">跟随父级音素器</system:String>
+  <system:String x:Key="noteproperty.tuning">调音</system:String>
+
+  <!-- ============================================================
+       Package manager keys
+       ============================================================ -->
+  <system:String x:Key="packages.caption">包管理</system:String>
+  <system:String x:Key="packages.refresh">刷新</system:String>
+  <system:String x:Key="packages.installed">已安装</system:String>
+  <system:String x:Key="packages.col.name">名称</system:String>
+  <system:String x:Key="packages.col.id">ID</system:String>
+  <system:String x:Key="packages.col.developer">开发者</system:String>
+  <system:String x:Key="packages.col.version">版本</system:String>
+  <system:String x:Key="packages.col.action">操作</system:String>
+  <system:String x:Key="packages.col.installed">已安装</system:String>
+  <system:String x:Key="packages.unknownversion">未知版本</system:String>
+  <system:String x:Key="packages.install">安装</system:String>
+  <system:String x:Key="packages.update">更新</system:String>
+  <system:String x:Key="packages.uninstall">卸载</system:String>
+  <system:String x:Key="packages.openinstalllocation">打开安装位置</system:String>
+  <system:String x:Key="packages.installfromfile">从文件安装 (.oudep)…</system:String>
+  <system:String x:Key="packages.confirm.install.caption">安装包</system:String>
+  <system:String x:Key="packages.confirm.install.message">是否要安装 {0}？</system:String>
+  <system:String x:Key="packages.confirm.update.caption">更新包</system:String>
+  <system:String x:Key="packages.confirm.update.message">是否要将 {0} 更新到版本 {1}？</system:String>
+  <system:String x:Key="packages.confirm.uninstall.caption">卸载包</system:String>
+  <system:String x:Key="packages.confirm.uninstall.message">是否要卸载 {0}？</system:String>
+  <system:String x:Key="packages.status.fetching">正在获取注册表…</system:String>
+  <system:String x:Key="packages.status.uninstalling">正在卸载 {0}…</system:String>
+  <system:String x:Key="packages.status.uninstallfinished">卸载完成</system:String>
+  <system:String x:Key="packages.status.uninstallfailed">卸载失败</system:String>
+  <system:String x:Key="packages.status.listinginstalled">正在列出已安装…</system:String>
+  <system:String x:Key="packages.status.ready">就绪</system:String>
+  <system:String x:Key="packages.status.error">错误</system:String>
+  <system:String x:Key="packages.status.installing">正在安装 {0}…</system:String>
+  <system:String x:Key="packages.status.installfinished">安装完成</system:String>
+  <system:String x:Key="packages.status.installfailed">安装失败</system:String>
+  <system:String x:Key="packages.errors.missing">包 {0} 未找到。请使用包管理器安装。</system:String>
+
+  <!-- ============================================================
+       Pianoroll keys
+       ============================================================ -->
+  <system:String x:Key="pianoroll.menu.lyrics.dashtoplustilda">将 "-" 替换为 "+~"</system:String>
+  <system:String x:Key="pianoroll.menu.notes.commonnotecopy">复制常用音符</system:String>
+  <system:String x:Key="pianoroll.menu.notes.commonnotepaste">粘贴常用音符</system:String>
+  <system:String x:Key="pianoroll.menu.notes.randomizeoffset">随机化音素偏移</system:String>
+  <system:String x:Key="pianoroll.menu.notes.randomizetiming">随机化音符时机</system:String>
+  <system:String x:Key="pianoroll.menu.notes.randomizetuning">随机化调音</system:String>
+  <system:String x:Key="pianoroll.menu.notes.refreshrealcurves">刷新真实曲线</system:String>
+  <system:String x:Key="pianoroll.menu.external">外部</system:String>
+  <system:String x:Key="pianoroll.menu.searchnote.alias">别名</system:String>
+  <system:String x:Key="pianoroll.menu.searchnote.note">音符</system:String>
+  <system:String x:Key="pianoroll.menu.searchnote.searchalias">搜索别名</system:String>
+  <system:String x:Key="pianoroll.menu.view.pianoroll">钢琴卷帘</system:String>
+  <system:String x:Key="pianoroll.menu.view.pianoroll.detach">分离</system:String>
+  <system:String x:Key="pianoroll.menu.view.pianoroll.hide">隐藏</system:String>
+  <system:String x:Key="pianoroll.toggle.expressions">显示表情 (L)</system:String>
+  <system:String x:Key="pianoroll.toggle.overwritepitch">切换覆盖音高模式</system:String>
+  <system:String x:Key="pianoroll.toggle.phonemizer">显示音素器标签</system:String>
+  <system:String x:Key="pianoroll.tool.pitchline">直线音高工具 (Shift + 2)
+    鼠标左键绘制直线
+    鼠标右键重置
+    按住 Ctrl 选择</system:String>
+  <system:String x:Key="pianoroll.tool.pitchscurve">S曲线音高工具 (Shift + 3)
+    拖拽绘制S曲线，释放进入调整模式
+    移动鼠标调整强度，点击应用
+    鼠标右键重置
+    按住 Ctrl 选择</system:String>
+  <system:String x:Key="pianoroll.tool.pitchesinewave">正弦波音高工具 (Shift + 4)
+    拖拽绘制正弦波，释放进入调整模式
+    移动鼠标调整波长和振幅，点击应用
+    鼠标右键重置
+    按住 Ctrl 选择</system:String>
+  <system:String x:Key="pianoroll.tool.pitchsmoothen">音高平滑工具 (Shift + 5)
+    鼠标左键平滑音高
+    鼠标右键重置
+    按住 Ctrl 选择</system:String>
+  <system:String x:Key="pianoroll.tooltip.attack">起音时间偏移</system:String>
+  <system:String x:Key="pianoroll.tooltip.overlap">重叠</system:String>
+  <system:String x:Key="pianoroll.tooltip.preutter">前发音</system:String>
+  <system:String x:Key="pianoroll.tooltip.release">释放时间偏移</system:String>
+
+  <!-- ============================================================
+       Preferences keys
+       ============================================================ -->
+  <system:String x:Key="prefs.general">通用</system:String>
+  <system:String x:Key="prefs.paths.singer">歌手路径</system:String>
+  <system:String x:Key="prefs.playback.autoscrollmode.off">关</system:String>
+  <system:String x:Key="prefs.playback.systemdefault">使用系统默认设备</system:String>
+  <system:String x:Key="prefs.diffsinger">DiffSinger</system:String>
+  <system:String x:Key="prefs.rendering.diffsingersteps">DiffSinger 声学渲染步数</system:String>
+  <system:String x:Key="prefs.rendering.diffsingerstepspitch">DiffSinger 音高渲染步数</system:String>
+  <system:String x:Key="prefs.rendering.diffsingerstepsvariance">DiffSinger 唱法渲染步数</system:String>
+  <system:String x:Key="prefs.rendering.diffsingervariancelocalpitchpatch">DiffSinger 局部唱法更新（用于音高编辑）</system:String>
+  <system:String x:Key="prefs.rendering.onnxgpu">GPU</system:String>
+  <system:String x:Key="prefs.rendering.resampler">重采样器</system:String>
+  <system:String x:Key="prefs.rendering.wavtool">Wavtool</system:String>
+  <system:String x:Key="prefs.utau">UTAU</system:String>
+  <system:String x:Key="prefs.playback.backend.mini">MiniAudio</system:String>
+  <system:String x:Key="prefs.appearance.customtheme.edit.title">编辑自定义主题</system:String>
+  <system:String x:Key="prefs.appearance.customtheme.delete.title">删除自定义主题</system:String>
+  <system:String x:Key="prefs.appearance.customtheme.delete.message">确定要删除此主题吗？</system:String>
+  <system:String x:Key="prefs.appearance.customtheme.create.title">创建自定义主题</system:String>
+  <system:String x:Key="prefs.appearance.customtheme.create.prompt">输入主题名称</system:String>
+  <system:String x:Key="prefs.appearance.customtheme.create.empty">主题名称不能为空。</system:String>
+
+  <!-- ============================================================
+       Singer error keys
+       ============================================================ -->
+  <system:String x:Key="singererror.aliasfullwidthspaces">别名包含全角空格。</system:String>
+  <system:String x:Key="singererror.aliasisnfd">别名为 NFD 格式。</system:String>
+  <system:String x:Key="singererror.aliasmultiplespaces">别名包含多个空格。</system:String>
+  <system:String x:Key="singererror.aliasstartwithspace">别名以空格开头或结尾。</system:String>
+  <system:String x:Key="singererror.bitdepth">音频文件的位深度不是 16 bit。</system:String>
+  <system:String x:Key="singererror.consonantoutofduration">辅音超出音频文件时长。</system:String>
+  <system:String x:Key="singererror.consonantshort">辅音必须 ≥ 0。</system:String>
+  <system:String x:Key="singererror.cutoffconsonant">结束必须在辅音右侧。</system:String>
+  <system:String x:Key="singererror.cutoffoutofduration">结束超出音频文件时长。</system:String>
+  <system:String x:Key="singererror.cutoffoverlap">结束必须在重叠右侧。</system:String>
+  <system:String x:Key="singererror.cutoffpreutter">结束必须在前发音右侧。</system:String>
+  <system:String x:Key="singererror.duplicatealias">存在重复别名。{0}</system:String>
+  <system:String x:Key="singererror.duplicatename">在忽略大小写时发现重复文件名"{0}"中的"{1}"。
+此声库可能无法在大小写敏感的操作系统上正常使用。</system:String>
+  <system:String x:Key="singererror.failedload">加载声库失败。</system:String>
+  <system:String x:Key="singererror.invalidduration">无效的时长 {0}。</system:String>
+  <system:String x:Key="singererror.invalidoto">无效的原音设定格式。</system:String>
+  <system:String x:Key="singererror.mono">音频文件不是单声道。</system:String>
+  <system:String x:Key="singererror.offsetoutofduration">开始超出音频文件时长。</system:String>
+  <system:String x:Key="singererror.offsetshort">开始必须 ≥ 0。</system:String>
+  <system:String x:Key="singererror.overlapoutofduration">重叠超出音频文件时长。</system:String>
+  <system:String x:Key="singererror.preutteroutofduration">前发音超出音频文件时长。</system:String>
+  <system:String x:Key="singererror.preuttershort">前发音必须 ≥ 0。</system:String>
+  <system:String x:Key="singererror.samplerate">音频文件的采样率不是 44100Hz。</system:String>
+  <system:String x:Key="singererror.soundmissing">音频文件缺失</system:String>
+  <system:String x:Key="singererror.soundnotopened">无法打开音频文件。</system:String>
+  <system:String x:Key="singererror.txtnotfound">未找到 character.txt。</system:String>
+  <system:String x:Key="singererror.wavisnfd">Wav 文件名为 NFD 格式。</system:String>
+  <system:String x:Key="singererror.wrongcase">文件名大小写错误：
+期望：{0}
+实际：{1}
+此声库可能无法在其他操作系统上正常使用。</system:String>
+  <system:String x:Key="singererror.yamlnotfound">未找到 character.yaml。</system:String>
+
+  <!-- ============================================================
+       Singers keys
+       ============================================================ -->
+  <system:String x:Key="singers.playsample">播放采样</system:String>
+  <system:String x:Key="singers.merge">与另一个声库合并</system:String>
+
+  <!-- ============================================================
+       Singer setup keys
+       ============================================================ -->
+  <system:String x:Key="singersetup.failed">安装歌手失败。</system:String>
+  <system:String x:Key="singersetup.succeeded">安装成功。</system:String>
+  <system:String x:Key="singersetup.title">歌手设置</system:String>
+
+  <!-- ============================================================
+       Theme editor
+       ============================================================ -->
+  <system:String x:Key="themeeditor.title">主题编辑器</system:String>
+
+  <!-- ============================================================
+       Tracks keys
+       ============================================================ -->
+  <system:String x:Key="tracks.favorite">收藏夹</system:String>
+  <system:String x:Key="tracks.nosinger">没有歌手</system:String>
+
+  <!-- ============================================================
+       Updater
+       ============================================================ -->
+  <system:String x:Key="updater.github">GitHub</system:String>
+
+  <!-- ============================================================
+       Plus 专属新增 keys — VST 效果器架
+       ============================================================ -->
+  <system:String x:Key="effects.title">效果器</system:String>
+  <system:String x:Key="effects.cancel">取消</system:String>
+  <system:String x:Key="effects.builtin">内置效果器</system:String>
+  <system:String x:Key="effects.builtin.active">内置效果器（{0} 个已激活）</system:String>
+  <system:String x:Key="effects.expand">展开</system:String>
+  <system:String x:Key="effects.collapse">折叠</system:String>
+  <system:String x:Key="effects.vstplugins">VST 插件</system:String>
+  <system:String x:Key="effects.addvstslot">+ 添加 VST 槽位</system:String>
+  <system:String x:Key="effects.emptyslot">空槽位</system:String>
+  <system:String x:Key="effects.on">开</system:String>
+  <system:String x:Key="effects.off">关</system:String>
+  <system:String x:Key="effects.export">导出</system:String>
+  <system:String x:Key="effects.enabled">已启用</system:String>
+  <system:String x:Key="effects.selecteffect">选择效果器</system:String>
+  <system:String x:Key="effects.filter">筛选…</system:String>
+  <system:String x:Key="effects.load">加载</system:String>
+  <system:String x:Key="effects.edit">编辑</system:String>
+  <system:String x:Key="effects.noplugins">未找到 VST/VST3 效果器插件。</system:String>
+  <system:String x:Key="effects.instruments.excluded">个乐器插件已排除。</system:String>
+  <system:String x:Key="effects.addscanpaths">在 设置 → OpenUTAU Plus 中添加扫描路径。</system:String>
+  <system:String x:Key="effects.available">个效果器可用</system:String>
+  <system:String x:Key="effects.instruments.filtered">(个乐器已过滤)</system:String>
+  <system:String x:Key="effects.info">信息</system:String>
+  <system:String x:Key="effects.ok">确定</system:String>
+  <system:String x:Key="effects.error.load">加载插件编辑器失败。</system:String>
+  <system:String x:Key="effects.error.unknown">未知错误</system:String>
+
+  <!-- ============================================================
+       Plus 专属新增 keys — VST 编辑器
+       ============================================================ -->
+  <system:String x:Key="vsteditor.title">VST 编辑器</system:String>
+  <system:String x:Key="vsteditor.pluginparams">插件参数</system:String>
+  <system:String x:Key="vsteditor.loading">正在加载插件信息…</system:String>
+  <system:String x:Key="vsteditor.opengui">打开原生 GUI</system:String>
+  <system:String x:Key="vsteditor.close">关闭</system:String>
+  <system:String x:Key="vsteditor.noplugin">无插件实例。</system:String>
+  <system:String x:Key="vsteditor.guiopened">原生 GUI 已打开！参数更改实时影响音频。</system:String>
+  <system:String x:Key="vsteditor.noeditor">无编辑器</system:String>
+  <system:String x:Key="vsteditor.nogui">此插件没有 GUI</system:String>
+  <system:String x:Key="vsteditor.error">错误</system:String>
+  <system:String x:Key="vsteditor.novendor">无厂商信息</system:String>
+  <system:String x:Key="vsteditor.nocategory">无分类信息</system:String>
+
+  <!-- ============================================================
+       Plus 专属新增 keys — 混音台
+       ============================================================ -->
+  <system:String x:Key="mixer.tracks">轨道: {0}</system:String>
+  <system:String x:Key="mixer.mute">M</system:String>
+  <system:String x:Key="mixer.solo">S</system:String>
+  <system:String x:Key="mixer.fx">FX</system:String>
+
+  <!-- ============================================================
+       Plus 专属新增 keys — 偏好设置 VST
+       ============================================================ -->
+  <system:String x:Key="prefs.vst.scanpaths">扫描 VST/VST3 插件的额外文件夹：</system:String>
+  <system:String x:Key="prefs.vst.add">添加</system:String>
+  <system:String x:Key="prefs.vst.remove">移除</system:String>
+  <system:String x:Key="prefs.vst.discovered">已发现的插件</system:String>
+  <system:String x:Key="prefs.vst.rescan">重新扫描</system:String>
+
+  <!-- ============================================================
+       Plus 专属新增 keys — 调试窗口
+       ============================================================ -->
+  <system:String x:Key="debug.level.verbose">详细</system:String>
+  <system:String x:Key="debug.level.debug">调试</system:String>
+  <system:String x:Key="debug.level.information">信息</system:String>
+  <system:String x:Key="debug.level.warning">警告</system:String>
+  <system:String x:Key="debug.level.error">错误</system:String>
+  <system:String x:Key="debug.level.fatal">严重</system:String>
+
+  <!-- ============================================================
+       Plus 专属新增 keys — 合并声库对话框列标题
+       ============================================================ -->
+  <system:String x:Key="mergevoicebank.originalname">原始名称</system:String>
+  <system:String x:Key="mergevoicebank.newname">新名称</system:String>
+  <system:String x:Key="mergevoicebank.originalsubbank">原始子库</system:String>
+  <system:String x:Key="mergevoicebank.newsubbank">新子库</system:String>
+
+  <!-- Plus 专属: MixFx 参数标签 -->
+  <system:String x:Key="mixfx.eq">EQ</system:String>
+  <system:String x:Key="mixfx.eq.low">低频 (dB)</system:String>
+  <system:String x:Key="mixfx.eq.midfreq">中频频点</system:String>
+  <system:String x:Key="mixfx.eq.mid">中频 (dB)</system:String>
+  <system:String x:Key="mixfx.eq.high">高频 (dB)</system:String>
+  <system:String x:Key="mixfx.compressor">压缩器</system:String>
+  <system:String x:Key="mixfx.comp.threshold">阈值</system:String>
+  <system:String x:Key="mixfx.comp.ratio">比率</system:String>
+  <system:String x:Key="mixfx.comp.makeup">补偿增益</system:String>
+  <system:String x:Key="mixfx.reverb">混响</system:String>
+  <system:String x:Key="mixfx.reverb.size">空间大小</system:String>
+  <system:String x:Key="mixfx.reverb.damp">阻尼</system:String>
+  <system:String x:Key="mixfx.reverb.wet">湿信号</system:String>
+  <system:String x:Key="mixfx.reverb.predelay">预延迟</system:String>
+
+  <!-- Plus 专属: 偏好设置 VST -->
+  <system:String x:Key="prefs.vst.title">VST 插件扫描路径</system:String>
+  <system:String x:Key="prefs.vst.pluginsfound">找到 {0} 个插件</system:String>
+
+  <!-- Plus 专属: 轨道效果右键菜单 -->
+  <system:String x:Key="context.track.effects">效果器</system:String>
+
+  <!-- Plus 专属: 欢迎页快速入口 -->
+  <system:String x:Key="welcome.quicklinks">快速入口</system:String>
+  <system:String x:Key="welcome.prefs">偏好设置</system:String>
+  <system:String x:Key="welcome.packages">包管理器</system:String>
+  <system:String x:Key="welcome.releases">GitHub 版本发布</system:String>
+  <system:String x:Key="welcome.wiki">OpenUTAU 文档</system:String>
+  <system:String x:Key="welcome.diffsinger">DiffSinger 官网</system:String>
+  <system:String x:Key="welcome.teto">Kasane Teto 公式</system:String>
+  <system:String x:Key="welcome.plus">OpenUTAU Plus 官网</system:String>
 </ResourceDictionary>

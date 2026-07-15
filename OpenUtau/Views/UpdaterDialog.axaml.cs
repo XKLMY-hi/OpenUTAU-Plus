@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using NetSparkleUpdater.Enums;
 using OpenUtau.App.ViewModels;
-using OpenUtau.Core.Util;
 using Serilog;
 
 namespace OpenUtau.App.Views {
@@ -19,20 +17,13 @@ namespace OpenUtau.App.Views {
             ViewModel.OnClosing();
         }
 
+        /// <summary>
+        /// Called at startup to check for updates silently.
+        /// Only shows the dialog if an update is available.
+        /// </summary>
         public static void CheckForUpdate(Action<Window> showDialog, Action closeApplication, TaskScheduler scheduler) {
             Task.Run(async () => {
-                using var updater = await UpdaterViewModel.NewUpdaterAsync();
-                if (updater == null) {
-                    return false;
-                }
-                var info = await updater.CheckForUpdatesQuietly(true);
-                if (info.Status == UpdateStatus.UpdateAvailable) {
-                    if (info.Updates[0].Version.ToString() == Preferences.Default.SkipUpdate) {
-                        return false;
-                    }
-                    return true;
-                }
-                return false;
+                return await UpdaterViewModel.CheckForUpdateAsync();
             }).ContinueWith(t => {
                 if (t.IsCompletedSuccessfully && t.Result) {
                     var dialog = new UpdaterDialog();
@@ -40,11 +31,11 @@ namespace OpenUtau.App.Views {
                     showDialog.Invoke(dialog);
                 }
                 if (t.IsFaulted) {
-                    Log.Error(t.Exception, "Failed to check for update");
+                    Log.Error(t.Exception, "[Updater] Failed to check for update");
                 }
             }, scheduler).ContinueWith((t2, _) => {
                 if (t2.IsFaulted) {
-                    Log.Error(t2.Exception, "Failed to check for update");
+                    Log.Error(t2.Exception, "[Updater] Failed to show update dialog");
                 }
             }, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted);
         }

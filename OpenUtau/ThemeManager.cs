@@ -9,7 +9,7 @@ using OpenUtau.Core.Util;
 using ReactiveUI;
 
 namespace OpenUtau.App {
-    class ThemeChangedEvent { }
+    public class ThemeChangedEvent { }
 
     class ThemeManager {
         public static bool IsDarkMode = false;

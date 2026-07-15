@@ -86,125 +86,218 @@
         </Menu>
       <Carousel SelectedIndex="{Binding Page}" >
         <!--Welcome page-->
-        <Grid Margin="60,50,60,40" RowDefinitions="Auto,Auto,Auto,*" ColumnDefinitions="*,*">
+        <Grid Margin="60,40,60,20" RowDefinitions="Auto,Auto,*,*" ColumnDefinitions="*,*">
+          <Grid.Styles>
+            <Style Selector="Button.welcomeBtn">
+              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+              <Setter Property="BorderThickness" Value="0.5"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+              <Setter Property="CornerRadius" Value="6"/>
+              <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            </Style>
+            <Style Selector="Button.welcomeBtn:pointerover">
+              <Setter Property="Background" Value="{DynamicResource AccentBrush1Semi}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush1}"/>
+              <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+            </Style>
+                        <Style Selector="TextBlock.formatBadge">
+              <Setter Property="FontSize" Value="8"/>
+              <Setter Property="FontWeight" Value="SemiBold"/>
+              <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+              <Setter Property="VerticalAlignment" Value="Center"/>
+              <Setter Property="Margin" Value="6,0,0,0"/>
+            </Style>
+            <Style Selector="Button.welcomeLink">
+              <Setter Property="Height" Value="30"/>
+              <Setter Property="FontSize" Value="12"/>
+              <Setter Property="HorizontalAlignment" Value="Stretch"/>
+              <Setter Property="HorizontalContentAlignment" Value="Left"/>
+              <Setter Property="Padding" Value="10,0"/>
+              <Setter Property="Background" Value="Transparent"/>
+              <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="CornerRadius" Value="4"/>
+              <Setter Property="Cursor" Value="Hand"/>
+            </Style>
+            <Style Selector="Button.welcomeLink:pointerover">
+              <Setter Property="Background" Value="{DynamicResource AccentBrush1Semi}"/>
+              <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+            </Style>
+            <Style Selector="Button.welcomeLink:pointerover Path.linkIcon">
+              <Setter Property="Stroke" Value="{DynamicResource AccentBrush1}"/>
+            </Style>
+            <Style Selector="Path.linkIcon">
+              <Setter Property="Width" Value="16"/>
+              <Setter Property="Height" Value="16"/>
+              <Setter Property="Stretch" Value="Uniform"/>
+              <Setter Property="Stroke" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+              <Setter Property="StrokeThickness" Value="1.5"/>
+              <Setter Property="VerticalAlignment" Value="Center"/>
+              <Setter Property="Margin" Value="0,0,8,0"/>
+            </Style>
+            <Style Selector="Border.welcomeCard">
+              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+              <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+              <Setter Property="BorderThickness" Value="0.5"/>
+              <Setter Property="CornerRadius" Value="6"/>
+              <Setter Property="Padding" Value="14,10"/>
+            </Style>
+          </Grid.Styles>
+
           <!--Startup warnings-->
           <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
             <Button Click="OnWelcomeRecovery" Height="40" Content="{Binding RecoveryString}"
                     IsVisible="{Binding HasRecovery}" Background="{DynamicResource WarningBrush}">
             </Button>
           </StackPanel>
+
           <!--Create new project or open existing project-->
-          <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Spacing="8">
-            <TextBlock Text="{DynamicResource welcome.start}" FontSize="20"/>
-            <WrapPanel Margin="-4" Orientation="Horizontal">
-              <Button Margin="4" Click="OnMenuNew" Height="60" Padding="12">
-                <Grid ColumnDefinitions="Auto,*">
-                  <Viewbox
-                    Grid.RowSpan="2"
-                    Width="24"
-                    Height="24"
-                    Margin="8,4,12,4">
-                    <!--From https://github.com/microsoft/vscode-icons/blob/main/icons/light/new-file.svg-->
-                    <Path Classes="clear" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"
-                      Data="M4.00024 7H3.00024V4H0.000244141V3H3.00024V0H4.00024V3H7.00024V4H4.00024V7ZM10.5002 1.09998L13.9003 4.59998L14.0002 5V13.5L13.5002 14H3.50024L3.00024 13.5V8H4.00024V13H13.0002V6H9.00024V2H5.00024V1H10.2002L10.5002 1.09998ZM10.0002 2V5H12.9003L10.0002 2Z"
-                      Fill="{StaticResource NeutralAccentBrush}"/>
-                  </Viewbox>
+          <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Spacing="10" Margin="0,0,0,20">
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,6">
+              <Image Source="/Assets/logotype.png" Height="22"
+                     IsVisible="{Binding !IsDarkMode}" Margin="0,0,0,2"/>
+              <Image Source="/Assets/logotype-w.png" Height="22"
+                     IsVisible="{Binding IsDarkMode}" Margin="0,0,0,2"/>
+              <TextBlock Text="{Binding AppVersion}" FontSize="13" Opacity="0.45"
+                         HorizontalAlignment="Center"/>
+            </StackPanel>
 
-                  <StackPanel Grid.Column="1"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Margin="0,0,8,0">
-
-                    <TextBlock HorizontalAlignment="Stretch"
-                      Text="{DynamicResource welcome.new}"
-                      FontSize="14"
-                      FontWeight="Normal"
-                      TextWrapping="Wrap" />
-
-                    <TextBlock HorizontalAlignment="Stretch"
-                      Text="{DynamicResource welcome.new.description}"
-                      FontSize="12"
-                      FontWeight="Normal"
-                      TextWrapping="Wrap" />
+            <WrapPanel Margin="-4" Orientation="Horizontal" HorizontalAlignment="Center">
+              <Button Margin="4" Click="OnMenuNew" Height="64" Width="180"
+                      Padding="14" Classes="welcomeBtn">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource welcome.new}" FontSize="14"/>
+                    <TextBlock Text="{DynamicResource welcome.new.description}" FontSize="11" Opacity="0.55"/>
                   </StackPanel>
-                </Grid>
               </Button>
-
-              <Button Margin="4" Click="OnMenuOpen" Height="60" Padding="12">
-                <Grid ColumnDefinitions="Auto,*">
-                  <Viewbox
-                    Grid.RowSpan="2"
-                    Width="24"
-                    Height="24"
-                    Margin="8,4,12,4">
-                    <!--From https://github.com/microsoft/vscode-icons/blob/main/icons/dark/go-to-file.svg-->
-                    <Path Classes="clear" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center"
-                      Data="M6 5.9142L8.06065 3.85356L8.06065 3.14645L5.91421 1L5.2071 1.70711L5.25 1.75L5.24998 1.75002L5.49997 2H5.5L6.49999 3H3.5C2.83696 3 2.20107 3.2634 1.73223 3.73224C1.26339 4.20108 1 4.83696 1 5.5C1 6.16305 1.26339 6.79893 1.73223 7.26777C2.20107 7.73661 2.83696 8 3.5 8H4V7H3.5C3.10218 7 2.72064 6.84197 2.43934 6.56066C2.15804 6.27936 2 5.89783 2 5.5C2 5.10218 2.15804 4.72065 2.43934 4.43934C2.72064 4.15804 3.10218 4 3.5 4H5V4.00003H5.49996L5.49999 4H6.49999L5.2071 5.29289L5.20711 5.29291L5.2071 5.29292L5.91421 6.00003L6 5.91423V5.9142ZM11 2H8.32838L7.32839 1H12L12.71 1.29L15.71 4.29L16 5V14L15 15H6L5 14V9.00003V6.50003L6 7.34699V14H15V6H11V2ZM12 2V5H15L12 2Z"
-                      Fill="{StaticResource NeutralAccentBrush}"/>
-                  </Viewbox>
-
-                  <StackPanel Grid.Column="1"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    Margin="0,0,8,0">
-
-                    <TextBlock HorizontalAlignment="Stretch"
-                      Text="{DynamicResource welcome.open}"
-                      FontSize="14"
-                      FontWeight="Normal"
-                      TextWrapping="Wrap" />
-
-                    <TextBlock HorizontalAlignment="Stretch"
-                      Text="{DynamicResource welcome.open.description}"
-                      FontSize="12"
-                      FontWeight="Normal"
-                      TextWrapping="Wrap" />
+              <Button Margin="4" Click="OnMenuOpen" Height="64" Width="180"
+                      Padding="14" Classes="welcomeBtn">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource welcome.open}" FontSize="14"/>
+                    <TextBlock Text="{DynamicResource welcome.open.description}" FontSize="11" Opacity="0.55"/>
                   </StackPanel>
-                </Grid>
               </Button>
             </WrapPanel>
           </StackPanel>
 
-          <!-- Recent files -->
-          <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,24,0,8" Text="{DynamicResource welcome.recent}" FontSize="20"/>
-          <ListBox ItemsSource="{Binding RecentFiles}" Grid.Row="3" Grid.Column="0" Margin="0,0,15,0" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
-            <ListBox.Styles>
-              <Style Selector="ListBoxItem">
-                <Setter Property="Height" Value="NaN" />
-                <Setter Property="MinHeight" Value="48" />
-                <Setter Property="Padding" Value="16,0" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-              </Style>
-            </ListBox.Styles>
-            <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:RecentFileInfo">
-                <StackPanel Margin="0,4" PointerPressed="OnWelcomeRecent" Background="Transparent">
-                  <TextBlock FontSize="16" Text="{Binding Name}"/>
-                  <TextBlock FontSize="12" Text="{Binding Directory}" TextWrapping="Wrap"/>
-                </StackPanel>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+          <!-- Recent files (left column, card) -->
+          <Border Grid.Row="2" Grid.RowSpan="2" Grid.Column="0"
+                  Classes="welcomeCard" Margin="0,0,8,0">
+            <DockPanel LastChildFill="True">
+              <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6"
+                         Text="{DynamicResource welcome.recent}" FontSize="14" Opacity="0.5"/>
+              <ListBox ItemsSource="{Binding RecentFiles}"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto"
+                       Background="Transparent" BorderThickness="0">
+                <ListBox.Styles>
+                  <Style Selector="ListBoxItem">
+                    <Setter Property="Height" Value="NaN"/>
+                    <Setter Property="MinHeight" Value="48"/>
+                    <Setter Property="Padding" Value="4,0"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                  </Style>
+                </ListBox.Styles>
+                <ListBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:RecentFileInfo">
+                    <StackPanel Margin="0,2" Background="Transparent"
+                          PointerPressed="OnWelcomeRecent">
+                      <TextBlock FontSize="13" Text="{Binding Name}"/>
+                      <TextBlock FontSize="10" Opacity="0.35" Text="{Binding Directory}"
+                                 TextTrimming="CharacterEllipsis"/>
+                      <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                        <Border Background="{DynamicResource AccentBrush1Semi}"
+                                CornerRadius="3" Padding="4,1">
+                          <TextBlock Classes="formatBadge" Text="{Binding Format}" Margin="0"/>
+                        </Border>
+                        <TextBlock FontSize="9" Opacity="0.3"
+                                   Text="{Binding LastWriteTimeStr}" VerticalAlignment="Center"
+                                   Margin="6,0,0,0"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </DockPanel>
+          </Border>
 
-          <!-- Template files -->
-          <TextBlock Grid.Row="2" Grid.Column="1" Margin="15,24,0,8" Text="{DynamicResource welcome.template}" FontSize="20"/>
-          <ListBox ItemsSource="{Binding TemplateFiles}" Grid.Row="3" Grid.Column="1" Margin="15,0,0,0" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch">
-            <ListBox.Styles>
-              <Style Selector="ListBoxItem">
-                <Setter Property="Height" Value="NaN" />
-                <Setter Property="MinHeight" Value="48" />
-                <Setter Property="Padding" Value="16,0" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-              </Style>
-            </ListBox.Styles>
-            <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:RecentFileInfo">
-                <StackPanel Margin="0,4" PointerPressed="OnWelcomeTemplate" Background="Transparent">
-                  <TextBlock FontSize="16" Text="{Binding Name}"/>
-                </StackPanel>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+          <!-- Quick links + Templates (right column) -->
+          <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Margin="8,0,0,0" Spacing="8">
+            <Border Classes="welcomeCard">
+              <StackPanel>
+                <TextBlock Margin="0,0,0,6" Text="{DynamicResource welcome.quicklinks}"
+                           FontSize="14" Opacity="0.5"/>
+                <Button Classes="welcomeLink" Click="OnWelcomePrefs">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-sliders}"/>
+                    <TextBlock Text="{DynamicResource welcome.prefs}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="welcomeLink" Click="OnWelcomePackages">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-package}"/>
+                    <TextBlock Text="{DynamicResource welcome.packages}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="welcomeLink" Click="OnWelcomeReleases">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-github}"/>
+                    <TextBlock Text="{DynamicResource welcome.releases}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="welcomeLink" Click="OnWelcomeWiki">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-book-open}"/>
+                    <TextBlock Text="{DynamicResource welcome.wiki}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="welcomeLink" Click="OnWelcomeDiffSinger">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-music}"/>
+                    <TextBlock Text="{DynamicResource welcome.diffsinger}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="welcomeLink" Click="OnWelcomeTeto">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-globe}"/>
+                    <TextBlock Text="{DynamicResource welcome.teto}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+                <Button Classes="welcomeLink" Click="OnWelcomePlus" IsEnabled="False">
+                  <StackPanel Orientation="Horizontal">
+                    <Path Classes="linkIcon" Data="{StaticResource icon-plus}"/>
+                    <TextBlock Text="{DynamicResource welcome.plus}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+            </Border>
+
+            <Border Classes="welcomeCard">
+              <DockPanel LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top" Margin="0,0,0,4"
+                           Text="{DynamicResource welcome.template}" FontSize="14" Opacity="0.5"/>
+                <ListBox ItemsSource="{Binding TemplateFiles}"
+                         MaxHeight="120" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Background="Transparent" BorderThickness="0">
+                  <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                      <Setter Property="Height" Value="NaN"/>
+                      <Setter Property="MinHeight" Value="34"/>
+                      <Setter Property="Padding" Value="4,0"/>
+                      <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                  </ListBox.Styles>
+                  <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RecentFileInfo">
+                      <StackPanel Margin="0,1" Background="Transparent"
+                            PointerPressed="OnWelcomeTemplate">
+                        <TextBlock FontSize="12"
+                                   Text="{Binding Name}" VerticalAlignment="Center"/>
+                      </StackPanel>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+              </DockPanel>
+            </Border>
+          </StackPanel>
         </Grid>
       
         <!--Main page-->

@@ -1828,6 +1828,30 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        // ── Welcome page quick links ──────────────────────────────
+        void OnWelcomePrefs(object sender, RoutedEventArgs args) => OnMenuPreferences(sender, args);
+        void OnWelcomePackages(object sender, RoutedEventArgs args) => OnMenuPackageManager(sender, args);
+
+        void OnWelcomeReleases(object sender, RoutedEventArgs args) {
+            try { OS.OpenWeb("https://github.com/XKLMY-hi/OpenUTAU-Plus/releases"); }
+            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
+        }
+        void OnWelcomeWiki(object sender, RoutedEventArgs args) {
+            try { OS.OpenWeb("https://github.com/stakira/OpenUtau/wiki/Getting-Started"); }
+            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
+        }
+        void OnWelcomeDiffSinger(object sender, RoutedEventArgs args) {
+            try { OS.OpenWeb("https://github.com/openvpi/DiffSinger"); }
+            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
+        }
+        void OnWelcomeTeto(object sender, RoutedEventArgs args) {
+            try { OS.OpenWeb("https://kasaneteto.jp/"); }
+            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
+        }
+        void OnWelcomePlus(object sender, RoutedEventArgs args) {
+            // Placeholder — official site coming soon.
+        }
+
         async void ValidateTracksVoiceColor() {
             DocManager.Inst.StartUndoGroup("command.track.remapvc");
             foreach (var track in DocManager.Inst.Project.tracks) {

@@ -25,7 +25,7 @@
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Margin" Value="4,6,4,2"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
-      <Setter Property="Background" Value="#1a1a1a"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
       <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
       <Setter Property="BorderThickness" Value="1"/>
@@ -64,13 +64,13 @@
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Name="RootGrid">
       <!-- Row 0: Track color bar -->
       <Border Name="ColorBar" Height="3" CornerRadius="1"
-              Margin="2,0,2,2" Background="#4EA6EA"/>
+              Margin="2,0,2,2" Background="{DynamicResource AccentBrush1}"/>
 
       <!-- Row 1: Track name + M/S buttons -->
       <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto" Margin="0,1,0,3">
-        <TextBlock Grid.Column="0" Classes="trackNameSmall" Name="TrackNameLabel" Text="Track 1"/>
-        <Button Grid.Column="1" Classes="mixerBtn" Content="M" Name="MuteBtn" Click="OnMuteClick"/>
-        <Button Grid.Column="2" Classes="mixerBtn" Content="S" Name="SoloBtn" Click="OnSoloClick"/>
+        <TextBlock Grid.Column="0" Classes="trackNameSmall" Name="TrackNameLabel" Text="--"/>
+        <Button Grid.Column="1" Classes="mixerBtn" Content="{DynamicResource mixer.mute}" Name="MuteBtn" Click="OnMuteClick"/>
+        <Button Grid.Column="2" Classes="mixerBtn" Content="{DynamicResource mixer.solo}" Name="SoloBtn" Click="OnSoloClick"/>
       </Grid>
 
       <!-- Row 2: Pan slider -->
@@ -80,14 +80,17 @@
 
       <!-- Row 3: FADER -->
       <Grid Grid.Row="3" Name="FaderBox"
-            Background="#1a1a1a" Margin="8,2,8,2" MinHeight="100"
+            Background="{DynamicResource SystemControlBackgroundAltMediumBrush}"
+            Margin="8,2,8,2" MinHeight="100"
             ClipToBounds="True"
             PointerPressed="OnFaderPressed"
             PointerMoved="OnFaderMoved">
         <Border Name="LevelFill" VerticalAlignment="Bottom"
                 Background="#3027AE60" Height="30"/>
         <Border Name="ThumbBar" VerticalAlignment="Top" Height="8"
-                CornerRadius="2" Background="#D0D0D0" BorderBrush="#555"
+                CornerRadius="2"
+                Background="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
                 BorderThickness="1" ZIndex="10"
                 IsHitTestVisible="False"/>
       </Grid>
@@ -100,7 +103,7 @@
 
       <!-- Row 5: FX entry button (opens unified TrackEffectRack) -->
       <Button Grid.Row="5" Name="FxEntryBtn" Classes="fxEntryBtn"
-              Content="FX" Click="OnFxEntryClick"/>
+              Content="{DynamicResource mixer.fx}" Click="OnFxEntryClick"/>
     </Grid>
   </Border>
 </UserControl>

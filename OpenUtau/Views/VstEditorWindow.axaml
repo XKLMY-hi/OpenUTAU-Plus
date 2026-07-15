@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="OpenUtau.App.Views.VstEditorWindow"
         Icon="/Assets/open-utau.ico"
-        Title="VST Editor" Width="420" Height="500"
+        Title="{DynamicResource vsteditor.title}" Width="420" Height="500"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
   <Border Margin="{Binding $parent.WindowDecorationMargin}">
@@ -30,10 +30,10 @@
               CornerRadius="4" Margin="0,4,0,4">
         <DockPanel Margin="8" LastChildFill="True">
           <TextBlock DockPanel.Dock="Top" FontSize="9" Opacity="0.4"
-                     Text="Plugin Parameters" Margin="0,0,0,4"/>
+                     Text="{DynamicResource vsteditor.pluginparams}" Margin="0,0,0,4"/>
           <ScrollViewer Height="160" VerticalScrollBarVisibility="Auto">
             <TextBlock Name="NativeStatus" FontSize="10" Opacity="0.6"
-                       FontFamily="monospace" Text="Loading plugin info..."
+                       FontFamily="monospace" Text="{DynamicResource vsteditor.loading}"
                        TextWrapping="NoWrap"/>
           </ScrollViewer>
         </DockPanel>
@@ -42,11 +42,11 @@
       <!-- Action buttons -->
       <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,6,0,0">
         <TextBlock Name="ParamInfo" FontSize="10" Opacity="0.4" TextAlignment="Center"/>
-        <Button Name="OpenEditorBtn" Content="Open Native GUI"
+        <Button Name="OpenEditorBtn" Content="{DynamicResource vsteditor.opengui}"
                 Height="32" FontSize="12" FontWeight="SemiBold"
                 Click="OnOpenEditorClick"
                 IsEnabled="False"/>
-        <Button Content="Close" Height="28" FontSize="11"
+        <Button Content="{DynamicResource vsteditor.close}" Height="28" FontSize="11"
                 Click="OnCloseClick"/>
       </StackPanel>
     </DockPanel>

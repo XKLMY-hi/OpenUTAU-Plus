@@ -77,7 +77,7 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public Bitmap? Avatar { get; set; }
         [Reactive] public Bitmap? Portrait { get; set; }
         [Reactive] public IBrush? PortraitMask { get; set; }
-        [Reactive] public string WindowTitle { get; set; } = "Piano Roll";
+        [Reactive] public string WindowTitle { get; set; } = ThemeManager.GetString("pianoroll.menu.view.pianoroll");
         [Reactive] public SolidColorBrush TrackAccentColor { get; set; } = ThemeManager.GetTrackColor("Blue").AccentColor;
         public double ViewportTicks => viewportTicks.Value;
         public double ViewportTracks => viewportTracks.Value;
@@ -535,7 +535,7 @@ namespace OpenUtau.App.ViewModels {
         }
         private void LoadWindowTitle(UPart? part, UProject? project) {
             if (part == null || project == null) {
-                WindowTitle = "Piano Roll";
+                WindowTitle = ThemeManager.GetString("pianoroll.menu.view.pianoroll");
                 return;
             }
             WindowTitle = project.tracks[part.trackNo].TrackName + " - " + part.DisplayName;

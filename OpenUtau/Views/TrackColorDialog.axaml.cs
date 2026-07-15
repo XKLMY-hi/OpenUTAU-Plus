@@ -5,7 +5,6 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
-using Org.BouncyCastle.Tls;
 
 namespace OpenUtau.App.Views {
     public partial class TrackColorDialog : Window {

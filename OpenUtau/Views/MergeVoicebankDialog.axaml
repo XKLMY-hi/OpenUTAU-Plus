@@ -45,8 +45,8 @@
       <DataGrid Grid.Row="1" Margin="10" HorizontalAlignment="Stretch" CanUserResizeColumns="True" 
                 ItemsSource="{Binding FolderRenames}" CellEditEnded="OnEditedFolder">
         <DataGrid.Columns>
-          <DataGridTextColumn Header="Original Name" Binding="{Binding Name}" IsReadOnly="True"/>
-          <DataGridTextColumn Header="New Name" Binding="{Binding NewName}"/>
+          <DataGridTextColumn Header="{DynamicResource mergevoicebank.originalname}" Binding="{Binding Name}" IsReadOnly="True"/>
+          <DataGridTextColumn Header="{DynamicResource mergevoicebank.newname}" Binding="{Binding NewName}"/>
         </DataGrid.Columns>
       </DataGrid>
       <TextBlock Grid.Row="2" Margin="10" Text="{Binding FolderNameErrors}"/>
@@ -69,8 +69,8 @@
       <DataGrid Grid.Row="1" Margin="10" HorizontalAlignment="Stretch" CanUserResizeColumns="True"
                 ItemsSource="{Binding SubbankRenames}" CellEditEnded="OnEditedSubbank">
         <DataGrid.Columns>
-          <DataGridTextColumn Header="Original subbank" Binding="{Binding Name}" IsReadOnly="True"/>
-          <DataGridTextColumn Header="New subbank" Binding="{Binding NewName}"/>
+          <DataGridTextColumn Header="{DynamicResource mergevoicebank.originalsubbank}" Binding="{Binding Name}" IsReadOnly="True"/>
+          <DataGridTextColumn Header="{DynamicResource mergevoicebank.newsubbank}" Binding="{Binding NewName}"/>
         </DataGrid.Columns>
       </DataGrid>
       <TextBlock Grid.Row="2" Margin="10" Text="{Binding SubbankNameErrors}"/>
@@ -93,8 +93,8 @@
       <DataGrid Grid.Row="1" Margin="10" HorizontalAlignment="Stretch" CanUserResizeColumns="True"
                 ItemsSource="{Binding VoiceColorRenames}"  CellEditEnded="OnEditedVoiceColor">
         <DataGrid.Columns>
-          <DataGridTextColumn Header="Original name" Binding="{Binding Name}" IsReadOnly="True"/>
-          <DataGridTextColumn Header="New name" Binding="{Binding NewName}"/>
+          <DataGridTextColumn Header="{DynamicResource mergevoicebank.originalname}" Binding="{Binding Name}" IsReadOnly="True"/>
+          <DataGridTextColumn Header="{DynamicResource mergevoicebank.newname}" Binding="{Binding NewName}"/>
         </DataGrid.Columns>
       </DataGrid>
       <TextBlock Grid.Row="2" Margin="10" Text="{Binding VoiceColorNameErrors}"/>

@@ -841,4 +841,118 @@ General
   <system:String x:Key="mixfx.library.delete">Delete</system:String>
   <system:String x:Key="mixfx.library.default">Default</system:String>
   <system:String x:Key="tracks.mixfx">Effects...</system:String>
+
+  <!-- ============================================================
+       Plus-specific keys — VST Effect Rack
+       ============================================================ -->
+  <system:String x:Key="effects.title">Effects</system:String>
+  <system:String x:Key="effects.builtin">Built-in Effects</system:String>
+  <system:String x:Key="effects.builtin.active">Built-in Effects ({0} active)</system:String>
+  <system:String x:Key="effects.expand">Expand</system:String>
+  <system:String x:Key="effects.collapse">Collapse</system:String>
+  <system:String x:Key="effects.vstplugins">VST Plugins</system:String>
+  <system:String x:Key="effects.addvstslot">+ Add VST Slot</system:String>
+  <system:String x:Key="effects.emptyslot">Empty slot</system:String>
+  <system:String x:Key="effects.on">On</system:String>
+  <system:String x:Key="effects.off">Off</system:String>
+  <system:String x:Key="effects.export">Export</system:String>
+  <system:String x:Key="effects.enabled">Enabled</system:String>
+  <system:String x:Key="effects.cancel">Cancel</system:String>
+  <system:String x:Key="effects.selecteffect">Select Effect</system:String>
+  <system:String x:Key="effects.filter">Filter...</system:String>
+  <system:String x:Key="effects.load">Load</system:String>
+  <system:String x:Key="effects.edit">Edit</system:String>
+  <system:String x:Key="effects.noplugins">No VST/VST3 effect plugins found.</system:String>
+  <system:String x:Key="effects.instruments.excluded">instrument plugin(s) excluded.</system:String>
+  <system:String x:Key="effects.addscanpaths">Add scan paths in Settings → OpenUTAU Plus.</system:String>
+  <system:String x:Key="effects.available">effects available</system:String>
+  <system:String x:Key="effects.instruments.filtered">(instruments filtered)</system:String>
+  <system:String x:Key="effects.info">Info</system:String>
+  <system:String x:Key="effects.ok">OK</system:String>
+  <system:String x:Key="effects.error.load">Failed to load plugin for editor.</system:String>
+  <system:String x:Key="effects.error.unknown">unknown error</system:String>
+
+  <!-- ============================================================
+       Plus-specific keys — VST Editor Window
+       ============================================================ -->
+  <system:String x:Key="vsteditor.title">VST Editor</system:String>
+  <system:String x:Key="vsteditor.pluginparams">Plugin Parameters</system:String>
+  <system:String x:Key="vsteditor.loading">Loading plugin info...</system:String>
+  <system:String x:Key="vsteditor.opengui">Open Native GUI</system:String>
+  <system:String x:Key="vsteditor.close">Close</system:String>
+  <system:String x:Key="vsteditor.noplugin">No plugin instance.</system:String>
+  <system:String x:Key="vsteditor.guiopened">Native GUI opened! Changes affect audio in real-time.</system:String>
+  <system:String x:Key="vsteditor.noeditor">No editor</system:String>
+  <system:String x:Key="vsteditor.nogui">this plugin has no GUI</system:String>
+  <system:String x:Key="vsteditor.error">Error</system:String>
+  <system:String x:Key="vsteditor.novendor">No vendor info</system:String>
+  <system:String x:Key="vsteditor.nocategory">No category info</system:String>
+
+  <!-- ============================================================
+       Plus-specific keys — Mixer
+       ============================================================ -->
+  <system:String x:Key="mixer.tracks">Tracks: {0}</system:String>
+  <system:String x:Key="mixer.mute">M</system:String>
+  <system:String x:Key="mixer.solo">S</system:String>
+  <system:String x:Key="mixer.fx">FX</system:String>
+
+  <!-- ============================================================
+       Plus-specific keys — Preferences VST
+       ============================================================ -->
+  <system:String x:Key="prefs.vst.scanpaths">Additional folders to scan for VST/VST3 plugins:</system:String>
+  <system:String x:Key="prefs.vst.add">Add</system:String>
+  <system:String x:Key="prefs.vst.remove">Remove</system:String>
+  <system:String x:Key="prefs.vst.discovered">Discovered Plugins</system:String>
+  <system:String x:Key="prefs.vst.rescan">Rescan</system:String>
+
+  <!-- ============================================================
+       Plus-specific keys — Debug Window log levels
+       ============================================================ -->
+  <system:String x:Key="debug.level.verbose">Verbose</system:String>
+  <system:String x:Key="debug.level.debug">Debug</system:String>
+  <system:String x:Key="debug.level.information">Information</system:String>
+  <system:String x:Key="debug.level.warning">Warning</system:String>
+  <system:String x:Key="debug.level.error">Error</system:String>
+  <system:String x:Key="debug.level.fatal">Fatal</system:String>
+
+  <!-- ============================================================
+       Plus-specific keys — Merge Voicebank column headers
+       ============================================================ -->
+  <system:String x:Key="mergevoicebank.originalname">Original Name</system:String>
+  <system:String x:Key="mergevoicebank.newname">New Name</system:String>
+  <system:String x:Key="mergevoicebank.originalsubbank">Original subbank</system:String>
+  <system:String x:Key="mergevoicebank.newsubbank">New subbank</system:String>
+
+  <!-- Plus-specific: MixFx parameter labels -->
+  <system:String x:Key="mixfx.eq">EQ</system:String>
+  <system:String x:Key="mixfx.eq.low">Low (dB)</system:String>
+  <system:String x:Key="mixfx.eq.midfreq">Mid Freq</system:String>
+  <system:String x:Key="mixfx.eq.mid">Mid (dB)</system:String>
+  <system:String x:Key="mixfx.eq.high">High (dB)</system:String>
+  <system:String x:Key="mixfx.compressor">Compressor</system:String>
+  <system:String x:Key="mixfx.comp.threshold">Threshold</system:String>
+  <system:String x:Key="mixfx.comp.ratio">Ratio</system:String>
+  <system:String x:Key="mixfx.comp.makeup">Makeup</system:String>
+  <system:String x:Key="mixfx.reverb">Reverb</system:String>
+  <system:String x:Key="mixfx.reverb.size">Size</system:String>
+  <system:String x:Key="mixfx.reverb.damp">Damp</system:String>
+  <system:String x:Key="mixfx.reverb.wet">Wet</system:String>
+  <system:String x:Key="mixfx.reverb.predelay">Pre-Delay</system:String>
+
+  <!-- Plus-specific: Preferences VST -->
+  <system:String x:Key="prefs.vst.title">VST Plugin Scan Paths</system:String>
+  <system:String x:Key="prefs.vst.pluginsfound">{0} plugin(s) found</system:String>
+
+  <!-- Plus-specific: Context menu entry for track effects -->
+  <system:String x:Key="context.track.effects">Effects</system:String>
+
+  <!-- Plus-specific: Welcome page quick links -->
+  <system:String x:Key="welcome.quicklinks">Quick Links</system:String>
+  <system:String x:Key="welcome.prefs">Preferences</system:String>
+  <system:String x:Key="welcome.packages">Package Manager</system:String>
+  <system:String x:Key="welcome.releases">GitHub Releases</system:String>
+  <system:String x:Key="welcome.wiki">OpenUTAU Wiki</system:String>
+  <system:String x:Key="welcome.diffsinger">DiffSinger</system:String>
+  <system:String x:Key="welcome.teto">Kasane Teto Official</system:String>
+  <system:String x:Key="welcome.plus">OpenUTAU Plus</system:String>
 </ResourceDictionary>

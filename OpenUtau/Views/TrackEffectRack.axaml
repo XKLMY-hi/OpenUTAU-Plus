@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="OpenUtau.App.Views.TrackEffectRack"
         Icon="/Assets/open-utau.ico"
-        Title="Effects" Width="520" Height="540"
+        Title="{DynamicResource effects.title}" Width="520" Height="540"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
   <Window.Styles>
@@ -83,18 +83,18 @@
       <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto,Auto,Auto" Margin="0,0,0,6">
         <TextBlock Grid.Column="0" Classes="header" Name="TitleLabel"/>
         <CheckBox Grid.Column="1" Name="ExportCheck" Margin="0,0,4,0" VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="2" Text="Export" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0" Opacity="0.7"/>
-        <ToggleSwitch Grid.Column="3" Name="EnableToggle" OnContent="On" OffContent="Off"/>
-        <TextBlock Grid.Column="4" Text=" Enabled" FontSize="11" VerticalAlignment="Center" Opacity="0.7"/>
+        <TextBlock Grid.Column="2" Text="{DynamicResource effects.export}" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0" Opacity="0.7"/>
+        <ToggleSwitch Grid.Column="3" Name="EnableToggle" OnContent="{DynamicResource effects.on}" OffContent="{DynamicResource effects.off}"/>
+        <TextBlock Grid.Column="4" Text="{DynamicResource effects.enabled}" FontSize="11" VerticalAlignment="Center" Opacity="0.7"/>
       </Grid>
 
       <!-- Presets -->
       <Grid DockPanel.Dock="Top" ColumnDefinitions="Auto,*,Auto,Auto,Auto" Margin="0,0,0,8">
-        <TextBlock Grid.Column="0" Text="Preset:" FontSize="11" VerticalAlignment="Center" Opacity="0.7" Margin="0,0,8,0"/>
+        <TextBlock Grid.Column="0" Text="{DynamicResource mixfx.preset}" FontSize="11" VerticalAlignment="Center" Opacity="0.7" Margin="0,0,8,0"/>
         <ComboBox Grid.Column="1" Name="PresetCombo"/>
-        <Button Grid.Column="2" Name="RecBtn" Content="Recommended" FontSize="10" Margin="6,0,4,0" Padding="6,2"/>
-        <Button Grid.Column="3" Name="SaveBtn" Content="Save" FontSize="10" Margin="4,0,4,0" Padding="6,2"/>
-        <Button Grid.Column="4" Name="DelBtn" Content="Delete" FontSize="10" Padding="6,2" IsEnabled="False"/>
+        <Button Grid.Column="2" Name="RecBtn" Content="{DynamicResource mixfx.recommended}" FontSize="10" Margin="6,0,4,0" Padding="6,2"/>
+        <Button Grid.Column="3" Name="SaveBtn" Content="{DynamicResource mixfx.library.save}" FontSize="10" Margin="4,0,4,0" Padding="6,2"/>
+        <Button Grid.Column="4" Name="DelBtn" Content="{DynamicResource mixfx.library.delete}" FontSize="10" Padding="6,2" IsEnabled="False"/>
       </Grid>
 
       <!-- Slot list -->

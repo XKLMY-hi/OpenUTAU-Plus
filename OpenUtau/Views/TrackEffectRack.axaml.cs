@@ -150,7 +150,7 @@ namespace OpenUtau.App.Views {
                 VerticalAlignment = VerticalAlignment.Center, Margin = new(0, 0, 6, 0),
             };
             var label = new TextBlock {
-                Text = $"Built-in Effects ({activeCount} active)",
+                Text = string.Format(ThemeManager.GetString("effects.builtin.active"), activeCount),
                 FontSize = 11, FontWeight = FontWeight.SemiBold, Opacity = 0.6,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -169,8 +169,8 @@ namespace OpenUtau.App.Views {
                     Classes = { on ? "fxPillOn" : "fxPillOff" },
                     CornerRadius = new(8), Padding = new(6, 1), Margin = new(1, 0),
                     Background = on
-                        ? new SolidColorBrush(Color.FromRgb(70, 140, 220))
-                        : new SolidColorBrush(Color.FromRgb(90, 90, 90)),
+                        ? ThemeManager.AccentBrush1
+                        : ThemeManager.NeutralAccentBrushSemi,
                     Cursor = new Cursor(StandardCursorType.Hand),
                     Child = new TextBlock { Text = name, FontSize = 9,
                         Foreground = on ? Brushes.White : Brushes.Gray,
@@ -188,7 +188,7 @@ namespace OpenUtau.App.Views {
 
             // Expand chevron button
             var expBtn = new Button {
-                Content = _builtInExpanded ? "Collapse" : "Expand",
+                Content = _builtInExpanded ? ThemeManager.GetString("effects.collapse") : ThemeManager.GetString("effects.expand"),
                 FontSize = 9, Padding = new(6, 1), Margin = new(8, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -231,7 +231,7 @@ namespace OpenUtau.App.Views {
             // ── VST section ──────────────────────────────────────────
             var vstHeader = new Grid { ColumnDefinitions = new("*,Auto") };
             vstHeader.Children.Add(new TextBlock {
-                Text = "VST Plugins", FontSize = 11, FontWeight = FontWeight.SemiBold,
+                Text = ThemeManager.GetString("effects.vstplugins"), FontSize = 11, FontWeight = FontWeight.SemiBold,
                 Opacity = 0.6, VerticalAlignment = VerticalAlignment.Center,
             });
             SlotList.Children.Add(new Border { Classes = { "slotRow" }, Child = vstHeader,
@@ -241,7 +241,7 @@ namespace OpenUtau.App.Views {
                 BuildVstRow(slot);
 
             if (track.VstSlots.Count < 8) {
-                var add = new Button { Classes = { "addBtn" }, Content = "+ Add VST Slot",
+                var add = new Button { Classes = { "addBtn" }, Content = ThemeManager.GetString("effects.addvstslot"),
                     Margin = new(0, 4, 0, 0) };
                 add.Click += (_, _) => { track.VstSlots.Add(new(track.VstSlots.Count)); BuildUI(); };
                 SlotList.Children.Add(add);
@@ -259,7 +259,7 @@ namespace OpenUtau.App.Views {
                 Text = name, FontSize = 11, FontWeight = FontWeight.SemiBold,
                 VerticalAlignment = VerticalAlignment.Center,
             });
-            var toggle = new ToggleSwitch { IsChecked = !bypassed, OnContent = "On", OffContent = "Off", FontSize = 10 };
+            var toggle = new ToggleSwitch { IsChecked = !bypassed, OnContent = ThemeManager.GetString("effects.on"), OffContent = ThemeManager.GetString("effects.off"), FontSize = 10 };
             toggle.Tapped += (_, _) => {
                 setBypassed(!bypassed);
                 toggle.IsChecked = !bypassed;
@@ -281,7 +281,7 @@ namespace OpenUtau.App.Views {
             outer.Children.Add(paramStack);
 
             var row = new Border { Classes = { "slotRow" }, Child = outer, Margin = new(4, 0, 0, 3),
-                BorderBrush = new SolidColorBrush(Color.FromRgb(60, 60, 60)) };
+                BorderBrush = ThemeManager.NeutralAccentBrush };
             if (bypassed) row.Classes.Add("bypassed");
             SlotList.Children.Add(row);
         }
@@ -344,7 +344,7 @@ namespace OpenUtau.App.Views {
                 leftStack.Children.Add(nameStack);
             } else {
                 leftStack.Children.Add(new TextBlock {
-                    Classes = { "empty" }, Text = "Empty slot",
+                    Classes = { "empty" }, Text = ThemeManager.GetString("effects.emptyslot"),
                 });
             }
             g.Children.Add(leftStack);
@@ -352,7 +352,7 @@ namespace OpenUtau.App.Views {
 
             if (slot.IsLoaded) {
                 var bt = new ToggleSwitch {
-                    IsChecked = !slot.Bypassed, OnContent = "On", OffContent = "Off",
+                    IsChecked = !slot.Bypassed, OnContent = ThemeManager.GetString("effects.on"), OffContent = ThemeManager.GetString("effects.off"),
                     FontSize = 10, Margin = new(6, 0, 2, 0),
                 };
                 bt.Tapped += (_, _) => {
@@ -363,7 +363,7 @@ namespace OpenUtau.App.Views {
                 g.Children.Add(bt); Grid.SetColumn(bt, 2);
 
                 var edit = new Button { Classes = { "browseBtn" }, Margin = new(2, 0, 2, 0),
-                    Content = new TextBlock { Text = "Edit", FontSize = 9 },
+                    Content = new TextBlock { Text = ThemeManager.GetString("effects.edit"), FontSize = 9 },
                 };
                 var s2 = slot; edit.Click += (_, _) => OpenVstEditor(s2);
                 g.Children.Add(edit); Grid.SetColumn(edit, 3);
@@ -391,26 +391,26 @@ namespace OpenUtau.App.Views {
             var instruments = VstPluginRegistry.Inst.All.Where(p => !p.IsEffect).ToList();
 
             if (allPlugins.Count == 0) {
-                string msgText = "No VST/VST3 effect plugins found.";
+                string msgText = ThemeManager.GetString("effects.noplugins");
                 if (instruments.Count > 0)
-                    msgText += $"\n\n{instruments.Count} instrument plugin(s) excluded.";
-                msgText += "\n\nAdd scan paths in Settings → OpenUTAU Plus.";
+                    msgText += $"\n\n{instruments.Count} {ThemeManager.GetString("effects.instruments.excluded")}";
+                msgText += $"\n\n{ThemeManager.GetString("effects.addscanpaths")}";
                 ShowMessage(msgText);
                 return;
             }
 
-            var picker = new Window { Title = "Select Effect", Width = 520, Height = 420,
+            var picker = new Window { Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner, Background = Background };
             var layout = new StackPanel { Margin = new(12) };
 
             // Info
             layout.Children.Add(new TextBlock {
-                Text = $"{allPlugins.Count} effects available" +
-                       (instruments.Count > 0 ? $" ({instruments.Count} instruments filtered)" : ""),
+                Text = $"{allPlugins.Count} {ThemeManager.GetString("effects.available")}" +
+                       (instruments.Count > 0 ? $" ({instruments.Count} {ThemeManager.GetString("effects.instruments.filtered")})" : ""),
                 FontSize = 11, Margin = new(0, 0, 0, 6), Opacity = 0.55,
             });
 
-            var search = new TextBox { Watermark = "Filter...", FontSize = 11, Margin = new(0, 0, 0, 6) };
+            var search = new TextBox { Watermark = ThemeManager.GetString("effects.filter"), FontSize = 11, Margin = new(0, 0, 0, 6) };
             layout.Children.Add(search);
 
             var lb = new ListBox { ItemsSource = allPlugins.ToList(), Height = 280 };
@@ -426,7 +426,7 @@ namespace OpenUtau.App.Views {
 
             var btns = new StackPanel { Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center, Margin = new(0, 8, 0, 0), Spacing = 8 };
-            var load = new Button { Content = "Load", Width = 64 };
+            var load = new Button { Content = ThemeManager.GetString("effects.load"), Width = 64 };
             load.Click += (_, _) => {
                 if (lb.SelectedItem is VstPluginEntry e) {
                     slot.PluginUid = e.Uid;
@@ -435,7 +435,7 @@ namespace OpenUtau.App.Views {
                 }
                 picker.Close();
             };
-            var cancel = new Button { Content = "Cancel", Width = 64 };
+            var cancel = new Button { Content = ThemeManager.GetString("effects.cancel"), Width = 64 };
             cancel.Click += (_, _) => picker.Close();
             btns.Children.Add(load); btns.Children.Add(cancel);
             layout.Children.Add(btns);
@@ -454,11 +454,11 @@ namespace OpenUtau.App.Views {
         }
 
         private void ShowMessage(string text) {
-            var w = new Window { Title = "Info", Width = 380, Height = 180,
+            var w = new Window { Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var sp = new StackPanel { Margin = new(14) };
             sp.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 12 });
-            var ok = new Button { Content = "OK", Width = 60,
+            var ok = new Button { Content = ThemeManager.GetString("effects.ok"), Width = 60,
                 HorizontalAlignment = HorizontalAlignment.Center, Margin = new(0, 8, 0, 0) };
             ok.Click += (_, _) => w.Close();
             sp.Children.Add(ok);
@@ -477,7 +477,7 @@ namespace OpenUtau.App.Views {
                 fx = VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
             }
             if (fx == null) {
-                ShowMessage($"Failed to load plugin for editor.\n{VstBridge.LastError() ?? "unknown error"}");
+                ShowMessage($"{ThemeManager.GetString("effects.error.load")}\n{VstBridge.LastError() ?? ThemeManager.GetString("effects.error.unknown")}");
                 return;
             }
 

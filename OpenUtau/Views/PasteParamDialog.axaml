@@ -18,6 +18,6 @@
       </ListBox.Styles>
     </ListBox>
 
-    <Button Content="OK" Click="OkButtonClick" Grid.Row="1" Width="100" HorizontalAlignment="Center"/>
+    <Button Content="{DynamicResource button.ok}" Click="OkButtonClick" Grid.Row="1" Width="100" HorizontalAlignment="Center"/>
   </Grid>
 </Window>

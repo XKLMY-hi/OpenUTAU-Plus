@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using OpenUtau.Core.Util;
 using OpenUtau.Core.Vst;
 using Serilog;
 
@@ -13,7 +14,7 @@ namespace OpenUtau.App.Views {
         public VstEditorWindow() {
             InitializeComponent();
             _fx = null!;
-            NativeStatus.Text = "No plugin instance.";
+            NativeStatus.Text = ThemeManager.GetString("vsteditor.noplugin");
         }
 
         /// <summary>
@@ -38,10 +39,10 @@ namespace OpenUtau.App.Views {
                 : new SolidColorBrush(Color.FromRgb(220, 120, 40));
 
             VendorLabel.Text = !string.IsNullOrEmpty(entry.Vendor)
-                ? entry.Vendor : "No vendor info";
+                ? entry.Vendor : ThemeManager.GetString("vsteditor.novendor");
 
             SubsLabel.Text = entry.SubCategories.Count > 0
-                ? string.Join(" · ", entry.SubCategories) : "No category info";
+                ? string.Join(" · ", entry.SubCategories) : ThemeManager.GetString("vsteditor.nocategory");
 
             string path = entry.Path;
             if (path.Length > 60) path = "..." + path[^57..];
@@ -50,7 +51,7 @@ namespace OpenUtau.App.Views {
             ParamInfo.Text = $"{entry.CategoryDisplay}  ·  {entry.Vendor}";
 
             OpenEditorBtn.IsEnabled = true;
-            OpenEditorBtn.Content = "Open Native GUI";
+            OpenEditorBtn.Content = ThemeManager.GetString("vsteditor.opengui");
 
             KeyDown += (_, e) => {
                 if (e.Key == Key.Escape) Close();
@@ -63,11 +64,11 @@ namespace OpenUtau.App.Views {
             try {
                 bool ok = _fx.OpenNativeEditor();
                 if (ok)
-                    NativeStatus.Text = "Native GUI opened! Changes affect audio in real-time.";
+                    NativeStatus.Text = ThemeManager.GetString("vsteditor.nativeopened");
                 else
-                    NativeStatus.Text = $"No editor: {VstBridge.LastError() ?? "this plugin has no GUI"}";
+                    NativeStatus.Text = $"{ThemeManager.GetString("vsteditor.noeditor")}: {VstBridge.LastError() ?? ThemeManager.GetString("vsteditor.nogui")}";
             } catch (Exception ex) {
-                NativeStatus.Text = $"Error: {ex.Message}";
+                NativeStatus.Text = $"{ThemeManager.GetString("vsteditor.error")}: {ex.Message}";
                 Log.Error(ex, $"[VstEditor] Failed for {_fx.DisplayName}");
             }
         }

@@ -3,12 +3,29 @@
   <Style>
     <Style.Resources>
       <CornerRadius x:Key="ControlCornerRadius">0</CornerRadius>
-      <CornerRadius x:Key="OverlayCornerRadius">0</CornerRadius>
+      <CornerRadius x:Key="OverlayCornerRadius">6</CornerRadius>
       <x:Double x:Key="MenuFlyoutThemeMinHeight">20</x:Double>
       <Thickness x:Key="MenuFlyoutScrollerMargin">0</Thickness>
       <Thickness x:Key="ComboBoxDropdownContentMargin">0</Thickness>
     </Style.Resources>
   </Style>
+  <!-- Rounded popup overlays -->
+  <Style Selector="Popup > Border">
+    <Setter Property="CornerRadius" Value="6"/>
+  </Style>
+  <Style Selector="ContextMenu">
+    <Setter Property="CornerRadius" Value="6"/>
+  </Style>
+  <Style Selector="MenuFlyoutPresenter">
+    <Setter Property="CornerRadius" Value="6"/>
+  </Style>
+  <Style Selector="MenuFlyoutPresenter /template/ Border#PART_PopupBorder">
+    <Setter Property="CornerRadius" Value="6"/>
+  </Style>
+  <Style Selector="MenuFlyoutPresenter /template/ Border">
+    <Setter Property="CornerRadius" Value="6"/>
+  </Style>
+
   <Style Selector="Window">
     <Setter Property="FontFamily" Value="{DynamicResource ui.fontfamily}"/>
     <Setter Property="Icon" Value="/Assets/open-utau.ico"/>

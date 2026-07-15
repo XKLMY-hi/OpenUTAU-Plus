@@ -16,7 +16,7 @@
                 ItemsSource="{Binding BeatUnits}"
                 SelectedItem="{Binding BeatUnit}"/>
     </Grid>
-    <Button Content="OK" Margin="8,4" HorizontalAlignment="Stretch"
+    <Button Content="{DynamicResource button.ok}" Margin="8,4" HorizontalAlignment="Stretch"
             Click="OnOkButtonClick"/>
   </StackPanel>
 </Window>

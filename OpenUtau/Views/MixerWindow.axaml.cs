@@ -9,6 +9,7 @@ using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.Render;
+using OpenUtau.Core.Util;
 using OpenUtau.Core.Ustx;
 
 namespace OpenUtau.App.Views {
@@ -66,6 +67,7 @@ namespace OpenUtau.App.Views {
                 var strip = new MixerTrackStrip(viewModel.Tracks[i]) { TrackIndex = i };
                 TrackStripsPanel.Children.Add(strip);
             }
+            StatusText.Text = string.Format(ThemeManager.GetString("mixer.tracks"), viewModel.Tracks.Count);
         }
 
         protected override void OnClosed(EventArgs e) {

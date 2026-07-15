@@ -34,13 +34,15 @@ namespace OpenUtau.App.ViewModels {
         public string Directory { get; }
         public DateTime LastWriteTime { get; }
         public string LastWriteTimeStr { get; }
+        public string Format { get; }
 
         public RecentFileInfo(string path) {
             PathName = path;
             Name = Path.GetFileName(path);
             Directory = Path.GetDirectoryName(path) ?? string.Empty;
             LastWriteTime = File.GetLastWriteTime(path);
-            LastWriteTimeStr = LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss");
+            LastWriteTimeStr = LastWriteTime.ToString("MM-dd HH:mm");
+            Format = Path.GetExtension(path).TrimStart('.').ToUpperInvariant();
         }
     }
 
@@ -73,6 +75,7 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public string ClearCacheHeader { get; set; }
         public bool ProjectSaved => !string.IsNullOrEmpty(DocManager.Inst.Project.FilePath) && DocManager.Inst.Project.Saved;
         public string AppVersion => $"OpenUTAU Plus v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version}";
+        [Reactive] public bool IsDarkMode { get; set; }
         [Reactive] public double Progress { get; set; }
         [Reactive] public string ProgressText { get; set; }
         [Reactive] public bool ShowPianoRoll { get; set; }
@@ -97,6 +100,9 @@ namespace OpenUtau.App.ViewModels {
         public Func<Task<bool>>? AskIfSaveAndContinue { get; set; }
 
         public MainWindowViewModel() {
+            IsDarkMode = ThemeManager.IsDarkMode;
+            MessageBus.Current.Listen<ThemeChangedEvent>()
+                .Subscribe(_ => { IsDarkMode = ThemeManager.IsDarkMode; });
             PlaybackViewModel = new PlaybackViewModel();
             TracksViewModel = new TracksViewModel();
             ClearCacheHeader = string.Empty;
