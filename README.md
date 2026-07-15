@@ -9,24 +9,47 @@
 ## 新增功能
 
 ### 🎚️ DAW 风格混音台
-- FL Studio 风格垂直推子，-24dB ~ +12dB
+- 垂直推子，-24dB ~ +12dB
 - 30fps 实时电平表（LevelTracker）
 - 静音 / 独奏按钮 + 颜色指示
 - 双击数值编辑（音量 / 声像）
 - **Ctrl+M** 快捷键开关
 
 ### 🔌 VST3 效果器插件支持
-- 加载任意 VST3 音频效果器（OTT、TDR Nova、Supercharger、Persistent 系列等）
+- 加载任意 VST3 音频效果器（压缩器、EQ、混响、延迟等）
 - **原生 GUI 弹出窗口** — 独立 Win32 窗口嵌入插件界面
 - **实时参数同步** — GUI 旋钮变动立即影响音频输出
 - **乐器过滤** — 自动排除合成器/采样器等无音频输入的插件
 - 每轨道最多 8 个槽位，按顺序串行处理
-- 3 个内置效果器：EQ / Compressor / Reverb（可折叠面板）
+- 3 个内置效果器：EQ / Compressor / Reverb（基于原版"试听效果"，重构为可折叠面板 + 支持旁通切换）
 
 ### 📦 .ustxp 项目格式
 - Plus 专属格式，`ustxpVersion: 1.0`
 - VST 插件参数持久化 — 重新打开项目自动恢复插件设置
 - 向后兼容 `.ustx`
+
+---
+
+## 设计目标
+
+OpenUTAU Plus 的愿景是将 OpenUTAU 从歌声合成编辑器逐步扩展为一个 **以人声为中心的 DAW 工作站**，让用户无需离开软件就能完成混音、母带、效果处理等全流程。
+
+### 近期目标（v1.x）
+
+- ✅ 混音台（每轨道推子、声像、静音独奏、电平表）
+- ✅ VST3 效果器插件支持（加载、GUI、实时参数）
+- ✅ `.ustxp` 项目格式（VST 参数持久化）
+- 🚧 导出带 VST 效果的音频（bounce/render with effects）
+- 🚧 VST 音源插件支持（加载合成器/采样器作为音源）
+- 🚧 macOS / Linux 跨平台支持
+
+### 远期愿景
+
+- 发送轨 / Aux 总线 / 侧链压缩
+- 插件延迟补偿（PDC）
+- 轨道编组与 VCA 推子
+- MIDI 控制面映射
+- 内置采样器与鼓机
 
 ---
 
@@ -39,7 +62,25 @@ dotnet restore
 dotnet run --project OpenUtau
 ```
 
-需要 [.NET 8.0 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)。VST3 桥接 DLL 已预编译在 `runtimes/win-x64/native/vst_bridge.dll` 中。
+需要 [.NET 8.0 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)。
+
+> **平台支持**：OpenUTAU Plus 本体用 C# / Avalonia 构建，可在 Windows / macOS / Linux 上运行。但 **VST3 桥接 DLL 目前仅编译了 Windows x64**，macOS 和 Linux 下 VST 相关功能暂时不可用。
+
+---
+
+## 局限性与待实现功能
+
+以下限制是设计决策或尚未完成的工作，**请在使用前了解**：
+
+| 限制 | 说明 |
+|------|------|
+| **导出不含 VST 效果** | 导出/混音时 VST 效果器不会被渲染到文件中。目前仅实时播放生效 |
+| **不支持 VST 音源** | 不可加载 VST 合成器/采样器（乐器类插件）作为音源。扫描器会自动过滤，仅显示效果器 |
+| **仅 Windows x64** | 桥接 DLL 仅编译了 Windows x64。macOS / Linux 用户暂时无法使用 VST 功能 |
+| **发送轨 / 侧链** | 尚未实现 Aux 总线和侧链压缩路由 |
+| **单线程渲染** | 渲染引擎按轨道顺序串行处理，尚未引入并行化 |
+
+这些都在 [设计目标](#设计目标) 的路线图中规划了解决方案。
 
 ---
 
@@ -156,3 +197,4 @@ VST3 桥接基于 [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/
 - [OpenUTAU](https://github.com/openutau/OpenUtau) 原版项目及全体贡献者
 - Steinberg 提供 VST3 SDK
 - 歌声合成社区
+- 本项目以 **Vibe Coding** 方式开发 —— 使用 DeepSeek V4 Pro AI 辅助编程完成架构设计、代码生成与调试
