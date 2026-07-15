@@ -107,19 +107,11 @@ namespace OpenUtau.Core.Render {
                 fader.SetScaleToTarget();
                 faders.Add(fader);
 
-                // Collect VST effects
+                // Collect VST effects — lock-free read from pre-loaded instances
                 var vstEffects = new System.Collections.Generic.List<SignalChain.Effects.IEffect>();
                 if (applyMixFx && track.VstSlots != null) {
-                    foreach (var slot in track.VstSlots) {
-                        if (!slot.IsLoaded || slot.Bypassed) continue;
-                        try {
-                            var vstFx = new Vst.VstEffect(slot);
-                            vstFx.Load();
-                            if (!vstFx.IsBypassed) vstEffects.Add(vstFx);
-                        } catch (Exception ex) {
-                            Serilog.Log.Warning($"[VST] Failed to load {slot.PluginUid}: {ex.Message}");
-                        }
-                    }
+                    foreach (var fx in Vst.VstPluginManager.Inst.GetActiveEffects(track.TrackNo))
+                        vstEffects.Add(fx);
                 }
 
                 ISignalSource trackOut = applyMixFx

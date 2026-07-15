@@ -22,15 +22,16 @@ namespace OpenUtau.App.Views {
 
         private readonly List<Preferences.MixFxUserPreset> userPresets = new();
         private readonly Preferences.MixFxUserPreset defaultPreset;
+        private bool _builtInExpanded;
 
         public TrackEffectRack() : this(new UTrack()) { }
 
         public TrackEffectRack(UTrack track) {
             InitializeComponent();
             this.track = track;
+            _builtInExpanded = false;
             TitleLabel.Text = $"{track.TrackName}";
 
-            // Init presets =================================================
             defaultPreset = new Preferences.MixFxUserPreset {
                 Name = ThemeManager.GetString("mixfx.library.default"),
                 Fx = RecommendedFx(),
@@ -43,11 +44,9 @@ namespace OpenUtau.App.Views {
             if (track.VstSlots == null || track.VstSlots.Count == 0)
                 track.VstSlots = VstPluginManager.CreateDefaultSlots(3);
 
-            // Sync UI state ================================================
             EnableToggle.IsChecked = fx.Enabled;
             ExportCheck.IsChecked = Preferences.Default.MixFxApplyOnExportMixdown;
 
-            // Top row buttons ==============================================
             RecBtn.Click += (_, _) => LoadPreset(defaultPreset);
             SaveBtn.Click += (_, _) => SavePreset();
             DelBtn.Click += (_, _) => DeletePreset();
@@ -63,9 +62,9 @@ namespace OpenUtau.App.Views {
             BuildUI();
         }
 
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════
         //  Presets
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════
 
         private static UMixFx RecommendedFx() => new() {
             Enabled = true,
@@ -100,7 +99,6 @@ namespace OpenUtau.App.Views {
             dlg.onFinish = n => { if (!string.IsNullOrWhiteSpace(n)) name = n; };
             await dlg.ShowDialog(this);
             if (string.IsNullOrWhiteSpace(name) || name == defaultPreset.Name) return;
-
             var snap = new Preferences.MixFxUserPreset { Name = name, Fx = Snap() };
             userPresets.RemoveAll(x => x.Name == name && x != defaultPreset);
             userPresets.Add(snap);
@@ -131,63 +129,134 @@ namespace OpenUtau.App.Views {
             ReverbSize = fx.ReverbSize, ReverbDamp = fx.ReverbDamp, ReverbWet = fx.ReverbWet, ReverbPreDelayMs = fx.ReverbPreDelayMs,
         };
 
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════
         //  UI Builder
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════
 
         private void BuildUI() {
             SlotList.Children.Clear();
 
-            // ── Built-in FX (compact rows) ───────────────────────────────
-            BuildBuiltInRow(0, "EQ", fx.EqBypassed,
-                v => { fx.EqBypassed = v; NotifyChanged(); BuildUI(); },
-                () => fx.EqPreset, v => { fx.EqPreset = v; LoadEqPreset(v); NotifyChanged(); },
-                FxPresets.EqPresetNames,
-                new[] { Param("Low", -12, 12, fx.EqLowDb, v => { fx.EqLowDb = v; }, "F1"),
-                        Param("Mid Freq", 200, 6000, fx.EqMidFreq, v => { fx.EqMidFreq = v; }, "F0"),
-                        Param("Mid", -12, 12, fx.EqMidDb, v => { fx.EqMidDb = v; }, "F1"),
-                        Param("High", -12, 12, fx.EqHighDb, v => { fx.EqHighDb = v; }, "F1") });
+            // ── Built-in FX section (collapsible) ─────────────────────
+            int activeCount = 0;
+            if (!fx.EqBypassed) activeCount++;
+            if (!fx.CompBypassed) activeCount++;
+            if (!fx.ReverbBypassed) activeCount++;
 
-            BuildBuiltInRow(1, "Compressor", fx.CompBypassed,
-                v => { fx.CompBypassed = v; NotifyChanged(); BuildUI(); },
-                () => fx.CompPreset, v => { fx.CompPreset = v; LoadCompPreset(v); NotifyChanged(); },
-                FxPresets.CompPresetNames,
-                new[] { Param("Thresh", -40, 0, fx.CompThresholdDb, v => { fx.CompThresholdDb = v; }, "F1"),
-                        Param("Ratio", 1, 20, fx.CompRatio, v => { fx.CompRatio = v; }, "F1"),
-                        Param("Makeup", 0, 12, fx.CompMakeupDb, v => { fx.CompMakeupDb = v; }, "F1") });
+            // Section header with expand chevron
+            var sectionHeader = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto") };
+            var chevron = new TextBlock {
+                Text = _builtInExpanded ? "▾" : "▸",
+                FontSize = 10, Opacity = 0.5,
+                VerticalAlignment = VerticalAlignment.Center, Margin = new(0, 0, 6, 0),
+            };
+            var label = new TextBlock {
+                Text = $"Built-in Effects ({activeCount} active)",
+                FontSize = 11, FontWeight = FontWeight.SemiBold, Opacity = 0.6,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            sectionHeader.Children.Add(chevron);
+            sectionHeader.Children.Add(label); Grid.SetColumn(label, 1);
 
-            BuildBuiltInRow(2, "Reverb", fx.ReverbBypassed,
-                v => { fx.ReverbBypassed = v; NotifyChanged(); BuildUI(); },
-                () => fx.ReverbPreset, v => { fx.ReverbPreset = v; LoadReverbPreset(v); NotifyChanged(); },
-                FxPresets.ReverbPresetNames,
-                new[] { Param("Size", 0, 1, fx.ReverbSize, v => { fx.ReverbSize = v; }, "F2"),
-                        Param("Damp", 0, 1, fx.ReverbDamp, v => { fx.ReverbDamp = v; }, "F2"),
-                        Param("Wet", 0, 2, fx.ReverbWet, v => { fx.ReverbWet = v; }, "F2"),
-                        Param("Pre-Delay", 0, 200, fx.ReverbPreDelayMs, v => { fx.ReverbPreDelayMs = v; }, "F0") });
+            // Quick toggles for each built-in
+            var qPanel = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 2 };
+            foreach (var (name, bp, toggle) in new[] {
+                ("EQ", fx.EqBypassed, (Action<bool>)(v => { fx.EqBypassed = v; NotifyChanged(); })),
+                ("Comp", fx.CompBypassed, v => { fx.CompBypassed = v; NotifyChanged(); }),
+                ("Reverb", fx.ReverbBypassed, v => { fx.ReverbBypassed = v; NotifyChanged(); }),
+            }) {
+                bool on = !bp;
+                var pill = new Border {
+                    Classes = { on ? "fxPillOn" : "fxPillOff" },
+                    CornerRadius = new(8), Padding = new(6, 1), Margin = new(1, 0),
+                    Background = on
+                        ? new SolidColorBrush(Color.FromRgb(70, 140, 220))
+                        : new SolidColorBrush(Color.FromRgb(90, 90, 90)),
+                    Cursor = new Cursor(StandardCursorType.Hand),
+                    Child = new TextBlock { Text = name, FontSize = 9,
+                        Foreground = on ? Brushes.White : Brushes.Gray,
+                        FontWeight = on ? FontWeight.SemiBold : FontWeight.Normal,
+                    },
+                };
+                var capName = name; var capBp = bp; var capToggle = toggle;
+                pill.PointerPressed += (_, _) => {
+                    capToggle(!capBp);
+                    BuildUI();
+                };
+                qPanel.Children.Add(pill);
+            }
+            sectionHeader.Children.Add(qPanel); Grid.SetColumn(qPanel, 2);
 
-            // ── VST section ──────────────────────────────────────────────
-            SlotList.Children.Add(new TextBlock { Classes = { "section" }, Text = "VST Plugins" });
+            // Expand chevron button
+            var expBtn = new Button {
+                Content = _builtInExpanded ? "Collapse" : "Expand",
+                FontSize = 9, Padding = new(6, 1), Margin = new(8, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            expBtn.Click += (_, _) => { _builtInExpanded = !_builtInExpanded; BuildUI(); };
+            sectionHeader.Children.Add(expBtn); Grid.SetColumn(expBtn, 3);
+
+            var section = new Border { Classes = { "slotRow" }, Child = sectionHeader,
+                Margin = new(0, 0, 0, 4) };
+            SlotList.Children.Add(section);
+
+            // Expanded built-in detail
+            if (_builtInExpanded) {
+                BuildBuiltInRow("EQ", fx.EqBypassed,
+                    v => { fx.EqBypassed = v; NotifyChanged(); BuildUI(); },
+                    () => fx.EqPreset, v => { fx.EqPreset = v; LoadEqPreset(v); NotifyChanged(); },
+                    FxPresets.EqPresetNames,
+                    new[] { Param("Low", -12, 12, fx.EqLowDb, v => fx.EqLowDb = v, "F1"),
+                            Param("Mid Freq", 200, 6000, fx.EqMidFreq, v => fx.EqMidFreq = v, "F0"),
+                            Param("Mid", -12, 12, fx.EqMidDb, v => fx.EqMidDb = v, "F1"),
+                            Param("High", -12, 12, fx.EqHighDb, v => fx.EqHighDb = v, "F1") });
+
+                BuildBuiltInRow("Compressor", fx.CompBypassed,
+                    v => { fx.CompBypassed = v; NotifyChanged(); BuildUI(); },
+                    () => fx.CompPreset, v => { fx.CompPreset = v; LoadCompPreset(v); NotifyChanged(); },
+                    FxPresets.CompPresetNames,
+                    new[] { Param("Thresh", -40, 0, fx.CompThresholdDb, v => fx.CompThresholdDb = v, "F1"),
+                            Param("Ratio", 1, 20, fx.CompRatio, v => fx.CompRatio = v, "F1"),
+                            Param("Makeup", 0, 12, fx.CompMakeupDb, v => fx.CompMakeupDb = v, "F1") });
+
+                BuildBuiltInRow("Reverb", fx.ReverbBypassed,
+                    v => { fx.ReverbBypassed = v; NotifyChanged(); BuildUI(); },
+                    () => fx.ReverbPreset, v => { fx.ReverbPreset = v; LoadReverbPreset(v); NotifyChanged(); },
+                    FxPresets.ReverbPresetNames,
+                    new[] { Param("Size", 0, 1, fx.ReverbSize, v => fx.ReverbSize = v, "F2"),
+                            Param("Damp", 0, 1, fx.ReverbDamp, v => fx.ReverbDamp = v, "F2"),
+                            Param("Wet", 0, 2, fx.ReverbWet, v => fx.ReverbWet = v, "F2"),
+                            Param("Pre-Delay", 0, 200, fx.ReverbPreDelayMs, v => fx.ReverbPreDelayMs = v, "F0") });
+            }
+
+            // ── VST section ──────────────────────────────────────────
+            var vstHeader = new Grid { ColumnDefinitions = new("*,Auto") };
+            vstHeader.Children.Add(new TextBlock {
+                Text = "VST Plugins", FontSize = 11, FontWeight = FontWeight.SemiBold,
+                Opacity = 0.6, VerticalAlignment = VerticalAlignment.Center,
+            });
+            SlotList.Children.Add(new Border { Classes = { "slotRow" }, Child = vstHeader,
+                Margin = new(0, 8, 0, 4) });
 
             foreach (var slot in track.VstSlots)
                 BuildVstRow(slot);
 
             if (track.VstSlots.Count < 8) {
-                var add = new Button { Classes = { "addBtn" }, Content = "+ Add VST slot", Margin = new(0, 4, 0, 0) };
+                var add = new Button { Classes = { "addBtn" }, Content = "+ Add VST Slot",
+                    Margin = new(0, 4, 0, 0) };
                 add.Click += (_, _) => { track.VstSlots.Add(new(track.VstSlots.Count)); BuildUI(); };
                 SlotList.Children.Add(add);
             }
         }
 
-        // ── Compact built-in row ──────────────────────────────────────
+        // ── Built-in FX row (only shown when expanded) ──────────────
 
-        private void BuildBuiltInRow(int idx, string name, bool bypassed,
+        private void BuildBuiltInRow(string name, bool bypassed,
             Action<bool> setBypassed, Func<string> getPreset, Action<string> setPreset,
             IReadOnlyList<string> presets, Control[] params_) {
 
-            // Header row
             var headerRow = new Grid { ColumnDefinitions = new ColumnDefinitions("*,Auto") };
             headerRow.Children.Add(new TextBlock {
-                Text = $"{idx + 1}. {name}", FontSize = 12, FontWeight = FontWeight.SemiBold,
+                Text = name, FontSize = 11, FontWeight = FontWeight.SemiBold,
                 VerticalAlignment = VerticalAlignment.Center,
             });
             var toggle = new ToggleSwitch { IsChecked = !bypassed, OnContent = "On", OffContent = "Off", FontSize = 10 };
@@ -198,41 +267,34 @@ namespace OpenUtau.App.Views {
             };
             headerRow.Children.Add(toggle); Grid.SetColumn(toggle, 1);
 
-            // Preset combo
             var combo = new ComboBox { ItemsSource = presets, SelectedItem = getPreset(),
                 Margin = new(0, 2, 0, 4), IsEnabled = !bypassed };
             combo.SelectionChanged += (_, _) => { if (combo.SelectedItem is string s) setPreset(s); };
 
-            // Param grid (hidden when bypassed) — each row is its own 3-col grid
             var paramStack = new StackPanel { Spacing = 1 };
             foreach (var c in params_)
                 paramStack.Children.Add(c);
 
-            var contentStack = new StackPanel { Spacing = 3, Margin = new(0, 4, 0, 2),
-                IsVisible = !bypassed };
-            contentStack.Children.Add(combo);
-            contentStack.Children.Add(paramStack);
+            var outer = new StackPanel();
+            outer.Children.Add(headerRow);
+            outer.Children.Add(combo);
+            outer.Children.Add(paramStack);
 
-            var outerStack = new StackPanel();
-            outerStack.Children.Add(headerRow);
-            outerStack.Children.Add(contentStack);
-
-            var row = new Border { Classes = { "slotRow" }, Child = outerStack };
+            var row = new Border { Classes = { "slotRow" }, Child = outer, Margin = new(4, 0, 0, 3),
+                BorderBrush = new SolidColorBrush(Color.FromRgb(60, 60, 60)) };
             if (bypassed) row.Classes.Add("bypassed");
             SlotList.Children.Add(row);
         }
 
-        // ── Slider helper ───────────────────────────────────────────────
-
         private static Grid Param(string label, double min, double max, double val,
             Action<double> onChange, string fmt) {
             var g = new Grid { Margin = new(0, 1),
-                ColumnDefinitions = new ColumnDefinitions("70,*,45") };
-            g.Children.Add(new TextBlock { Text = label, FontSize = 10, VerticalAlignment = VerticalAlignment.Center, Opacity = 0.7 });
-            var s = new Slider { Classes = { "param" }, Minimum = min, Maximum = max, Value = val,
-                TickFrequency = (max - min) / 100 };
+                ColumnDefinitions = new ColumnDefinitions("60,*,40") };
+            g.Children.Add(new TextBlock { Text = label, FontSize = 10,
+                VerticalAlignment = VerticalAlignment.Center, Opacity = 0.6 });
+            var s = new Slider { Classes = { "param" }, Minimum = min, Maximum = max, Value = val };
             var vl = new TextBlock { Text = val.ToString(fmt), FontSize = 9, FontFamily = "monospace",
-                VerticalAlignment = VerticalAlignment.Center, TextAlignment = TextAlignment.Right, Opacity = 0.7 };
+                VerticalAlignment = VerticalAlignment.Center, TextAlignment = TextAlignment.Right, Opacity = 0.6 };
             s.PropertyChanged += (_, e) => {
                 if (e.Property == RangeBase.ValueProperty) { onChange(s.Value); vl.Text = s.Value.ToString(fmt); }
             };
@@ -241,25 +303,45 @@ namespace OpenUtau.App.Views {
             return g;
         }
 
-        // ── VST row ─────────────────────────────────────────────────────
+        // ── VST row ─────────────────────────────────────────────────
 
         private void BuildVstRow(VstPluginSlot slot) {
             var row = new Border { Classes = { "slotRow" } };
-            var g = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto") };
+            var g = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto,Auto") };
 
-            // Number + type badge
-            var leftStack = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+            var leftStack = new StackPanel { Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center };
             leftStack.Children.Add(new TextBlock {
-                Text = $"{slot.SlotIndex + 4}", FontSize = 11, Opacity = 0.5,
-                VerticalAlignment = VerticalAlignment.Center, FontFamily = "monospace", Margin = new(0, 0, 6, 0),
+                Text = $"{slot.SlotIndex + 1}", FontSize = 11, Opacity = 0.35,
+                VerticalAlignment = VerticalAlignment.Center, FontFamily = "monospace",
+                Margin = new(0, 0, 6, 0),
             });
+
             if (slot.IsLoaded) {
-                leftStack.Children.Add(new TextBlock {
-                    Classes = { "typeLabel" }, Text = "[VST]",
+                // Type badge
+                var entry = slot.Entry;
+                string badge = entry?.Type == VstPluginType.VST3
+                    ? (entry.IsEffect ? "VST3" : "VST3i")
+                    : (entry?.IsEffect == true ? "VST2" : "VST2i");
+                var badgeColor = entry is { IsEffect: false }
+                    ? new SolidColorBrush(Color.FromRgb(220, 120, 50))
+                    : new SolidColorBrush(Color.FromRgb(60, 150, 100));
+                leftStack.Children.Add(new Border {
+                    Background = badgeColor, CornerRadius = new(3),
+                    Padding = new(5, 1), Margin = new(0, 0, 6, 0),
+                    Child = new TextBlock { Text = badge, FontSize = 9,
+                        Foreground = Brushes.White, FontWeight = FontWeight.SemiBold },
                 });
-                leftStack.Children.Add(new TextBlock {
+
+                var nameStack = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+                nameStack.Children.Add(new TextBlock {
                     Classes = { "slotName" }, Text = slot.DisplayName,
                 });
+                if (!string.IsNullOrEmpty(slot.PluginVendor))
+                    nameStack.Children.Add(new TextBlock {
+                        Text = slot.PluginVendor, FontSize = 9, Opacity = 0.45,
+                    });
+                leftStack.Children.Add(nameStack);
             } else {
                 leftStack.Children.Add(new TextBlock {
                     Classes = { "empty" }, Text = "Empty slot",
@@ -268,11 +350,10 @@ namespace OpenUtau.App.Views {
             g.Children.Add(leftStack);
             Grid.SetColumn(leftStack, 1);
 
-            // Bypass toggle (always show for loaded slots)
             if (slot.IsLoaded) {
                 var bt = new ToggleSwitch {
                     IsChecked = !slot.Bypassed, OnContent = "On", OffContent = "Off",
-                    FontSize = 10, Margin = new(6, 0, 0, 0),
+                    FontSize = 10, Margin = new(6, 0, 2, 0),
                 };
                 bt.Tapped += (_, _) => {
                     slot.Bypassed = !slot.Bypassed;
@@ -281,13 +362,20 @@ namespace OpenUtau.App.Views {
                 };
                 g.Children.Add(bt); Grid.SetColumn(bt, 2);
 
+                var edit = new Button { Classes = { "browseBtn" }, Margin = new(2, 0, 2, 0),
+                    Content = new TextBlock { Text = "Edit", FontSize = 9 },
+                };
+                var s2 = slot; edit.Click += (_, _) => OpenVstEditor(s2);
+                g.Children.Add(edit); Grid.SetColumn(edit, 3);
+
                 var rm = new Button { Classes = { "removeBtn" } };
-                var s = slot; rm.Click += (_, _) => { s.Clear(); BuildUI(); };
-                g.Children.Add(rm); Grid.SetColumn(rm, 3);
+                var s = slot; rm.Click += (_, _) => { VstPluginManager.Inst.UnloadEffect(track.TrackNo, s.SlotIndex); s.Clear(); BuildUI(); };
+                g.Children.Add(rm); Grid.SetColumn(rm, 4);
             } else {
-                var browse = new Button { Classes = { "browseBtn" }, HorizontalAlignment = HorizontalAlignment.Right };
+                var browse = new Button { Classes = { "browseBtn" },
+                    HorizontalAlignment = HorizontalAlignment.Right };
                 var s = slot; browse.Click += (_, _) => BrowsePlugin(s);
-                g.Children.Add(browse); Grid.SetColumn(browse, 3);
+                g.Children.Add(browse); Grid.SetColumn(browse, 4);
             }
 
             row.Child = g;
@@ -295,79 +383,121 @@ namespace OpenUtau.App.Views {
             SlotList.Children.Add(row);
         }
 
+        // ── Plugin Browser ──────────────────────────────────────────
+
         private void BrowsePlugin(VstPluginSlot slot) {
             VstPluginRegistry.Inst.ScanAll();
-            // Only show EFFECT plugins — instruments would crash the chain
             var allPlugins = VstPluginRegistry.Inst.Effects;
             var instruments = VstPluginRegistry.Inst.All.Where(p => !p.IsEffect).ToList();
+
             if (allPlugins.Count == 0) {
                 string msgText = "No VST/VST3 effect plugins found.";
                 if (instruments.Count > 0)
-                    msgText += $"\n\n{instruments.Count} instrument plugin(s) were excluded" +
-                               " (instruments cannot be used as effects).";
+                    msgText += $"\n\n{instruments.Count} instrument plugin(s) excluded.";
                 msgText += "\n\nAdd scan paths in Settings → OpenUTAU Plus.";
-                var msg = new Window { Title = "No plugins", Width = 380, Height = 180,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner };
-                var sp = new StackPanel { Margin = new(14) };
-                sp.Children.Add(new TextBlock { Text = msgText, TextWrapping = TextWrapping.Wrap, FontSize = 12 });
-                var ok = new Button { Content = "OK", Width = 60, HorizontalAlignment = HorizontalAlignment.Center,
-                    Margin = new(0, 8, 0, 0) };
-                ok.Click += (_, _) => msg.Close(); sp.Children.Add(ok);
-                msg.Content = new Border { Child = sp };
-                msg.ShowDialog(this);
+                ShowMessage(msgText);
                 return;
             }
 
-            var picker = new Window { Title = "Select Effect Plugin", Width = 500, Height = 380,
+            var picker = new Window { Title = "Select Effect", Width = 520, Height = 420,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner, Background = Background };
             var layout = new StackPanel { Margin = new(12) };
-            var infoRow = new TextBlock {
-                Text = $"Only audio effects shown ({allPlugins.Count} found" +
-                       (instruments.Count > 0 ? $", {instruments.Count} instruments excluded)" : ")"),
-                FontSize = 11, Margin = new(0, 0, 0, 4), Opacity = 0.6,
-            };
-            layout.Children.Add(infoRow);
 
-            // Search box
-            var search = new TextBox {
-                Watermark = "Filter plugins...", FontSize = 11,
-                Margin = new(0, 0, 0, 6),
-            };
+            // Info
+            layout.Children.Add(new TextBlock {
+                Text = $"{allPlugins.Count} effects available" +
+                       (instruments.Count > 0 ? $" ({instruments.Count} instruments filtered)" : ""),
+                FontSize = 11, Margin = new(0, 0, 0, 6), Opacity = 0.55,
+            });
+
+            var search = new TextBox { Watermark = "Filter...", FontSize = 11, Margin = new(0, 0, 0, 6) };
             layout.Children.Add(search);
 
-            var lb = new ListBox { ItemsSource = allPlugins.ToList(), Height = 240 };
+            var lb = new ListBox { ItemsSource = allPlugins.ToList(), Height = 280 };
             layout.Children.Add(lb);
 
-            // Search filter
             search.TextChanged += (_, _) => {
-                var filter = search.Text?.ToLowerInvariant() ?? "";
-                lb.ItemsSource = string.IsNullOrEmpty(filter)
+                var f = search.Text?.ToLowerInvariant() ?? "";
+                lb.ItemsSource = string.IsNullOrEmpty(f)
                     ? allPlugins
-                    : allPlugins.Where(p => p.Name.ToLowerInvariant().Contains(filter)).ToList();
+                    : allPlugins.Where(p => p.Name.ToLowerInvariant().Contains(f)
+                        || p.Vendor.ToLowerInvariant().Contains(f)).ToList();
             };
 
             var btns = new StackPanel { Orientation = Orientation.Horizontal,
                 HorizontalAlignment = HorizontalAlignment.Center, Margin = new(0, 8, 0, 0), Spacing = 8 };
             var load = new Button { Content = "Load", Width = 64 };
-            var cancel = new Button { Content = "Cancel", Width = 64 };
-            btns.Children.Add(load); btns.Children.Add(cancel);
-            layout.Children.Add(btns);
-            picker.Content = new Border { Child = layout };
             load.Click += (_, _) => {
-                if (lb.SelectedItem is VstPluginEntry e) { slot.PluginUid = e.Uid; BuildUI(); }
+                if (lb.SelectedItem is VstPluginEntry e) {
+                    slot.PluginUid = e.Uid;
+                    VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
+                    BuildUI();
+                }
                 picker.Close();
             };
+            var cancel = new Button { Content = "Cancel", Width = 64 };
             cancel.Click += (_, _) => picker.Close();
+            btns.Children.Add(load); btns.Children.Add(cancel);
+            layout.Children.Add(btns);
+
+            lb.DoubleTapped += (_, _) => {
+                if (lb.SelectedItem is VstPluginEntry e) {
+                    slot.PluginUid = e.Uid;
+                    VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
+                    BuildUI();
+                }
+                picker.Close();
+            };
+
+            picker.Content = new Border { Child = layout };
             picker.ShowDialog(this);
         }
 
-        // ═══════════════════════════════════════════════════════════════════
-        //  Preset loaders
-        // ═══════════════════════════════════════════════════════════════════
+        private void ShowMessage(string text) {
+            var w = new Window { Title = "Info", Width = 380, Height = 180,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner };
+            var sp = new StackPanel { Margin = new(14) };
+            sp.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 12 });
+            var ok = new Button { Content = "OK", Width = 60,
+                HorizontalAlignment = HorizontalAlignment.Center, Margin = new(0, 8, 0, 0) };
+            ok.Click += (_, _) => w.Close();
+            sp.Children.Add(ok);
+            w.Content = new Border { Child = sp };
+            w.ShowDialog(this);
+        }
 
-        void LoadEqPreset(string k) { if (FxPresets.Eq.TryGetValue(k, out var p)) { fx.EqLowDb = p.LowDb; fx.EqMidFreq = p.MidFreq; fx.EqMidDb = p.MidDb; fx.EqHighDb = p.HighDb; } }
-        void LoadCompPreset(string k) { if (FxPresets.Comp.TryGetValue(k, out var p)) { fx.CompThresholdDb = p.ThresholdDb; fx.CompRatio = p.Ratio; fx.CompMakeupDb = p.MakeupDb; } }
-        void LoadReverbPreset(string k) { if (FxPresets.Reverb.TryGetValue(k, out var p)) { fx.ReverbSize = p.RoomSize; fx.ReverbDamp = p.Damp; fx.ReverbWet = 1.0; fx.ReverbPreDelayMs = p.PreDelayMs; } }
+        private void OpenVstEditor(VstPluginSlot slot) {
+            if (!slot.IsLoaded) return;
+            if (slot.Entry == null) return;
+
+            // Get shared instance — do NOT create new one
+            var fx = VstPluginManager.Inst.GetEffect(track.TrackNo, slot.SlotIndex);
+            if (fx == null) {
+                // Not yet loaded — load it now
+                fx = VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
+            }
+            if (fx == null) {
+                ShowMessage($"Failed to load plugin for editor.\n{VstBridge.LastError() ?? "unknown error"}");
+                return;
+            }
+
+            var editor = new VstEditorWindow(fx);
+            editor.Show();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  Preset loaders
+        // ═══════════════════════════════════════════════════════════════
+
+        void LoadEqPreset(string k) {
+            if (FxPresets.Eq.TryGetValue(k, out var p)) { fx.EqLowDb = p.LowDb; fx.EqMidFreq = p.MidFreq; fx.EqMidDb = p.MidDb; fx.EqHighDb = p.HighDb; }
+        }
+        void LoadCompPreset(string k) {
+            if (FxPresets.Comp.TryGetValue(k, out var p)) { fx.CompThresholdDb = p.ThresholdDb; fx.CompRatio = p.Ratio; fx.CompMakeupDb = p.MakeupDb; }
+        }
+        void LoadReverbPreset(string k) {
+            if (FxPresets.Reverb.TryGetValue(k, out var p)) { fx.ReverbSize = p.RoomSize; fx.ReverbDamp = p.Damp; fx.ReverbWet = 1.0; fx.ReverbPreDelayMs = p.PreDelayMs; }
+        }
 
         void NotifyChanged() => MessageBus.Current.SendMessage(new MixFxChangedNotification(track.TrackNo));
 

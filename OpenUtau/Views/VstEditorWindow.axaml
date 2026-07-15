@@ -2,21 +2,53 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="OpenUtau.App.Views.VstEditorWindow"
         Icon="/Assets/open-utau.ico"
-        Title="VST Editor" Width="400" Height="300"
+        Title="VST Editor" Width="420" Height="500"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
   <Border Margin="{Binding $parent.WindowDecorationMargin}">
     <DockPanel Margin="14" LastChildFill="True">
-      <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" FontSize="14"
-                 Name="TitleLabel" Margin="0,0,0,8"/>
-      <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <StackPanel Spacing="6" HorizontalAlignment="Center">
-          <TextBlock Name="StatusText" FontSize="12" Opacity="0.6"
-                     Text="Native editor not yet available" TextAlignment="Center"/>
-          <TextBlock FontSize="11" Opacity="0.4" TextWrapping="Wrap"
-                     Text="VST native GUI integration requires the C++ bridge DLL (Phase 3).&#10;Audio processing through loaded plugins works via EffectChain."/>
+      <!-- Plugin info header -->
+      <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10" Spacing="4">
+        <TextBlock FontWeight="SemiBold" FontSize="15" Name="TitleLabel"/>
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <Border Name="TypeBadge" CornerRadius="3" Padding="5,1">
+            <TextBlock Name="TypeLabel" FontSize="10" Foreground="White" FontWeight="SemiBold"/>
+          </Border>
+          <TextBlock Name="VendorLabel" FontSize="11" Opacity="0.6" VerticalAlignment="Center"/>
         </StackPanel>
-      </Grid>
+      </StackPanel>
+
+      <!-- Metadata -->
+      <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8" Spacing="2">
+        <TextBlock Name="SubsLabel" FontSize="11" Opacity="0.5" TextWrapping="Wrap"/>
+        <TextBlock Name="PathLabel" FontSize="9" Opacity="0.3" TextWrapping="Wrap"/>
+      </StackPanel>
+
+      <!-- Parameter list area -->
+      <Border DockPanel.Dock="Bottom" BorderThickness="0.5"
+              BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+              CornerRadius="4" Margin="0,4,0,4">
+        <DockPanel Margin="8" LastChildFill="True">
+          <TextBlock DockPanel.Dock="Top" FontSize="9" Opacity="0.4"
+                     Text="Plugin Parameters" Margin="0,0,0,4"/>
+          <ScrollViewer Height="160" VerticalScrollBarVisibility="Auto">
+            <TextBlock Name="NativeStatus" FontSize="10" Opacity="0.6"
+                       FontFamily="monospace" Text="Loading plugin info..."
+                       TextWrapping="NoWrap"/>
+          </ScrollViewer>
+        </DockPanel>
+      </Border>
+
+      <!-- Action buttons -->
+      <StackPanel DockPanel.Dock="Bottom" Spacing="6" Margin="0,6,0,0">
+        <TextBlock Name="ParamInfo" FontSize="10" Opacity="0.4" TextAlignment="Center"/>
+        <Button Name="OpenEditorBtn" Content="Open Native GUI"
+                Height="32" FontSize="12" FontWeight="SemiBold"
+                Click="OnOpenEditorClick"
+                IsEnabled="False"/>
+        <Button Content="Close" Height="28" FontSize="11"
+                Click="OnCloseClick"/>
+      </StackPanel>
     </DockPanel>
   </Border>
 </Window>

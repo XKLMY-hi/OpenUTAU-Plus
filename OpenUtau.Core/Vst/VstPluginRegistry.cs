@@ -56,7 +56,10 @@ namespace OpenUtau.Core.Vst {
             int found = 0;
             foreach (var path in paths.Distinct()) {
                 if (!Directory.Exists(path)) continue;
-                found += ScanDirectory(path);
+                // Default VST3 paths: only scan top-level single-file .vst3
+                // (avoids loading huge plugins in vendor subdirectories)
+                bool isDefaultPath = DefaultVst3Paths.Contains(path);
+                found += ScanDirectory(path, isDefaultPath ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories);
             }
             SaveToPreferences();
             Log.Information($"[VST] Registry: {found} plugins ({Effects.Count} effects)");
@@ -66,14 +69,18 @@ namespace OpenUtau.Core.Vst {
 
         // ── Scanning ────────────────────────────────────────────
 
-        private int ScanDirectory(string dir) {
+        private int ScanDirectory(string dir, SearchOption searchOpt) {
             int count = 0;
             try {
-                foreach (var vst3Dir in Directory.GetDirectories(dir, "*.vst3", SearchOption.AllDirectories)) {
+                foreach (var vst3Dir in Directory.GetDirectories(dir, "*.vst3", searchOpt)) {
                     try { if (ScanVst3Bundle(vst3Dir)) count++; }
                     catch (Exception ex) { Log.Warning($"[VST] Error {vst3Dir}: {ex.Message}"); }
                 }
-                foreach (var dll in Directory.GetFiles(dir, "*.dll", SearchOption.AllDirectories)) {
+                foreach (var vst3File in Directory.GetFiles(dir, "*.vst3", searchOpt)) {
+                    try { if (ScanVst3SingleFile(vst3File)) count++; }
+                    catch (Exception ex) { Log.Warning($"[VST] Error {vst3File}: {ex.Message}"); }
+                }
+                foreach (var dll in Directory.GetFiles(dir, "*.dll", searchOpt)) {
                     try { if (ScanVst2Dll(dll)) count++; }
                     catch { }
                 }
@@ -110,7 +117,7 @@ namespace OpenUtau.Core.Vst {
                             }
                         }
 
-                        string uid = $"vst3:{cid}";
+                        string uid = $"vst3:{NormalizeCid(cid)}";
                         _entries[uid] = new VstPluginEntry {
                             Uid = uid, Name = cn ?? name, Vendor = vendor, Path = bundleDir,
                             Type = VstPluginType.VST3,
@@ -122,6 +129,94 @@ namespace OpenUtau.Core.Vst {
                 }
             } catch { }
             return false;
+        }
+
+        /// <summary>
+        /// Probe a single-file .vst3 DLL (not a bundle directory).
+        /// Uses the native vst_probe() which only reads factory metadata
+        /// without creating a component — safe for instrument VSTs.
+        /// </summary>
+        private bool ScanVst3SingleFile(string filePath) {
+            // Skip if file is actually a directory
+            if (Directory.Exists(filePath)) return false;
+
+            // Skip huge plugins (>100MB) during auto-scan to avoid hangs.
+            // Users can still manually load them via the plugin browser.
+            try {
+                var fi = new System.IO.FileInfo(filePath);
+                if (fi.Length > 100 * 1024 * 1024) {
+                    Log.Information($"[VST] Skip large plugin: {Path.GetFileName(filePath)} ({fi.Length / 1024 / 1024}MB)");
+                    return false;
+                }
+            } catch { }
+
+            try {
+                string? json = VstBridge.Probe(filePath);
+                if (string.IsNullOrEmpty(json)) return false;
+
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                if (!root.TryGetProperty("classes", out var classes)) return false;
+                if (classes.GetArrayLength() == 0) return false;
+
+                // Use class name as plugin name; module name is blank for single-file
+                string pluginName = "Unknown";
+                string pluginVendor = "";
+
+                bool added = false;
+                foreach (var cls in classes.EnumerateArray()) {
+                    string? cat = cls.TryGetProperty("category", out var c) ? c.GetString() : null;
+                    if (cat != "Audio Module Class") continue;
+
+                    string? cid = cls.TryGetProperty("cid", out var cidEl) ? cidEl.GetString() : null;
+                    if (string.IsNullOrEmpty(cid)) continue;
+
+                    string? cn = cls.TryGetProperty("name", out var nm) ? nm.GetString() : null;
+                    string? vn = cls.TryGetProperty("vendor", out var v) ? v.GetString() : null;
+                    if (!string.IsNullOrEmpty(cn)) pluginName = cn;
+                    if (!string.IsNullOrEmpty(vn)) pluginVendor = vn;
+
+                    var subs = new List<string>();
+                    if (cls.TryGetProperty("subs", out var sc)) {
+                        foreach (var s in sc.EnumerateArray()) {
+                            string? sub = s.GetString();
+                            if (!string.IsNullOrEmpty(sub)) subs.Add(sub);
+                        }
+                    }
+
+                    // Normalize CID: lowercase hex, keep only hex chars
+                    string normCid = NormalizeCid(cid);
+                    string uid = $"vst3:{normCid}";
+
+                    _entries[uid] = new VstPluginEntry {
+                        Uid = uid, Name = pluginName, Vendor = pluginVendor,
+                        Path = filePath, Type = VstPluginType.VST3,
+                        SubCategories = subs,
+                        IsEffect = ClassifyEffect(subs, VstPluginType.VST3),
+                    };
+                    added = true;
+                }
+                return added;
+            } catch (Exception ex) {
+                Log.Warning($"[VST] Probe failed {filePath}: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Normalize a CID to lowercase hex with no dashes.
+        /// Handles both GUID formats (with dashes) and raw hex strings.
+        /// </summary>
+        private static string NormalizeCid(string cid) {
+            // Keep only hex chars, lowercase
+            var sb = new System.Text.StringBuilder();
+            foreach (char ch in cid) {
+                if (ch >= '0' && ch <= '9') sb.Append(ch);
+                else if (ch >= 'a' && ch <= 'f') sb.Append(ch);
+                else if (ch >= 'A' && ch <= 'F') sb.Append(char.ToLowerInvariant(ch));
+            }
+            return sb.ToString();
         }
 
         private bool ScanVst2Dll(string dllPath) {
