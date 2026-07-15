@@ -72,7 +72,7 @@ namespace OpenUtau.App.ViewModels {
 
         [Reactive] public string ClearCacheHeader { get; set; }
         public bool ProjectSaved => !string.IsNullOrEmpty(DocManager.Inst.Project.FilePath) && DocManager.Inst.Project.Saved;
-        public string AppVersion => $"OpenUtau v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version}";
+        public string AppVersion => $"OpenUTAU Plus v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version}";
         [Reactive] public double Progress { get; set; }
         [Reactive] public string ProgressText { get; set; }
         [Reactive] public bool ShowPianoRoll { get; set; }
@@ -108,7 +108,9 @@ namespace OpenUtau.App.ViewModels {
                 .OrderByDescending(f => f.LastWriteTime));
             TemplateFiles.Clear();
             Directory.CreateDirectory(PathManager.Inst.TemplatesPath);
-            TemplateFiles.AddRange(Directory.GetFiles(PathManager.Inst.TemplatesPath, "*.ustx")
+            var templates = Directory.GetFiles(PathManager.Inst.TemplatesPath, "*.ustxp")
+                .Concat(Directory.GetFiles(PathManager.Inst.TemplatesPath, "*.ustx"));
+            TemplateFiles.AddRange(templates
                 .Select(file => new RecentFileInfo(file)));
 
             // create async commands that consult the view's save prompt
@@ -203,7 +205,10 @@ namespace OpenUtau.App.ViewModels {
         }
 
         public void NewProject() {
-            var defaultTemplate = Path.Combine(PathManager.Inst.TemplatesPath, "default.ustx");
+            var defaultTemplate = Path.Combine(PathManager.Inst.TemplatesPath, "default.ustxp");
+            if (!File.Exists(defaultTemplate)) {
+                defaultTemplate = Path.Combine(PathManager.Inst.TemplatesPath, "default.ustx");
+            }
             if (File.Exists(defaultTemplate)) {
                 try {
                     OpenProject(new[] { defaultTemplate });
@@ -335,7 +340,8 @@ namespace OpenUtau.App.ViewModels {
 
         public void RefreshTemplates() {
             Directory.CreateDirectory(PathManager.Inst.TemplatesPath);
-            var templates = Directory.GetFiles(PathManager.Inst.TemplatesPath, "*.ustx");
+            var templates = Directory.GetFiles(PathManager.Inst.TemplatesPath, "*.ustxp")
+                .Concat(Directory.GetFiles(PathManager.Inst.TemplatesPath, "*.ustx")).ToList();
             openTemplatesMenuItems.Clear();
             openTemplatesMenuItems.AddRange(templates.Select(file => new MenuItemViewModel() {
                 Header = Path.GetRelativePath(PathManager.Inst.TemplatesPath, file),

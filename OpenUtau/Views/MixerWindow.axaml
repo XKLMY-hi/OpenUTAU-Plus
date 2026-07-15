@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:OpenUtau.App.ViewModels"
+        xmlns:c="clr-namespace:OpenUtau.App.Controls"
+        mc:Ignorable="d"
+        x:Class="OpenUtau.App.Views.MixerWindow"
+        Icon="/Assets/open-utau.ico"
+        Title="{DynamicResource menu.tools.mixer}"
+        Width="600" Height="420"
+        MinWidth="200" MinHeight="300"
+        WindowStartupLocation="CenterScreen">
+  <Window.Styles>
+    <Style Selector="Slider.masterFader">
+      <Setter Property="Orientation" Value="Vertical"/>
+      <Setter Property="Height" Value="180"/>
+      <Setter Property="Width" Value="30"/>
+      <Setter Property="Margin" Value="0,4"/>
+    </Style>
+    <Style Selector="TextBlock.masterLabel">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="TextAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="4"/>
+    </Style>
+  </Window.Styles>
+
+  <Border Margin="{Binding $parent.WindowDecorationMargin}">
+    <Grid RowDefinitions="*,Auto">
+      <!-- Track strips area -->
+      <ScrollViewer Grid.Row="0"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Hidden">
+        <StackPanel Name="TrackStripsPanel" Orientation="Horizontal"
+                    HorizontalAlignment="Left" Margin="4,4,0,4">
+          <!-- Track strips added dynamically -->
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Status bar -->
+      <Border Grid.Row="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+              BorderThickness="0,1,0,0" Padding="8,4">
+        <TextBlock Name="StatusText" FontSize="11" Opacity="0.7"
+                   Text="{Binding Tracks.Count, StringFormat={}Tracks: {0}}"/>
+      </Border>
+    </Grid>
+  </Border>
+</Window>

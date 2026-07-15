@@ -95,15 +95,37 @@ namespace OpenUtau.Core.Render {
                     .Where(part => part.Samples != null)
                     .Select(part => part.TrimSamples(project)));
                 var trackMix = new WaveMix(trackSources);
-                var fader = new Fader(trackMix);
+
+                // LevelTracker wraps the raw per-track mix BEFORE fader,
+                // so it measures only this track's un-attenuated signal.
+                var tracker = new LevelTracker(trackMix);
+                TrackLevels.Register(track.TrackNo, tracker);
+
+                var fader = new Fader(tracker);
                 fader.Scale = PlaybackManager.DecibelToVolume(track.Muted ? -24 : track.Volume);
                 fader.Pan = (float)track.Pan;
                 fader.SetScaleToTarget();
                 faders.Add(fader);
 
+                // Collect VST effects
+                var vstEffects = new System.Collections.Generic.List<SignalChain.Effects.IEffect>();
+                if (applyMixFx && track.VstSlots != null) {
+                    foreach (var slot in track.VstSlots) {
+                        if (!slot.IsLoaded || slot.Bypassed) continue;
+                        try {
+                            var vstFx = new Vst.VstEffect(slot);
+                            vstFx.Load();
+                            if (!vstFx.IsBypassed) vstEffects.Add(vstFx);
+                        } catch (Exception ex) {
+                            Serilog.Log.Warning($"[VST] Failed to load {slot.PluginUid}: {ex.Message}");
+                        }
+                    }
+                }
+
                 ISignalSource trackOut = applyMixFx
-                    ? MixFxSource.WrapWith(fader, track.MixFx)
+                    ? EffectChain.Build(fader, track.MixFx, vstEffects.ToArray())
                     : (ISignalSource)fader;
+
                 trackOutputs.Add(trackOut);
             }
             var task = Task.Run(() => {
@@ -140,7 +162,11 @@ namespace OpenUtau.Core.Render {
         public Tuple<MasterAdapter, List<Fader>> RenderProject(TaskScheduler uiScheduler, ref CancellationTokenSource cancellation) {
             double startMs = project.timeAxis.TickPosToMsPos(startTick);
             var renderMixdownResult = RenderMixdown(uiScheduler, ref cancellation, wait: false);
-            var master = new MasterAdapter(renderMixdownResult.Item1);
+            // Wrap the final mix in a master LevelTracker so the mixer window
+            // can display the actual audible master output level
+            var masterTracker = new LevelTracker(renderMixdownResult.Item1);
+            TrackLevels.RegisterMaster(masterTracker);
+            var master = new MasterAdapter(masterTracker);
             master.SetPosition((int)(startMs * 44100 / 1000) * 2);
             return Tuple.Create(master, renderMixdownResult.Item2);
         }

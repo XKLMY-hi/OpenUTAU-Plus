@@ -8,6 +8,7 @@ using Avalonia.Platform.Storage;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Colors;
 using OpenUtau.Core;
+using OpenUtau.Core.Vst;
 
 namespace OpenUtau.App.Views {
     public partial class PreferencesDialog : Window {
@@ -148,6 +149,22 @@ namespace OpenUtau.App.Views {
                 viewModel!.RefreshThemes();
             };
             dialog.ShowDialog(this);
+        }
+
+        // ── OpenUTAU Plus: VST Settings ─────────────────────
+        void AddVstPath(object sender, RoutedEventArgs e) {
+            var path = NewVstPath.Text?.Trim();
+            if (!string.IsNullOrWhiteSpace(path)) {
+                viewModel!.AddVstScanPath(path);
+                NewVstPath.Text = "";
+            }
+        }
+        void RemoveVstPath(object sender, RoutedEventArgs e) {
+            if (VstPathsList.SelectedItem is string path)
+                viewModel!.RemoveVstScanPath(path);
+        }
+        void RescanVstPlugins(object sender, RoutedEventArgs e) {
+            viewModel!.RefreshVstPlugins();
         }
 
         async void OnCustomThemeDelete(object sender, RoutedEventArgs e) {

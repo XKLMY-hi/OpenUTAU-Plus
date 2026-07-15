@@ -39,6 +39,13 @@ namespace OpenUtau.Core.Ustx {
         public string cacheDir = "UCache";
         [YamlMember(SerializeAs = typeof(string))]
         public Version ustxVersion;
+
+        /// <summary>
+        /// OpenUTAU Plus format version. Written alongside ustxVersion in .ustxp files.
+        /// Null when loaded from legacy .ustx. Used to track Plus-specific migrations.
+        /// </summary>
+        [YamlMember(SerializeAs = typeof(string))]
+        public Version? ustxpVersion;
         [YamlIgnore] public int resolution => 480;
 
         [Obsolete("Since ustx v0.6")] public double bpm = 120;

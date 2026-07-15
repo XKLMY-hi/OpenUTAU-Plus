@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenUtau.Api;
 using OpenUtau.Core.Render;
+using OpenUtau.Core.Vst;
 using OpenUtau.Classic;
 using Serilog;
 using YamlDotNet.Serialization;
@@ -95,6 +96,8 @@ namespace OpenUtau.Core.Ustx {
         // Per-track post-processing FX.  null = no FX configured (bypass).
         // Backwards compatible: older ustx files simply load with this null.
         public UMixFx MixFx { get; set; }
+        /// <summary>Per-track VST plugin slots (up to 5). Only saved in .ustxp format.</summary>
+        public List<VstPluginSlot> VstSlots { get; set; } = new();
         public double Volume { set; get; }
         public double Pan { set; get; }
 

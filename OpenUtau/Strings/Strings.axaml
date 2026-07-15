@@ -99,10 +99,10 @@
   <system:String x:Key="debug.copylog">Copy Log</system:String>
   <system:String x:Key="debug.reverselogorder">Reverse Log Order</system:String>
 
-  <system:String x:Key="dialogs.about.caption">About OpenUTAU</system:String>
+  <system:String x:Key="dialogs.about.caption">About OpenUTAU Plus</system:String>
   <system:String x:Key="dialogs.about.message">
-OpenUtau aims to be an open source editing environment for UTAU community, with a modern user experience and intelligent phonological support. Visit us on Github.</system:String>
-  <system:String x:Key="dialogs.exitsave.caption">Exit OpenUtau</system:String>
+OpenUTAU Plus is an enhanced fork of OpenUtau, an open source editing environment for UTAU community, with a modern user experience and intelligent phonological support.</system:String>
+  <system:String x:Key="dialogs.exitsave.caption">Exit OpenUTAU Plus</system:String>
   <system:String x:Key="dialogs.exitsave.message">The current project contains unsaved changes. Do you want to save it?</system:String>
   <system:String x:Key="dialogs.export.caption">Export</system:String>
   <system:String x:Key="dialogs.export.savefirst">Save project file first</system:String>
@@ -126,7 +126,7 @@ Do you want to continue by splitting at the nearest position after current playh
   <system:String x:Key="dialogs.messagebox.copy">Copy error to clipboard</system:String>
   <system:String x:Key="dialogs.noresampler.caption">No resampler</system:String>
   <system:String x:Key="dialogs.noresampler.message">No resampler! Put your favourite resampler exe or dll in the Resamplers folder and choose it in Preferences!</system:String>
-  <system:String x:Key="dialogs.recovery">Previously, OpenUtau terminated abnormally. Click here to recover.</system:String>
+  <system:String x:Key="dialogs.recovery">Previously, OpenUTAU Plus terminated abnormally. Click here to recover.</system:String>
   <system:String x:Key="dialogs.recovery.caption">Recovery project</system:String>
   <system:String x:Key="dialogs.remaptimeaxis.message">This tool will change the tempo of the project without changing the actual positions and durations (in seconds) of notes.
   New BPM:</system:String>
@@ -185,7 +185,7 @@ Do you want to continue by splitting at the nearest position after current playh
   <system:String x:Key="errors.failed.loadprefs">Failed to load prefs. Initialize it.</system:String>
   <system:String x:Key="errors.failed.openfile">Failed to open</system:String>
   <system:String x:Key="errors.failed.openlocation">Failed to open location</system:String>
-  <system:String x:Key="errors.failed.opennewerproject">Project file is newer than software! Upgrade OpenUtau!</system:String>
+  <system:String x:Key="errors.failed.opennewerproject">Project file is newer than software! Upgrade OpenUTAU Plus!</system:String>
   <system:String x:Key="errors.failed.render">Failed to render.</system:String>
   <system:String x:Key="errors.failed.runeditingmacro">Failed to run editing macro</system:String>
   <system:String x:Key="errors.failed.save">Failed to save</system:String>
@@ -309,17 +309,18 @@ Do you want to continue by splitting at the nearest position after current playh
   <system:String x:Key="menu.file.saveas">Save As...</system:String>
   <system:String x:Key="menu.file.savetemplate">Save Template...</system:String>
   <system:String x:Key="menu.help">Help</system:String>
-  <system:String x:Key="menu.help.about">About OpenUtau</system:String>
+  <system:String x:Key="menu.help.about">About OpenUTAU Plus</system:String>
   <system:String x:Key="menu.help.checkupdate">Check Update</system:String>
   <system:String x:Key="menu.help.logslocation">Open Logs Location</system:String>
   <system:String x:Key="menu.help.reportissue">Report Issue</system:String>
-  <system:String x:Key="menu.help.wiki">OpenUtau Documentation</system:String>
+  <system:String x:Key="menu.help.wiki">OpenUTAU Plus Documentation</system:String>
   <system:String x:Key="menu.project">Project</system:String>
   <system:String x:Key="menu.project.expressions">Expressions...</system:String>
   <system:String x:Key="menu.project.remaptimeaxis">Adjust Tempo (Preserve Timing)</system:String>
   <system:String x:Key="menu.tools">Tools</system:String>
   <system:String x:Key="menu.tools.clearcache">Clear Cache</system:String>
   <system:String x:Key="menu.tools.debugwindow">Debug Window</system:String>
+  <system:String x:Key="menu.tools.mixer">Mixer</system:String>
   <system:String x:Key="menu.tools.fullscreen">Full Screen</system:String>
   <system:String x:Key="menu.tools.layout">Layout</system:String>
   <system:String x:Key="menu.tools.layout.hsplit11">Horizontal 1:1</system:String>
@@ -591,7 +592,7 @@ Warning: this option removes custom presets.</system:String>
   <system:String x:Key="prefs.diffsinger">DiffSinger</system:String>
   <system:String x:Key="prefs.editing">Editing</system:String>
   <system:String x:Key="prefs.general">General</system:String>
-  <system:String x:Key="prefs.note.restart">Note: please restart OpenUtau after changing this item.</system:String>
+  <system:String x:Key="prefs.note.restart">Note: please restart OpenUTAU Plus after changing this item.</system:String>
   <system:String x:Key="prefs.otoeditor">Oto Editor</system:String>
   <system:String x:Key="prefs.otoeditor.select">Default Oto Editor</system:String>
   <system:String x:Key="prefs.otoeditor.setparampath">setParam Path</system:String>
@@ -634,9 +635,9 @@ Warning: this option removes custom presets.</system:String>
   1. Set "resampler-compatibility" to "on" in moreconfig.txt.
   2. Set "auto-update-llsm-mrq" to "off" in moreconfig.txt.
   3. Patiently wait for moresampler to generate missing llsm files.</system:String>
-  <system:String x:Key="prefs.rendering.resampler.note">Note: to use external resamplers, please add the resampler DLL or EXE file in the Resamplers folder in the OpenUtau install path and choose it in Preferences.</system:String>
+  <system:String x:Key="prefs.rendering.resampler.note">Note: to use external resamplers, please add the resampler DLL or EXE file in the Resamplers folder in the OpenUTAU Plus install path and choose it in Preferences.</system:String>
   <system:String x:Key="prefs.rendering.skipmuted">Skip muted tracks</system:String>
-  <system:String x:Key="prefs.rendering.threads.cpuwarn">Warning: too many render threads may cause OpenUtau to run slowly.</system:String>
+  <system:String x:Key="prefs.rendering.threads.cpuwarn">Warning: too many render threads may cause OpenUTAU Plus to run slowly.</system:String>
   <system:String x:Key="prefs.rendering.threads.numthreads">Maximum Render Threads</system:String>
   <system:String x:Key="prefs.rendering.wavtool">Wavtool</system:String>
   <system:String x:Key="prefs.utau">UTAU</system:String>
@@ -816,7 +817,7 @@ General
   <system:String x:Key="updater.update">Update</system:String>
 
   <system:String x:Key="warning">Warning</system:String>
-  <system:String x:Key="warning.asciipath">Your OpenUtau home path "{0}" contains non-ASCII character. Exe resamplers may not work.</system:String>
+  <system:String x:Key="warning.asciipath">Your OpenUTAU Plus home path "{0}" contains non-ASCII character. Exe resamplers may not work.</system:String>
   <system:String x:Key="warning.renderer">No settings for this renderer.</system:String>
 
   <system:String x:Key="welcome.new">New</system:String>
@@ -839,5 +840,5 @@ General
   <system:String x:Key="mixfx.library.save">Save...</system:String>
   <system:String x:Key="mixfx.library.delete">Delete</system:String>
   <system:String x:Key="mixfx.library.default">Default</system:String>
-  <system:String x:Key="tracks.mixfx">Track Polish...</system:String>
+  <system:String x:Key="tracks.mixfx">Effects...</system:String>
 </ResourceDictionary>

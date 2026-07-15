@@ -262,6 +262,11 @@ errors.txt
             public bool MixFxApplyOnExportMixdown = true;
             public List<MixFxUserPreset> MixFxUserPresets = new List<MixFxUserPreset>();
 
+            // OpenUTAU Plus: VST plugin scan paths
+            public List<string> VstScanPaths = new();
+            // OpenUTAU Plus: cached VST registry (avoids re-scan on restart)
+            public List<VstCachedEntry> VstCachedPlugins = new();
+
             // Legacy
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int? Theme;
@@ -274,6 +279,18 @@ errors.txt
         public class MixFxUserPreset {
             public string Name { get; set; } = string.Empty;
             public Ustx.UMixFx Fx { get; set; } = new Ustx.UMixFx();
+        }
+
+        /// <summary>
+        /// Cached VST registry entry — persisted in Preferences to avoid re-scanning on restart.
+        /// </summary>
+        public class VstCachedEntry {
+            public string Uid { get; set; } = string.Empty;
+            public string Name { get; set; } = string.Empty;
+            public string Vendor { get; set; } = string.Empty;
+            public string Path { get; set; } = string.Empty;
+            public int Type { get; set; }
+            public List<string> Subs { get; set; } = new();
         }
     }
 }

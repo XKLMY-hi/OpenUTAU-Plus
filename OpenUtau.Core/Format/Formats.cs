@@ -52,11 +52,18 @@ namespace OpenUtau.Core.Format {
             if (files.Length < 1) {
                 return null;
             }
+            // Route .ustxp files to Ustxp.Load, .ustx to the same for unified loading
+            if (Ustxp.IsUstxpFile(files[0])) {
+                return Ustxp.Load(files[0]);
+            }
+            if (Ustxp.IsUstxFile(files[0])) {
+                return Ustxp.Load(files[0]);
+            }
             ProjectFormats format = DetectProjectFormat(files[0]);
             UProject? project = null;
             switch (format) {
                 case ProjectFormats.Ustx:
-                    project = Ustx.Load(files[0]);
+                    project = Ustxp.Load(files[0]);
                     break;
                 case ProjectFormats.Vsq3:
                 case ProjectFormats.Vsq4:

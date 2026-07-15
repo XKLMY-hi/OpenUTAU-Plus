@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using OpenUtau.Audio;
 using OpenUtau.Classic;
 using OpenUtau.Core;
 using OpenUtau.Core.Util;
+using OpenUtau.Core.Vst;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using OpenUtau.Core.Render;
@@ -458,6 +460,47 @@ namespace OpenUtau.App.ViewModels {
 
         public void ToggleOnnxGpuDisplay(bool show) {
             ShowOnnxGpu = show;
+        }
+
+        // ── OpenUTAU Plus: VST Settings ─────────────────────
+
+        private ObservableCollection<string>? _vstScanPaths;
+        public ObservableCollection<string> VstScanPaths {
+            get {
+                if (_vstScanPaths == null) {
+                    _vstScanPaths = new ObservableCollection<string>(Preferences.Default.VstScanPaths);
+                    _vstScanPaths.CollectionChanged += (_, _) => {
+                        Preferences.Default.VstScanPaths = _vstScanPaths.ToList();
+                        Preferences.Save();
+                    };
+                }
+                return _vstScanPaths;
+            }
+        }
+
+        [Reactive] public int VstPluginCount { get; set; }
+        [Reactive] public int VstEffectCount { get; set; }
+
+        public List<VstPluginEntry> VstKnownPlugins =>
+            VstPluginRegistry.Inst.All.ToList();
+
+        public void AddVstScanPath(string path) {
+            if (string.IsNullOrWhiteSpace(path)) return;
+            if (VstScanPaths.Contains(path)) return;
+            VstScanPaths.Add(path);
+        }
+
+        public void RemoveVstScanPath(string path) {
+            VstScanPaths.Remove(path);
+        }
+
+        public void RefreshVstPlugins() {
+            VstPluginRegistry.Inst.Rescan();
+            VstPluginCount = VstPluginRegistry.Inst.Count;
+            VstEffectCount = VstPluginRegistry.Inst.EffectCount;
+            this.RaisePropertyChanged(nameof(VstKnownPlugins));
+            this.RaisePropertyChanged(nameof(VstPluginCount));
+            this.RaisePropertyChanged(nameof(VstEffectCount));
         }
     }
 }

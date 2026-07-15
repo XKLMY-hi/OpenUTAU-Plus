@@ -282,6 +282,7 @@ namespace OpenUtau.Core {
             AudioOutput.Stop();
             PlayingMaster = false;
             loopEndTick = -1;
+            TrackLevels.Clear();
         }
 
         public void PausePlayback() {

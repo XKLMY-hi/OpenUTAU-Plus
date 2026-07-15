@@ -1,0 +1,22 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="OpenUtau.App.Views.VstEditorWindow"
+        Icon="/Assets/open-utau.ico"
+        Title="VST Editor" Width="400" Height="300"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+  <Border Margin="{Binding $parent.WindowDecorationMargin}">
+    <DockPanel Margin="14" LastChildFill="True">
+      <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" FontSize="14"
+                 Name="TitleLabel" Margin="0,0,0,8"/>
+      <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel Spacing="6" HorizontalAlignment="Center">
+          <TextBlock Name="StatusText" FontSize="12" Opacity="0.6"
+                     Text="Native editor not yet available" TextAlignment="Center"/>
+          <TextBlock FontSize="11" Opacity="0.4" TextWrapping="Wrap"
+                     Text="VST native GUI integration requires the C++ bridge DLL (Phase 3).&#10;Audio processing through loaded plugins works via EffectChain."/>
+        </StackPanel>
+      </Grid>
+    </DockPanel>
+  </Border>
+</Window>

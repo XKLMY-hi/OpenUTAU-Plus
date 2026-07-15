@@ -153,7 +153,7 @@ namespace OpenUtau.Core {
                 string filename = untitled
                     ? "Untitled"
                     : Path.GetFileNameWithoutExtension(Project.FilePath);
-                string backup = Path.Join(dir, filename + "-backup.ustx");
+                string backup = Path.Join(dir, filename + "-backup.ustxp");
                 Log.Information($"Saving backup {backup}.");
                 Format.Ustx.AutoSave(backup, Project);
                 Log.Information($"Saved backup {backup}.");
@@ -182,7 +182,7 @@ namespace OpenUtau.Core {
                     ? "Untitled"
                     : Path.GetFileNameWithoutExtension(Project.FilePath);
 
-                string backup = Path.Join(dir, filename + "-autosave.ustx");
+                string backup = Path.Join(dir, filename + "-autosave.ustxp");
                 Log.Information($"Autosave {backup}.");
                 Format.Ustx.AutoSave(backup, Project);
                 Log.Information($"Autosaved {backup}.");
@@ -206,9 +206,9 @@ namespace OpenUtau.Core {
                         savedPoint = undoQueue.Last();
                     }
                     if (string.IsNullOrEmpty(saveProjectNotif.Path)) {
-                        Format.Ustx.Save(Project.FilePath, Project);
+                        Format.Ustxp.Save(Project.FilePath, Project);
                     } else {
-                        Format.Ustx.Save(saveProjectNotif.Path, Project);
+                        Format.Ustxp.Save(saveProjectNotif.Path, Project);
                     }
                 } else if (cmd is LoadProjectNotification notification) {
                     undoQueue.Clear();

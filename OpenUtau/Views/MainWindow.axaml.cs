@@ -97,6 +97,9 @@ namespace OpenUtau.App.Views {
 
             AddHandler(DragDrop.DropEvent, OnDrop);
 
+            // Global keyboard handler — catches keys even when child controls have focus
+            AddHandler(KeyDownEvent, OnWindowKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel | Avalonia.Interactivity.RoutingStrategies.Bubble, handledEventsToo: true);
+
             if (Preferences.Default.MainWindowSize.TryGetPosition(out int x, out int y)) {
                 Position = new PixelPoint(x, y);
             }
@@ -304,7 +307,7 @@ namespace OpenUtau.App.Views {
         async void OnMenuSaveAs(object sender, RoutedEventArgs args) => await SaveAs();
         async Task SaveAs() {
             var file = await FilePicker.SaveFileAboutProject(
-                this, "menu.file.saveas", FilePicker.USTX);
+                this, "menu.file.saveas", FilePicker.USTXP);
             if (!string.IsNullOrEmpty(file)) {
                 viewModel.SaveProject(file);
             }
@@ -320,9 +323,9 @@ namespace OpenUtau.App.Views {
                     return;
                 }
                 file = Path.GetFileNameWithoutExtension(file);
-                file = $"{file}.ustx";
+                file = $"{file}.ustxp";
                 file = Path.Combine(PathManager.Inst.TemplatesPath, file);
-                Ustx.Save(file, project.CloneAsTemplate());
+                Ustxp.Save(file, project.CloneAsTemplate());
             };
             dialog.ShowDialog(this);
         }
@@ -673,6 +676,47 @@ namespace OpenUtau.App.Views {
             });
         }
 
+        void OnMenuMixer(object sender, RoutedEventArgs args) {
+            var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+            if (desktop == null) return;
+            var window = desktop.Windows.FirstOrDefault(w => w is MixerWindow);
+            if (window == null) {
+                window = new MixerWindow();
+            }
+            window.Show();
+        }
+
+        void ToggleMixerWindow() {
+            var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+            if (desktop == null) return;
+            var window = desktop.Windows.FirstOrDefault(w => w is MixerWindow);
+            if (window != null) {
+                window.Close();
+            } else {
+                new MixerWindow().Show();
+            }
+        }
+
+        // ── Piano roll resize indicator ─────────────────────
+        // Uses DragStarted/DragCompleted on the GridSplitter to show a tooltip.
+        // The TextBlock "ResizeTooltip" is defined in MainWindow.axaml.
+        private void OnSplitterDragStarted(object? sender, Avalonia.Input.VectorEventArgs e) {
+            var splitter = (Avalonia.Controls.GridSplitter)sender!;
+            var grid = (Grid)splitter.Parent!;
+            UpdateResizeTooltip(grid);
+            ResizeTooltip.IsVisible = true;
+        }
+        private void OnSplitterDragCompleted(object? sender, Avalonia.Input.VectorEventArgs e) {
+            ResizeTooltip.IsVisible = false;
+        }
+        private void UpdateResizeTooltip(Grid grid) {
+            double trackH = grid.RowDefinitions[2].ActualHeight;
+            double pianoH = grid.RowDefinitions[4].ActualHeight;
+            double total = trackH + pianoH;
+            int pct = total > 0 ? (int)Math.Round(pianoH / total * 100) : 50;
+            ResizeTooltip.Text = $"PR {pct}%";
+        }
+
         void OnMenuDebugWindow(object sender, RoutedEventArgs args) {
             var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
             if (desktop == null) {
@@ -784,7 +828,27 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        /// <summary>
+        /// Global key handler registered via AddHandler(handledEventsToo:true).
+        /// Catches Ctrl+M etc. even when piano roll or other children have consumed the event.
+        /// </summary>
+        void OnWindowKeyDown(object? sender, KeyEventArgs args) {
+            if (args.KeyModifiers == cmdKey && args.Key == Key.M) {
+                OnMenuMixer(this, new RoutedEventArgs());
+                args.Handled = true;
+            }
+        }
+
         void OnKeyDown(object sender, KeyEventArgs args) {
+            // Global shortcuts — before focus check
+            if (args.KeyModifiers == cmdKey) {
+                switch (args.Key) {
+                    case Key.M: OnMenuMixer(sender, args); args.Handled = true; return;
+                    case Key.W: ToggleMixerWindow(); args.Handled = true; return;
+                    case Key.S: _ = Save(); args.Handled = true; return;
+                }
+            }
+
             if (PianoRollContainer.IsKeyboardFocusWithin) {
                 args.Handled = false;
                 return;
@@ -825,6 +889,7 @@ namespace OpenUtau.App.Views {
                 args.Handled = true;
                 switch (args.Key) {
                     case Key.A: viewModel.TracksViewModel.SelectAllParts(); break;
+                    case Key.M: OnMenuMixer(sender, new RoutedEventArgs()); break;
                     case Key.N: NewProject(); break;
                     case Key.O: Open(); break;
                     case Key.S: _ = Save(); break;
@@ -878,7 +943,7 @@ namespace OpenUtau.App.Views {
         }
 
         async void OnDrop(object? sender, DragEventArgs args) {
-            string[] ProjectExts = { ".ustx", ".ust", ".vsqx", ".ufdata", ".musicxml", ".mid", ".midi" };
+            string[] ProjectExts = { ".ustxp", ".ustx", ".ust", ".vsqx", ".ufdata", ".musicxml", ".mid", ".midi" };
             string[] ArchiveExts = { ".zip", ".rar", ".uar" };
             string[] AudioExts = { ".mp3", ".wav", ".ogg", ".flac" };
             string[] SupportedExts = ProjectExts
