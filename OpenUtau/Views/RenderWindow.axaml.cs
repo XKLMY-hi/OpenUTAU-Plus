@@ -100,7 +100,6 @@ namespace OpenUtau.App.Views {
             ProgressBarControl.Value = 0;
 
             bool isMixdown = RadioMixdown.IsChecked == true;
-            bool silentRecord = ChkSilentRecord.IsChecked == true;
             bool applyMixFx = (ChkVst.IsChecked == true) || (ChkBuiltinFx.IsChecked == true);
             var project = DocManager.Inst.Project;
             var selTrackNos = _trackChecks.Where(x => x.cb.IsChecked == true)
@@ -114,57 +113,34 @@ namespace OpenUtau.App.Views {
                     RenderEngine engine = new RenderEngine(project);
 
                     if (isMixdown) {
-                        // silentRecord captured above (before Task.Run)
+                        // ── 实时录制模式（静音播放，绝对精确含全部效果） ──
+                        Dispatcher.UIThread.Invoke(() => {
+                            ProgressLabel.Text = "正在渲染混缩...";
+                            ProgressBarControl.Value = 20;
+                        });
 
-                        if (silentRecord) {
-                            // ── 实时录制模式：渲染→模拟播放写入 ──────
-                            Dispatcher.UIThread.Invoke(() => {
-                                ProgressLabel.Text = "正在渲染混缩...";
-                                ProgressBarControl.Value = 20;
-                            });
+                        var renderResult = engine.RenderProject(
+                            DocManager.Inst.MainScheduler, ref ctx);
+                        var masterAdapter = renderResult.Item1;
 
-                            var renderResult = engine.RenderProject(
-                                DocManager.Inst.MainScheduler, ref ctx);
-                            var masterAdapter = renderResult.Item1;
+                        Dispatcher.UIThread.Invoke(() => {
+                            ProgressLabel.Text = "正在写入录音文件...";
+                            ProgressBarControl.Value = 70;
+                        });
 
-                            Dispatcher.UIThread.Invoke(() => {
-                                ProgressLabel.Text = "正在写入录音文件...";
-                                ProgressBarControl.Value = 70;
-                            });
+                        using var writer = new WaveFileWriter(
+                            File.Create(path), WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
+                        var recorder = new RecordingAdapter(masterAdapter, writer, silentOutput: true);
 
-                            // Use RecordingAdapter to write silently to file
-                            using var writer = new WaveFileWriter(
-                                File.Create(path), WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
-                            var recorder = new RecordingAdapter(masterAdapter, writer, silentOutput: true);
-
-                            float[] buf = new float[4096];
-                            int totalRead = 0;
-                            while ((totalRead = recorder.Read(buf, 0, buf.Length)) > 0) {
-                                // pull all data — RecordingAdapter writes to file automatically
-                                var sec = totalRead / 44100.0 / 2.0;
-                                if (totalRead % 88200 == 0) {
-                                    Dispatcher.UIThread.Invoke(() => {
-                                        ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
-                                    });
-                                }
+                        float[] buf = new float[4096];
+                        int totalRead = 0;
+                        while ((totalRead = recorder.Read(buf, 0, buf.Length)) > 0) {
+                            var sec = totalRead / 44100.0 / 2.0;
+                            if (totalRead % 88200 == 0) {
+                                Dispatcher.UIThread.Invoke(() => {
+                                    ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
+                                });
                             }
-                        } else {
-                            // ── Offline mixdown (fast, RenderMixdown) ──
-                            Dispatcher.UIThread.Invoke(() => {
-                                ProgressLabel.Text = "正在渲染混缩...";
-                                ProgressBarControl.Value = 20;
-                            });
-
-                            var result = engine.RenderMixdown(
-                                DocManager.Inst.MainScheduler, ref ctx,
-                                wait: true, applyMixFx: applyMixFx);
-
-                            Dispatcher.UIThread.Invoke(() => {
-                                ProgressLabel.Text = "正在写入文件...";
-                                ProgressBarControl.Value = 80;
-                            });
-
-                            WriteWavFile(path, result.Item1);
                         }
                     } else {
                         var trackMixes = engine.RenderTracks(

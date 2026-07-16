@@ -167,10 +167,6 @@
               <ComboBoxItem Content="24-bit" Tag="24"/>
               <ComboBoxItem Content="32-bit float" Tag="32"/>
             </ComboBox>
-            <Separator Height="0.5" Margin="0,8,0,4"
-                       Background="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-            <CheckBox Name="ChkSilentRecord" IsChecked="True"
-                      Content="实时录制（静音播放，绝对精确）"/>
           </StackPanel>
         </Border>
       </Grid>
