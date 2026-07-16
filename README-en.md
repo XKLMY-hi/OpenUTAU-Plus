@@ -175,12 +175,93 @@ See [CLAUDE.md](./CLAUDE.md) for the full architecture and development guide.
 
 | Layer | Technology |
 |-------|-----------|
-| UI | Avalonia 11.x + ReactiveUI MVVM |
-| Core | .NET 8.0 / C# 12 |
-| Audio | NAudio + custom ISignalSource signal chain |
-| VST3 Host | C++ / Steinberg VST3 SDK v3.8.0 (MIT) |
-| Serialization | YamlDotNet |
+| Runtime | .NET 8.0 / C# 12 |
+| UI Framework | Avalonia 11.x + ReactiveUI MVVM |
+| Audio Playback | NAudio (WASAPI) / MiniAudio |
+| Audio DSP | NWaves |
+| Signal Chain | Custom ISignalSource / IEffect interface |
+| VST3 Host | C++ / Steinberg VST3 SDK v3.8.0 |
+| AI Inference | ONNX Runtime (DirectML GPU acceleration) |
+| Icons | Lucide Icons |
+| Serialization | YamlDotNet / Newtonsoft.Json |
+| Logging | Serilog |
 | Testing | xUnit |
+
+---
+
+## Open Source Libraries
+
+This project is built with the following open source libraries. We are grateful to all maintainers.
+
+### Core
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [Avalonia UI](https://avaloniaui.net/) | 11.2.4 | MIT | Cross-platform UI framework |
+| [ReactiveUI](https://www.reactiveui.net/) | 19.5 | MIT | MVVM reactive framework |
+| [NAudio](https://github.com/naudio/NAudio) | 2.2.1 | MIT | Windows audio playback & processing |
+| [NWaves](https://github.com/ar1st0crat/NWaves) | 0.9.6 | MIT | Audio signal processing / DSP |
+| [ONNX Runtime](https://onnxruntime.ai/) | 1.23 | MIT | Machine learning inference engine |
+| [YamlDotNet](https://github.com/aaubry/YamlDotNet) | 15.1 | MIT | USTX project file serialization |
+| [Newtonsoft.Json](https://www.newtonsoft.com/json) | 13.0 | MIT | JSON serialization |
+| [Serilog](https://serilog.net/) | 4.1 | Apache-2.0 | Structured logging |
+
+### Audio Formats
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [NAudio.Vorbis](https://github.com/naudio/Vorbis) | 1.5.0 | MIT | Ogg Vorbis decoding |
+| [BunLabs.NAudio.Flac](https://github.com/BunLabs/NAudio.Flac) | 2.0.1 | MIT | FLAC decoding |
+| [NLayer](https://github.com/naudio/NLayer) | 1.4.0 | MIT | MP3 decoding |
+| [Concentus.OggFile](https://github.com/lostromb/concentus) | 1.0.6 | Apache-2.0 | Opus encoding |
+
+### UI / Design
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [Material.Avalonia](https://github.com/AvaloniaCommunity/Material.Avalonia) | 3.13.3 | MIT | Material Design controls |
+| [Lucide Icons](https://lucide.dev/) | — | ISC | User interface icons |
+| [Dotnet.Bundle](https://github.com/egramtel/dotnet-bundle) | 0.9.13 | MIT | macOS app bundling |
+
+### File Formats / MIDI
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [DryWetMidi](https://github.com/melanchall/drywetmidi) | 7.2.0 | MIT | MIDI file read/write |
+| [SharpCompress](https://github.com/adamhathcock/sharpcompress) | 0.48.1 | MIT | Archive extraction |
+
+### Language / Phoneme Processing
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [csharp-pinyin](https://github.com/poychang/csharp-pinyin) | 1.0.0 | MIT | Hanzi to Pinyin conversion |
+| [csharp-kana](https://github.com/poychang/csharp-kana) | 1.0.2 | MIT | Kana conversion |
+| [WanaKana-net](https://github.com/MartinZikmund/WanaKana-net) | 1.0.0 | MIT | Japanese kana processing |
+| [UTF.Unknown](https://github.com/CharsetDetector/UTF-unknown) | 2.5.1 | MIT | Text encoding detection |
+
+### Utilities
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [TextCopy](https://github.com/CopyText/TextCopy) | 6.2.1 | MIT | Cross-platform clipboard |
+| [K4os.Hash.xxHash](https://github.com/k4os/K4os.Hash.xxHash) | 1.0.8 | MIT | Fast hashing |
+| [Ignore](https://github.com/nicoco007/Ignore) | 0.1.50 | MIT | .gitignore rule parsing |
+| [NumSharp](https://github.com/SciSharp/NumSharp) | 0.30.0 | Apache-2.0 | Numerical computing |
+| [NeoLua](https://github.com/neolithos/NeoLua) | 1.3.19 | Apache-2.0 | Lua scripting engine |
+| [NetMQ](https://github.com/zeromq/netmq) | 4.0.1 | LGPL-3.0 | Inter-process communication |
+
+### C++ Native (VST3 Bridge)
+
+| Library | Version | License | Purpose |
+|----|------|------|------|
+| [VST3 SDK](https://github.com/steinbergmedia/vst3sdk) | 3.8.0 | MIT / GPL-3 | VST3 host bridging |
+| [Worldline](https://github.com/stakira/OpenUtau) | — | MIT | Native audio rendering engine |
+
+### Design Assets
+
+| Resource | License | Source |
+|------|------|------|
+| Lucide Icons | ISC | https://lucide.dev/ |
 
 ---
 
@@ -188,7 +269,9 @@ See [CLAUDE.md](./CLAUDE.md) for the full architecture and development guide.
 
 Based on [OpenUTAU](https://github.com/openutau/OpenUtau), MIT License.
 
-The VST3 bridge uses [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/vst3sdk), also MIT-licensed.
+The VST3 bridge uses [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/vst3sdk), dual-licensed MIT / GPL-3 (this project uses the MIT-licensed portions).
+
+Lucide icons are ISC licensed.
 
 ---
 

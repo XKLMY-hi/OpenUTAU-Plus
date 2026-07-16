@@ -175,12 +175,93 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 | 层 | 技术 |
 |----|------|
-| UI | Avalonia 11.x + ReactiveUI MVVM |
-| 核心 | .NET 8.0 / C# 12 |
-| 音频 | NAudio + 自定义 ISignalSource 信号链 |
-| VST3 宿主 | C++ / Steinberg VST3 SDK v3.8.0 (MIT) |
-| 序列化 | YamlDotNet |
+| 运行时 | .NET 8.0 / C# 12 |
+| UI 框架 | Avalonia 11.x + ReactiveUI MVVM |
+| 音频播放 | NAudio (WASAPI) / MiniAudio |
+| 音频 DSP | NWaves |
+| 信号链 | 自定义 ISignalSource / IEffect 接口 |
+| VST3 宿主 | C++ / Steinberg VST3 SDK v3.8.0 |
+| AI 推理 | ONNX Runtime (DirectML GPU 加速) |
+| 图标 | Lucide Icons |
+| 序列化 | YamlDotNet / Newtonsoft.Json |
+| 日志 | Serilog |
 | 测试 | xUnit |
+
+---
+
+## 使用的开源库
+
+本项目的构建离不开以下开源项目，在此致谢。
+
+### 核心
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [Avalonia UI](https://avaloniaui.net/) | 11.2.4 | MIT | 跨平台 UI 框架 |
+| [ReactiveUI](https://www.reactiveui.net/) | 19.5 | MIT | MVVM 响应式框架 |
+| [NAudio](https://github.com/naudio/NAudio) | 2.2.1 | MIT | Windows 音频播放与处理 |
+| [NWaves](https://github.com/ar1st0crat/NWaves) | 0.9.6 | MIT | 音频信号处理 / DSP |
+| [ONNX Runtime](https://onnxruntime.ai/) | 1.23 | MIT | 机器学习推理引擎 |
+| [YamlDotNet](https://github.com/aaubry/YamlDotNet) | 15.1 | MIT | USTX 项目文件序列化 |
+| [Newtonsoft.Json](https://www.newtonsoft.com/json) | 13.0 | MIT | JSON 序列化 |
+| [Serilog](https://serilog.net/) | 4.1 | Apache-2.0 | 结构化日志 |
+
+### 音频格式
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [NAudio.Vorbis](https://github.com/naudio/Vorbis) | 1.5.0 | MIT | Ogg Vorbis 解码 |
+| [BunLabs.NAudio.Flac](https://github.com/BunLabs/NAudio.Flac) | 2.0.1 | MIT | FLAC 解码 |
+| [NLayer](https://github.com/naudio/NLayer) | 1.4.0 | MIT | MP3 解码 |
+| [Concentus.OggFile](https://github.com/lostromb/concentus) | 1.0.6 | Apache-2.0 | Opus 编码 |
+
+### UI / 设计
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [Material.Avalonia](https://github.com/AvaloniaCommunity/Material.Avalonia) | 3.13.3 | MIT | Material Design 控件 |
+| [Lucide Icons](https://lucide.dev/) | — | ISC | 界面图标 |
+| [Dotnet.Bundle](https://github.com/egramtel/dotnet-bundle) | 0.9.13 | MIT | macOS 应用打包 |
+
+### 文件格式 / MIDI
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [DryWetMidi](https://github.com/melanchall/drywetmidi) | 7.2.0 | MIT | MIDI 文件读写 |
+| [SharpCompress](https://github.com/adamhathcock/sharpcompress) | 0.48.1 | MIT | 压缩包解压 |
+
+### 语言 / 音素处理
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [csharp-pinyin](https://github.com/poychang/csharp-pinyin) | 1.0.0 | MIT | 汉字转拼音 |
+| [csharp-kana](https://github.com/poychang/csharp-kana) | 1.0.2 | MIT | 假名转换 |
+| [WanaKana-net](https://github.com/MartinZikmund/WanaKana-net) | 1.0.0 | MIT | 日文假名处理 |
+| [UTF.Unknown](https://github.com/CharsetDetector/UTF-unknown) | 2.5.1 | MIT | 文本编码检测 |
+
+### 工具
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [TextCopy](https://github.com/CopyText/TextCopy) | 6.2.1 | MIT | 跨平台剪贴板 |
+| [K4os.Hash.xxHash](https://github.com/k4os/K4os.Hash.xxHash) | 1.0.8 | MIT | 高速哈希 |
+| [Ignore](https://github.com/nicoco007/Ignore) | 0.1.50 | MIT | .gitignore 规则解析 |
+| [NumSharp](https://github.com/SciSharp/NumSharp) | 0.30.0 | Apache-2.0 | 数值计算 |
+| [NeoLua](https://github.com/neolithos/NeoLua) | 1.3.19 | Apache-2.0 | Lua 脚本引擎 |
+| [NetMQ](https://github.com/zeromq/netmq) | 4.0.1 | LGPL-3.0 | 进程间通信 |
+
+### C++ 原生 (VST3 桥接)
+
+| 库 | 版本 | 许可 | 用途 |
+|----|------|------|------|
+| [VST3 SDK](https://github.com/steinbergmedia/vst3sdk) | 3.8.0 | MIT / GPL-3 | VST3 宿主桥接 |
+| [Worldline](https://github.com/stakira/OpenUtau) | — | MIT | 原生音频渲染引擎 |
+
+### 设计资源
+
+| 资源 | 许可 | 来源 |
+|------|------|------|
+| Lucide Icons | ISC | https://lucide.dev/ |
 
 ---
 
@@ -188,7 +269,9 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 基于 [OpenUTAU](https://github.com/openutau/OpenUtau)，MIT License。
 
-VST3 桥接基于 [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/vst3sdk)，MIT License。
+VST3 桥接基于 [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/vst3sdk)，MIT / GPL-3 双许可（本项目使用 MIT 许可部分）。
+
+Lucide 图标使用 ISC License。
 
 ---
 
