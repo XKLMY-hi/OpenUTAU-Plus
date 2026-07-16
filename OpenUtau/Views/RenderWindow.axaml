@@ -102,10 +102,9 @@
         </StackPanel>
       </Border>
 
-      <!-- ═══ 2. Three cards: Range / Format / Quality ═══ -->
+      <!-- ═══ 2. Range + Format ═══ -->
       <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="*"/>
           <ColumnDefinition Width="*"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -129,7 +128,7 @@
         </Border>
 
         <!-- Format -->
-        <Border Grid.Column="1" Classes="renderCard" Margin="4,0">
+        <Border Grid.Column="1" Classes="renderCard" Margin="4,0,0,0">
           <StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
               <Path Classes="cardIcon" Data="{StaticResource icon-save}"/>
@@ -138,34 +137,12 @@
             <TextBlock Classes="subLabel" Text="格式"/>
             <ComboBox Classes="renderCombo" Name="FormatCombo" SelectedIndex="0">
               <ComboBoxItem Content="WAV 16-bit" Tag="Wav16"/>
-              <ComboBoxItem Content="WAV 24-bit" Tag="Wav24"/>
               <ComboBoxItem Content="WAV 32-bit float" Tag="Wav32"/>
             </ComboBox>
             <TextBlock Classes="subLabel" Text="采样率"/>
             <ComboBox Classes="renderCombo" Name="SampleRateCombo" SelectedIndex="0">
               <ComboBoxItem Content="44100 Hz" Tag="44100"/>
               <ComboBoxItem Content="48000 Hz" Tag="48000"/>
-              <ComboBoxItem Content="96000 Hz" Tag="96000"/>
-            </ComboBox>
-          </StackPanel>
-        </Border>
-
-        <!-- Quality -->
-        <Border Grid.Column="2" Classes="renderCard" Margin="4,0,0,0">
-          <StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-              <Path Classes="cardIcon" Data="{StaticResource icon-sliders}"/>
-              <TextBlock Classes="cardTitle" Text="品质"/>
-            </StackPanel>
-            <RadioButton Classes="renderOption" GroupName="Quality"
-                         Name="RadioStandard" IsChecked="True" Content="标准"/>
-            <RadioButton Classes="renderOption" GroupName="Quality"
-                         Name="RadioHigh" Content="最高"/>
-            <TextBlock Classes="subLabel" Text="WAV 位深" Margin="0,8,0,0"/>
-            <ComboBox Classes="renderCombo" Name="BitDepthCombo" SelectedIndex="0">
-              <ComboBoxItem Content="16-bit" Tag="16"/>
-              <ComboBoxItem Content="24-bit" Tag="24"/>
-              <ComboBoxItem Content="32-bit float" Tag="32"/>
             </ComboBox>
           </StackPanel>
         </Border>
