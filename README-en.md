@@ -39,7 +39,7 @@ OpenUTAU Plus aims to evolve OpenUTAU from a vocal synthesis editor into a **voc
 - ✅ Mixer console (per-track faders, pan, mute/solo, meters)
 - ✅ VST3 audio effect support (loading, GUI, real-time parameters)
 - ✅ `.ustxp` project format (VST parameter persistence)
-- 🚧 Export/render with VST effects (bounce/render with effects)
+- ✅ Export/render with VST effects (silent-playback recording)
 - 🚧 VST instrument support (loading synths/samplers as sound sources)
 - 🚧 macOS / Linux cross-platform support
 
@@ -74,7 +74,7 @@ These are design decisions or work-in-progress items. **Please read before using
 
 | Limitation | Details |
 |------------|---------|
-| **Export excludes VST effects** | VST effects are not rendered into exported audio files. Currently only works during real-time playback |
+| ~~Export excludes VST effects~~ **✅ Resolved** | Real-time recording mode: silent-playback full signal chain capture, including VST + built-in FX + volume/pan |
 | **No VST instrument support** | VST synths/samplers (instrument plugins) cannot be loaded as sound sources. The scanner automatically filters them out |
 | **Windows x64 only** | The bridge DLL is compiled for Windows x64 only. macOS / Linux users cannot use VST features |
 | **No send/Aux buses** | Aux buses and sidechain compression are not yet implemented |
