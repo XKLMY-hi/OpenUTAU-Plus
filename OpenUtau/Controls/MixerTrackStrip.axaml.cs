@@ -11,13 +11,17 @@ using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Util;
+using System.Reactive.Linq;
 using ReactiveUI;
+
+using static OpenUtau.Core.DocManager;
 
 namespace OpenUtau.App.Controls {
     public partial class MixerTrackStrip : UserControl {
         private UTrack? track;
         private bool isDragging;
         private bool suppressingEvents;
+        private bool _syncing;
         public UTrack? Track {
             get => track;
             set { if (track == value) return; track = value; LoadTrackData(); }
@@ -32,7 +36,31 @@ namespace OpenUtau.App.Controls {
             FaderBox.AddHandler(PointerCaptureLostEvent, OnFaderCaptureLost,
                 Avalonia.Interactivity.RoutingStrategies.Tunnel | Avalonia.Interactivity.RoutingStrategies.Bubble, true);
         }
-        public MixerTrackStrip(UTrack track) : this() { Track = track; }
+        public MixerTrackStrip(UTrack track) : this() {
+            Track = track;
+            // Subscribe to volume/pan changes from main window
+            MessageBus.Current.Listen<VolumeChangeNotification>()
+                .Where(n => n.TrackNo == track.TrackNo)
+                .Subscribe(n => {
+                    if (_syncing) return;
+                    _syncing = true;
+                    double db = Math.Clamp(n.Volume, FaderMin, FaderMax);
+                    UpdateFaderPositionFromDb(db);
+                    UpdateVolValueDisplay(db);
+                    _syncing = false;
+                });
+            MessageBus.Current.Listen<PanChangeNotification>()
+                .Where(n => n.TrackNo == track.TrackNo)
+                .Subscribe(n => {
+                    if (_syncing) return;
+                    _syncing = true;
+                    suppressingEvents = true;
+                    PanSlider.Value = Math.Clamp(n.Pan, -100, 100);
+                    track.Pan = n.Pan / 100.0;
+                    suppressingEvents = false;
+                    _syncing = false;
+                });
+        }
 
         private void LoadTrackData() {
             if (track == null) return;
@@ -40,11 +68,13 @@ namespace OpenUtau.App.Controls {
             TrackNameLabel.Text = track.TrackName;
             ColorBar.Background = ThemeManager.GetTrackColor(track.TrackColor).AccentColor;
             UpdateMuteSoloButtons();
-            PanSlider.Value = track.Pan;
+            PanSlider.Value = track.Pan * 100.0;
             PanSlider.PropertyChanged += (s, e) => {
                 if (e.Property == RangeBase.ValueProperty && !suppressingEvents && track != null) {
-                    track.Pan = PanSlider.Value;
-                    DocManager.Inst.ExecuteCmd(new PanChangeNotification(track.TrackNo, PanSlider.Value));
+                    track.Pan = PanSlider.Value / 100.0;
+                    var pn = new PanChangeNotification(track.TrackNo, PanSlider.Value);
+                    DocManager.Inst.ExecuteCmd(pn);
+                    MessageBus.Current.SendMessage(pn);
                 }
             };
             UpdateVolValueDisplay(Math.Clamp(track.Volume, FaderMin, FaderMax));
@@ -78,6 +108,11 @@ namespace OpenUtau.App.Controls {
             double ratio = 1.0 - Math.Clamp(y / FaderBox.Bounds.Height, 0, 1);
             return FaderMin + ratio * FaderRange;
         }
+        private void UpdateFaderPositionFromDb(double db) {
+            if (track == null || FaderBox.Bounds.Height <= 0) return;
+            ThumbBar.Margin = new Thickness(-2, DbToTop(Math.Clamp(db, FaderMin, FaderMax)), -2, 0);
+        }
+
         private void UpdateFaderPosition() {
             if (track == null || FaderBox.Bounds.Height <= 0) return;
             double db = Math.Clamp(track.Volume, FaderMin, FaderMax);
@@ -94,7 +129,9 @@ namespace OpenUtau.App.Controls {
             if (track == null) return;
             db = Math.Clamp(db, FaderMin, FaderMax);
             track.Volume = db;
-            DocManager.Inst.ExecuteCmd(new VolumeChangeNotification(track.TrackNo, track.Muted ? -24 : db));
+            var vn = new VolumeChangeNotification(track.TrackNo, track.Muted ? -24 : db);
+            DocManager.Inst.ExecuteCmd(vn);
+            MessageBus.Current.SendMessage(vn);
             UpdateFaderPosition();
             UpdateVolValueDisplay(db);
         }
@@ -153,7 +190,9 @@ namespace OpenUtau.App.Controls {
         private void OnMuteClick(object? sender, RoutedEventArgs e) {
             if (track == null) return;
             track.Mute = !track.Mute; track.Muted = track.Mute;
-            DocManager.Inst.ExecuteCmd(new VolumeChangeNotification(track.TrackNo, track.Muted ? -24 : track.Volume));
+            var vn2 = new VolumeChangeNotification(track.TrackNo, track.Muted ? -24 : track.Volume);
+            DocManager.Inst.ExecuteCmd(vn2);
+            MessageBus.Current.SendMessage(vn2);
             MessageBus.Current.SendMessage(new TracksMuteEvent(track.TrackNo, false));
             UpdateMuteSoloButtons();
         }

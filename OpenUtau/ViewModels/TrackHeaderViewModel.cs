@@ -50,6 +50,7 @@ namespace OpenUtau.App.ViewModels {
         public ViewModelActivator Activator { get; }
 
         private readonly UTrack track;
+        private bool _syncing;
 
         // Parameterless constructor for Avalonia preview only.
         public TrackHeaderViewModel() {
@@ -120,20 +121,41 @@ namespace OpenUtau.App.ViewModels {
                 ? ThemeManager.GetTrackColor(track.TrackColor)
                 : ThemeManager.GetTrackColor("Blue");
             Volume = track.Volume;
-            Pan = track.Pan;
+            Pan = track.Pan * 100.0;
             Mute = track.Mute;
             Muted = track.Muted;
             Solo = track.Solo;
             MixFxEnabled = track.MixFx?.Enabled ?? false;
             this.WhenAnyValue(x => x.Volume)
                 .Subscribe(volume => {
+                    if (_syncing) return;
                     track.Volume = volume;
-                    DocManager.Inst.ExecuteCmd(new VolumeChangeNotification(track.TrackNo, Muted ? -24 : volume));
+                    var vn = new VolumeChangeNotification(track.TrackNo, Muted ? -24 : volume);
+                    DocManager.Inst.ExecuteCmd(vn);
+                    MessageBus.Current.SendMessage(vn);
                 });
             this.WhenAnyValue(x => x.Pan)
                 .Subscribe(pan => {
-                    track.Pan = pan;
-                    DocManager.Inst.ExecuteCmd(new PanChangeNotification(track.TrackNo, pan));
+                    track.Pan = pan / 100.0;
+                    var pn = new PanChangeNotification(track.TrackNo, pan);
+                    DocManager.Inst.ExecuteCmd(pn);
+                    MessageBus.Current.SendMessage(pn);
+                });
+
+            // Listen for volume/pan changes from mixer window
+            MessageBus.Current.Listen<VolumeChangeNotification>()
+                .Where(n => n.TrackNo == track.TrackNo)
+                .Subscribe(n => {
+                    _syncing = true;
+                    Volume = n.Volume;
+                    _syncing = false;
+                });
+            MessageBus.Current.Listen<PanChangeNotification>()
+                .Where(n => n.TrackNo == track.TrackNo)
+                .Subscribe(n => {
+                    _syncing = true;
+                    Pan = n.Pan;
+                    _syncing = false;
                 });
             this.WhenAnyValue(x => x.Mute)
                 .Subscribe(mute => {
@@ -142,7 +164,9 @@ namespace OpenUtau.App.ViewModels {
             this.WhenAnyValue(x => x.Muted)
                 .Subscribe(muted => {
                     track.Muted = muted;
-                    DocManager.Inst.ExecuteCmd(new VolumeChangeNotification(track.TrackNo, muted ? -24 : Volume));
+                    var vnm = new VolumeChangeNotification(track.TrackNo, muted ? -24 : Volume);
+                    DocManager.Inst.ExecuteCmd(vnm);
+                    MessageBus.Current.SendMessage(vnm);
                 });
             this.WhenAnyValue(x => x.Solo)
                 .Subscribe(solo => {
