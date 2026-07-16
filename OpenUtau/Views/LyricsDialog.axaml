@@ -26,23 +26,23 @@
       <TextBlock Text="{StaticResource lyrics.separators}" Margin="0,2"/>
       <Border CornerRadius="5"
               Background="{DynamicResource MenuFlyoutItemBackgroundPointerOver}">
-        <TextBlock Text="⎵" Margin="0" Padding="4,2"/>
+        <TextBlock Text="Space" FontFamily="monospace" Margin="0" Padding="4,2"/>
       </Border>
       <Border CornerRadius="5"
               Background="{DynamicResource MenuFlyoutItemBackgroundPointerOver}">
-        <TextBlock Text="," Margin="0" Padding="4,2"/>
+        <TextBlock Text="," FontFamily="monospace" Margin="0" Padding="4,2"/>
       </Border>
       <Border CornerRadius="5"
               Background="{DynamicResource MenuFlyoutItemBackgroundPointerOver}">
-        <TextBlock Text="&quot;" Margin="0" Padding="4,2"/>
+        <TextBlock Text="&quot;" FontFamily="monospace" Margin="0" Padding="4,2"/>
       </Border>
       <Border CornerRadius="5"
               Background="{DynamicResource MenuFlyoutItemBackgroundPointerOver}">
-        <TextBlock Text="↵" Margin="0" Padding="4,2"/>
+        <TextBlock Text="Enter" FontFamily="monospace" Margin="0" Padding="4,2"/>
       </Border>
       <Border CornerRadius="5"
               Background="{DynamicResource MenuFlyoutItemBackgroundPointerOver}">
-        <TextBlock Text="字" Margin="0" Padding="4,2"/>
+        <TextBlock Text="字" FontFamily="monospace" Margin="0" Padding="4,2"/>
       </Border>
     </StackPanel>
     <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="10">

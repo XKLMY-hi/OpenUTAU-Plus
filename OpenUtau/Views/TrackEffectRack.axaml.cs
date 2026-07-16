@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
@@ -144,9 +145,11 @@ namespace OpenUtau.App.Views {
 
             // Section header with expand chevron
             var sectionHeader = new Grid { ColumnDefinitions = new("Auto,*,Auto,Auto") };
-            var chevron = new TextBlock {
-                Text = _builtInExpanded ? "▾" : "▸",
-                FontSize = 10, Opacity = 0.5,
+            var chevron = new Path {
+                Data = this.FindResource(_builtInExpanded ? "icon-chevron-down" : "icon-chevron-right") as StreamGeometry,
+                Stroke = this.FindResource("SystemControlForegroundBaseHighBrush") as IBrush,
+                StrokeThickness = 1.5, Width = 12, Height = 12,
+                Stretch = Stretch.Uniform, Opacity = 0.5,
                 VerticalAlignment = VerticalAlignment.Center, Margin = new(0, 0, 6, 0),
             };
             var label = new TextBlock {

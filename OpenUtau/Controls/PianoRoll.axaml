@@ -567,7 +567,7 @@
         <Rectangle.Fill>
           <LinearGradientBrush StartPoint="0,0" EndPoint="0,6">
             <GradientStop Color="Transparent" Offset="0"/>
-            <GradientStop Color="Black" Offset="1"/>
+            <GradientStop Color="{DynamicResource BackgroundColor}" Offset="1"/>
           </LinearGradientBrush>
         </Rectangle.Fill>
       </Rectangle>
@@ -627,19 +627,19 @@
       </Border>
 
       <Border Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-              BoxShadow="inset 0 0 5 1 #3F000000" ClipToBounds="True" IsHitTestVisible="False">
+              BoxShadow="inset 0 0 5 1 #3F808080" ClipToBounds="True" IsHitTestVisible="False">
         <Grid>
           <Border Classes="tips" HorizontalAlignment="Center" VerticalAlignment="Center"
-                IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F000000">
+                IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F808080">
             <TextBlock Classes="tips" Grid.Column="0" Margin="10,5"
                        Text="{DynamicResource tip.notes.basics}"/>
           </Border>
           <Border Classes="tips" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0" Padding="4,4,4,2"
-                   IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F000000">
+                   IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F808080">
             <TextBlock Classes="tips" Text="{DynamicResource tip.notes.zoomx}"/>
           </Border>
           <Border Classes="tips" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="4,4,4,2"
-                   IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F000000">
+                   IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F808080">
             <TextBlock Classes="tips" Text="{DynamicResource tip.notes.zoomy}"/>
           </Border>
           <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,5"
@@ -650,15 +650,15 @@
       </Border>
       <Grid Grid.Row="3" Grid.Column="1" RowDefinitions="1*,1*">
         <Border Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top"
-                BoxShadow="0 0 5 1 #3F000000">
+                BoxShadow="0 0 5 1 #3F808080">
           <c:LyricBox Name="LyricBox" Width="360" LostFocus="LyricBoxLostFocus"/>
         </Border>
       </Grid>
       <Border Grid.Row="5" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-              IsVisible="{Binding NotesViewModel.ShowExpressions}" BoxShadow="inset 0 0 5 1 #3F000000"
+              IsVisible="{Binding NotesViewModel.ShowExpressions}" BoxShadow="inset 0 0 5 1 #3F808080"
               ClipToBounds="True" IsHitTestVisible="False">
         <Border Classes="tips" HorizontalAlignment="Center" VerticalAlignment="Center"
-                IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F000000">
+                IsVisible="{Binding NotesViewModel.ShowTips}" BoxShadow="0 0 5 1 #3F808080">
           <TextBlock Classes="tips" Grid.Column="0" Margin="10,5"
                      Text="{DynamicResource tip.exps}"/>
         </Border>

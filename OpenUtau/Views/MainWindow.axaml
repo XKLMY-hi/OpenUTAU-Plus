@@ -345,11 +345,11 @@
                 </Button>
                 <Button Click="OnPlayOrPause">
                   <Path Fill="{Binding $parent.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Data="M 0 0 L 7 6.5 L 0 13 Z"/>
+                        Data="{StaticResource icon-play}"/>
                 </Button>
                 <Button Command="{Binding PlaybackViewModel.Pause}">
                   <Path Fill="{Binding $parent.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Data="M 0 0 L 2 0 L 2 9 L 0 9 Z M 4 0 L 6 0 L 6 9 L 4 9 Z"/>
+                        Data="{StaticResource icon-pause}"/>
                 </Button>
                 <Button Command="{Binding PlaybackViewModel.SeekEnd}">
                   <Path Fill="{Binding $parent.Foreground}" VerticalAlignment="Center" HorizontalAlignment="Center"
@@ -495,7 +495,7 @@
             </c:PartsCanvas.ContextMenu>
           </c:PartsCanvas>
           <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"
-                  BoxShadow="inset 0 0 5 1 #3F000000" ClipToBounds="True" IsHitTestVisible="False">
+                  BoxShadow="inset 0 0 5 1 #3F808080" ClipToBounds="True" IsHitTestVisible="False">
             <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,5"
                     IsVisible="{Binding TracksViewModel.PlayPosWaitingRendering}" Background="{DynamicResource BackgroundBrushSemi}">
               <TextBlock Text="{DynamicResource progress.waitingrendering}" FontSize="15"/>
