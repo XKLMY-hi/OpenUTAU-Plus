@@ -27,6 +27,29 @@
 - Plus 专属格式，`ustxpVersion: 1.0`
 - VST 插件参数持久化 — 重新打开项目自动恢复插件设置
 - 向后兼容 `.ustx`
+---
+
+## 实机截图
+
+<div align="center">
+
+### 欢迎页
+![欢迎页](screenshots/welcome.png)
+
+### 主编辑器
+![主编辑器](screenshots/editor.png)
+
+### 混音台
+![混音台](screenshots/mixer.png)
+
+### VST 效果器
+![VST 效果器](screenshots/vst.png)
+
+### 渲染窗口
+![渲染窗口](screenshots/render.png)
+
+</div>
+
 
 ---
 

@@ -27,6 +27,29 @@ Based on [OpenUTAU](https://github.com/openutau/OpenUtau) (MIT License)
 - Plus-native format, `ustxpVersion: 1.0`
 - VST plugin parameter persistence — re-open a project and all plugin settings are restored
 - Backward-compatible with `.ustx`
+---
+
+## Screenshots
+
+<div align="center">
+
+### Welcome Page
+![Welcome](screenshots/welcome.png)
+
+### Main Editor
+![Editor](screenshots/editor.png)
+
+### Mixer Console
+![Mixer](screenshots/mixer.png)
+
+### VST Effects
+![VST](screenshots/vst.png)
+
+### Render Window
+![Render](screenshots/render.png)
+
+</div>
+
 
 ---
 
