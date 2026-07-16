@@ -27,25 +27,11 @@
       <Setter Property="Height" Value="22"/>
       <Setter Property="Margin" Value="4,0,0,0"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Content">
-        <Viewbox Width="12" Height="12">
-          <Path Data="{StaticResource icon-x}"
-                Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                StrokeThickness="1.5" Stretch="Uniform"/>
-        </Viewbox>
-      </Setter>
     </Style>
     <Style Selector="Button.browseBtn">
       <Setter Property="Width" Value="22"/>
       <Setter Property="Height" Value="22"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Content">
-        <Viewbox Width="12" Height="12">
-          <Path Data="{StaticResource icon-chevron-right}"
-                Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                StrokeThickness="1.5" Stretch="Uniform"/>
-        </Viewbox>
-      </Setter>
     </Style>
     <Style Selector="Button.addBtn">
       <Setter Property="Height" Value="28"/>

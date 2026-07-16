@@ -10,13 +10,6 @@
       <Setter Property="Width" Value="24"/>
       <Setter Property="Height" Value="24"/>
       <Setter Property="Margin" Value="0"/>
-      <Setter Property="Content">
-        <Viewbox Width="14" Height="14">
-          <Path Data="{StaticResource icon-chevron-right}"
-                Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                StrokeThickness="1.5" Stretch="Uniform"/>
-        </Viewbox>
-      </Setter>
     </Style>
     <Style Selector="Border.slotRow">
       <Setter Property="Height" Value="32"/>
@@ -51,13 +44,6 @@
       <Setter Property="Height" Value="22"/>
       <Setter Property="Margin" Value="4,0,0,0"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="Content">
-        <Viewbox Width="12" Height="12">
-          <Path Data="{StaticResource icon-x}"
-                Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                StrokeThickness="1.5" Stretch="Uniform"/>
-        </Viewbox>
-      </Setter>
     </Style>
     <Style Selector="Button.addSlotBtn">
       <Setter Property="Height" Value="30"/>
