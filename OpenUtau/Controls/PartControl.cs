@@ -186,7 +186,7 @@ namespace OpenUtau.App.Controls {
             context.DrawRectangle(backgroundBrush, null, new Rect(1, 0, Width - 1, Height - 1), 4, 4);
 
             // Text
-            var textLayout = TextLayoutCache.Get(Text, Brushes.White, 12);
+            var textLayout = TextLayoutCache.Get(Text, Application.Current?.Resources["SystemControlForegroundBaseHighBrush"] as IBrush ?? Brushes.White, 12);
             using (var state = context.PushTransform(Matrix.CreateTranslation(3, 2))) {
                 context.DrawRectangle(backgroundBrush, null, new Rect(new Point(0, 0), new Size(textLayout.Width, textLayout.Height)));
                 textLayout.Draw(context, new Point());

@@ -46,6 +46,7 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public Color BarNumberColor { get; set; }
         [Reactive] public Color FinalPitchColor { get; set; }
         [Reactive] public Color TrackBackgroundAltColor { get; set; }
+        [Reactive] public Color WarningColor { get; set; }
 
         [Reactive] public Color WhiteKeyColorLeft { get; set; }
         [Reactive] public Color WhiteKeyColorRight { get; set; }
@@ -97,6 +98,7 @@ namespace OpenUtau.App.ViewModels {
             BarNumberColor = Color.Parse(themeYaml.BarNumberColor);
             FinalPitchColor = Color.Parse(themeYaml.FinalPitchColor);
             TrackBackgroundAltColor = Color.Parse(themeYaml.TrackBackgroundAltColor);
+            WarningColor = Color.Parse(themeYaml.WarningColor);
 
             WhiteKeyColorLeft = Color.Parse(themeYaml.WhiteKeyColorLeft);
             WhiteKeyColorRight = Color.Parse(themeYaml.WhiteKeyColorRight);
@@ -192,6 +194,9 @@ namespace OpenUtau.App.ViewModels {
             this.WhenAnyValue(vm => vm.TrackBackgroundAltColor)
                 .Subscribe(v => Application.Current!.Resources["TrackBackgroundAltColor"] = v);
 
+            this.WhenAnyValue(vm => vm.WarningColor)
+                .Subscribe(v => Application.Current!.Resources["WarningColor"] = v);
+
 
             this.WhenAnyValue(vm => vm.WhiteKeyColorLeft)
                 .Subscribe(v => Application.Current!.Resources["WhiteKeyColorLeft"] = v);
@@ -254,6 +259,7 @@ namespace OpenUtau.App.ViewModels {
                 BarNumberColor = BarNumberColor.ToString(),
                 FinalPitchColor = FinalPitchColor.ToString(),
                 TrackBackgroundAltColor = TrackBackgroundAltColor.ToString(),
+                WarningColor = WarningColor.ToString(),
 
                 WhiteKeyColorLeft = WhiteKeyColorLeft.ToString(),
                 WhiteKeyColorRight = WhiteKeyColorRight.ToString(),

@@ -956,4 +956,22 @@ General
   <system:String x:Key="welcome.diffsinger">DiffSinger</system:String>
   <system:String x:Key="welcome.teto">Kasane Teto Official</system:String>
   <system:String x:Key="welcome.plus">OpenUTAU Plus</system:String>
+  <system:String x:Key="render.mode">Output Mode</system:String>
+  <system:String x:Key="render.range">Render Range</system:String>
+  <system:String x:Key="render.format">Output Format</system:String>
+  <system:String x:Key="render.quality">Render Quality</system:String>
+  <system:String x:Key="render.tracks">Track Selection</system:String>
+  <system:String x:Key="render.effects">Effect Options</system:String>
+  <system:String x:Key="render.outputpath">Output Path</system:String>
+  <system:String x:Key="button.browse">Browse...</system:String>
+  <system:String x:Key="render.openfolder">Open Folder</system:String>
+  <system:String x:Key="render.start">Start Render</system:String>
+  <system:String x:Key="render.mixdown">Stereo Mixdown (1 file)</system:String>
+  <system:String x:Key="render.pertrack">Per-Track Export</system:String>
+  <system:String x:Key="render.fullsong">Full Song</system:String>
+  <system:String x:Key="render.loop">Loop Region</system:String>
+  <system:String x:Key="render.custom">Custom</system:String>
+  <system:String x:Key="render.formatlabel">Format</system:String>
+  <system:String x:Key="render.samplerate">Sample Rate</system:String>
+  <system:String x:Key="render.ready">Ready</system:String>
 </ResourceDictionary>

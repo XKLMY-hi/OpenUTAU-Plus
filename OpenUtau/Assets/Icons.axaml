@@ -53,4 +53,24 @@
   <StreamGeometry x:Key="icon-palette">M2 12a10 10 0 1 0 10-10 M12 2a10 10 0 0 1 10 10 M2 12a10 10 0 0 0 10 10 M12 12h.01 M8 8h.01 M16 8h.01 M8 16h.01</StreamGeometry>
   <StreamGeometry x:Key="icon-cpu">M9 2v2 M15 2v2 M9 20v2 M15 20v2 M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z M8 8h3.5a2.5 2.5 0 0 1 0 5H8v5</StreamGeometry>
   <StreamGeometry x:Key="icon-wrench">M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z</StreamGeometry>
+
+  <!-- Missing controls (Phase 3 supplement) -->
+  <StreamGeometry x:Key="icon-undo">M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.001 8.001 0 01-15.357-2m0 0H15</StreamGeometry>
+  <StreamGeometry x:Key="icon-redo">M21 7v5h.582a8.001 8.001 0 01-15.357 2M21 7h-4.418M3 17v-5h.581a8.001 8.001 0 0115.357 2M3 17h4.418</StreamGeometry>
+  <StreamGeometry x:Key="icon-zoom-in">M21 21l-4.3-4.3 M11 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M11 4v4 M9 6h4</StreamGeometry>
+  <StreamGeometry x:Key="icon-zoom-out">M21 21l-4.3-4.3 M11 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M9 6h4</StreamGeometry>
+  <StreamGeometry x:Key="icon-chevron-up">M18 15l-6-6-6 6</StreamGeometry>
+  <StreamGeometry x:Key="icon-chevron-left">M15 18l-6-6 6-6</StreamGeometry>
+  <StreamGeometry x:Key="icon-home">M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z M9 22V12h6v10</StreamGeometry>
+  <StreamGeometry x:Key="icon-refresh-cw">M3 12a9 9 0 019-9 9.75 9.75 0 016.74 2.74L21 8 M21 3v5h-5 M21 12a9 9 0 01-9 9 9.75 9.75 0 01-6.74-2.74L3 16 M3 21v-5h5</StreamGeometry>
+  <StreamGeometry x:Key="icon-stop">M6 6h12v12H6z</StreamGeometry>
+  <StreamGeometry x:Key="icon-skip-forward">M5 4l10 8-10 8z M19 5v14</StreamGeometry>
+  <StreamGeometry x:Key="icon-skip-back">M19 20l-10-8 10-8z M5 19V5</StreamGeometry>
+  <StreamGeometry x:Key="icon-folder">M4 20h16a2 2 0 002-2V8a2 2 0 00-2-2h-7.93a2 2 0 01-1.66-.9l-.82-1.2A2 2 0 007.93 3H4a2 2 0 00-2 2v13c0 1.1.9 2 2 2Z</StreamGeometry>
+  <StreamGeometry x:Key="icon-file">M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z M14 2v6h6</StreamGeometry>
+  <StreamGeometry x:Key="icon-download">M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4 M7 10l5 5 5-5 M12 15V3</StreamGeometry>
+  <StreamGeometry x:Key="icon-clock">M12 2a10 10 0 100 20 10 10 0 000-20z M12 6v6l4 2</StreamGeometry>
+  <StreamGeometry x:Key="icon-lock">M19 11H5a2 2 0 00-2 2v7a2 2 0 002 2h14a2 2 0 002-2v-7a2 2 0 00-2-2z M7 11V7a5 5 0 0110 0v4</StreamGeometry>
+  <StreamGeometry x:Key="icon-settings">M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z M12 15a3 3 0 100-6 3 3 0 000 6z</StreamGeometry>
+  <StreamGeometry x:Key="icon-list">M3 12h18 M3 6h18 M3 18h18</StreamGeometry>
 </ResourceDictionary>

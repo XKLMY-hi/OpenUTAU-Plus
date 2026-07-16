@@ -5,7 +5,7 @@
         mc:Ignorable="d" Width="450" Height="130"
         x:Class="OpenUtau.App.Views.TrackColorDialog" WindowStartupLocation="CenterOwner"
         Icon="/Assets/open-utau.ico"
-        Title="{StaticResource tracks.trackcolor}"
+        Title="{DynamicResource tracks.trackcolor}"
         KeyDown="OnKeyDown">
   <Grid RowDefinitions="*,50" >
     <ListBox ItemsSource="{Binding TrackColors}" SelectedValue="{Binding SelectedColor}"
@@ -30,8 +30,8 @@
       </ListBox.Styles>
     </ListBox>
     <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center" VerticalAlignment="Top">
-      <Button Content="{StaticResource button.cancel}" MinWidth="50" Click="OnCancel"/>
-      <Button Content="{StaticResource button.apply}" MinWidth="50" Click="OnFinish"/>
+      <Button Content="{DynamicResource button.cancel}" MinWidth="50" Click="OnCancel"/>
+      <Button Content="{DynamicResource button.apply}" MinWidth="50" Click="OnFinish"/>
     </StackPanel>
   </Grid>
 </Window>

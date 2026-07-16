@@ -1119,4 +1119,22 @@ Curve Type
   <system:String x:Key="welcome.diffsinger">DiffSinger 官网</system:String>
   <system:String x:Key="welcome.teto">Kasane Teto 公式</system:String>
   <system:String x:Key="welcome.plus">OpenUTAU Plus 官网</system:String>
+  <system:String x:Key="render.mode">输出模式</system:String>
+  <system:String x:Key="render.range">渲染范围</system:String>
+  <system:String x:Key="render.format">输出格式</system:String>
+  <system:String x:Key="render.quality">品质</system:String>
+  <system:String x:Key="render.tracks">轨道选择</system:String>
+  <system:String x:Key="render.effects">效果选项</system:String>
+  <system:String x:Key="render.outputpath">输出路径</system:String>
+  <system:String x:Key="button.browse">浏览...</system:String>
+  <system:String x:Key="render.openfolder">打开文件夹</system:String>
+  <system:String x:Key="render.start">开始渲染</system:String>
+  <system:String x:Key="render.mixdown">立体声混缩（1 个文件）</system:String>
+  <system:String x:Key="render.pertrack">分轨导出（每轨 1 个文件）</system:String>
+  <system:String x:Key="render.fullsong">整曲</system:String>
+  <system:String x:Key="render.loop">循环区间</system:String>
+  <system:String x:Key="render.custom">自定义</system:String>
+  <system:String x:Key="render.formatlabel">格式</system:String>
+  <system:String x:Key="render.samplerate">采样率</system:String>
+  <system:String x:Key="render.ready">准备就绪</system:String>
 </ResourceDictionary>

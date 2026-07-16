@@ -96,6 +96,7 @@ public class CustomTheme {
             SetResourceColor("BarNumberColor", Default.BarNumberColor);
             SetResourceColor("FinalPitchColor", Default.FinalPitchColor);
             SetResourceColor("TrackBackgroundAltColor", Default.TrackBackgroundAltColor);
+            SetResourceColor("WarningColor", Default.WarningColor);
 
             SetResourceColor("WhiteKeyColorLeft", Default.WhiteKeyColorLeft);
             SetResourceColor("WhiteKeyColorRight", Default.WhiteKeyColorRight);
@@ -151,6 +152,7 @@ public class CustomTheme {
         public string BarNumberColor = "#AFA3B5";
         public string FinalPitchColor = "#C0C0C0";
         public string TrackBackgroundAltColor = "#F0F0F0";
+        public string WarningColor = "#FFF4CE";
 
         public string WhiteKeyColorLeft = "Transparent";
         public string WhiteKeyColorRight = "Transparent";

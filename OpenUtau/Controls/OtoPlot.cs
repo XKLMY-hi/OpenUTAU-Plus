@@ -75,12 +75,12 @@ namespace OpenUtau.App.Controls {
         private byte[]? wavBitmapData;
         private WriteableBitmap? melBitmap;
 
-        private IBrush blueFill = new SolidColorBrush(Avalonia.Media.Colors.LightBlue, 0.5);
-        private IBrush pinkFill = new SolidColorBrush(Avalonia.Media.Colors.Pink, 0.5);
-        private IPen blueLine = new Pen(SolidColorBrush.Parse("#4EA6EA"), 2);
-        private IPen limeLine = new Pen(Brushes.Lime);
-        private IPen redLine = new Pen(Brushes.Red);
-        private IPen whiteLine = new Pen(Brushes.White);
+        private IBrush blueFill = ThemeManager.AccentBrush1Semi;
+        private IBrush pinkFill = ThemeManager.AccentBrush3Semi;
+        private IPen blueLine = ThemeManager.AccentPen1Thickness2;
+        private IPen limeLine = ThemeManager.AccentPen1;
+        private IPen redLine = ThemeManager.AccentPen3;
+        private IPen whiteLine = new Pen(ThemeManager.ForegroundBrush);
         private TextLayout ovlText;
         private TextLayout preText;
         private PolylineGeometry? f0Geometry;
@@ -95,11 +95,11 @@ namespace OpenUtau.App.Controls {
             ovlText = new TextLayout(
                 "OVL",
                 new Typeface(FontFamily.Default, weight: FontWeight.Normal),
-                12, Brushes.Lime, TextAlignment.Left, TextWrapping.NoWrap);
+                12, ThemeManager.AccentBrush1, TextAlignment.Left, TextWrapping.NoWrap);
             preText = new TextLayout(
                 "PRE",
                 new Typeface(FontFamily.Default, weight: FontWeight.Normal),
-                12, Brushes.Red, TextAlignment.Left, TextWrapping.NoWrap);
+                12, ThemeManager.AccentBrush3, TextAlignment.Left, TextWrapping.NoWrap);
 
             PointerPressed += OtoPlot_PointerPressed;
             PointerReleased += OtoPlot_PointerReleased;

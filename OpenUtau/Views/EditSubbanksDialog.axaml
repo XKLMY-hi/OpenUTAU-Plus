@@ -14,9 +14,9 @@
               CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False"
               ItemsSource="{Binding Rows}" SelectionChanged="OnSelectionChanged">
       <DataGrid.Columns>
-        <DataGridTextColumn Header="{StaticResource singers.subbanks.tone}" Width="*" Binding="{Binding Tone}"/>
-        <DataGridTextColumn Header="{StaticResource oto.prefix}" Width="*" Binding="{Binding Prefix}"/>
-        <DataGridTextColumn Header="{StaticResource oto.suffix}" Width="*" Binding="{Binding Suffix}"/>
+        <DataGridTextColumn Header="{DynamicResource singers.subbanks.tone}" Width="*" Binding="{Binding Tone}"/>
+        <DataGridTextColumn Header="{DynamicResource oto.prefix}" Width="*" Binding="{Binding Prefix}"/>
+        <DataGridTextColumn Header="{DynamicResource oto.suffix}" Width="*" Binding="{Binding Suffix}"/>
       </DataGrid.Columns>
     </DataGrid>
     <Grid Grid.Column="2">
