@@ -113,15 +113,15 @@
   <SolidColorBrush x:Key="AccentBrush3Semi"
                    Color="{DynamicResource AccentColor3}" Opacity="0.5" />
   <SolidColorBrush x:Key="SelectedTrackAccentBrush"
-                   Color="#D13438" />
+                   Color="{DynamicResource SystemAccentColor}" />
   <SolidColorBrush x:Key="SelectedTrackAccentLightBrush"
-                   Color="#E2787B" />
+                   Color="{DynamicResource SystemAccentColorLight1}" />
   <SolidColorBrush x:Key="SelectedTrackAccentLightBrushSemi"
-                   Color="#E2787B" Opacity="0.5"/>
+                   Color="{DynamicResource SystemAccentColorLight1}" Opacity="0.5"/>
   <SolidColorBrush x:Key="SelectedTrackAccentDarkBrush"
-                   Color="#AC252A" />
+                   Color="{DynamicResource SystemAccentColorDark1}" />
   <SolidColorBrush x:Key="SelectedTrackCenterKeyBrush"
-                   Color="#F0C5C6" />
+                   Color="{DynamicResource AccentColor2}" />
   <SolidColorBrush x:Key="WarningBrush"
                    Color="{DynamicResource WarningColor}" />
 

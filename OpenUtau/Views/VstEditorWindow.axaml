@@ -12,7 +12,7 @@
         <TextBlock FontWeight="SemiBold" FontSize="15" Name="TitleLabel"/>
         <StackPanel Orientation="Horizontal" Spacing="6">
           <Border Name="TypeBadge" CornerRadius="3" Padding="5,1">
-            <TextBlock Name="TypeLabel" FontSize="10" Foreground="White" FontWeight="SemiBold"/>
+            <TextBlock Name="TypeLabel" FontSize="10" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontWeight="SemiBold"/>
           </Border>
           <TextBlock Name="VendorLabel" FontSize="11" Opacity="0.6" VerticalAlignment="Center"/>
         </StackPanel>

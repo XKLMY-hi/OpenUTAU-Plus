@@ -510,7 +510,7 @@
                         IsVisible="{Binding ShowPianoRoll}"/>
           <!-- Resize tooltip indicator -->
           <TextBlock Grid.Row="3" Grid.Column="0" Name="ResizeTooltip"
-                     IsVisible="False" Background="#CC333333" Foreground="White"
+                     IsVisible="False" Background="#CC333333" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                      FontSize="11" Padding="4,2" HorizontalAlignment="Left"
                      VerticalAlignment="Bottom" Margin="4,0,0,0"/>
           <Canvas Grid.Row="4" Grid.ColumnSpan="3" IsVisible="{Binding ShowPianoRoll}">
