@@ -42,7 +42,7 @@ namespace OpenUtau.Core.Render {
         public WaveMix mix;
     }
 
-    class RenderEngine {
+    public class RenderEngine {
         readonly UProject project;
         readonly int startTick;
         readonly int endTick;

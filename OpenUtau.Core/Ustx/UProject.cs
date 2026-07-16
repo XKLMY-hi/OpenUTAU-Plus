@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenUtau.Core.Util;
+using OpenUtau.Core.Vst;
+using Serilog;
 using SharpCompress;
 using YamlDotNet.Serialization;
 
@@ -196,6 +198,20 @@ namespace OpenUtau.Core.Ustx {
             }
             foreach (var part in parts) {
                 part.AfterLoad(this, tracks[part.trackNo]);
+            }
+            // Restore VST plugin instances from saved slots
+            foreach (var track in tracks) {
+                if (track.VstSlots != null) {
+                    foreach (var slot in track.VstSlots) {
+                        if (!string.IsNullOrEmpty(slot.PluginUid)) {
+                            try {
+                                Vst.VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
+                            } catch (Exception e) {
+                                Log.Error(e, "[AfterLoad] Failed to load VST {0} for track {1}", slot.PluginUid, track.TrackNo);
+                            }
+                        }
+                    }
+                }
             }
         }
 

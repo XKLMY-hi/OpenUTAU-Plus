@@ -60,6 +60,7 @@ namespace OpenUtau.Core.Util {
             string ext = Path.GetExtension(filePath);
             switch(ext){
                 case ".ustx":
+                case ".ustxp":
                     AddRecentFile(filePath);
                     break;
                 case ".mid":
