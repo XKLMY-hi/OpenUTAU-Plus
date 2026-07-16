@@ -13,6 +13,13 @@ namespace OpenUtau.App.Views {
 
         public VstEditorWindow() {
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
             _fx = null!;
             NativeStatus.Text = ThemeManager.GetString("vsteditor.noplugin");
         }

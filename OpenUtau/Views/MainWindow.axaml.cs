@@ -59,6 +59,13 @@ namespace OpenUtau.App.Views {
         public MainWindow() {
             Log.Information("Creating main window.");
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
             Log.Information("Initialized main window component.");
             DataContext = viewModel = new MainWindowViewModel {
                 // give the viewmodel a way to prompt/save using the view's existing method

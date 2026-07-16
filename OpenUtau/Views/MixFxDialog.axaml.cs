@@ -15,6 +15,13 @@ namespace OpenUtau.App.Views {
 
         public MixFxDialog(UTrack? track) {
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
             this.track = track;
             DataContext = viewModel = new MixFxViewModel(track);
             viewModel.AskForName = PromptForNameAsync;

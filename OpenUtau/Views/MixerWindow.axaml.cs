@@ -19,6 +19,13 @@ namespace OpenUtau.App.Views {
 
         public MixerWindow() {
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
             DataContext = viewModel = new MixerViewModel();
             RebuildStrips();
             viewModel.Tracks.CollectionChanged += OnTracksChanged;

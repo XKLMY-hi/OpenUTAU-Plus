@@ -29,6 +29,13 @@ namespace OpenUtau.App.Views {
 
         public TrackEffectRack(UTrack track) {
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
             this.track = track;
             _builtInExpanded = false;
             TitleLabel.Text = $"{track.TrackName}";

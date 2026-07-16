@@ -23,6 +23,13 @@ namespace OpenUtau.App.Views {
 
         public RenderWindow() {
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
 
             // Range radio — show/hide custom box
             RadioFullSong.IsCheckedChanged += (_, _) => CustomRangeBox.IsVisible = false;

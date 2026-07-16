@@ -8,6 +8,13 @@ namespace OpenUtau.App.Views {
 
         public DebugWindow() {
             InitializeComponent();
+            try
+            {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+                Background = Avalonia.Media.Brushes.Transparent;
+            }
+            catch { }
             DataContext = viewModel = new DebugViewModel();
             viewModel.SetWindow(this);
             viewModel.Attach();
