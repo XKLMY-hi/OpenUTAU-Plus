@@ -1,0 +1,270 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="OpenUtau.App.Views.RenderWindow"
+        Icon="/Assets/open-utau.ico"
+        Title="渲染音频"
+        Width="680" Height="580" MinWidth="520" MinHeight="440"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+  <Window.Styles>
+    <Style Selector="Border.renderCard">
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="14,10"/>
+    </Style>
+    <Style Selector="TextBlock.cardTitle">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Opacity" Value="0.6"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="0,0,0,6"/>
+    </Style>
+    <Style Selector="Path.cardIcon">
+      <Setter Property="Width" Value="14"/>
+      <Setter Property="Height" Value="14"/>
+      <Setter Property="Stretch" Value="Uniform"/>
+      <Setter Property="Stroke" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+      <Setter Property="StrokeThickness" Value="1.5"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Margin" Value="0,0,6,0"/>
+    </Style>
+    <Style Selector="RadioButton.renderOption">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Margin" Value="0,0,20,2"/>
+    </Style>
+    <Style Selector="ComboBox.renderCombo">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Height" Value="26"/>
+      <Setter Property="Margin" Value="0,0,0,6"/>
+    </Style>
+    <Style Selector="Button.renderBtn">
+      <Setter Property="Height" Value="34"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Padding" Value="24,0"/>
+      <Setter Property="CornerRadius" Value="5"/>
+      <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    <Style Selector="Button.renderBtn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
+    </Style>
+    <Style Selector="Button.renderBtn:disabled">
+      <Setter Property="Opacity" Value="0.4"/>
+    </Style>
+    <Style Selector="Button.secondaryBtn">
+      <Setter Property="Height" Value="28"/>
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="Padding" Value="12,0"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
+    </Style>
+    <Style Selector="ProgressBar.renderProgress">
+      <Setter Property="Height" Value="6"/>
+      <Setter Property="CornerRadius" Value="3"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+    </Style>
+        <Style Selector="TextBlock.subLabel">
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="Opacity" Value="0.4"/>
+    </Style>
+    <Style Selector="Path.btnIcon">
+      <Setter Property="Width" Value="12"/>
+      <Setter Property="Height" Value="12"/>
+      <Setter Property="Stretch" Value="Uniform"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+  </Window.Styles>
+
+  <Border Margin="{Binding $parent.WindowDecorationMargin}">
+    <DockPanel Margin="16" LastChildFill="True">
+
+      <!-- ═══ 1. Output Mode ═══ -->
+      <Border DockPanel.Dock="Top" Classes="renderCard" Margin="0,0,0,8">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+            <Path Classes="cardIcon" Data="{StaticResource icon-layout}"/>
+            <TextBlock Classes="cardTitle" Text="输出模式"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <RadioButton Classes="renderOption" GroupName="OutMode"
+                         Name="RadioMixdown" IsChecked="True"
+                         Content="立体声混缩（1 个文件）"/>
+            <RadioButton Classes="renderOption" GroupName="OutMode"
+                         Name="RadioPerTrack"
+                         Content="分轨导出（每轨 1 个文件）"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <!-- ═══ 2. Three cards: Range / Format / Quality ═══ -->
+      <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Range -->
+        <Border Grid.Column="0" Classes="renderCard" Margin="0,0,4,0">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+              <Path Classes="cardIcon" Data="{StaticResource icon-play}"/>
+              <TextBlock Classes="cardTitle" Text="渲染范围"/>
+            </StackPanel>
+            <RadioButton Classes="renderOption" GroupName="Range"
+                         Name="RadioFullSong" IsChecked="True" Content="整曲"/>
+            <RadioButton Classes="renderOption" GroupName="Range"
+                         Name="RadioLoop" Content="循环区间"/>
+            <RadioButton Classes="renderOption" GroupName="Range"
+                         Name="RadioCustom" Content="自定义"/>
+            <TextBox Name="CustomRangeBox" FontSize="11" Height="22"
+                     Watermark="0:00 ~ 3:45" Margin="0,4,0,0" IsVisible="False"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Format -->
+        <Border Grid.Column="1" Classes="renderCard" Margin="4,0">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+              <Path Classes="cardIcon" Data="{StaticResource icon-save}"/>
+              <TextBlock Classes="cardTitle" Text="输出格式"/>
+            </StackPanel>
+            <TextBlock Classes="subLabel" Text="格式"/>
+            <ComboBox Classes="renderCombo" Name="FormatCombo" SelectedIndex="0">
+              <ComboBoxItem Content="WAV 16-bit" Tag="Wav16"/>
+              <ComboBoxItem Content="WAV 24-bit" Tag="Wav24"/>
+              <ComboBoxItem Content="WAV 32-bit float" Tag="Wav32"/>
+            </ComboBox>
+            <TextBlock Classes="subLabel" Text="采样率"/>
+            <ComboBox Classes="renderCombo" Name="SampleRateCombo" SelectedIndex="0">
+              <ComboBoxItem Content="44100 Hz" Tag="44100"/>
+              <ComboBoxItem Content="48000 Hz" Tag="48000"/>
+              <ComboBoxItem Content="96000 Hz" Tag="96000"/>
+            </ComboBox>
+          </StackPanel>
+        </Border>
+
+        <!-- Quality -->
+        <Border Grid.Column="2" Classes="renderCard" Margin="4,0,0,0">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+              <Path Classes="cardIcon" Data="{StaticResource icon-sliders}"/>
+              <TextBlock Classes="cardTitle" Text="品质"/>
+            </StackPanel>
+            <RadioButton Classes="renderOption" GroupName="Quality"
+                         Name="RadioStandard" IsChecked="True" Content="标准"/>
+            <RadioButton Classes="renderOption" GroupName="Quality"
+                         Name="RadioHigh" Content="最高"/>
+            <TextBlock Classes="subLabel" Text="WAV 位深" Margin="0,8,0,0"/>
+            <ComboBox Classes="renderCombo" Name="BitDepthCombo" SelectedIndex="0">
+              <ComboBoxItem Content="16-bit" Tag="16"/>
+              <ComboBoxItem Content="24-bit" Tag="24"/>
+              <ComboBoxItem Content="32-bit float" Tag="32"/>
+            </ComboBox>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- ═══ 3. Tracks + Effects ═══ -->
+      <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Track selection -->
+        <Border Grid.Column="0" Classes="renderCard" Margin="0,0,4,0">
+          <DockPanel LastChildFill="True">
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
+              <Path Classes="cardIcon" Data="{StaticResource icon-music}"/>
+              <TextBlock Classes="cardTitle" Text="轨道选择"/>
+            </StackPanel>
+            <ScrollViewer MaxHeight="120" VerticalScrollBarVisibility="Auto">
+              <StackPanel Name="TrackCheckPanel"/>
+            </ScrollViewer>
+          </DockPanel>
+        </Border>
+
+        <!-- Effects -->
+        <Border Grid.Column="1" Classes="renderCard" Margin="4,0,0,0">
+          <StackPanel Spacing="4">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+              <Path Classes="cardIcon" Data="{StaticResource icon-equalizer}"/>
+              <TextBlock Classes="cardTitle" Text="效果选项"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+              <CheckBox Name="ChkVst" IsChecked="True" VerticalAlignment="Center"/>
+              <TextBlock Text="包含 VST 效果器" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+              <CheckBox Name="ChkBuiltinFx" IsChecked="True" VerticalAlignment="Center"/>
+              <TextBlock Text="包含内置 EQ / 压限 / 混响" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+              <CheckBox Name="ChkVolume" IsChecked="True" VerticalAlignment="Center"/>
+              <TextBlock Text="应用轨道音量 / 声像" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- ═══ 4. Output path ═══ -->
+      <Border DockPanel.Dock="Top" Classes="renderCard" Margin="0,0,0,10">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+            <Path Classes="cardIcon" Data="{StaticResource icon-folder-open}"/>
+            <TextBlock Classes="cardTitle" Text="输出路径"/>
+          </StackPanel>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBox Grid.Column="0" Name="OutputPathBox" FontSize="11"
+                     Height="24" Margin="0,0,8,0" VerticalAlignment="Center"
+                     Text="选择文件保存位置..."/>
+            <Button Grid.Column="1" Classes="secondaryBtn" Content="浏览..."
+                    Click="OnBrowsePath"/>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <!-- ═══ 5. Bottom: progress + buttons ═══ -->
+      <Border DockPanel.Dock="Bottom" Padding="0" Background="Transparent">
+        <StackPanel Spacing="6">
+          <ProgressBar Classes="renderProgress" Name="ProgressBarControl"
+                       Value="0" Minimum="0" Maximum="100"/>
+          <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+              <TextBlock Name="ProgressLabel" FontSize="11" Opacity="0.7" Text="准备就绪"/>
+              <TextBlock Name="ProgressSubLabel" FontSize="10" Opacity="0.4" IsVisible="False"/>
+            </StackPanel>
+            <Border Grid.Column="1"/>
+            <!-- 打开文件夹 -->
+            <Button Grid.Column="2" Classes="secondaryBtn"
+                    Click="OnOpenFolder" Margin="0,0,8,0">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <Path Classes="btnIcon"
+                      Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}" StrokeThickness="1.5"
+                      Data="{StaticResource icon-folder-open}"/>
+                <TextBlock Text="打开文件夹" FontSize="11" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <!-- 开始渲染 -->
+            <Button Grid.Column="3" Classes="renderBtn"
+                    Name="StartBtn" Click="OnStartRender">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Path Classes="btnIcon" Stroke="White" StrokeThickness="2.5"
+                      Data="{StaticResource icon-play}"/>
+                <TextBlock Text="开始渲染" FontSize="13" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+    </DockPanel>
+  </Border>
+</Window>

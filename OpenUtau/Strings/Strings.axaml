@@ -285,6 +285,7 @@ Do you want to continue by splitting at the nearest position after current playh
   <system:String x:Key="menu.file">File</system:String>
   <system:String x:Key="menu.file.exit">Exit</system:String>
   <system:String x:Key="menu.file.exportaudio">Export Audio</system:String>
+  <system:String x:Key="menu.file.render">Render...</system:String>
   <system:String x:Key="menu.file.exportds">Export DiffSinger Scripts To</system:String>
   <system:String x:Key="menu.file.exportmidi">Export Midi File</system:String>
   <system:String x:Key="menu.file.exportmixdown">Mixdown To Wav File</system:String>

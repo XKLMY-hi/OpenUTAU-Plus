@@ -387,6 +387,11 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        void OnMenuRender(object sender, RoutedEventArgs args) {
+            var renderWindow = new RenderWindow();
+            renderWindow.ShowDialog(this);
+        }
+
         async void OnMenuExportMixdown(object sender, RoutedEventArgs args) {
             var project = DocManager.Inst.Project;
             var file = await FilePicker.SaveFileAboutProject(
