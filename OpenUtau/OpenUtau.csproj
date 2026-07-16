@@ -10,7 +10,7 @@
     <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>0.1.568.121</Version>
+    <Version>0.1.568.2</Version>
     <ApplicationIcon>Assets\open-utau.ico</ApplicationIcon>
     <PublishReadyToRun>true</PublishReadyToRun>
     <DebugType>embedded</DebugType>
@@ -20,8 +20,8 @@
     <CFBundleName>OpenUTAU Plus</CFBundleName>
     <CFBundleDisplayName>OpenUTAU Plus</CFBundleDisplayName>
     <CFBundleIdentifier>com.stakira.openutau</CFBundleIdentifier>
-    <CFBundleVersion>0.1.568.1</CFBundleVersion>
-    <CFBundleShortVersionString>0.1.568-plus.1</CFBundleShortVersionString>
+    <CFBundleVersion>0.1.568.2</CFBundleVersion>
+    <CFBundleShortVersionString>0.1.568-plus.2</CFBundleShortVersionString>
     <CFBundlePackageType>APPL</CFBundlePackageType>
     <CFBundleSignature>????</CFBundleSignature>
     <CFBundleExecutable>OpenUtau</CFBundleExecutable>
