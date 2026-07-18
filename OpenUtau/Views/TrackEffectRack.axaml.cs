@@ -403,8 +403,8 @@ namespace OpenUtau.App.Views {
                 return;
             }
 
-            var picker = new Window { Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner, Background = Background };
+            var picker = new WindowEx(false) { Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var layout = new StackPanel { Margin = new(12) };
 
             // Info
@@ -458,7 +458,7 @@ namespace OpenUtau.App.Views {
         }
 
         private void ShowMessage(string text) {
-            var w = new Window { Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
+            var w = new WindowEx(false) { Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var sp = new StackPanel { Margin = new(14) };
             sp.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 12 });
