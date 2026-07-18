@@ -268,6 +268,10 @@ errors.txt
             // OpenUTAU Plus: cached VST registry (avoids re-scan on restart)
             public List<VstCachedEntry> VstCachedPlugins = new();
 
+            // ── UI: Window blur ─────────────────────────
+            public bool EnableBlur = true;
+            public string BlurMode = "AcrylicBlur";   // AcrylicBlur | Mica | None
+
             // Legacy
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int? Theme;

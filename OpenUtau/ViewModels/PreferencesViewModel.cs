@@ -190,6 +190,10 @@ namespace OpenUtau.App.ViewModels {
             RememberMid = Preferences.Default.RememberMid;
             RememberUst = Preferences.Default.RememberUst;
             RememberVsqx = Preferences.Default.RememberVsqx;
+            EnableBlur = Preferences.Default.EnableBlur;
+            BlurModeIndex = Preferences.Default.BlurMode switch {
+                "Mica" => 1, "None" => 2, _ => 0
+            };
             ClearCacheOnQuit = Preferences.Default.ClearCacheOnQuit;
 
             MessageBus.Current.Listen<ThemeEditorStateChangedEvent>()
@@ -398,6 +402,13 @@ namespace OpenUtau.App.ViewModels {
                     Preferences.Default.SkipRenderingMutedTracks = skipRenderingMutedTracks;
                     Preferences.Save();
                 });
+            this.WhenAnyValue(vm => vm.EnableBlur)
+                .Subscribe(v => { Preferences.Default.EnableBlur = v; Preferences.Save(); });
+            this.WhenAnyValue(vm => vm.BlurModeIndex)
+                .Subscribe(v => {
+                    Preferences.Default.BlurMode = v switch { 1 => "Mica", 2 => "None", _ => "AcrylicBlur" };
+                    Preferences.Save();
+                });
         }
 
         public void TestAudioOutputDevice() {
@@ -453,6 +464,11 @@ namespace OpenUtau.App.ViewModels {
         public void ToggleOnnxGpuDisplay(bool show) {
             ShowOnnxGpu = show;
         }
+
+        // ── OpenUTAU Plus: Window Blur ──────────────────────
+
+        [Reactive] public bool EnableBlur { get; set; }
+        [Reactive] public int BlurModeIndex { get; set; }
 
         // ── OpenUTAU Plus: VST Settings ─────────────────────
 

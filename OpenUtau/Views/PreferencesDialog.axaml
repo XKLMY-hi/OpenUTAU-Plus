@@ -420,7 +420,22 @@
         <StackPanel>
           <TextBlock Text="OpenUTAU Plus" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
 
-          <TextBlock Text="{DynamicResource prefs.vst.title}" FontWeight="SemiBold" Margin="0,10,0,4"/>
+          <!-- Window Blur Effect -->
+          <TextBlock Text="{DynamicResource prefs.plus.blur}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+          <Grid Margin="0,0,0,4">
+            <TextBlock Text="{DynamicResource prefs.plus.blur.enable}" VerticalAlignment="Center"/>
+            <ToggleSwitch IsChecked="{Binding EnableBlur}" HorizontalAlignment="Right"/>
+          </Grid>
+          <TextBlock Text="{DynamicResource prefs.plus.blur.mode}" Margin="0,4,0,0"/>
+          <ComboBox SelectedIndex="{Binding BlurModeIndex}" IsEnabled="{Binding EnableBlur}">
+            <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.acrylic}"/>
+            <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.mica}"/>
+            <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.none}"/>
+          </ComboBox>
+          <TextBlock Text="{DynamicResource prefs.plus.blur.restart}"
+                     FontSize="10" Opacity="0.45" Margin="0,4,0,0"/>
+
+          <TextBlock Text="{DynamicResource prefs.vst.title}" FontWeight="SemiBold" Margin="0,16,0,4"/>
           <TextBlock Text="{DynamicResource prefs.vst.scanpaths}"
                      FontSize="11" Opacity="0.7" Margin="0,0,0,6"/>
           <ListBox Name="VstPathsList" MinHeight="60" MaxHeight="100"

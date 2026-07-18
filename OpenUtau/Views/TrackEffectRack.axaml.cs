@@ -403,10 +403,8 @@ namespace OpenUtau.App.Views {
                 return;
             }
 
-            var picker = new WindowEx(true) {
-                Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            };
+            var picker = new WindowEx(true) { Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var layout = new StackPanel { Margin = new(12) };
 
             // Info
@@ -464,13 +462,8 @@ namespace OpenUtau.App.Views {
         }
 
         private void ShowMessage(string text) {
-            var w = new WindowEx(false) {
-                Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ExtendClientAreaToDecorationsHint = true,
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur },
-                Background = Avalonia.Media.Brushes.Transparent,
-            };
+            var w = new WindowEx(false) { Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var sp = new StackPanel { Margin = new(14) };
             sp.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 12 });
             var ok = new Button { Content = ThemeManager.GetString("effects.ok"), Width = 60,
