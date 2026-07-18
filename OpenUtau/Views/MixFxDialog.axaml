@@ -8,8 +8,7 @@
         Icon="/Assets/open-utau.ico"
         Title="{DynamicResource mixfx.caption}"
         Width="640" Height="540"
-        WindowStartupLocation="CenterOwner"
-        CanResize="False">
+        WindowStartupLocation="CenterOwner">
   <Window.Styles>
     <Style Selector="TextBlock.lbl">
       <Setter Property="VerticalAlignment" Value="Center"/>
