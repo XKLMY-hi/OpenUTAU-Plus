@@ -36,9 +36,7 @@
       <Setter Property="CornerRadius" Value="3"/>
     </Style>
   </Window.Styles>
-  <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
-    <Border Margin="{Binding $parent.WindowDecorationMargin}">
+  <Border Margin="{Binding $parent.WindowDecorationMargin}">
     <DockPanel Margin="14" LastChildFill="True">
 
       <!-- TOP: title + enable + recommended -->
@@ -170,5 +168,4 @@
       </Grid>
     </DockPanel>
   </Border>
-  </DockPanel>
 </controls:WindowEx>

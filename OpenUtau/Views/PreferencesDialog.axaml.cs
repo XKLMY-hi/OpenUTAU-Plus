@@ -5,16 +5,17 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Colors;
 using OpenUtau.Core;
 using OpenUtau.Core.Vst;
 
 namespace OpenUtau.App.Views {
-    public partial class PreferencesDialog : Window {
+    public partial class PreferencesDialog : WindowEx {
         private PreferencesViewModel? viewModel => this.DataContext as PreferencesViewModel;   
 
-        public PreferencesDialog() {
+        public PreferencesDialog() : base(false) {
             InitializeComponent();
         }
 

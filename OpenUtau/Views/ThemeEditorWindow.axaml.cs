@@ -3,11 +3,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
 using ReactiveUI;
 
 namespace OpenUtau.App.Views {
-    public partial class ThemeEditorWindow : Window {
+    public partial class ThemeEditorWindow : WindowEx {
 
         private static ThemeEditorWindow? _instance;
 

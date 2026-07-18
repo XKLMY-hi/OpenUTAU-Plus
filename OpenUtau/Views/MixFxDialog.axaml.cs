@@ -14,7 +14,7 @@ namespace OpenUtau.App.Views {
 
         public MixFxDialog() : this(null) { }
 
-        public MixFxDialog(UTrack? track) {
+        public MixFxDialog(UTrack? track) : base(false) {
             InitializeComponent();
             this.track = track;
             DataContext = viewModel = new MixFxViewModel(track);
