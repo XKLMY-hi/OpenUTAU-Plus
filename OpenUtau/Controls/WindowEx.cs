@@ -32,35 +32,26 @@ public class WindowEx : Window
 
         if (!prefs.EnableBlur)
         {
-            // Blur disabled: opaque background, no transparency hint
+            // Blur disabled: override to opaque, use theme background
             TransparencyLevelHint = new[] { WindowTransparencyLevel.None };
-            ExtendClientAreaToDecorationsHint = true; // keep custom chrome area
-            Background = TryGetBrush("SystemControlBackgroundAltHighBrush")
-                ?? TryGetBrush("AcrylicTintBrush")
-                ?? Brushes.Transparent;
+            Background = TryGetBrush("SystemControlBackgroundAltHighBrush");
             return;
         }
 
-        // Blur enabled: apply selected mode
+        // Blur enabled: apply selected mode; Background stays
+        // as DynamicResource (set by global style in Styles.axaml)
         var levels = prefs.BlurMode switch
         {
-            "Mica"   => new[] { WindowTransparencyLevel.Mica, WindowTransparencyLevel.AcrylicBlur },
-            "None"   => new[] { WindowTransparencyLevel.None },
-            _        => new[] { WindowTransparencyLevel.AcrylicBlur },
+            "Mica" => new[] { WindowTransparencyLevel.Mica, WindowTransparencyLevel.AcrylicBlur },
+            "None" => new[] { WindowTransparencyLevel.None },
+            _      => new[] { WindowTransparencyLevel.AcrylicBlur },
         };
         TransparencyLevelHint = levels;
-        ExtendClientAreaToDecorationsHint = true;
-
-        // Use acrylic tint brush (theme-aware); fall back to transparent
-        Background = TryGetBrush("AcrylicTintBrush") ?? Brushes.Transparent;
     }
 
     private static IBrush? TryGetBrush(string key)
     {
-        try
-        {
-            return Application.Current?.Resources[key] as IBrush;
-        }
+        try { return Application.Current?.Resources[key] as IBrush; }
         catch { return null; }
     }
 }
