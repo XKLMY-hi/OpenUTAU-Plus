@@ -11,12 +11,17 @@ public partial class WindowTitleBar : UserControl
     public WindowTitleBar()
     {
         InitializeComponent();
+    }
 
-        AttachedToVisualTree += (_, _) =>
+    private Window? HostWindow => VisualRoot as Window;
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+
+        if (VisualRoot is Window window)
         {
-            if (VisualRoot is not Window window) return;
-
-            // Sync initial title (icon is set via XAML data binding)
+            // Sync title immediately
             TitleText.Text = window.Title ?? string.Empty;
 
             // Track window state → maximize/restore icon
@@ -26,10 +31,8 @@ public partial class WindowTitleBar : UserControl
             // Track title changes
             window.GetObservable(Window.TitleProperty)
                   .Subscribe(title => TitleText.Text = title ?? string.Empty);
-        };
+        }
     }
-
-    private Window? HostWindow => VisualRoot as Window;
 
     // ── Icon toggle ───────────────────────────────────────
 
@@ -38,15 +41,9 @@ public partial class WindowTitleBar : UserControl
         if (MaxRestoreIcon is null) return;
 
         if (state == WindowState.Maximized)
-        {
-            // restore icon — two overlapping squares
             MaxRestoreIcon.Data = Geometry.Parse("M4 8h4V4h12v12h-4v4H4V8z");
-        }
         else
-        {
-            // maximize icon — single outlined square
             MaxRestoreIcon.Data = Geometry.Parse("M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2");
-        }
     }
 
     // ── Drag ──────────────────────────────────────────────

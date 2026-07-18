@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="OpenUtau.App.Controls.WindowTitleBar">
 
-  <!-- Custom window title bar: drag area, icon, title, min / max / close -->
+  <!-- Custom window title bar: icon + title + min / max / close -->
   <Grid Height="32"
         Background="Transparent"
         PointerPressed="OnTitleBarPointerPressed"
@@ -13,23 +13,18 @@
       <ColumnDefinition Width="Auto"/>
     </Grid.ColumnDefinitions>
 
-    <!-- Left: window icon -->
-    <Image Grid.Column="0"
-           Width="16" Height="16"
-           Margin="12,0,8,0"
-           VerticalAlignment="Center"
-           IsHitTestVisible="False"
-           Name="IconImage"/>
+    <!-- Left: window icon + title -->
+    <StackPanel Grid.Column="0" Orientation="Horizontal"
+                VerticalAlignment="Center" Margin="12,0,0,0" IsHitTestVisible="False">
+      <Image Source="/Assets/open-utau.ico"
+             Width="16" Height="16" Margin="0,0,8,0"/>
+      <TextBlock Name="TitleText"
+                 FontSize="12"
+                 VerticalAlignment="Center"
+                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+    </StackPanel>
 
-    <!-- Center: title text (drag target) -->
-    <TextBlock Grid.Column="1"
-               FontSize="12"
-               VerticalAlignment="Center"
-               IsHitTestVisible="False"
-               Name="TitleText"
-               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-
-    <!-- Right: window control buttons -->
+    <!-- Right: window controls -->
     <StackPanel Grid.Column="2" Orientation="Horizontal"
                 VerticalAlignment="Stretch">
       <!-- Minimize -->

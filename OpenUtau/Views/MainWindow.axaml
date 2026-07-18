@@ -16,8 +16,10 @@
       <Setter Property="Focusable" Value="False"/>
     </Style>
   </Window.Styles>
-  <Grid>
-    <Grid Name="MainGrid" Margin="{Binding $parent[1].WindowDecorationMargin}">
+  <DockPanel LastChildFill="True">
+    <controls:WindowTitleBar DockPanel.Dock="Top"/>
+    <Grid>
+      <Grid Name="MainGrid" Margin="{Binding $parent[1].WindowDecorationMargin}">
       <Menu Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24"
                 Opened="OnMainMenuOpened" Closed="OnMainMenuClosed" PointerExited="OnMainMenuPointerLeave"
                 ZIndex="1">
@@ -523,4 +525,5 @@
       </Carousel>
     </Grid>
   </Grid>
+  </DockPanel>
 </controls:WindowEx>

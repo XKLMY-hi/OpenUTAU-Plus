@@ -15,7 +15,7 @@ namespace OpenUtau.App.Views {
     public partial class PreferencesDialog : WindowEx {
         private PreferencesViewModel? viewModel => this.DataContext as PreferencesViewModel;   
 
-        public PreferencesDialog() : base(false) {
+        public PreferencesDialog() {
             InitializeComponent();
         }
 

@@ -56,7 +56,7 @@ namespace OpenUtau.App.Views {
         private readonly ReactiveCommand<UPart, Unit> PartMergeCommand;
         private readonly ReactiveCommand<UPart, Unit> PartSplitCommand;
 
-        public MainWindow() : base(false) {
+        public MainWindow() {
             Log.Information("Creating main window.");
             InitializeComponent();
             Log.Information("Initialized main window component.");
