@@ -30,7 +30,7 @@
     <Setter Property="FontFamily" Value="{DynamicResource ui.fontfamily}"/>
     <Setter Property="Icon" Value="/Assets/open-utau.ico"/>
     <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="Background" Value="{DynamicResource AcrylicTintBrush}"/>
     <Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
   </Style>
   <Style Selector="Menu">

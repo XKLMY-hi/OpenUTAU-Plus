@@ -8,6 +8,8 @@
   <Application.Resources>
     <ResourceDictionary>
       <CornerRadius x:Key="OverlayCornerRadius">6</CornerRadius>
+      <!-- Default acrylic tint (overridden by theme files) -->
+      <SolidColorBrush x:Key="AcrylicTintBrush" Color="#CC303030"/>
       <ResourceInclude x:Key="strings-en-US" Source="/Strings/Strings.axaml"/>
       <ResourceInclude x:Key="strings-de-DE" Source="/Strings/Strings.de-DE.axaml"/>
       <ResourceInclude x:Key="strings-es-ES" Source="/Strings/Strings.es-ES.axaml"/>

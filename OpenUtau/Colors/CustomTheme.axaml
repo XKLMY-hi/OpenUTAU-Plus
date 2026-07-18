@@ -3,6 +3,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <system:Boolean x:Key="IsDarkMode">false</system:Boolean>
 
+  <!-- Acrylic material background (default: light tint) -->
+  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#CCF0F0F0"/>
+
   <Color x:Key="BackgroundColor">#FFFFFF</Color>
   <Color x:Key="BackgroundColorPointerOver">#F0F0F0</Color>
   <Color x:Key="BackgroundColorPressed">#E0E0E0</Color>
