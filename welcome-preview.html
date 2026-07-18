@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenUTAU Plus 欢迎页 - 预览</title>
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --card: #2a2a2a;
+    --text: #e0e0e0;
+    --text2: #999;
+    --border: #3a3a3a;
+    --accent: #d13438;
+    --accent2: #e2787b;
+    --radius: 8px;
+  }
+  body.light {
+    --bg: #f5f5f5;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --text2: #888;
+    --border: #e0e0e0;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  /* ── chrome bar ── */
+  .chrome {
+    height: 32px; background: var(--card); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 12px;
+  }
+  .chrome-title { font-size: 12px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .chrome-btns { display: flex; }
+  .chrome-btns button { width: 46px; height: 32px; border: none; background: none; color: var(--text); font-size: 12px; cursor: pointer; }
+  .chrome-btns .close:hover { background: #e81123; color: #fff; }
+
+  /* ── content ── */
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+  .main { flex: 1; overflow-y: auto; display: flex; justify-content: center; padding: 40px 20px; }
+
+  /* ── toolbar ── */
+  .toolbar {
+    position: fixed; top: 40px; right: 12px; z-index: 999;
+    display: flex; gap: 6px; flex-direction: column;
+  }
+  .toolbar button, .toolbar select {
+    padding: 6px 10px; font-size: 11px; border: 1px solid var(--border);
+    background: var(--card); color: var(--text); border-radius: 4px; cursor: pointer;
+  }
+  .toolbar button:hover { border-color: var(--accent); }
+</style>
+</head>
+<body class="light">
+
+<div class="chrome">
+  <span class="chrome-title">
+    <svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="#d13438"/></svg>
+    OpenUTAU Plus
+  </span>
+  <div class="chrome-btns">
+    <button>─</button><button>□</button><button class="close">✕</button>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button onclick="document.body.classList.toggle('light')">🌓 切换深浅</button>
+  <select onchange="switchTheme(this.value)">
+    <option value="1">设计 1 — 居中卡片</option>
+    <option value="2">设计 2 — 磁贴风格</option>
+    <option value="3">设计 3 — Hero Banner</option>
+    <option value="4">设计 4 — 极简带图</option>
+    <option value="5">设计 5 — 仪表盘</option>
+    <option value="6">设计 6 — 大磁贴</option>
+  </select>
+</div>
+
+<div class="main" id="main"></div>
+
+<script>
+// ── Shared data ──
+const recent = [
+  { name:'My Song.ustx', dir:'D:\\Projects\\Music', fmt:'USTX', time:'今天 14:22' },
+  { name:'Cover.ustxp', dir:'D:\\Projects\\Music', fmt:'USTXP', time:'昨天 09:15' },
+  { name:'Original.ustx', dir:'C:\\Users\\Me\\Music', fmt:'USTX', time:'3天前' },
+  { name:'Test.ustx', dir:'D:\\OpenUTAU\\Projects', fmt:'USTX', time:'1周前' },
+];
+const links = [
+  { icon:'⚙', text:'偏好设置' },
+  { icon:'📦', text:'包管理器' },
+  { icon:'🐙', text:'GitHub Releases' },
+  { icon:'📖', text:'OpenUTAU Wiki' },
+  { icon:'🎵', text:'DiffSinger' },
+  { icon:'🌐', text:'Kasane Teto' },
+];
+const templates = ['默认模板', '空项目', 'VST 测试项目'];
+
+const STYLE = `
+  .logo { text-align:center; margin-bottom:24px; }
+  .logo img { height:28px; margin-bottom:8px; }
+  .ver { font-size:13px; opacity:.4; }
+  h2 { font-size:13px; font-weight:600; opacity:.5; margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; }
+  .btn { border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer; border-radius:var(--radius); transition:.15s; }
+  .btn:hover { border-color:var(--accent); background:var(--accent); color:#fff; }
+  .btn.accent { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .btn.accent:hover { background:var(--accent2); }
+  .badge { font-size:9px; font-weight:600; color:var(--accent); background:#d1343820; padding:2px 6px; border-radius:3px; }
+  .muted { font-size:11px; opacity:.4; }
+`;
+
+// ── 设计 1: 居中卡片 ──
+function design1() {
+  return `<style>${STYLE}
+    .d1 { max-width:480px; width:100%; }
+    .d1 .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:12px; }
+    .d1 .actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+    .d1 .actions .btn { padding:20px 16px; font-size:15px; font-weight:600; display:flex; align-items:center; gap:10px; }
+    .d1 .recent-item { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+    .d1 .recent-item:hover { color:var(--accent); }
+    .d1 .recent-item:last-child { border-bottom:none; }
+    .d1 .recent-left { display:flex; align-items:center; gap:10px; }
+    .d1 .links { display:flex; flex-wrap:wrap; gap:4px 16px; padding:0; }
+    .d1 .links a { color:var(--text2); text-decoration:none; font-size:12px; }
+    .d1 .links a:hover { color:var(--accent); }
+    .d1 .tpl-item { padding:8px 0; font-size:13px; cursor:pointer; }
+    .d1 .tpl-item:hover { color:var(--accent); }
+  </style>
+  <div class="d1">
+    <div class="logo">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='28'%3E%3Ctext x='0' y='22' font-family='system-ui' font-size='22' font-weight='700' fill='%23d13438'%3EOpenUTAU%3Ctext font-weight='400' fill='%23e0e0e0'%3E Plus%3C/text%3E%3C/text%3E%3C/svg%3E" onerror="this.style.display='none'">
+      <div class="ver">v0.1.568-plus.0.0.2-beta</div>
+    </div>
+    <div class="actions">
+      <button class="btn accent" onclick="alert('新建项目')">✨ 新建项目<br><span style="font-weight:400;font-size:11px;opacity:.7">创建空白歌声合成项目</span></button>
+      <button class="btn" onclick="alert('打开项目')">📂 打开项目<br><span style="font-weight:400;font-size:11px;opacity:.7">浏览本地文件</span></button>
+    </div>
+    <div class="card">
+      <h2>最近项目</h2>
+      ${recent.map(r=>`<div class="recent-item"><div class="recent-left"><span>📄</span><span>${r.name}</span></div><div style="display:flex;align-items:center;gap:8px"><span class="badge">${r.fmt}</span><span class="muted">${r.time}</span></div></div>`).join('')}
+    </div>
+    <div class="card" style="padding:14px 20px">
+      <div class="links">${links.map(l=>`<a href="#">${l.icon} ${l.text}</a>`).join('<span style="color:var(--border);margin:0 4px">·</span>')}</div>
+    </div>
+    <div class="card">
+      <h2>模板</h2>
+      ${templates.map(t=>`<div class="tpl-item">🔰 ${t}</div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── 设计 2: 磁贴风格 ──
+function design2() {
+  return `<style>${STYLE}
+    .d2 { max-width:620px; width:100%; }
+    .d2 .tiles { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+    .d2 .tile { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:.15s; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .d2 .tile:hover { border-color:var(--accent); }
+    .d2 .tile.big { width:180px; height:110px; font-size:15px; font-weight:600; gap:8px; }
+    .d2 .tile.big.accent { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .d2 .tile.big.accent:hover { background:var(--accent2); }
+    .d2 .tile.mid { width:140px; height:70px; font-size:12px; gap:4px; }
+    .d2 .tile.mid .name { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px; }
+    .d2 .tile.small { width:100px; height:46px; font-size:11px; gap:2px; }
+    .d2 .section { margin-bottom:16px; }
+    .d2 h2 { text-align:center; }
+  </style>
+  <div class="d2">
+    <div class="logo">
+      <div style="font-size:22px;font-weight:700;color:var(--accent)">OpenUTAU <span style="font-weight:400;color:var(--text)">Plus</span></div>
+      <div class="ver">v0.1.568</div>
+    </div>
+    <div class="section">
+      <div class="tiles">
+        <div class="tile big accent">✨<br>新建项目</div>
+        <div class="tile big">📂<br>打开项目</div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>最近项目</h2>
+      <div class="tiles">
+        ${recent.map(r=>`<div class="tile mid"><div class="name">📄 ${r.name}</div><div style="display:flex;gap:6px"><span class="badge">${r.fmt}</span><span class="muted">${r.time}</span></div></div>`).join('')}
+      </div>
+    </div>
+    <div class="section">
+      <h2>快捷链接</h2>
+      <div class="tiles">
+        ${links.map(l=>`<div class="tile small">${l.icon} ${l.text}</div>`).join('')}
+      </div>
+    </div>
+    <div class="section">
+      <h2>模板</h2>
+      <div class="tiles">
+        ${templates.map(t=>`<div class="tile mid">🔰 ${t}</div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 设计 3: Hero Banner ──
+function design3() {
+  return `<style>${STYLE}
+    .d3 { width:100%; max-width:800px; }
+    .d3 .hero { background:linear-gradient(135deg, var(--accent), #8b1a1a); color:#fff; border-radius:var(--radius); padding:40px 30px; text-align:center; margin-bottom:20px; }
+    .d3 .hero h1 { font-size:28px; margin-bottom:4px; }
+    .d3 .hero p { opacity:.7; font-size:14px; margin-bottom:20px; }
+    .d3 .hero .actions { display:flex; gap:10px; justify-content:center; }
+    .d3 .hero .btn { padding:12px 28px; font-size:14px; font-weight:600; background:#fff; color:#1a1a1a; border:none; }
+    .d3 .hero .btn.ghost { background:#fff3; color:#fff; }
+    .d3 .row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .d3 .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
+    .d3 .recent-item { padding:8px 0; border-bottom:1px solid var(--border); cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+    .d3 .recent-item:hover { color:var(--accent); }
+  </style>
+  <div class="d3">
+    <div class="hero">
+      <h1>OpenUTAU Plus</h1>
+      <p>基于 OpenUTAU 的增强版歌声合成工作站 · 带 DAW 混音台与 VST 效果器</p>
+      <div class="actions">
+        <button class="btn">✨ 新建项目</button>
+        <button class="btn ghost">📂 打开项目</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card">
+        <h2>最近项目</h2>
+        ${recent.map(r=>`<div class="recent-item"><span>${r.name}</span><span class="muted">${r.time}</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <h2>快捷链接</h2>
+        ${links.map(l=>`<div class="recent-item"><span>${l.icon} ${l.text}</span><span>→</span></div>`).join('')}
+        <h2 style="margin-top:12px">模板</h2>
+        ${templates.map(t=>`<div class="recent-item"><span>🔰 ${t}</span><span>→</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 设计 4: 极简带图 ──
+function design4() {
+  return `<style>${STYLE}
+    .d4 { max-width:440px; width:100%; text-align:center; }
+    .d4 .logo-area { margin-bottom:32px; }
+    .d4 .logo-area .big-icon { width:64px; height:64px; border-radius:16px; background:var(--accent); margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-size:32px; }
+    .d4 .logo-area h1 { font-size:20px; margin-bottom:4px; }
+    .d4 .btns { display:flex; gap:10px; margin-bottom:28px; }
+    .d4 .btns .btn { flex:1; padding:14px; font-size:14px; font-weight:600; }
+    .d4 .recent { text-align:left; margin-bottom:20px; }
+    .d4 .recent-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+    .d4 .recent-item:hover { color:var(--accent); }
+    .d4 .recent-item .info { flex:1; }
+    .d4 .recent-item .name { font-size:13px; }
+    .d4 .recent-item .path { font-size:10px; opacity:.4; }
+    .d4 .links { display:flex; flex-wrap:wrap; justify-content:center; gap:4px 14px; }
+    .d4 .links a { color:var(--text2); text-decoration:none; font-size:12px; }
+    .d4 .links a:hover { color:var(--accent); }
+  </style>
+  <div class="d4">
+    <div class="logo-area">
+      <div class="big-icon">🎤</div>
+      <h1>OpenUTAU Plus</h1>
+      <div class="ver">v0.1.568 · 歌声合成工作站</div>
+    </div>
+    <div class="btns">
+      <button class="btn accent">✨ 新建</button>
+      <button class="btn">📂 打开</button>
+    </div>
+    <div class="recent">
+      <h2>最近项目</h2>
+      ${recent.map(r=>`<div class="recent-item"><span>📄</span><div class="info"><div class="name">${r.name}</div><div class="path">${r.dir}</div></div><span class="muted">${r.time}</span></div>`).join('')}
+    </div>
+    <div class="links">${links.map(l=>`<a href="#">${l.text}</a>`).join(' · ')}</div>
+    <div style="margin-top:16px">${templates.map(t=>`<a href="#" style="color:var(--text2);font-size:12px">🔰 ${t}</a>`).join(' · ')}</div>
+  </div>`;
+}
+
+// ── 设计 5: 仪表盘 ──
+function design5() {
+  return `<style>${STYLE}
+    .d5 { width:100%; max-width:720px; }
+    .d5 .head { display:flex; align-items:center; gap:16px; margin-bottom:24px; }
+    .d5 .head .icon { width:48px; height:48px; border-radius:12px; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:24px; }
+    .d5 .head h1 { font-size:20px; }
+    .d5 .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+    .d5 .stat { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:14px; text-align:center; }
+    .d5 .stat .num { font-size:24px; font-weight:700; color:var(--accent); }
+    .d5 .stat .label { font-size:10px; opacity:.5; margin-top:2px; }
+    .d5 .grid2 { display:grid; grid-template-columns:2fr 1fr; gap:14px; }
+    .d5 .card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
+    .d5 .item { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+    .d5 .item:hover { color:var(--accent); }
+    .d5 .item:last-child { border-bottom:none; }
+  </style>
+  <div class="d5">
+    <div class="head">
+      <div class="icon">🎤</div>
+      <div><h1>OpenUTAU Plus</h1><div class="ver">歌声合成工作站 · v0.1.568</div></div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">2</div><div class="label">最近项目</div></div>
+      <div class="stat"><div class="num">6</div><div class="label">快捷操作</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">模板</div></div>
+      <div class="stat"><div class="num" style="color:var(--accent2)">✚</div><div class="label">新建/打开</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div style="display:flex;gap:10px;margin-bottom:14px">
+          <button class="btn accent" style="flex:1;padding:12px;font-size:14px">✨ 新建项目</button>
+          <button class="btn" style="flex:1;padding:12px;font-size:14px">📂 打开项目</button>
+        </div>
+        <h2>最近项目</h2>
+        ${recent.map(r=>`<div class="item"><span>${r.name}</span><span class="muted">${r.time}</span></div>`).join('')}
+      </div>
+      <div class="card">
+        <h2>快捷链接</h2>
+        ${links.map(l=>`<div class="item"><span>${l.icon} ${l.text}</span><span>→</span></div>`).join('')}
+        <h2 style="margin-top:12px">模板</h2>
+        ${templates.map(t=>`<div class="item"><span>🔰 ${t}</span><span>→</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 设计 6: 大磁贴 ──
+function design6() {
+  return `<style>${STYLE}
+    .d6 { max-width:780px; width:100%; }
+    .d6 .hero { display:flex; align-items:center; gap:20px; margin-bottom:28px; justify-content:center; }
+    .d6 .hero .big-icon { width:72px; height:72px; border-radius:18px; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; }
+    .d6 .hero h1 { font-size:24px; margin-bottom:2px; }
+    .d6 .tiles { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+    .d6 .tile { background:var(--card); border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:.15s; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+    .d6 .tile:hover { border-color:var(--accent); transform:translateY(-1px); }
+    .d6 .tile.xl { width:240px; height:140px; font-size:18px; font-weight:600; gap:10px; }
+    .d6 .tile.xl.accent { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .d6 .tile.xl.accent:hover { background:var(--accent2); }
+    .d6 .tile.wide { width:180px; height:64px; font-size:13px; gap:4px; flex-direction:row; }
+    .d6 .tile.wide .tname { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px; }
+    .d6 .tile.sq { width:110px; height:60px; font-size:11px; gap:4px; }
+    .d6 .section { margin-bottom:8px; }
+  </style>
+  <div class="d6">
+    <div class="hero">
+      <div class="big-icon">🎤</div>
+      <div>
+        <h1>OpenUTAU Plus</h1>
+        <div class="ver">歌声合成工作站 · v0.1.568-plus.0.0.2-beta</div>
+      </div>
+    </div>
+    <div class="tiles">
+      <div class="tile xl accent">✨<div style="font-size:12px;font-weight:400;opacity:.7">创建新项目</div></div>
+      <div class="tile xl">📂<div style="font-size:12px;font-weight:400;opacity:.7">打开本地项目</div></div>
+      ${recent.slice(0,2).map(r=>`<div class="tile xl"><div style="font-size:24px">📄</div><div>${r.name}</div><div style="display:flex;gap:6px"><span class="badge">${r.fmt}</span><span class="muted">${r.time}</span></div></div>`).join('')}
+    </div>
+    <div class="section"><h2>快捷操作</h2></div>
+    <div class="tiles">
+      ${links.map(l=>`<div class="tile sq">${l.icon}<div>${l.text}</div></div>`).join('')}
+    </div>
+    <div class="section"><h2>更多最近项目 + 模板</h2></div>
+    <div class="tiles">
+      ${recent.slice(2).map(r=>`<div class="tile wide"><span>📄</span><span class="tname">${r.name}</span><span class="muted" style="font-size:9px">${r.time}</span></div>`).join('')}
+      ${templates.map(t=>`<div class="tile wide">🔰 <span class="tname">${t}</span></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ── Switch ──
+const designs = { '1':design1, '2':design2, '3':design3, '4':design4, '5':design5, '6':design6 };
+function switchTheme(id) {
+  document.querySelector('select').value = id;
+  const html = designs[id]();
+  document.getElementById('main').innerHTML = html;
+}
+switchTheme('1');
+</script>
+</body>
+</html>
