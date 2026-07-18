@@ -22,7 +22,7 @@
       <Grid Name="MainGrid" Margin="{Binding $parent[1].WindowDecorationMargin}">
       <Menu Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24"
                 Opened="OnMainMenuOpened" Closed="OnMainMenuClosed" PointerExited="OnMainMenuPointerLeave"
-                ZIndex="1">
+                ZIndex="1" IsVisible="{Binding Page}">
           <MenuItem Header="{DynamicResource menu.file}" IsEnabled="{Binding Page}">
             <MenuItem Header="{DynamicResource menu.file.new}" InputGesture="Ctrl+N" Click="OnMenuNew"/>
             <MenuItem Header="{DynamicResource menu.file.newfromtemplate}" ItemsSource="{Binding OpenTemplatesMenuItems}" Classes="MenuItemWithSubMenu"/>
@@ -213,10 +213,12 @@
                 <!-- Top: logo + nav -->
                 <StackPanel DockPanel.Dock="Top" Margin="0,20,0,0">
                   <StackPanel Margin="18,0,18,16">
-                    <Image Source="/Assets/logotype.png" Height="18"
-                           IsVisible="{Binding !IsDarkMode}" Margin="0,0,0,2"/>
-                    <Image Source="/Assets/logotype-w.png" Height="18"
-                           IsVisible="{Binding IsDarkMode}" Margin="0,0,0,2"/>
+                    <WrapPanel>
+                      <TextBlock Text="OpenUTAU" FontSize="14" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                      <TextBlock Text=" Plus" FontSize="14" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource AccentBrush1}"/>
+                    </WrapPanel>
                     <TextBlock Text="{Binding AppVersion}" FontSize="10" Opacity="0.35"/>
                   </StackPanel>
                   <TextBlock Classes="welcomeSideLabel" Text="{DynamicResource welcome.start}"/>
