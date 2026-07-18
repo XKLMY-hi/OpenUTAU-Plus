@@ -128,6 +128,7 @@
               <Setter Property="FontSize" Value="12"/>
               <Setter Property="Background" Value="Transparent"/>
               <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="CornerRadius" Value="0"/>
               <Setter Property="HorizontalContentAlignment" Value="Left"/>
             </Style>
             <Style Selector="Button.welcomeBotLink:pointerover">
@@ -232,13 +233,19 @@
                   </ListBox>
                 </StackPanel>
                 <!-- Bottom: quick links -->
-                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,16">
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,12">
                   <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                           BorderThickness="0,1,0,0" Margin="12,8"/>
                   <Button Classes="welcomeBotLink" Click="OnWelcomePrefs"
                           Content="{DynamicResource welcome.prefs}"/>
                   <Button Classes="welcomeBotLink" Click="OnWelcomePackages"
                           Content="{DynamicResource welcome.packages}"/>
+                  <Button Classes="welcomeBotLink" Click="OnWelcomeReleases"
+                          Content="{DynamicResource welcome.releases}"/>
+                  <Button Classes="welcomeBotLink" Click="OnWelcomeWiki"
+                          Content="{DynamicResource welcome.wiki}"/>
+                  <Button Classes="welcomeBotLink" Click="OnWelcomeDiffSinger"
+                          Content="{DynamicResource welcome.diffsinger}"/>
                 </StackPanel>
               </DockPanel>
             </Border>
