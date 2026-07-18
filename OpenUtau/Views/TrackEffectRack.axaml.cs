@@ -403,12 +403,9 @@ namespace OpenUtau.App.Views {
                 return;
             }
 
-            var picker = new WindowEx(false) {
+            var picker = new WindowEx(true) {
                 Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                ExtendClientAreaToDecorationsHint = true,
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur },
-                Background = Avalonia.Media.Brushes.Transparent,
             };
             var layout = new StackPanel { Margin = new(12) };
 
@@ -458,7 +455,11 @@ namespace OpenUtau.App.Views {
                 picker.Close();
             };
 
-            picker.Content = new Border { Child = layout };
+            var dp = new DockPanel { LastChildFill = true };
+            dp.Children.Add(new WindowTitleBar());
+            DockPanel.SetDock(dp.Children[0], Dock.Top);
+            dp.Children.Add(new Border { Child = layout, Margin = new(0) });
+            picker.Content = dp;
             picker.ShowDialog(this);
         }
 
