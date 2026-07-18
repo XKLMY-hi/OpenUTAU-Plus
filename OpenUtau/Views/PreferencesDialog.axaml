@@ -41,8 +41,9 @@
     </Style>
   </Window.Styles>
 
-  
-  <Grid Margin="{Binding $parent.WindowDecorationMargin}" ColumnDefinitions="150,*">
+  <DockPanel LastChildFill="True">
+    <controls:WindowTitleBar DockPanel.Dock="Top"/>
+    <Grid Margin="{Binding $parent.WindowDecorationMargin}" ColumnDefinitions="150,*">
     <ListBox Classes="NoScroll" Name="DrawerList"
               Focusable="{Binding ElementName=LeftDrawer, Path=LeftDrawerOpened}">
       <ListBox.Styles>
@@ -444,4 +445,5 @@
       </Carousel>
     </ScrollViewer>
   </Grid>
+  </DockPanel>
 </controls:WindowEx>
