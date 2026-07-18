@@ -1,10 +1,10 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         x:Class="OpenUtau.App.Views.TrackEffectRack"
         Icon="/Assets/open-utau.ico"
         Title="{DynamicResource effects.title}" Width="520" Height="540"
-        WindowStartupLocation="CenterOwner"
-        Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        WindowStartupLocation="CenterOwner">
   <Window.Styles>
     <Style Selector="TextBlock.header">
       <Setter Property="FontWeight" Value="SemiBold"/>
@@ -73,9 +73,11 @@
     </Style>
   </Window.Styles>
 
-  <Border Margin="{Binding $parent.WindowDecorationMargin}">
-    <DockPanel Margin="14" LastChildFill="True">
-      <!-- Header: title + export + enable -->
+  <DockPanel LastChildFill="True">
+    <controls:WindowTitleBar DockPanel.Dock="Top"/>
+    <Border Margin="{Binding $parent.WindowDecorationMargin}">
+      <DockPanel Margin="14" LastChildFill="True">
+        <!-- Header: title + export + enable -->
       <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto,Auto,Auto,Auto" Margin="0,0,0,6">
         <TextBlock Grid.Column="0" Classes="header" Name="TitleLabel"/>
         <CheckBox Grid.Column="1" Name="ExportCheck" Margin="0,0,4,0" VerticalAlignment="Center"/>
@@ -99,4 +101,5 @@
       </ScrollViewer>
     </DockPanel>
   </Border>
-</Window>
+  </DockPanel>
+</controls:WindowEx>

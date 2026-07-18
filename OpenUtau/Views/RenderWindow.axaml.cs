@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Threading;
+using OpenUtau.App.Controls;
 using OpenUtau.Core;
 using OpenUtau.Core.Render;
 using OpenUtau.Core.SignalChain;
@@ -17,19 +18,12 @@ using OpenUtau.Core.Util;
 using Serilog;
 
 namespace OpenUtau.App.Views {
-    public partial class RenderWindow : Window {
+    public partial class RenderWindow : WindowEx {
         private CancellationTokenSource? _cts;
         private readonly List<(CheckBox cb, Core.Ustx.UTrack track)> _trackChecks = new();
 
         public RenderWindow() {
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
 
             // Range radio — show/hide custom box
             RadioFullSong.IsCheckedChanged += (_, _) => CustomRangeBox.IsVisible = false;

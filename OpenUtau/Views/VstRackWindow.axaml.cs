@@ -4,11 +4,12 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using OpenUtau.App.Controls;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Vst;
 
 namespace OpenUtau.App.Views {
-    public partial class VstRackWindow : Window {
+    public partial class VstRackWindow : WindowEx {
         private readonly UTrack track;
 
         public VstRackWindow() : this(new UTrack()) { }

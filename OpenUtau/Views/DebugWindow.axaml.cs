@@ -1,20 +1,14 @@
-﻿using System;
+using System;
 using Avalonia.Controls;
+using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
 
 namespace OpenUtau.App.Views {
-    public partial class DebugWindow : Window {
+    public partial class DebugWindow : WindowEx {
         DebugViewModel viewModel;
 
         public DebugWindow() {
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
             DataContext = viewModel = new DebugViewModel();
             viewModel.SetWindow(this);
             viewModel.Attach();

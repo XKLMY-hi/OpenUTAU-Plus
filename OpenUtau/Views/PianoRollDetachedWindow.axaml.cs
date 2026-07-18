@@ -6,7 +6,7 @@ using OpenUtau.App.Controls;
 using OpenUtau.Core.Util;
 
 namespace OpenUtau.App.Views {
-    public partial class PianoRollDetachedWindow : Window {
+    public partial class PianoRollDetachedWindow : WindowEx {
         private readonly PianoRoll pianoRoll;
         private bool forceClose;
 

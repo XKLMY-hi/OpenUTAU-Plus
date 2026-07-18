@@ -1,13 +1,14 @@
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
 using ReactiveUI;
 
 namespace OpenUtau.App.Views {
-    public partial class MixFxDialog : Window {
+    public partial class MixFxDialog : WindowEx {
         readonly MixFxViewModel viewModel;
         readonly UTrack? track;
 
@@ -15,13 +16,6 @@ namespace OpenUtau.App.Views {
 
         public MixFxDialog(UTrack? track) {
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
             this.track = track;
             DataContext = viewModel = new MixFxViewModel(track);
             viewModel.AskForName = PromptForNameAsync;

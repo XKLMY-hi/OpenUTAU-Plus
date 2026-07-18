@@ -8,6 +8,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
+using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.SignalChain.Effects;
@@ -17,7 +18,7 @@ using OpenUtau.Core.Util;
 using ReactiveUI;
 
 namespace OpenUtau.App.Views {
-    public partial class TrackEffectRack : Window {
+    public partial class TrackEffectRack : WindowEx {
         private readonly UTrack track;
         private UMixFx fx => track.MixFx ??= new();
 
@@ -29,13 +30,6 @@ namespace OpenUtau.App.Views {
 
         public TrackEffectRack(UTrack track) {
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
             this.track = track;
             _builtInExpanded = false;
             TitleLabel.Text = $"{track.TrackName}";

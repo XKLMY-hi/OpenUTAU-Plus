@@ -974,4 +974,9 @@ General
   <system:String x:Key="render.formatlabel">Format</system:String>
   <system:String x:Key="render.samplerate">Sample Rate</system:String>
   <system:String x:Key="render.ready">Ready</system:String>
+
+  <system:String x:Key="window.minimize">Minimize</system:String>
+  <system:String x:Key="window.maximize">Maximize</system:String>
+  <system:String x:Key="window.restore">Restore</system:String>
+  <system:String x:Key="window.close">Close</system:String>
 </ResourceDictionary>

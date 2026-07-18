@@ -537,4 +537,35 @@
   <Style Selector="ScrollBar /template/ Thumb.thumb">
     <Setter Property="CornerRadius" Value="3"/>
   </Style>
+
+  <!-- ── Window title bar buttons ──────────────────────── -->
+  <Style Selector="Button.titleBarBtn">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Margin" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="CornerRadius" Value="0"/>
+  </Style>
+  <Style Selector="Button.titleBarBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}"/>
+  </Style>
+  <Style Selector="Button.titleBarBtn:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+  </Style>
+
+  <!-- Close button: red hover -->
+  <Style Selector="Button.titleBarBtn.closeBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="#E81123"/>
+  </Style>
+  <Style Selector="Button.titleBarBtn.closeBtn:pointerover Path">
+    <Setter Property="Stroke" Value="White"/>
+  </Style>
+  <Style Selector="Button.titleBarBtn.closeBtn:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="#BF0F1D"/>
+  </Style>
+  <Style Selector="Button.titleBarBtn.closeBtn:pressed Path">
+    <Setter Property="Stroke" Value="White"/>
+  </Style>
 </Styles>

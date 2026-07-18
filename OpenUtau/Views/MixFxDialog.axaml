@@ -1,7 +1,8 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         mc:Ignorable="d"
         x:Class="OpenUtau.App.Views.MixFxDialog"
         Icon="/Assets/open-utau.ico"
@@ -35,7 +36,9 @@
       <Setter Property="CornerRadius" Value="3"/>
     </Style>
   </Window.Styles>
-  <Border Margin="{Binding $parent.WindowDecorationMargin}">
+  <DockPanel LastChildFill="True">
+    <controls:WindowTitleBar DockPanel.Dock="Top"/>
+    <Border Margin="{Binding $parent.WindowDecorationMargin}">
     <DockPanel Margin="14" LastChildFill="True">
 
       <!-- TOP: title + enable + recommended -->
@@ -167,4 +170,5 @@
       </Grid>
     </DockPanel>
   </Border>
-</Window>
+  </DockPanel>
+</controls:WindowEx>

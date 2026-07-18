@@ -28,7 +28,7 @@ using SharpCompress;
 using Point = Avalonia.Point;
 
 namespace OpenUtau.App.Views {
-    public partial class MainWindow : Window, ICmdSubscriber {
+    public partial class MainWindow : WindowEx, ICmdSubscriber {
         private readonly KeyModifiers cmdKey =
             OS.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control;
         private readonly MainWindowViewModel viewModel;
@@ -56,16 +56,9 @@ namespace OpenUtau.App.Views {
         private readonly ReactiveCommand<UPart, Unit> PartMergeCommand;
         private readonly ReactiveCommand<UPart, Unit> PartSplitCommand;
 
-        public MainWindow() {
+        public MainWindow() : base(false) {
             Log.Information("Creating main window.");
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
             Log.Information("Initialized main window component.");
             DataContext = viewModel = new MainWindowViewModel {
                 // give the viewmodel a way to prompt/save using the view's existing method

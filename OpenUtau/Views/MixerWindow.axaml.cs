@@ -13,19 +13,12 @@ using OpenUtau.Core.Util;
 using OpenUtau.Core.Ustx;
 
 namespace OpenUtau.App.Views {
-    public partial class MixerWindow : Window {
+    public partial class MixerWindow : WindowEx {
         private readonly MixerViewModel viewModel;
         private readonly DispatcherTimer levelTimer;
 
         public MixerWindow() {
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
             DataContext = viewModel = new MixerViewModel();
             RebuildStrips();
             viewModel.Tracks.CollectionChanged += OnTracksChanged;

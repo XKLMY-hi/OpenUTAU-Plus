@@ -4,22 +4,16 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using OpenUtau.Core.Util;
+using OpenUtau.App.Controls;
 using OpenUtau.Core.Vst;
 using Serilog;
 
 namespace OpenUtau.App.Views {
-    public partial class VstEditorWindow : Window {
+    public partial class VstEditorWindow : WindowEx {
         private readonly VstEffect _fx;
 
         public VstEditorWindow() {
             InitializeComponent();
-            try
-            {
-                ExtendClientAreaToDecorationsHint = true;
-                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
-                Background = Avalonia.Media.Brushes.Transparent;
-            }
-            catch { }
             _fx = null!;
             NativeStatus.Text = ThemeManager.GetString("vsteditor.noplugin");
         }

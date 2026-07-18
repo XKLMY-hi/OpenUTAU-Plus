@@ -1,10 +1,10 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         x:Class="OpenUtau.App.Views.VstRackWindow"
         Icon="/Assets/open-utau.ico"
         Title="{DynamicResource effects.title}" Width="480" Height="380"
-        WindowStartupLocation="CenterOwner"
-        Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+        WindowStartupLocation="CenterOwner">
   <Window.Styles>
     <Style Selector="Button.addBtn">
       <Setter Property="Width" Value="24"/>
@@ -58,7 +58,9 @@
     </Style>
   </Window.Styles>
 
-  <Border Margin="{Binding $parent.WindowDecorationMargin}">
+  <DockPanel LastChildFill="True">
+    <controls:WindowTitleBar DockPanel.Dock="Top"/>
+    <Border Margin="{Binding $parent.WindowDecorationMargin}">
     <DockPanel Margin="12" LastChildFill="True">
       <!-- Header -->
       <Grid DockPanel.Dock="Top" ColumnDefinitions="*,Auto" Margin="0,0,0,10">
@@ -72,4 +74,5 @@
       </ScrollViewer>
     </DockPanel>
   </Border>
-</Window>
+  </DockPanel>
+</controls:WindowEx>

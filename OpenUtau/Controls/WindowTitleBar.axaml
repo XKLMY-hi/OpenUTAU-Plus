@@ -1,0 +1,73 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OpenUtau.App.Controls.WindowTitleBar">
+
+  <!-- Custom window title bar: drag area, icon, title, min / max / close -->
+  <Grid Height="32"
+        Background="Transparent"
+        PointerPressed="OnTitleBarPointerPressed"
+        DoubleTapped="OnTitleBarDoubleTapped">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
+
+    <!-- Left: window icon -->
+    <Image Grid.Column="0"
+           Width="16" Height="16"
+           Margin="12,0,8,0"
+           VerticalAlignment="Center"
+           IsHitTestVisible="False"
+           Name="IconImage"/>
+
+    <!-- Center: title text (drag target) -->
+    <TextBlock Grid.Column="1"
+               FontSize="12"
+               VerticalAlignment="Center"
+               IsHitTestVisible="False"
+               Name="TitleText"
+               Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+
+    <!-- Right: window control buttons -->
+    <StackPanel Grid.Column="2" Orientation="Horizontal"
+                VerticalAlignment="Stretch">
+      <!-- Minimize -->
+      <Button Width="46" Height="32"
+              Classes="titleBarBtn"
+              Click="OnMinimize"
+              ToolTip.Tip="{DynamicResource window.minimize}">
+        <Path Data="{StaticResource icon-minus}"
+              Width="12" Height="12"
+              Stretch="Uniform"
+              Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
+              StrokeThickness="1.5"/>
+      </Button>
+
+      <!-- Maximize / Restore -->
+      <Button Width="46" Height="32"
+              Classes="titleBarBtn"
+              Click="OnMaximizeRestore"
+              Name="MaxRestoreBtn"
+              ToolTip.Tip="{DynamicResource window.maximize}">
+        <Path Name="MaxRestoreIcon"
+              Width="12" Height="12"
+              Stretch="Uniform"
+              Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
+              StrokeThickness="1.5"/>
+      </Button>
+
+      <!-- Close -->
+      <Button Width="46" Height="32"
+              Classes="titleBarBtn closeBtn"
+              Click="OnClose"
+              ToolTip.Tip="{DynamicResource window.close}">
+        <Path Data="{StaticResource icon-x}"
+              Width="12" Height="12"
+              Stretch="Uniform"
+              Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}"
+              StrokeThickness="1.5"/>
+      </Button>
+    </StackPanel>
+  </Grid>
+</UserControl>

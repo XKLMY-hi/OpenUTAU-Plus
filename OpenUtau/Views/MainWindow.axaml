@@ -1,15 +1,16 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:OpenUtau.App.ViewModels"
         xmlns:c="clr-namespace:OpenUtau.App.Controls"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="650"
         x:Class="OpenUtau.App.Views.MainWindow"
         Icon="/Assets/open-utau.ico"
         Title="{Binding Title}" MinWidth="300" MinHeight="200" Width="{Binding Width}" Height="{Binding Height}"
         Focusable="True" KeyDown="OnKeyDown" PointerPressed="OnPointerPressed" Closing="WindowClosing"
-        DragDrop.AllowDrop="True" TransparencyLevelHint="None">
+        DragDrop.AllowDrop="True">
   <Window.Styles>
     <Style Selector="Button,ToggleButton">
       <Setter Property="Focusable" Value="False"/>
@@ -522,4 +523,4 @@
       </Carousel>
     </Grid>
   </Grid>
-</Window>
+</controls:WindowEx>
