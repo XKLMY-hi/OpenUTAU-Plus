@@ -1814,8 +1814,8 @@ namespace OpenUtau.App.Views {
             DocManager.Inst.EndUndoGroup();
         }
         public async void OnWelcomeRecent(object sender, PointerPressedEventArgs args) {
-            if (sender is StackPanel panel &&
-                panel.DataContext is RecentFileInfo fileInfo) {
+            if (sender is StyledElement el &&
+                el.DataContext is RecentFileInfo fileInfo) {
                 if (!DocManager.Inst.ChangesSaved && !await AskIfSaveAndContinue()) {
                     return;
                 }
@@ -1824,8 +1824,8 @@ namespace OpenUtau.App.Views {
         }
 
         public async void OnWelcomeTemplate(object sender, PointerPressedEventArgs args) {
-            if (sender is StackPanel panel &&
-                panel.DataContext is RecentFileInfo fileInfo) {
+            if (sender is StyledElement el &&
+                el.DataContext is RecentFileInfo fileInfo) {
                 if (!DocManager.Inst.ChangesSaved && !await AskIfSaveAndContinue()) {
                     return;
                 }
