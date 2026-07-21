@@ -95,7 +95,7 @@
           <Grid.Styles>
             <!-- Sidebar -->
             <Style Selector="Border.welcomeSidebar">
-              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+              <Setter Property="Background" Value="Transparent"/>
               <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
               <Setter Property="BorderThickness" Value="0,0,1,0"/>
             </Style>
@@ -251,7 +251,7 @@
             </Border>
 
             <!-- ═══ RIGHT CONTENT ═══ -->
-            <Carousel Grid.Column="1" SelectedIndex="{Binding #WelcomeNav.SelectedIndex}"
+            <Carousel Grid.Column="1" SelectedIndex="{Binding SelectedIndex, ElementName=WelcomeNav}"
                       Margin="32,20">
               <!-- Tab 0: Recent files -->
               <Grid RowDefinitions="Auto,*">
