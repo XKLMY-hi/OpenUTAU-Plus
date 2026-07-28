@@ -16,12 +16,16 @@ using Serilog;
 using SharpCompress;
 
 namespace OpenUtau.App.Views {
-    public partial class MessageBox : WindowEx {
+    public partial class MessageBox : Window {
         public enum MessageBoxButtons { Ok, OkCancel, YesNo, YesNoCancel, OkCopy }
         public enum MessageBoxResult { Ok, Cancel, Yes, No }
 
-        public MessageBox() : base(false) {
+        public MessageBox() {
             InitializeComponent();
+            try {
+                ExtendClientAreaToDecorationsHint = true;
+                TransparencyLevelHint = new[] { Avalonia.Controls.WindowTransparencyLevel.AcrylicBlur };
+            } catch { }
         }
 
         public void SetText(string text) {
