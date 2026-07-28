@@ -268,6 +268,10 @@ errors.txt
             // OpenUTAU Plus: cached VST registry (avoids re-scan on restart)
             public List<VstCachedEntry> VstCachedPlugins = new();
 
+            // ── Mixer attachment ────────────────────────
+            public bool DetachMixer = false;
+            public WindowSize MixerWindowSize = new WindowSize();
+
             // ── UI: Window blur ─────────────────────────
             public bool EnableBlur = true;
             public string BlurMode = "AcrylicBlur";   // AcrylicBlur | Mica | None

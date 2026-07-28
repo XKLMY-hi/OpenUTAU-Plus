@@ -1,80 +1,56 @@
 using System;
-using System.Collections.Specialized;
-using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Threading;
 using OpenUtau.App.Controls;
-using OpenUtau.App.ViewModels;
-using OpenUtau.Core;
-using OpenUtau.Core.Render;
 using OpenUtau.Core.Util;
-using OpenUtau.Core.Ustx;
 
-namespace OpenUtau.App.Views {
-    public partial class MixerWindow : WindowEx {
-        private readonly MixerViewModel viewModel;
-        private readonly DispatcherTimer levelTimer;
+namespace OpenUtau.App.Views;
 
-        public MixerWindow() {
-            InitializeComponent();
-            DataContext = viewModel = new MixerViewModel();
-            RebuildStrips();
-            viewModel.Tracks.CollectionChanged += OnTracksChanged;
+public partial class MixerWindow : WindowEx
+{
+    private MixerControl? _mixerControl;
+    private bool _forceClose;
 
-            // Forward space to main window
-            KeyDown += (s, e) => {
-                if (e.Key == Key.Space) {
-                    e.Handled = true;
-                    var mainWindow = (Application.Current?.ApplicationLifetime
-                        as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)
-                        ?.MainWindow;
-                    mainWindow?.Focus();
-                }
-            };
+    public MixerWindow() { InitializeComponent(); }
 
-            // Poll track levels at ~30 fps for VU meter animation
-            levelTimer = new DispatcherTimer(
-                TimeSpan.FromMilliseconds(33),
-                DispatcherPriority.Render,
-                OnLevelTimerTick);
-            levelTimer.Start();
+    public MixerWindow(MixerControl mixerControl) : this()
+    {
+        _mixerControl = mixerControl;
+        MixerContainer.Content = mixerControl;
+
+        // Restore window position
+        if (Preferences.Default.MixerWindowSize.TryGetPosition(out int x, out int y))
+            Position = new Avalonia.PixelPoint(x, y);
+        WindowState = (Avalonia.Controls.WindowState)Preferences.Default.MixerWindowSize.State;
+
+        Closing += OnWindowClosing;
+    }
+
+    public void ForceClose()
+    {
+        _forceClose = true;
+        Close();
+    }
+
+    private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        // Save position
+        Preferences.Default.MixerWindowSize.Set(Width, Height, Position.X, Position.Y, (int)WindowState);
+        Preferences.Save();
+
+        if (!_forceClose)
+        {
+            // Hide rather than close – control will be reparented
+            e.Cancel = true;
+            Hide();
         }
+    }
 
-        private int _tickCount;
-        private void OnLevelTimerTick(object? sender, EventArgs e) {
-            _tickCount++;
-            if (_tickCount == 1) {
-                Serilog.Log.Information($"[Mixer] Timer started, {TrackStripsPanel.Children.Count} strips visible={IsVisible}");
-            }
-            foreach (var child in TrackStripsPanel.Children) {
-                if (child is MixerTrackStrip strip && strip.Track != null) {
-                    float db = TrackLevels.ReadAndReset(strip.Track.TrackNo);
-                    strip.UpdateLevel(db);
-                }
-            }
-        }
-
-        private void OnTracksChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-            RebuildStrips();
-        }
-
-        private void RebuildStrips() {
-            TrackStripsPanel.Children.Clear();
-            if (viewModel.Tracks.Count == 0) return;
-            for (int i = 0; i < viewModel.Tracks.Count; i++) {
-                var strip = new MixerTrackStrip(viewModel.Tracks[i]) { TrackIndex = i };
-                TrackStripsPanel.Children.Add(strip);
-            }
-            StatusText.Text = string.Format(ThemeManager.GetString("mixer.tracks"), viewModel.Tracks.Count);
-        }
-
-        protected override void OnClosed(EventArgs e) {
-            base.OnClosed(e);
-            levelTimer.Stop();
-            viewModel.Tracks.CollectionChanged -= OnTracksChanged;
-            DocManager.Inst.RemoveSubscriber(viewModel);
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        if (_forceClose && _mixerControl != null)
+        {
+            _mixerControl.Shutdown();
+            _mixerControl = null;
         }
     }
 }

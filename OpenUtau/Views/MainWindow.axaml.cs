@@ -35,6 +35,8 @@ namespace OpenUtau.App.Views {
 
         private PianoRollDetachedWindow? pianoRollWindow;
         private PianoRoll? pianoRoll;
+        private MixerControl? mixerControl;
+        private MixerWindow? mixerWindow;
 
         private PartEditState? partEditState;
 
@@ -682,23 +684,54 @@ namespace OpenUtau.App.Views {
         }
 
         void OnMenuMixer(object sender, RoutedEventArgs args) {
-            var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-            if (desktop == null) return;
-            var window = desktop.Windows.FirstOrDefault(w => w is MixerWindow);
-            if (window == null) {
-                window = new MixerWindow();
+            OpenOrToggleMixer();
+        }
+
+        void OpenOrToggleMixer() {
+            if (mixerControl == null) {
+                mixerControl = new MixerControl();
+                if (Preferences.Default.DetachMixer) {
+                    mixerWindow = new MixerWindow(mixerControl);
+                    mixerWindow.Show();
+                } else {
+                    MixerContainer.Content = mixerControl;
+                    viewModel.ShowMixer = true;
+                }
+            } else if (mixerWindow != null) {
+                mixerWindow.Activate();
+            } else {
+                viewModel.ShowMixer = !viewModel.ShowMixer;
             }
-            window.Show();
+        }
+
+        public void SetMixerAttachment() {
+            if (mixerControl == null) return;
+
+            if (Preferences.Default.DetachMixer) {
+                // Detached → Embedded
+                mixerWindow?.ForceClose();
+                mixerWindow = null;
+                MixerContainer.Content = mixerControl;
+                viewModel.ShowMixer = true;
+                Preferences.Default.DetachMixer = false;
+            } else {
+                // Embedded → Detached
+                MixerContainer.Content = null;
+                viewModel.ShowMixer = false;
+                mixerWindow = new MixerWindow(mixerControl);
+                mixerWindow.Show();
+                Preferences.Default.DetachMixer = true;
+            }
+            Preferences.Save();
         }
 
         void ToggleMixerWindow() {
-            var desktop = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-            if (desktop == null) return;
-            var window = desktop.Windows.FirstOrDefault(w => w is MixerWindow);
-            if (window != null) {
-                window.Close();
+            if (mixerControl == null) return;
+            if (mixerWindow != null) {
+                // Close detached window → return to embedded
+                SetMixerAttachment();
             } else {
-                new MixerWindow().Show();
+                viewModel.ShowMixer = !viewModel.ShowMixer;
             }
         }
 
