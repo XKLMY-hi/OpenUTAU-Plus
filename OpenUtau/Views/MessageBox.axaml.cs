@@ -20,7 +20,7 @@ namespace OpenUtau.App.Views {
         public enum MessageBoxButtons { Ok, OkCancel, YesNo, YesNoCancel, OkCopy }
         public enum MessageBoxResult { Ok, Cancel, Yes, No }
 
-        public MessageBox() {
+        public MessageBox() : base(false) {
             InitializeComponent();
         }
 
