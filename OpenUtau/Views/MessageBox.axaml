@@ -1,14 +1,17 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="OpenUtau.App.Views.MessageBox" SizeToContent="WidthAndHeight" CanResize="False"
+        x:Class="OpenUtau.App.Views.MessageBox" SizeToContent="WidthAndHeight"
         Icon="/Assets/open-utau.ico"
         Title="OpenUTAU Plus" MinWidth="300" MinHeight="150"
         WindowStartupLocation="CenterScreen">
-  <ScrollViewer MaxHeight="700" VerticalScrollBarVisibility="Auto">
-    <Grid Margin="{Binding $parent.WindowDecorationMargin}">
+  <DockPanel LastChildFill="True">
+    <controls:WindowTitleBar DockPanel.Dock="Top"/>
+    <ScrollViewer MaxHeight="700" VerticalScrollBarVisibility="Auto">
+      <Grid Margin="{Binding $parent.WindowDecorationMargin}">
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
         <RowDefinition Height="50"/>
@@ -66,4 +69,5 @@
       </StackPanel>
     </Grid>
   </ScrollViewer>
-</Window>
+  </DockPanel>
+</controls:WindowEx>
