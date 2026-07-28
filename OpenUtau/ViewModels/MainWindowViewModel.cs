@@ -149,7 +149,7 @@ namespace OpenUtau.App.ViewModels {
                 });
             this.WhenAnyValue(vm => vm.ShowMixer)
                 .Subscribe(x => {
-                    MixerMaxHeight = x ? double.PositiveInfinity : 0;
+                    MixerMaxHeight = x ? 600 : 0;
                     MixerMinHeight = x ? 120 : 0;
                 });
         }

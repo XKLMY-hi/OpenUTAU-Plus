@@ -408,7 +408,7 @@
                            MinHeight="{Binding PianoRollMinHeight}"
                            MaxHeight="{Binding PianoRollMaxHeight}"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"
+            <RowDefinition Height="150"
                            MinHeight="{Binding MixerMinHeight}"
                            MaxHeight="{Binding MixerMaxHeight}"/>
             <RowDefinition Height="20"/>
