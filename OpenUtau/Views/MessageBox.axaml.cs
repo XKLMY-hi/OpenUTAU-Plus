@@ -10,12 +10,13 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
+using OpenUtau.App.Controls;
 using OpenUtau.Core;
 using Serilog;
 using SharpCompress;
 
 namespace OpenUtau.App.Views {
-    public partial class MessageBox : Window {
+    public partial class MessageBox : WindowEx {
         public enum MessageBoxButtons { Ok, OkCancel, YesNo, YesNoCancel, OkCopy }
         public enum MessageBoxResult { Ok, Cancel, Yes, No }
 
