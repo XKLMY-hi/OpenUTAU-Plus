@@ -745,23 +745,25 @@ namespace OpenUtau.App.Views {
 
         private void OnMixerSplitterPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
         {
-            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed || sender is not Control c) return;
             _draggingMixer = true;
             var pt = e.GetPosition(this);
             _mixerDragStartY = pt.Y;
-            _mixerStartHeight = MainGrid.RowDefinitions[6].ActualHeight;
+            if (c.Parent is Grid g)
+                _mixerStartHeight = g.RowDefinitions[6].ActualHeight;
             if (_mixerStartHeight <= 0) _mixerStartHeight = 150;
-            e.Pointer.Capture((Avalonia.Input.IInputElement?)sender);
+            e.Pointer.Capture(c);
             e.Handled = true;
         }
 
         private void OnMixerSplitterMoved(object? sender, Avalonia.Input.PointerEventArgs e)
         {
-            if (!_draggingMixer || sender == null) return;
+            if (!_draggingMixer || sender is not Control c) return;
             var pt = e.GetPosition(this);
             double delta = _mixerDragStartY - pt.Y;
             double newH = Math.Clamp(_mixerStartHeight + delta, 120, 600);
-            MainGrid.RowDefinitions[6].Height = new GridLength(newH);
+            if (c.Parent is Grid g)
+                g.RowDefinitions[6].Height = new GridLength(newH);
         }
 
         private void OnMixerSplitterReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
