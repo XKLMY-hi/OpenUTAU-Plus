@@ -503,6 +503,9 @@
               </ContextMenu>
             </Canvas.ContextMenu>
           </Canvas>
+          <Border Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Width="1"
+                  BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                  BorderThickness="1,0,0,0" IsHitTestVisible="False" ZIndex="10"/>
           <c:TrackHeaderCanvas Grid.Row="2" Grid.Column="0" ClipToBounds="True" Background="Transparent"
                               DataContext="{Binding TracksViewModel}"
                               TrackHeight="{Binding TrackHeight}"
@@ -594,7 +597,7 @@
             </c:PartsCanvas.ContextMenu>
           </c:PartsCanvas>
           <Border Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"
-                  BoxShadow="inset 0 0 5 1 #3F808080" ClipToBounds="True" IsHitTestVisible="False">
+                  ClipToBounds="True" IsHitTestVisible="False">
             <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,5"
                     IsVisible="{Binding TracksViewModel.PlayPosWaitingRendering}" Background="{DynamicResource BackgroundBrushSemi}">
               <TextBlock Text="{DynamicResource progress.waitingrendering}" FontSize="15"/>
@@ -610,7 +613,7 @@
                         IsVisible="{Binding ShowPianoRoll}"/>
           <!-- Resize tooltip indicator -->
           <TextBlock Grid.Row="3" Grid.Column="0" Name="ResizeTooltip"
-                     IsVisible="False" Background="#CC333333" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                     IsVisible="False" Background="{DynamicResource SystemControlBackgroundAltHighBrush}" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                      FontSize="11" Padding="4,2" HorizontalAlignment="Left"
                      VerticalAlignment="Bottom" Margin="4,0,0,0"/>
           <Canvas Grid.Row="4" Grid.ColumnSpan="3" IsVisible="{Binding ShowPianoRoll}">
@@ -631,6 +634,14 @@
                           IsVisible="{Binding ShowMixer}"/>
           <TextBlock Grid.Row="7" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="20" Margin="4,4,4,0" Text="{Binding ProgressText}"/>
           <ProgressBar Grid.Row="8" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Value="{Binding Progress}"/>
+          <!-- Version badge (editor) -->
+          <Border Grid.Row="2" Grid.Column="1" Background="{DynamicResource AccentBrush1Semi}"
+                  CornerRadius="4" Padding="6,2" HorizontalAlignment="Right"
+                  VerticalAlignment="Bottom" Margin="0,0,8,8" IsHitTestVisible="False"
+                  Opacity="0.6">
+            <TextBlock Text="{Binding AppVersion}" FontSize="9"
+                       Foreground="{DynamicResource AccentBrush1}"/>
+          </Border>
         </Grid>
       </Carousel>
     </Grid>
