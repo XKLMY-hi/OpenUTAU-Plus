@@ -439,24 +439,24 @@
             <Border Classes="playback" Width="100" HorizontalAlignment="Center">
               <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding PlaybackViewModel.SeekStart}">
-                  <Path Data="{StaticResource icon-skip-back}" Width="14" Height="14"
+                  <Path Data="{StaticResource icon-skip-back}" Width="10" Height="10"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}" StrokeThickness="1.5"/>
+                        Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
                 <Button Click="OnPlayOrPause">
-                  <Path Data="{StaticResource icon-play}" Width="14" Height="14"
+                  <Path Data="{StaticResource icon-play}" Width="10" Height="10"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}" StrokeThickness="1.5"/>
+                        Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
                 <Button Command="{Binding PlaybackViewModel.Pause}">
-                  <Path Data="{StaticResource icon-pause}" Width="14" Height="14"
+                  <Path Data="{StaticResource icon-pause}" Width="10" Height="10"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}" StrokeThickness="1.5"/>
+                        Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
                 <Button Command="{Binding PlaybackViewModel.SeekEnd}">
-                  <Path Data="{StaticResource icon-skip-forward}" Width="14" Height="14"
+                  <Path Data="{StaticResource icon-skip-forward}" Width="10" Height="10"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
-                        Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}" StrokeThickness="1.5"/>
+                        Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
               </StackPanel>
             </Border>
