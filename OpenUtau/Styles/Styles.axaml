@@ -314,7 +314,7 @@
   <Style Selector="Border.playback TextBlock">
     <Setter Property="Padding" Value="6,0,0,1"/>
     <Setter Property="FontSize" Value="11"/>
-    <Setter Property="FontFamily" Value="Monospace"/>
+    <Setter Property="FontFamily" Value="{DynamicResource ui.fontfamily}"/>
     <Setter Property="VerticalAlignment" Value="Center"/>
     <Setter Property="HorizontalAlignment" Value="Center"/>
   </Style>
