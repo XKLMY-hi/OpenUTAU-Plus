@@ -738,6 +738,38 @@ namespace OpenUtau.App.Views {
         // ── Piano roll resize indicator ─────────────────────
         // Uses DragStarted/DragCompleted on the GridSplitter to show a tooltip.
         // The TextBlock "ResizeTooltip" is defined in MainWindow.axaml.
+        // ── Mixer manual drag resize ──────────────────────
+        private bool _draggingMixer;
+        private double _mixerDragStartY;
+        private double _mixerStartHeight;
+
+        private void OnMixerSplitterPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+        {
+            if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
+            _draggingMixer = true;
+            var pt = e.GetPosition(this);
+            _mixerDragStartY = pt.Y;
+            _mixerStartHeight = MainGrid.RowDefinitions[6].ActualHeight;
+            if (_mixerStartHeight <= 0) _mixerStartHeight = 150;
+            e.Pointer.Capture((Avalonia.Input.IInputElement?)sender);
+            e.Handled = true;
+        }
+
+        private void OnMixerSplitterMoved(object? sender, Avalonia.Input.PointerEventArgs e)
+        {
+            if (!_draggingMixer || sender == null) return;
+            var pt = e.GetPosition(this);
+            double delta = _mixerDragStartY - pt.Y;
+            double newH = Math.Clamp(_mixerStartHeight + delta, 120, 600);
+            MainGrid.RowDefinitions[6].Height = new GridLength(newH);
+        }
+
+        private void OnMixerSplitterReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
+        {
+            _draggingMixer = false;
+            e.Pointer.Capture(null);
+        }
+
         private void OnSplitterDragStarted(object? sender, Avalonia.Input.VectorEventArgs e) {
             var splitter = (Avalonia.Controls.GridSplitter)sender!;
             var grid = (Grid)splitter.Parent!;

@@ -616,12 +616,15 @@
           <Canvas Grid.Row="4" Grid.ColumnSpan="3" IsVisible="{Binding ShowPianoRoll}">
             <ContentControl Name="PianoRollContainer" Width="{Binding $parent[Canvas].Bounds.Width}" Height="{Binding $parent[Canvas].Bounds.Height}"/>
           </Canvas>
-          <!-- Mixer splitter (like piano roll) -->
-          <GridSplitter Grid.Row="5" Grid.ColumnSpan="3"
-                        Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                        Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
-                        Focusable="False" Cursor="SizeNorthSouth"
-                        IsVisible="{Binding ShowMixer}"/>
+          <!-- Mixer resize handle (manual drag) -->
+          <Border Grid.Row="5" Grid.ColumnSpan="3"
+                  Height="6" HorizontalAlignment="Stretch"
+                  Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                  Cursor="SizeNorthSouth"
+                  PointerPressed="OnMixerSplitterPressed"
+                  PointerMoved="OnMixerSplitterMoved"
+                  PointerReleased="OnMixerSplitterReleased"
+                  IsVisible="{Binding ShowMixer}"/>
           <!-- Mixer embedded -->
           <ContentControl Grid.Row="6" Grid.ColumnSpan="3"
                           Name="MixerContainer"
