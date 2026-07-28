@@ -80,6 +80,8 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public string ProgressText { get; set; }
         [Reactive] public bool ShowPianoRoll { get; set; }
         [Reactive] public bool ShowMixer { get; set; }
+        [Reactive] public double MixerMaxHeight { get; set; }
+        [Reactive] public double MixerMinHeight { get; set; }
         [Reactive] public double PianoRollMaxHeight { get; set; }
         [Reactive] public double PianoRollMinHeight { get; set; }
         public ReactiveCommand<UPart, Unit> PartDeleteCommand { get; set; }
@@ -144,6 +146,11 @@ namespace OpenUtau.App.ViewModels {
                 .Subscribe(x => {
                     PianoRollMaxHeight = x ? double.PositiveInfinity : 0;
                     PianoRollMinHeight = x ? ViewConstants.PianoRollMinHeight : 0;
+                });
+            this.WhenAnyValue(vm => vm.ShowMixer)
+                .Subscribe(x => {
+                    MixerMaxHeight = x ? double.PositiveInfinity : 0;
+                    MixerMinHeight = x ? 120 : 0;
                 });
         }
 
