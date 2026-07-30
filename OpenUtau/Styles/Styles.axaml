@@ -12,19 +12,19 @@
   </Style>
   <!-- Rounded popup overlays -->
   <Style Selector="Popup > Border">
-    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="CornerRadius" Value="8"/>
   </Style>
   <Style Selector="ContextMenu">
-    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="CornerRadius" Value="8"/>
   </Style>
   <Style Selector="MenuFlyoutPresenter">
-    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="CornerRadius" Value="8"/>
   </Style>
   <Style Selector="MenuFlyoutPresenter /template/ Border#PART_PopupBorder">
-    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="CornerRadius" Value="8"/>
   </Style>
   <Style Selector="MenuFlyoutPresenter /template/ Border">
-    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="CornerRadius" Value="8"/>
   </Style>
 
   <Style Selector="Window">
@@ -47,6 +47,9 @@
   <Style Selector="MenuItem /template/ Path#PART_ChevronPath">
     <Setter Property="RenderTransform" Value="Scale(0.75,0.75)"/>
     <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+  </Style>
+  <Style Selector="MenuItem:selected">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
   </Style>
   <Style Selector="MenuItem /template/ TextBlock#PART_InputGestureText">
     <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutItemForeground}"/>
@@ -320,10 +323,18 @@
   </Style>
 
   <Style Selector="ListBoxItem">
-    <Setter Property="MinHeight" Value="24"/>
-    <Setter Property="Height" Value="24"/>
-    <Setter Property="Padding" Value="4"/>
+    <Setter Property="MinHeight" Value="28"/>
+    <Setter Property="Height" Value="28"/>
+    <Setter Property="Padding" Value="8,4"/>
     <Setter Property="Margin" Value="0"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="CornerRadius" Value="4"/>
+  </Style>
+  <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush1Semi}"/>
+  </Style>
+  <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
   </Style>
 
   <Style Selector="CheckBox">
@@ -490,7 +501,7 @@
             </Border>
             <Border Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="0,8,0,0" Padding="12,12,12,8"
                 BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
-                    CornerRadius="3">
+                    CornerRadius="8">
               <ContentPresenter Content="{TemplateBinding Content}" />
             </Border>
           </Grid>
@@ -596,8 +607,15 @@
 
   <!-- TabItem -->
   <Style Selector="TabItem">
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="Padding" Value="8,4"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Padding" Value="12,6"/>
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+  <Style Selector="TabItem:selected /template/ Border#PART_SelectedPipe">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
+  </Style>
+  <Style Selector="TabItem:pointerover /template/ Border#PART_LayoutRoot">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
   </Style>
 
   <!-- RadioButton (global) -->
@@ -609,9 +627,11 @@
 
   <!-- ToolTip -->
   <Style Selector="ToolTip">
-    <Setter Property="FontSize" Value="11"/>
-    <Setter Property="Padding" Value="6,3"/>
-    <Setter Property="CornerRadius" Value="4"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Padding" Value="8,4"/>
+    <Setter Property="CornerRadius" Value="6"/>
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
   </Style>
 
   <!-- Separator -->
