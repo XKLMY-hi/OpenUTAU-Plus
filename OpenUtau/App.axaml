@@ -1,7 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:OpenUtau.App"
-             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              x:Class="OpenUtau.App.App" Name="OpenUTAU Plus">
   <Application.DataTemplates>
     <local:ViewLocator/>
@@ -39,7 +38,7 @@
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
-    <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Red" />
+    <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
     <StyleInclude Source="/Styles/Styles.axaml"/>
