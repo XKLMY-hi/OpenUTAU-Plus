@@ -4,7 +4,7 @@
   <system:Boolean x:Key="IsDarkMode">true</system:Boolean>
 
   <!-- Acrylic material background: warm dark tint at 80% opacity -->
-  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#CC1e1e28"/>
+  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#991e1e28"/>
 
   <!-- Warm gray dark palette — see ui-preview-library Design Tokens -->
   <Color x:Key="BackgroundColor">#1e1e28</Color>
