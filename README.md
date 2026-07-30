@@ -8,12 +8,17 @@
 
 ## 新增功能
 
-### 🪟 现代化 UI 升级
-- **亚克力 / Mica 窗口模糊效果** — 全部窗口统一启用，设置中可切换模糊类型或关闭
-- **自绘窗口边框** — Edge / Office 风格自定义标题栏（图标 + 标题 + Min/Max/Close），全部窗口统一
-- **VS 2022 风格欢迎页** — 左侧导航栏 + 右侧内容区联动切换，纯文字品牌标题，"Plus" 强调色
-- **GUI 大改造** — 全局底座现代化、核心控件现代化、细节打磨（侧边栏分隔线、版本号角标、回放控件 Lucide 图标）
-- **全面汉化** — 完整中文本地化 + Lucide 图标集成
+### 🪟 现代化 UI 全面翻新
+- **暖灰暗色主题** — 自定义色板（底色 `#1e1e28` · 表面 `#282838` · 强调色 `#c73a3f`），替换 FluentTheme 默认深色
+- **亚克力 / Mica 窗口模糊** — 全部窗口统一启用，右键设置中切换模糊类型或关闭；Tint 65% 深冷灰
+- **自绘窗口边框** — Edge / Office 风格自定义标题栏（图标 + 标题 + Min/Max/Close），全部 30+ 窗口统一 WindowEx
+- **HarmonyOS Sans SC 字体** — 四字重（Light/Regular/Medium/Bold），全局应用
+- **Heroicons Solid 图标** — 52 枚 MIT 许可矢量图标，替换 Lucide
+- **8px 统一圆角** — 按钮 / 文本框 / 卡片 / 弹出层全局 8px 圆角 · 32px 控件高度
+- **左右分栏欢迎页** — 最近项目列表 + 快捷操作卡片 + 模板文件，移除旧版侧栏切换
+- **Card 分组偏好设置** — 纯文本窄导航 + 右区独立圆角卡片，胶囊形开关，细边镶嵌下拉菜单
+- **混音台 / VST / 插件槽暖灰统一** — 推子 accent 色、面板底色、8px 圆角
+- **全面汉化** — 完整中文本地化
 
 ### 🎚️ DAW 风格混音台
 - 垂直推子，-24dB ~ +12dB
@@ -70,7 +75,7 @@ OpenUTAU Plus 的愿景是将 OpenUTAU 从歌声合成编辑器逐步扩展为�
 - ✅ VST3 效果器插件支持（加载、GUI、实时参数）
 - ✅ `.ustxp` 项目格式（VST 参数持久化）
 - ✅ 导出带 VST 效果的音频（实时录制静音播放）
-- ✅ 现代化 UI（亚克力/Mica 模糊 + 自绘边框 + VS 2022 欢迎页）
+- ✅ 现代化 UI 全面翻新（自定义暖灰主题 · 亚克力模糊 · 自绘边框 · Heroicons · HarmonyOS Sans SC · 8px 统一圆角）
 - 🚧 VST 音源插件支持（加载合成器/采样器作为音源）
 - 🚧 macOS / Linux 跨平台支持
 
@@ -213,7 +218,7 @@ dotnet run --project VstTest                  # VST 兼容性测试
 | 信号链 | 自定义 ISignalSource / IEffect 接口 |
 | VST3 宿主 | C++ / Steinberg VST3 SDK v3.8.0 |
 | AI 推理 | ONNX Runtime (DirectML GPU 加速) |
-| 图标 | Lucide Icons |
+| 图标 | Heroicons Solid |
 | 序列化 | YamlDotNet / Newtonsoft.Json |
 | 日志 | Serilog |
 | 测试 | xUnit |
@@ -250,8 +255,8 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 | 库 | 版本 | 许可 | 用途 |
 |----|------|------|------|
-| [Material.Avalonia](https://github.com/AvaloniaCommunity/Material.Avalonia) | 3.13.3 | MIT | Material Design 控件 |
-| [Lucide Icons](https://lucide.dev/) | — | ISC | 界面图标 |
+| [HarmonyOS Sans SC](https://developer.harmonyos.com/) | — | OFL | 全局 UI 字体 |
+| [Heroicons Solid](https://heroicons.com/) | — | MIT | 界面图标 |
 | [Dotnet.Bundle](https://github.com/egramtel/dotnet-bundle) | 0.9.13 | MIT | macOS 应用打包 |
 
 ### 文件格式 / MIDI
@@ -292,7 +297,8 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 | 资源 | 许可 | 来源 |
 |------|------|------|
-| Lucide Icons | ISC | https://lucide.dev/ |
+| Heroicons Solid | MIT | https://heroicons.com/ |
+| HarmonyOS Sans SC | OFL | https://developer.harmonyos.com/ |
 
 ---
 
@@ -302,7 +308,7 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 VST3 桥接基于 [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/vst3sdk)，MIT / GPL-3 双许可（本项目使用 MIT 许可部分）。
 
-Lucide 图标使用 ISC License。
+Heroicons Solid 图标使用 MIT License。
 
 ---
 
