@@ -3,8 +3,8 @@
         xmlns:controls="clr-namespace:OpenUtau.App.Controls">
   <Style>
     <Style.Resources>
-      <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
-      <CornerRadius x:Key="OverlayCornerRadius">6</CornerRadius>
+      <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
+      <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
       <x:Double x:Key="MenuFlyoutThemeMinHeight">20</x:Double>
       <Thickness x:Key="MenuFlyoutScrollerMargin">0</Thickness>
       <Thickness x:Key="ComboBoxDropdownContentMargin">0</Thickness>
@@ -98,19 +98,26 @@
   </Style>
 
   <Style Selector="TextBlock">
-    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="FontSize" Value="13"/>
   </Style>
   <Style Selector="Label">
-    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="FontSize" Value="13"/>
   </Style>
   <Style Selector="TextBox">
-    <Setter Property="MinHeight" Value="20"/>
-    <Setter Property="Height" Value="20"/>
-    <Setter Property="Padding" Value="4,1"/>
+    <Setter Property="MinHeight" Value="32"/>
+    <Setter Property="Height" Value="32"/>
+    <Setter Property="Padding" Value="8,4"/>
     <Setter Property="Margin" Value="0,0,0,4"/>
-    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="FontSize" Value="13"/>
     <Setter Property="VerticalAlignment" Value="Top"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
     <Setter Property="SelectionForegroundBrush" Value="White"/>
+    <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush1Semi}"/>
+  </Style>
+  <Style Selector="TextBox:focus">
+    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush1}"/>
+    <Setter Property="BorderThickness" Value="1.5"/>
   </Style>
   <Style Selector="TextBox:disabled">
     <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
@@ -118,12 +125,15 @@
 
   <Style Selector="Button">
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="Height" Value="20"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Height" Value="32"/>
+    <Setter Property="MinHeight" Value="32"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="4,0,4,2"/>
+    <Setter Property="Padding" Value="12,0"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
     <Setter Property="Template">
       <ControlTemplate>
         <ContentPresenter x:Name="PART_ContentPresenter"
@@ -140,18 +150,62 @@
       </ControlTemplate>
     </Setter>
   </Style>
-  <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
-    <Setter Property="RenderTransform" Value="scale(1)"/>
+  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
+  </Style>
+  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
+  </Style>
+
+  <!-- Primary (accent) button -->
+  <Style Selector="Button.primary">
+    <Setter Property="Foreground" Value="White"/>
+  </Style>
+  <Style Selector="Button.primary /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
+  </Style>
+  <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush3}"/>
+  </Style>
+
+  <!-- Outline (border-only) button -->
+  <Style Selector="Button.outline">
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+  </Style>
+  <Style Selector="Button.outline /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="Transparent"/>
+  </Style>
+  <Style Selector="Button.outline:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
+  </Style>
+
+  <!-- Danger button -->
+  <Style Selector="Button.danger">
+    <Setter Property="Foreground" Value="White"/>
+  </Style>
+  <Style Selector="Button.danger /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="#c73a3f"/>
+  </Style>
+  <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="#d94a50"/>
+  </Style>
+  <Style Selector="Button.danger:pressed /template/ ContentPresenter#PART_ContentPresenter">
+    <Setter Property="Background" Value="#b03237"/>
   </Style>
   <Style Selector="Button.clear">
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="Height" Value="20"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Height" Value="32"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="4,0,4,2"/>
+    <Setter Property="Padding" Value="8,0"/>
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
   </Style>
   <Style Selector="Button.clear:pointerover /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="Background" Value="{DynamicResource BackgroundColorPointerOver}"/>
@@ -159,10 +213,11 @@
 
   <Style Selector="ToggleButton.normal">
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="Height" Value="20"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Height" Value="32"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="4,0,4,2"/>
+    <Setter Property="Padding" Value="12,0"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
@@ -186,10 +241,11 @@
 
   <Style Selector="ToggleButton.toolbar">
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="Height" Value="20"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="Height" Value="32"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="4,0,4,2"/>
+    <Setter Property="Padding" Value="12,0"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
@@ -225,28 +281,39 @@
 
   <Style Selector="ToggleButton.switch">
     <Setter Property="FontSize" Value="13"/>
-    <Setter Property="Padding" Value="6,2"/>
+    <Setter Property="Padding" Value="8,4"/>
     <Setter Property="BorderThickness" Value="0"/>
   </Style>
 
   <Style Selector="ToggleSwitch /template/ Border#SwitchKnobBounds">
     <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
+    <Setter Property="CornerRadius" Value="13"/>
+  </Style>
+  <Style Selector="ToggleSwitch /template/ Border#SwitchKnobBounds:pointerover">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
+  </Style>
+  <Style Selector="ToggleSwitch /template/ Border#OuterBorder">
+    <Setter Property="CornerRadius" Value="13"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
   </Style>
 
   <Style Selector="ComboBox">
     <Setter Property="Background" Value="{DynamicResource SystemRegionBrush}"/>
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="MinHeight" Value="20"/>
-    <Setter Property="Height" Value="20"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="MinHeight" Value="32"/>
+    <Setter Property="Height" Value="32"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="4,0,0,2"/>
+    <Setter Property="Padding" Value="8,0,0,0"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
   </Style>
   <Style Selector="ComboBoxItem">
-    <Setter Property="FontSize" Value="12"/>
-    <Setter Property="MinHeight" Value="20"/>
-    <Setter Property="Height" Value="20"/>
+    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="MinHeight" Value="28"/>
+    <Setter Property="Height" Value="28"/>
     <Setter Property="Margin" Value="0"/>
-    <Setter Property="Padding" Value="4,2,0,0"/>
+    <Setter Property="Padding" Value="8,4"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
   </Style>
   <Style Selector="ComboBox /template/ Path#DropDownGlyph">
     <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
@@ -260,8 +327,9 @@
   </Style>
 
   <Style Selector="CheckBox">
-    <Setter Property="MinHeight" Value="20" />
-    <Setter Property="MinWidth" Value="20" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="MinWidth" Value="28" />
+    <Setter Property="FontSize" Value="13" />
   </Style>
   <Style Selector="CheckBox /template/ Grid">
     <Setter Property="Height" Value="20" />
@@ -269,6 +337,7 @@
   </Style>
   <Style Selector="CheckBox /template/ Border#NormalRectangle">
     <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="CornerRadius" Value="4" />
   </Style>
   <Style Selector="CheckBox /template/ Viewbox">
     <Setter Property="VerticalAlignment" Value="Top" />
@@ -520,8 +589,9 @@
 
   <!-- RadioButton (global) -->
   <Style Selector="RadioButton">
-    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="FontSize" Value="13"/>
     <Setter Property="Margin" Value="0,2"/>
+    <Setter Property="MinHeight" Value="28"/>
   </Style>
 
   <!-- ToolTip -->
