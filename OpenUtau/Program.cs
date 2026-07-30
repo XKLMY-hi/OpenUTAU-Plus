@@ -65,12 +65,14 @@ namespace OpenUtau.App {
                 string fontFamily = process.StandardOutput.ReadToEnd();
                 if (!string.IsNullOrEmpty(fontFamily)) {
                     string [] fontFamilies = fontFamily.Split(',');
-                    fontOptions.DefaultFamilyName = fontFamilies[0];
+                    fontOptions.DefaultFamilyName = $"HarmonyOS Sans SC, {fontFamilies[0]}";
+                } else {
+                    fontOptions.DefaultFamilyName = "HarmonyOS Sans SC";
                 }
             } else if (OS.IsMacOS()) {
-                //To avoid text display corruption, specify Hiragino Sans font first.
-                //Due to the specification of AvaloniaUI, this only affects when the language is set to Japanese.
-                fontOptions.DefaultFamilyName = "Hiragino Sans, Segoe UI, San Francisco, Helvetica Neue";
+                fontOptions.DefaultFamilyName = "HarmonyOS Sans SC, Hiragino Sans, Segoe UI, San Francisco, Helvetica Neue";
+            } else {
+                fontOptions.DefaultFamilyName = "HarmonyOS Sans SC";
             }
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
