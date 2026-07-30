@@ -13,8 +13,9 @@
       <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10" Spacing="4">
         <TextBlock FontWeight="SemiBold" FontSize="15" Name="TitleLabel"/>
         <StackPanel Orientation="Horizontal" Spacing="6">
-          <Border Name="TypeBadge" CornerRadius="3" Padding="5,1">
-            <TextBlock Name="TypeLabel" FontSize="10" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" FontWeight="SemiBold"/>
+          <Border Name="TypeBadge" CornerRadius="6" Padding="5,1"
+                  Background="{DynamicResource AccentBrush1Semi}">
+            <TextBlock Name="TypeLabel" FontSize="10" Foreground="{DynamicResource AccentBrush1}" FontWeight="SemiBold"/>
           </Border>
           <TextBlock Name="VendorLabel" FontSize="11" Opacity="0.6" VerticalAlignment="Center"/>
         </StackPanel>
@@ -29,7 +30,8 @@
       <!-- Parameter list area -->
       <Border DockPanel.Dock="Bottom" BorderThickness="0.5"
               BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-              CornerRadius="4" Margin="0,4,0,4">
+              CornerRadius="8" Margin="0,4,0,4"
+              Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
         <DockPanel Margin="8" LastChildFill="True">
           <TextBlock DockPanel.Dock="Top" FontSize="9" Opacity="0.4"
                      Text="{DynamicResource vsteditor.pluginparams}" Margin="0,0,0,4"/>

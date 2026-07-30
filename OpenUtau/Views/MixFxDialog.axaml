@@ -30,9 +30,18 @@
     </Style>
     <Style Selector="Border.column">
       <Setter Property="Padding" Value="10"/>
-      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="CornerRadius" Value="3"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+    </Style>
+    <Style Selector="ComboBox">
+      <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="Slider">
+      <Setter Property="Margin" Value="0,-2,0,-2"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
     </Style>
   </Window.Styles>
   <DockPanel LastChildFill="True">

@@ -15,13 +15,13 @@
       <Setter Property="Height" Value="32"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
       <Setter Property="BorderThickness" Value="0.5"/>
-      <Setter Property="CornerRadius" Value="2"/>
-      <Setter Property="Margin" Value="0,0,0,3"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Margin" Value="0,0,0,4"/>
       <Setter Property="Padding" Value="8,0"/>
-      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
     </Style>
     <Style Selector="Border.slotRow:pointerover">
-      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
     </Style>
     <Style Selector="TextBlock.slotNum">
       <Setter Property="FontSize" Value="11"/>
@@ -51,10 +51,11 @@
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
       <Setter Property="BorderThickness" Value="0.5"/>
       <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="CornerRadius" Value="8"/>
     </Style>
     <Style Selector="Button.addSlotBtn:pointerover">
-      <Setter Property="BorderBrush" Value="{DynamicResource AccentColor1}"/>
-      <Setter Property="Foreground" Value="{DynamicResource AccentColor1}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush1}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
     </Style>
   </Window.Styles>
 
