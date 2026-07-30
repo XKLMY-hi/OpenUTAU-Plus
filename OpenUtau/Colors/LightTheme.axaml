@@ -3,13 +3,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <system:Boolean x:Key="IsDarkMode">false</system:Boolean>
 
-  <!-- Acrylic material background: light tint at 80% opacity for blur depth -->
-  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#CCF0F0F0"/>
+  <!-- Acrylic material background: light tint at 60% for visible blur -->
+  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#99F8F8FA"/>
 
-  <Color x:Key="BackgroundColor">#FFFFFF</Color>
-  <Color x:Key="BackgroundColorPointerOver">#F0F0F0</Color>
-  <Color x:Key="BackgroundColorPressed">#E0E0E0</Color>
-  <Color x:Key="BackgroundColorDisabled">#D0D0D0</Color>
+  <!-- Fluent surface colors -->
+  <SolidColorBrush x:Key="SurfaceBrush" Color="#F8F8FA"/>
+  <SolidColorBrush x:Key="SurfaceVariantBrush" Color="#F0F0F3"/>
+
+  <Color x:Key="BackgroundColor">#F8F8FA</Color>
+  <Color x:Key="BackgroundColorPointerOver">#F0F0F3</Color>
+  <Color x:Key="BackgroundColorPressed">#E8E8ED</Color>
+  <Color x:Key="BackgroundColorDisabled">#E0E0E5</Color>
 
   <Color x:Key="ForegroundColor">#000000</Color>
   <Color x:Key="ForegroundColorPointerOver">#000000</Color>

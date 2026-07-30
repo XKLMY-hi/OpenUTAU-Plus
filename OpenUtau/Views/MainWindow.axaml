@@ -100,9 +100,9 @@
               <Setter Property="BorderThickness" Value="0,0,1,0"/>
             </Style>
             <Style Selector="ListBoxItem.welcomeNav">
-              <Setter Property="Height" Value="36"/>
-              <Setter Property="Padding" Value="18,0"/>
-              <Setter Property="FontSize" Value="13"/>
+              <Setter Property="Height" Value="40"/>
+              <Setter Property="Padding" Value="20,0"/>
+              <Setter Property="FontSize" Value="14"/>
               <Setter Property="VerticalContentAlignment" Value="Center"/>
               <Setter Property="Background" Value="Transparent"/>
               <Setter Property="BorderBrush" Value="Transparent"/>
@@ -136,14 +136,14 @@
             </Style>
             <!-- Content area -->
             <Style Selector="TextBlock.welcomeHeading">
-              <Setter Property="FontSize" Value="14"/>
+              <Setter Property="FontSize" Value="18"/>
               <Setter Property="FontWeight" Value="SemiBold"/>
               <Setter Property="Margin" Value="0,0,0,8"/>
             </Style>
             <Style Selector="TextBlock.welcomeSub">
-              <Setter Property="FontSize" Value="11"/>
-              <Setter Property="Opacity" Value="0.5"/>
-              <Setter Property="Margin" Value="0,0,0,12"/>
+              <Setter Property="FontSize" Value="13"/>
+              <Setter Property="Opacity" Value="0.45"/>
+              <Setter Property="Margin" Value="0,0,0,16"/>
             </Style>
             <Style Selector="Button.welcomePrimary">
               <Setter Property="Height" Value="36"/>
@@ -175,12 +175,18 @@
             <Style Selector="ListBox.recentList ListBoxItem">
               <Setter Property="Height" Value="NaN"/>
               <Setter Property="MinHeight" Value="52"/>
-              <Setter Property="Padding" Value="10,6"/>
+              <Setter Property="Padding" Value="12,8"/>
               <Setter Property="VerticalContentAlignment" Value="Center"/>
-              <Setter Property="Background" Value="Transparent"/>
+              <Setter Property="Background" Value="#152A2838"/>
+              <Setter Property="BorderThickness" Value="1"/>
+              <Setter Property="BorderBrush" Value="Transparent"/>
+              <Setter Property="CornerRadius" Value="8"/>
+              <Setter Property="Margin" Value="0,2"/>
             </Style>
             <Style Selector="ListBox.recentList ListBoxItem:pointerover">
-              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+              <Setter Property="Background" Value="#302A2838"/>
+              <Setter Property="BorderBrush" Value="#30C73A3F"/>
+              <!-- BoxShadow not yet supported on ListBoxItem -->
             </Style>
             <!-- Template cards -->
             <Style Selector="Border.tplCard">

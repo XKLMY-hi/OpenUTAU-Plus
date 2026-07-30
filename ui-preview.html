@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=1400">
+<title>OpenUTAU Plus — Fluent UI 预览</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','SF Pro Display',system-ui,sans-serif;background:#1a1a20;color:#e0e0e0;padding:24px;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(199,58,63,.06) 0%,transparent 50%),
+                    radial-gradient(ellipse at 80% 60%,rgba(80,120,200,.04) 0%,transparent 50%),
+                    radial-gradient(ellipse at 50% 90%,rgba(199,58,63,.03) 0%,transparent 40%);
+  background-attachment:fixed}
+h2{font-size:16px;margin:32px 0 8px;color:#fff;border-bottom:1px solid #30303a;padding-bottom:6px}
+.sub{font-size:11px;opacity:.45;margin-bottom:20px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.compare-grid.wide{grid-template-columns:1fr}
+.col h3{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#888;margin-bottom:10px;text-align:center}
+.surface{background:#25252f;border-radius:10px;padding:16px}
+.surface.after{background:#1e1e28;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.label{font-size:10px;opacity:.45;margin:12px 0 4px}
+.label:first-child{margin-top:0}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.spacer{height:8px}
+
+/* ══ BEFORE ══ */
+.o-btn{background:#505050;color:#ddd;border:1px solid #666;font-size:12px;padding:2px 8px;height:20px;min-width:48px}
+.o-btn.accent{background:#d13438;border-color:#d13438;color:#fff}
+.o-input{background:#505050;border:1px solid #666;color:#ddd;font-size:12px;padding:2px 6px;height:20px}
+.o-combo{background:#505050;border:1px solid #666;color:#ddd;font-size:12px;padding:2px 8px;height:20px;min-width:100px;position:relative}
+.o-combo::after{content:'▾';margin-left:auto;opacity:.5}
+.o-toggle{width:44px;height:20px;border-radius:10px;background:#555;position:relative;flex-shrink:0}
+.o-toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#ddd;border-radius:50%}
+.o-toggle.on{background:#d13438}.o-toggle.on::after{left:26px}
+.o-check{width:14px;height:14px;border:2px solid #777;background:#444;border-radius:2px;flex-shrink:0}
+.o-check.on{background:#d13438;border-color:#d13438}
+.o-card{background:#303030;border:1px solid #555;padding:10px;margin:6px 0;font-size:12px}
+.o-menu{background:#383838;border:1px solid #555;padding:4px 0;width:160px;font-size:12px}
+.o-menu div{padding:4px 12px}
+.o-menu div:hover{background:#d13438}
+.o-tooltip{display:inline-block;background:#383838;border:1px solid #555;font-size:11px;padding:4px 8px;color:#ccc}
+.o-scroll{width:6px;height:40px;background:#444;border-radius:0}
+.o-progress{width:100%;height:4px;background:#383838}.o-progress::after{content:'';display:block;width:60%;height:100%;background:#d13438}
+.o-tab{border-bottom:2px solid #555;padding:6px 14px;font-size:12px;color:#999}
+.o-tab.active{border-color:#d13438;color:#fff}
+.o-titlebar{display:flex;align-items:center;height:32px;background:#2a2a35;padding:0 12px;gap:12px;font-size:12px}
+.o-titlebar .btns{margin-left:auto;display:flex}
+.o-titlebar .btns div{width:28px;height:20px;border:1px solid #555;text-align:center;font-size:9px;line-height:20px;color:#999}
+.o-titlebar .btns div.close{background:#d13438;color:#fff;border-color:#d13438}
+.o-dialog{background:#303030;border:1px solid #666;border-radius:0;padding:20px;width:300px}
+.o-dialog .title{font-size:14px;font-weight:600;margin-bottom:10px}
+.o-track{display:flex;gap:8px;align-items:center;background:#303030;border:1px solid #555;padding:6px 10px;font-size:12px}
+.o-track .avatar{width:32px;height:32px;border-radius:4px;background:#555}
+
+/* ══ AFTER ══ */
+.n-btn{background:#383848;color:#f0f0f0;border:none;border-radius:8px;font-size:13px;padding:6px 16px;height:32px;min-width:64px;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:all .15s;cursor:pointer}
+.n-btn:hover{background:#484868;box-shadow:0 2px 6px rgba(0,0,0,.35);transform:translateY(-1px)}
+.n-btn.accent{background:#c73a3f;color:#fff}.n-btn.accent:hover{background:#e04a4f}
+.n-input{background:#2a2a38;border:1px solid #3a3a4a;color:#f0f0f0;font-size:13px;padding:6px 10px;height:32px;border-radius:8px;transition:border-color .15s;outline:none}
+.n-input:focus{border-color:#c73a3f;box-shadow:0 0 0 3px rgba(199,58,63,.15)}
+.n-combo{background:#2a2a38;border:1px solid #3a3a4a;color:#f0f0f0;font-size:13px;padding:6px 12px;height:32px;border-radius:8px;min-width:120px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;transition:all .15s}
+.n-combo:hover{border-color:#555;background:#303048}
+.n-toggle{width:46px;height:26px;border-radius:13px;background:#48485a;position:relative;transition:background .15s;cursor:pointer;flex-shrink:0}
+.n-toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.n-toggle.on{background:#c73a3f}.n-toggle.on::after{left:23px}
+.n-check{width:18px;height:18px;border:2px solid #555;border-radius:4px;flex-shrink:0;transition:all .15s;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.n-check.on{background:#c73a3f;border-color:#c73a3f}
+.n-check.on::after{content:'✓';color:#fff;font-size:11px;font-weight:bold}
+.n-card{background:#282832;border:1px solid #383842;padding:14px;margin:8px 0;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.2);font-size:13px}
+.n-card .title{font-size:14px;font-weight:600;margin-bottom:8px}
+.n-card .row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid #2a2a38;gap:24px}
+.n-card .row:last-child{border-bottom:none}
+.n-menu{background:#2e2e3a;border:1px solid #3a3a4a;padding:6px 0;width:170px;font-size:13px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
+.n-menu div{padding:6px 14px;border-radius:4px;margin:2px 6px;transition:background .1s;cursor:pointer}
+.n-menu div:hover{background:#c73a3f;color:#fff}
+.n-tooltip{display:inline-block;background:#333;color:#f0f0f0;font-size:12px;padding:6px 10px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.n-scroll-wrap{display:flex;gap:4px;align-items:flex-end;height:40px}
+.n-scroll{width:4px;height:40px;background:#3a3a4a;border-radius:2px;transition:width .15s}
+.n-scroll:hover{width:8px}
+.n-progress{width:100%;height:4px;background:#2a2a38;border-radius:2px;overflow:hidden}
+.n-progress div{width:60%;height:100%;background:#c73a3f;border-radius:2px;transition:width .3s}
+.n-tab{display:flex;gap:0;border-bottom:1px solid #383842}
+.n-tab div{padding:8px 18px;font-size:13px;color:#888;border-bottom:2px solid transparent;transition:all .15s;cursor:pointer}
+.n-tab div.active{color:#fff;border-color:#c73a3f}
+.n-tab div:hover:not(.active){color:#bbb;border-color:#555}
+.n-titlebar{display:flex;align-items:center;height:36px;background:#282838;padding:0 14px;gap:10px;font-size:12px;border-bottom:1px solid #383848}
+.n-titlebar .btns{margin-left:auto;display:flex;gap:6px}
+.n-titlebar .btns div{width:32px;height:26px;border-radius:6px;text-align:center;line-height:26px;font-size:10px;transition:all .1s;cursor:pointer;color:#aaa}
+.n-titlebar .btns div:hover{background:#3a3a58;color:#fff}
+.n-titlebar .btns div.close:hover{background:#c73a3f}
+.n-dialog{background:#262638;border:1px solid #383848;border-radius:12px;padding:24px;width:320px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.n-dialog .title{font-size:16px;font-weight:600;margin-bottom:12px}
+.n-track{display:flex;gap:12px;align-items:center;background:#282838;border:1px solid #383848;border-radius:8px;padding:8px 12px;font-size:13px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.n-track .avatar{width:36px;height:36px;border-radius:8px;background:#c73a3f;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:14px}
+.mono{font-family:'Cascadia Code','Consolas',monospace;font-size:12px}
+
+/* ══ ACRYLIC + MOUSE GLOW SYSTEM ══ */
+
+/* Mouse-following glow layer (behind all content) */
+#mouse-glow{position:fixed;pointer-events:none;z-index:0;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(199,58,63,.12) 0%,rgba(199,58,63,.04) 40%,transparent 70%);
+  transform:translate(-50%,-50%);transition:left .08s linear,top .08s linear;opacity:0}
+body:hover #mouse-glow{opacity:1}
+
+/* Acrylic base mixin — applied to all 'after' panel controls */
+.acrylic{
+  background:rgba(40,40,56,.45);
+  backdrop-filter:blur(16px) saturate(1.2);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  border:1px solid rgba(199,58,63,.18);
+  box-shadow:0 2px 8px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.acrylic:hover{border-color:rgba(199,58,63,.35);box-shadow:0 4px 16px rgba(199,58,63,.06),0 2px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.06)}
+.acrylic:focus-within{border-color:rgba(199,58,63,.5);box-shadow:0 0 0 3px rgba(199,58,63,.08)}
+.acrylic.accent{border-color:rgba(199,58,63,.4);background:rgba(199,58,63,.15)}
+.acrylic.accent:hover{border-color:rgba(199,58,63,.6);background:rgba(199,58,63,.22);box-shadow:0 4px 20px rgba(199,58,63,.12),0 2px 8px rgba(0,0,0,.2)}
+
+/* Apply acrylic to new components */
+.n-btn.acryl{background:rgba(40,40,56,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(199,58,63,.2);color:#f0f0f0;border-radius:8px;font-size:13px;padding:6px 16px;height:32px;min-width:64px;box-shadow:0 1px 4px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.03);cursor:pointer;transition:all .2s;position:relative;z-index:1}
+.n-btn.acryl:hover{border-color:rgba(199,58,63,.45);box-shadow:0 4px 16px rgba(199,58,63,.1),0 2px 8px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.06)}
+.n-btn.acryl.accent{background:rgba(199,58,63,.18);border-color:rgba(199,58,63,.45);color:#fff}
+.n-btn.acryl.accent:hover{background:rgba(199,58,63,.28);border-color:rgba(199,58,63,.65);box-shadow:0 4px 24px rgba(199,58,63,.2),0 2px 8px rgba(0,0,0,.25)}
+
+.n-input.acryl{background:rgba(30,30,42,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(199,58,63,.15);color:#f0f0f0;font-size:13px;padding:6px 10px;height:32px;border-radius:8px;outline:none;transition:all .2s}
+.n-input.acryl:focus{border-color:rgba(199,58,63,.5);box-shadow:0 0 0 3px rgba(199,58,63,.1)}
+
+.n-card.acryl{background:rgba(40,40,56,.4);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(199,58,63,.12);padding:14px;margin:8px 0;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.03);transition:all .25s}
+.n-card.acryl:hover{border-color:rgba(199,58,63,.3);box-shadow:0 6px 20px rgba(199,58,63,.08),0 2px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.06)}
+
+/* Track item — acrylic + left accent bar */
+.track-item{transition:all .2s ease;position:relative;background:rgba(40,40,56,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid transparent;border-radius:8px}
+.track-item::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;background:#c73a3f;border-radius:0 3px 3px 0;transform:scaleY(0);transition:transform .2s ease}
+.track-item:hover{background:rgba(40,40,56,.5);border-color:rgba(199,58,63,.18);box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.track-item:hover::before{transform:scaleY(1)}
+.track-item.selected{background:rgba(199,58,63,.1);border-color:rgba(199,58,63,.25)}
+.track-item.selected::before{transform:scaleY(1)}
+
+/* Action card — glow ring on hover */
+.action-card{transition:all .25s ease;position:relative;background:rgba(40,40,56,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(199,58,63,.1);border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.action-card:hover{border-color:rgba(199,58,63,.35);box-shadow:0 0 24px 4px rgba(199,58,63,.12),0 4px 16px rgba(0,0,0,.25);transform:translateY(-2px)}
+.action-card:active{transform:translateY(0);box-shadow:0 2px 8px rgba(199,58,63,.08)}
+.action-icon{transition:transform .2s ease}
+.action-card:hover .action-icon{transform:scale(1.1)}
+</style></head><body>
+<!-- Mouse glow layer -->
+<div id="mouse-glow"></div>
+<script>
+const glow=document.getElementById('mouse-glow');
+document.addEventListener('mousemove',e=>{
+  glow.style.left=e.clientX+'px';
+  glow.style.top=e.clientY+'px';
+});
+</script>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>按钮 / 输入框 / 下拉 / 开关</h2>
+<div class="sub">日常交互最高频控件 — 尺寸、圆角、阴影反馈</div>
+
+<div class="compare-grid">
+<div class="col"><div class="surface"><h3>BEFORE</h3>
+  <div class="label">Button</div><div class="row"><div class="o-btn">Cancel</div><div class="o-btn accent">OK</div></div>
+  <div class="label">TextBox</div><input class="o-input" value="Track 1" style="width:120px">
+  <div class="label">ComboBox</div><div class="o-combo">WASAPI ▾</div>
+  <div class="label">ToggleSwitch</div><div class="row"><div class="o-toggle"></div><div class="o-toggle on"></div></div>
+  <div class="label">CheckBox</div><div class="row"><div class="o-check"></div><span style="font-size:12px">Enable</span> <div class="o-check on"></div><span style="font-size:12px">Enable</span></div>
+</div></div>
+<div class="col"><div class="surface after"><h3>AFTER</h3>
+  <div class="label">Button · acrylic · accent border · hover glow</div><div class="row"><div class="n-btn acryl">Cancel</div><div class="n-btn acryl accent">OK</div></div>
+  <div class="label">TextBox · acrylic · focus ring glow</div><input class="n-input acryl" value="Track 1" style="width:140px">
+  <div class="label">ComboBox · acrylic · dropdown</div><div class="n-combo" style="background:rgba(40,40,56,.5);backdrop-filter:blur(12px);border:1px solid rgba(199,58,63,.18)">WASAPI <span style="opacity:.3">▾</span></div>
+  <div class="label">ToggleSwitch · 46x26 · ball shadow · .15s transition</div><div class="row"><div class="n-toggle"></div><div class="n-toggle on"></div></div>
+  <div class="label">CheckBox · 18px · 4px radius · ✓ mark</div><div class="row"><div class="n-check"></div><span style="font-size:13px">Enable</span> <div class="n-check on"></div><span style="font-size:13px">Enable</span></div>
+</div></div>
+</div>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>设置页 · Preferences</h2>
+<div class="sub">布局从平铺 StackPanel → 卡片分组 + Grid 水平对齐</div>
+
+<div class="compare-grid">
+<div class="col"><div class="surface"><h3>BEFORE</h3>
+  <div style="font-size:14px;font-weight:600;margin:8px 0 6px">Playback</div>
+  <div class="label">Audio output</div><div class="o-combo" style="width:130px">WASAPI ▾</div>
+  <div class="label">Lock start time</div><div class="o-toggle"></div>
+  <div class="label">Auto scroll</div><div class="o-toggle on"></div>
+  <div style="font-size:14px;font-weight:600;margin:14px 0 6px">Appearance</div>
+  <div class="label">Theme</div><div class="o-combo" style="width:100px">Dark ▾</div>
+</div></div>
+<div class="col"><div class="surface after"><h3>AFTER · card layout</h3>
+  <div class="n-card acryl"><div class="title">Playback</div>
+    <div class="row"><span>Audio output</span><div class="n-combo" style="width:140px">WASAPI <span style="opacity:.3">▾</span></div></div>
+    <div class="row"><span>Lock start time</span><div class="n-toggle"></div></div>
+    <div class="row"><span>Auto scroll</span><div class="n-toggle on"></div></div>
+  </div>
+  <div class="n-card acryl"><div class="title">Appearance</div>
+    <div class="row"><span>Theme</span><div class="n-combo" style="width:120px">Dark <span style="opacity:.3">▾</span></div></div>
+  </div>
+</div></div>
+</div>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>混音台轨道 · Mixer Track Strip</h2>
+<div class="sub">68px→80px · 单色强调电平面板 · 药丸形按钮 · 推子加大</div>
+
+<div class="compare-grid">
+<div class="col"><div class="surface" style="display:flex;justify-content:center"><h3>BEFORE 68px</h3></div>
+  <div style="display:flex;gap:8px;justify-content:center">
+  <div style="width:68px;background:#25252a;border:1px solid#555;border-radius:4px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px">
+    <div style="height:3px;width:100%;background:#d13438;min-height:3px"></div>
+    <div style="font-size:8px">Track 1</div>
+    <div style="display:flex;gap:2px"><div class="o-btn" style="width:24px;height:16px;font-size:7px;padding:0">M</div><div class="o-btn" style="width:24px;height:16px;font-size:7px;padding:0">S</div></div>
+    <div style="width:100%;height:60px;background:#1a1a1f;border:1px solid#555;position:relative;margin:3px 0"><div style="position:absolute;bottom:0;width:100%;height:45%;background:linear-gradient(to top,#2a7,#390 40%,#d93 70%,#d33)"></div></div>
+    <div style="font-size:8px">-3.2 dB</div>
+    <div class="o-btn" style="width:50px;height:18px;font-size:8px;padding:0;margin-top:2px">FX</div>
+  </div>
+  </div></div>
+<div class="col"><div class="surface after" style="display:flex;justify-content:center"><h3>AFTER 80px</h3></div>
+  <div style="display:flex;gap:8px;justify-content:center">
+  <div style="width:80px;background:#1e1e28;border:1px solid#383848;border-radius:8px;padding:10px 5px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;box-shadow:0 2px 8px rgba(0,0,0,.3)">
+    <div style="height:4px;width:100%;background:#c73a3f;border-radius:2px;min-height:4px"></div>
+    <div style="font-weight:600;font-size:10px">Track 1</div>
+    <div style="display:flex;gap:5px"><div class="n-btn" style="width:26px;height:20px;font-size:8px;border-radius:4px;padding:0;min-width:0">M</div><div class="n-btn accent" style="width:26px;height:20px;font-size:8px;border-radius:4px;padding:0;min-width:0">S</div></div>
+    <div style="width:100%;height:70px;background:#16161e;border-radius:4px;position:relative;margin:4px 0;overflow:hidden"><div style="position:absolute;bottom:0;width:100%;height:55%;background:#c73a3f;opacity:.6;border-radius:4px 4px 0 0"></div></div>
+    <div style="font-size:10px;font-weight:600">-3.2 dB</div>
+    <div class="n-btn accent" style="width:56px;height:24px;font-size:9px;border-radius:99px;padding:0;min-width:0">FX</div>
+  </div>
+  </div></div>
+</div>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>菜单 · 提示 · 滚动条 · 进度条 · 标签页</h2>
+<div class="sub">辅助控件统一圆角+阴影+过渡</div>
+
+<div class="compare-grid">
+<div class="col"><div class="surface"><h3>BEFORE</h3>
+  <div class="label">ContextMenu</div><div class="o-menu"><div>Cut</div><div>Copy</div><div>Paste</div><div style="border-top:1px solid#555">Delete</div></div>
+  <div class="label">ToolTip</div><div class="o-tooltip">BPM: 120</div>
+  <div class="label">ScrollBar</div><div class="row"><div class="o-scroll"></div></div>
+  <div class="label">ProgressBar</div><div class="o-progress"></div>
+  <div class="label">Tabs</div><div class="row"><div class="o-tab">General</div><div class="o-tab active">Playback</div><div class="o-tab">Render</div></div>
+</div></div>
+<div class="col"><div class="surface after"><h3>AFTER</h3>
+  <div class="label">ContextMenu · 8px radius · shadow · .1s hover</div><div class="n-menu"><div>Cut</div><div>Copy</div><div>Paste</div><div style="border-top:1px solid#3a3a4a;margin-top:4px;padding-top:4px">Delete</div></div>
+  <div class="label">ToolTip · 6px radius · shadow</div><div class="n-tooltip">BPM: 120</div>
+  <div class="label">ScrollBar · 4px → hover 8px</div><div class="n-scroll-wrap"><div class="n-scroll"></div></div>
+  <div class="label">ProgressBar · 4px · rounded</div><div class="n-progress"><div></div></div>
+  <div class="label">Tabs · 2px accent underline · .15s transition</div><div class="n-tab"><div>General</div><div class="active">Playback</div><div>Render</div></div>
+</div></div>
+</div>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>窗口外壳 · Title Bar + Dialog</h2>
+<div class="sub">自绘标题栏抛光 · 圆角对话框</div>
+
+<div class="compare-grid">
+<div class="col"><div class="surface"><h3>BEFORE</h3>
+  <div class="label">TitleBar</div>
+  <div class="o-titlebar"><span>OpenUTAU Plus</span><div class="btns"><div>─</div><div>□</div><div class="close">✕</div></div></div>
+  <div class="label" style="margin-top:16px">Dialog</div>
+  <div class="o-dialog"><div class="title">Confirm</div><div style="font-size:12px;margin-bottom:12px;opacity:.8">Delete selected track?</div><div class="row"><div class="o-btn">Cancel</div><div class="o-btn accent">Delete</div></div></div>
+</div></div>
+<div class="col"><div class="surface after"><h3>AFTER</h3>
+  <div class="label">TitleBar · 36px · bottom separator · hover on all btns</div>
+  <div class="n-titlebar"><span>OpenUTAU Plus</span><div class="btns"><div>─</div><div>□</div><div class="close">✕</div></div></div>
+  <div class="label" style="margin-top:16px">Dialog · 12px radius · 8px shadow</div>
+  <div class="n-dialog"><div class="title">Confirm</div><div style="font-size:13px;margin-bottom:16px;opacity:.7">Delete selected track?</div><div class="row" style="justify-content:flex-end;gap:8px"><div class="n-btn">Cancel</div><div class="n-btn accent">Delete</div></div></div>
+</div></div>
+</div>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>轨道头 · Track Header</h2>
+<div class="sub">歌手头像 · 轨道名 · 声像/音量滑条</div>
+
+<div class="compare-grid">
+<div class="col"><div class="surface"><h3>BEFORE</h3>
+  <div class="o-track"><div class="avatar"></div><div><div style="font-weight:600;font-size:12px">Track 1</div><div style="font-size:10px;opacity:.5">Singer · JPN VCV</div></div><div style="margin-left:auto;display:flex;flex-direction:column;gap:2px"><div class="label" style="margin:0">Vol</div><input type="range" style="width:60px;height:12px"><div class="label" style="margin:0">Pan</div><input type="range" style="width:60px;height:12px"></div></div>
+</div></div>
+<div class="col"><div class="surface after"><h3>AFTER</h3>
+  <div class="n-track"><div class="avatar">T1</div><div><div style="font-weight:600;font-size:13px">Track 1</div><div style="font-size:11px;opacity:.5">Singer · JPN VCV</div></div><div style="margin-left:auto;display:flex;gap:12px;align-items:center"><div style="display:flex;flex-direction:column;gap:4px;align-items:center"><span style="font-size:10px;opacity:.4">Vol</span><div style="width:4px;height:32px;background:#383848;border-radius:2px;position:relative"><div style="position:absolute;bottom:0;width:100%;height:60%;background:#c73a3f;border-radius:2px"></div></div></div><div style="display:flex;flex-direction:column;gap:4px;align-items:center"><span style="font-size:10px;opacity:.4">Pan</span><div style="width:4px;height:32px;background:#383848;border-radius:2px;position:relative"><div style="position:absolute;bottom:0;width:100%;height:50%;background:#c73a3f;border-radius:2px"></div></div></div></div></div>
+</div></div>
+</div>
+
+<!-- ════════════════ SECTION ════════════════ -->
+<h2>欢迎页 · Welcome Screen</h2>
+<div class="sub">VOCALOID 6 风格 — 左2/3近期工程列表+搜索 · 右1/3快捷操作卡片</div>
+
+<div class="compare-grid wide">
+<div class="col"><div class="surface"><h3>BEFORE</h3>
+  <div style="display:flex;gap:0;font-size:12px">
+    <div style="width:180px;padding:16px"><div style="padding:6px 12px;background:#d13438;font-weight:600;border-radius:2px;color:#fff;margin-bottom:4px">Recent</div><div style="padding:6px 12px;color:#999">New Project</div><div style="padding:6px 12px;color:#999">Open</div></div>
+    <div style="flex:1;padding:16px"><div style="font-size:18px;font-weight:600;margin-bottom:4px">OpenUTAU Plus</div><div style="font-size:12px;opacity:.5">Voice synthesis workstation</div><div style="display:flex;gap:4px;margin-top:12px">
+      <div style="background:#303030;border:1px solid#555;padding:8px 12px;font-size:12px;width:200px"><div style="font-weight:600">song.ustx</div><div style="font-size:10px;opacity:.5">Modified 2h ago</div></div>
+    </div></div>
+  </div>
+</div></div>
+<div class="col"><div class="surface after" style="padding:0"><h3>AFTER · VOCALOID 6 launcher style</h3>
+  <!-- Title bar -->
+  <div class="n-titlebar" style="border-bottom:1px solid #383848"><span style="font-weight:600;font-size:13px">OpenUTAU Plus</span><div class="btns"><div>─</div><div>□</div><div class="close">✕</div></div></div>
+  <!-- Main layout: 2-column elastic -->
+  <div style="display:flex;min-height:440px;background:#1e1e28">
+    <!-- LEFT COLUMN ~2/3 -->
+    <div style="flex:2;padding:28px 32px;display:flex;flex-direction:column;gap:0">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;opacity:.35;margin-bottom:14px">Recent projects</div>
+      <!-- Search input with glow -->
+      <div class="search-glow" style="display:flex;align-items:center;background:rgba(30,30,42,.5);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(199,58,63,.12);border-radius:8px;padding:8px 14px;gap:10px;margin-bottom:20px">
+        <span style="font-size:15px;opacity:.3">🔍</span>
+        <input style="flex:1;background:none;border:none;color:#f0f0f0;font-size:13px;outline:none" placeholder="Search projects…">
+      </div>
+      <!-- Pinned section -->
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.25;margin-bottom:8px">Pinned</div>
+      <div class="track-item selected" style="display:flex;align-items:center;gap:14px;padding:10px 14px;margin:3px 0;border-radius:8px;cursor:pointer;transition:all .15s">
+        <span style="font-size:24px">📌</span>
+        <div style="flex:1"><div style="font-weight:600;font-size:14px;color:#fff">kimi_no_uta.ustx</div><div style="font-size:11px;opacity:.35">C:\Projects\Vocaloid\</div></div>
+        <span style="font-size:10px;opacity:.25;flex-shrink:0">2h ago</span>
+      </div>
+      <!-- All projects section -->
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.25;margin:16px 0 8px">All projects</div>
+      <div class="track-item" style="display:flex;align-items:center;gap:14px;padding:10px 14px;margin:3px 0;border-radius:8px;cursor:pointer;transition:all .15s">
+        <span style="font-size:24px">🎵</span>
+        <div style="flex:1"><div style="font-weight:500;font-size:14px;color:#e0e0e0">demo_project.ustxp</div><div style="font-size:11px;opacity:.35">C:\Projects\</div></div>
+        <span style="font-size:10px;opacity:.25;flex-shrink:0">Jul 25</span>
+      </div>
+      <div class="track-item" style="display:flex;align-items:center;gap:14px;padding:10px 14px;margin:3px 0;border-radius:8px;cursor:pointer;transition:all .15s">
+        <span style="font-size:24px">🎵</span>
+        <div style="flex:1"><div style="font-weight:500;font-size:14px;color:#e0e0e0">test_vst_chain.ustxp</div><div style="font-size:11px;opacity:.35">C:\Projects\</div></div>
+        <span style="font-size:10px;opacity:.25;flex-shrink:0">Jul 22</span>
+      </div>
+      <div class="track-item" style="display:flex;align-items:center;gap:14px;padding:10px 14px;margin:3px 0;border-radius:8px;cursor:pointer;transition:all .15s">
+        <span style="font-size:24px">🎵</span>
+        <div style="flex:1"><div style="font-weight:500;font-size:14px;color:#e0e0e0">hajimete_no_uta.ustx</div><div style="font-size:11px;opacity:.35">C:\Projects\</div></div>
+        <span style="font-size:10px;opacity:.25;flex-shrink:0">Jul 18</span>
+      </div>
+      <div class="track-item" style="display:flex;align-items:center;gap:14px;padding:10px 14px;margin:3px 0;border-radius:8px;cursor:pointer;transition:all .15s">
+        <span style="font-size:24px">🎵</span>
+        <div style="flex:1"><div style="font-weight:500;font-size:14px;color:#e0e0e0">cover_renai.ustx</div><div style="font-size:11px;opacity:.35">C:\Projects\</div></div>
+        <span style="font-size:10px;opacity:.25;flex-shrink:0">Jul 14</span>
+      </div>
+    </div>
+    <!-- DIVIDER -->
+    <div style="width:1px;background:#2a2a3a;align-self:stretch;margin:24px 0"></div>
+    <!-- RIGHT COLUMN ~1/3 -->
+    <div style="flex:1;padding:28px 32px;display:flex;flex-direction:column;gap:0">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;opacity:.35;margin-bottom:14px">Quick actions</div>
+      <!-- Action cards with glow -->
+      <div class="n-card action-card" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin:5px 0;cursor:pointer">
+        <span class="action-icon" style="font-size:28px;flex-shrink:0">✨</span>
+        <div><div style="font-weight:600;font-size:14px;color:#fff">New project</div><div style="font-size:11px;opacity:.35;margin-top:2px">Create a new USTX project</div></div>
+      </div>
+      <div class="n-card action-card" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin:5px 0;cursor:pointer">
+        <span class="action-icon" style="font-size:28px;flex-shrink:0">📁</span>
+        <div><div style="font-weight:600;font-size:14px;color:#fff">Open file</div><div style="font-size:11px;opacity:.35;margin-top:2px">Browse for .ustx or .ustxp files</div></div>
+      </div>
+      <div class="n-card action-card" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin:5px 0;cursor:pointer">
+        <span class="action-icon" style="font-size:28px;flex-shrink:0">📥</span>
+        <div><div style="font-weight:600;font-size:14px;color:#fff">Import MIDI</div><div style="font-size:11px;opacity:.35;margin-top:2px">Convert from MIDI file</div></div>
+      </div>
+      <div class="n-card action-card" style="display:flex;align-items:center;gap:16px;padding:18px 20px;margin:5px 0;cursor:pointer">
+        <span class="action-icon" style="font-size:28px;flex-shrink:0">🎓</span>
+        <div><div style="font-weight:600;font-size:14px;color:#fff">Getting started</div><div style="font-size:11px;opacity:.35;margin-top:2px">Tutorials and documentation</div></div>
+      </div>
+      <!-- Bottom link -->
+      <div style="margin-top:auto;text-align:right;padding-top:12px">
+        <span style="font-size:11px;opacity:.25;cursor:pointer;transition:opacity .15s">v0.1.568-plus · Release notes ↗</span>
+      </div>
+    </div>
+  </div>
+</div></div>
+</div>
+
+</body></html>

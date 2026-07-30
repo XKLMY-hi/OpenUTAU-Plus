@@ -1,39 +1,46 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="OpenUtau.App.Controls.MixerTrackStrip"
-             Width="68" MinHeight="300">
+             Width="80" MinHeight="300">
   <UserControl.Styles>
     <Style Selector="Button.mixerBtn">
-      <Setter Property="Width" Value="22"/>
-      <Setter Property="Height" Value="16"/>
+      <Setter Property="Width" Value="26"/>
+      <Setter Property="Height" Value="20"/>
       <Setter Property="FontSize" Value="9"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Padding" Value="0"/>
-      <Setter Property="Margin" Value="1"/>
+      <Setter Property="Margin" Value="2"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Background" Value="#30304060"/>
+      <Setter Property="BorderBrush" Value="#18C73A3F"/>
     </Style>
     <Style Selector="Button.mixerBtn.muteOn">
-      <Setter Property="Background" Value="#E53935"/>
-      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Background" Value="#30C73A3F"/>
+      <Setter Property="BorderBrush" Value="#66C73A3F"/>
+      <Setter Property="Foreground" Value="#C73A3F"/>
     </Style>
     <Style Selector="Button.mixerBtn.soloOn">
-      <Setter Property="Background" Value="#FBC02D"/>
-      <Setter Property="Foreground" Value="#1a1a1a"/>
+      <Setter Property="Background" Value="#30C73A3F"/>
+      <Setter Property="BorderBrush" Value="#66C73A3F"/>
+      <Setter Property="Foreground" Value="#C73A3F"/>
     </Style>
     <Style Selector="Button.fxEntryBtn">
-      <Setter Property="Height" Value="22"/>
+      <Setter Property="Height" Value="24"/>
       <Setter Property="FontSize" Value="10"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Margin" Value="4,6,4,2"/>
+      <Setter Property="Margin" Value="6,8,6,4"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
-      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
-      <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
-      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="Background" Value="#20C73A3F"/>
+      <Setter Property="Foreground" Value="#C73A3F"/>
+      <Setter Property="BorderBrush" Value="#40C73A3F"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="2"/>
+      <Setter Property="CornerRadius" Value="999"/>
     </Style>
     <Style Selector="Button.fxEntryBtn.fxActive">
-      <Setter Property="BorderBrush" Value="{DynamicResource AccentColor1}"/>
-      <Setter Property="Foreground" Value="{DynamicResource AccentColor1}"/>
+      <Setter Property="Background" Value="#40C73A3F"/>
+      <Setter Property="BorderBrush" Value="#80C73A3F"/>
+      <Setter Property="Foreground" Value="White"/>
     </Style>
     <Style Selector="TextBlock.sectionLabel">
       <Setter Property="FontSize" Value="8"/>
