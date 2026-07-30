@@ -30,12 +30,30 @@
       <Setter Property="Text" Value="{DynamicResource prefs.note.restart}"/>
       <Setter Property="FontSize" Value="11"/>
       <Setter Property="TextWrapping" Value="Wrap"/>
-      <Setter Property="Margin" Value="4,0"/>
+      <Setter Property="Margin" Value="0,4,0,0"/>
+      <Setter Property="Opacity" Value="0.5"/>
     </Style>
     <Style Selector="ToggleSwitch">
       <Setter Property="OnContent" Value="{DynamicResource button.on}"/>
       <Setter Property="OffContent" Value="{DynamicResource button.off}"/>
       <Setter Property="HorizontalAlignment" Value="Right"/>
+    </Style>
+    <!-- Card grouping -->
+    <Style Selector="Border.prefsCard">
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Padding" Value="12,10"/>
+      <Setter Property="Margin" Value="0,0,0,10"/>
+    </Style>
+    <Style Selector="TextBlock.cardTitle">
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Margin" Value="0,0,0,6"/>
+    </Style>
+    <Style Selector="Grid.cardRow">
+      <Setter Property="Margin" Value="0,3"/>
     </Style>
   </Window.Styles>
 
@@ -132,338 +150,409 @@
         </ListBoxItem>
     </ListBox>
     <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
-      <Carousel Name="PageCarousel" Margin="10" HorizontalAlignment="Stretch" 
+      <Carousel Name="PageCarousel" Margin="10" HorizontalAlignment="Stretch"
           SelectedIndex="{Binding ElementName=DrawerList, Path=SelectedIndex}">
         <!-- General -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.appearance.lang}" Margin="0,10,0,0"/>
-          <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding Converter={StaticResource cultureNameConverter}}"/>
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-          <TextBlock Text="{DynamicResource prefs.appearance.sortorder}" Margin="0,10,0,0"/>
-          <ComboBox ItemsSource="{Binding SortingOrders}" SelectedItem="{Binding SortingOrder}">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding Converter={StaticResource cultureNameConverter}}"/>
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-          <TextBlock Classes="restart"/>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.general}"/>
+              <TextBlock Text="{DynamicResource prefs.appearance.lang}" Margin="0,4,0,0"/>
+              <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource cultureNameConverter}}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Text="{DynamicResource prefs.appearance.sortorder}" Margin="0,8,0,0"/>
+              <ComboBox ItemsSource="{Binding SortingOrders}" SelectedItem="{Binding SortingOrder}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource cultureNameConverter}}"/>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Classes="restart"/>
+            </StackPanel>
+          </Border>
         </StackPanel>
-        
+
         <!-- Playback -->
-        <StackPanel>
-          <Grid>
-            <TextBlock Text="{DynamicResource prefs.playback.systemdefault}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding UseSystemDefaultDevice}"/>
-          </Grid>
-          <TextBlock Classes="restart"/>
-          <TextBlock Text="{DynamicResource prefs.playback.device}" Margin="0,10,0,0"/>
-          <ComboBox ItemsSource="{Binding AudioOutputDevices}" SelectedItem="{Binding AudioOutputDevice}" IsEnabled="{Binding !UseSystemDefaultDevice}"/>
-          <Button Content="{DynamicResource prefs.playback.test}" HorizontalAlignment="Stretch" Command="{Binding TestAudioOutputDevice}"/>
-          <TextBlock Text="{DynamicResource prefs.playback.backend}" Margin="0,10,0,0"/>
-          <ComboBox SelectedIndex="{Binding PreferPortAudio}">
-            <ComboBoxItem Content="{DynamicResource prefs.playback.backend.auto}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.playback.backend.mini}"/>
-          </ComboBox>
-          <TextBlock Classes="restart"/>
-          <TextBlock Text="{DynamicResource prefs.playback.lockstarttime}" Margin="0,10,0,0"/>
-          <ComboBox SelectedIndex="{Binding LockStartTime}">
-            <ComboBoxItem Content="{DynamicResource prefs.playback.lockstarttime.off}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.playback.lockstarttime.on}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.playback.lockstarttime.onlycursor}"/>
-          </ComboBox>
-          <TextBlock Text="{DynamicResource prefs.playback.autoscroll}" Margin="0,10,0,0"/>
-          <ComboBox  SelectedIndex="{Binding PlaybackAutoScroll}">
-            <ComboBoxItem Content="{DynamicResource prefs.playback.autoscrollmode.off}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.playback.autoscrollmode.stationarycursor}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.playback.autoscrollmode.pagescroll}"/>
-          </ComboBox>
-          <Grid ColumnDefinitions="Auto,8,20,8,*" Margin="0,10,0,0">
-            <TextBlock Grid.Column="0" Text="{DynamicResource prefs.playback.cursorposition}"/>
-            <TextBlock Grid.Column="2">
-              <TextBlock.Text>
-                <MultiBinding StringFormat="{}{0:#0.0}">
-                  <Binding Path="PlayPosMarkerMargin"/>
-                </MultiBinding>
-              </TextBlock.Text>
-            </TextBlock>
-            <Slider Grid.Column="4" Classes="fader" Value="{Binding PlayPosMarkerMargin}" Minimum="0" Maximum="1"
-                    TickPlacement="BottomRight" TickFrequency="0.1" IsSnapToTickEnabled="true"/>
-          </Grid>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.playback.device}"/>
+              <Grid>
+                <TextBlock Text="{DynamicResource prefs.playback.systemdefault}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding UseSystemDefaultDevice}"/>
+              </Grid>
+              <TextBlock Classes="restart"/>
+              <ComboBox Margin="0,4,0,0" ItemsSource="{Binding AudioOutputDevices}" SelectedItem="{Binding AudioOutputDevice}" IsEnabled="{Binding !UseSystemDefaultDevice}"/>
+              <Button Content="{DynamicResource prefs.playback.test}" HorizontalAlignment="Stretch" Command="{Binding TestAudioOutputDevice}"/>
+              <TextBlock Text="{DynamicResource prefs.playback.backend}" Margin="0,8,0,0"/>
+              <ComboBox SelectedIndex="{Binding PreferPortAudio}">
+                <ComboBoxItem Content="{DynamicResource prefs.playback.backend.auto}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.playback.backend.mini}"/>
+              </ComboBox>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.playback.autoscroll}"/>
+              <TextBlock Text="{DynamicResource prefs.playback.lockstarttime}" Margin="0,4,0,0"/>
+              <ComboBox SelectedIndex="{Binding LockStartTime}">
+                <ComboBoxItem Content="{DynamicResource prefs.playback.lockstarttime.off}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.playback.lockstarttime.on}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.playback.lockstarttime.onlycursor}"/>
+              </ComboBox>
+              <TextBlock Text="{DynamicResource prefs.playback.autoscroll}" Margin="0,8,0,0"/>
+              <ComboBox  SelectedIndex="{Binding PlaybackAutoScroll}">
+                <ComboBoxItem Content="{DynamicResource prefs.playback.autoscrollmode.off}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.playback.autoscrollmode.stationarycursor}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.playback.autoscrollmode.pagescroll}"/>
+              </ComboBox>
+              <Grid ColumnDefinitions="Auto,8,20,8,*" Margin="0,8,0,0">
+                <TextBlock Grid.Column="0" Text="{DynamicResource prefs.playback.cursorposition}"/>
+                <TextBlock Grid.Column="2">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0:#0.0}">
+                      <Binding Path="PlayPosMarkerMargin"/>
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+                <Slider Grid.Column="4" Classes="fader" Value="{Binding PlayPosMarkerMargin}" Minimum="0" Maximum="1"
+                        TickPlacement="BottomRight" TickFrequency="0.1" IsSnapToTickEnabled="true"/>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- Paths -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.paths.singer}"/>
-          <Grid ColumnDefinitions="*,10,Auto" Margin="4,0,0,10" HorizontalAlignment="Stretch">
-            <TextBlock TextWrapping="Wrap" FontSize="11" Text="{Binding SingerPath}"/>
-            <Button Content="{DynamicResource button.open}" Grid.Column="2" Click="OpenSingersFolder"/>
-          </Grid>
-          <TextBlock Text="{DynamicResource prefs.paths.addlsinger}"/>
-          <Grid ColumnDefinitions="*,10,Auto" Margin="4,0,0,0" HorizontalAlignment="Stretch">
-            <TextBlock TextWrapping="Wrap" FontSize="11" Text="{Binding AdditionalSingersPath}"/>
-            <Button Content="{DynamicResource button.open}" Grid.Column="2" Click="OpenAddlSingersFolder"/>
-          </Grid>
-          <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*,10,*">
-            <Button Grid.Column="0" Content="{DynamicResource button.reset}"
-                    HorizontalAlignment="Stretch" Click="ResetAddlSingersPath"/>
-            <Button Grid.Column="2" Content="{DynamicResource button.select}"
-                    HorizontalAlignment="Stretch" Click="SelectAddlSingersPath"/>
-            <Button Grid.Column="4" Content="{DynamicResource singers.refresh}"
-                    HorizontalAlignment="Stretch" Click="ReloadSingers"/>
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.paths.addlsinger.install}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding InstallToAdditionalSingersPath}"/>
-          </Grid>
-          <Grid>
-            <TextBlock Text="{DynamicResource prefs.paths.loaddeepfolders}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding LoadDeepFolders}"/>
-          </Grid>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.paths.singer}"/>
+              <Grid ColumnDefinitions="*,10,Auto" Margin="0,0,0,6" HorizontalAlignment="Stretch">
+                <TextBlock TextWrapping="Wrap" FontSize="11" Text="{Binding SingerPath}"/>
+                <Button Content="{DynamicResource button.open}" Grid.Column="2" Click="OpenSingersFolder"/>
+              </Grid>
+              <TextBlock Text="{DynamicResource prefs.paths.addlsinger}" Margin="0,4,0,0"/>
+              <Grid ColumnDefinitions="*,10,Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                <TextBlock TextWrapping="Wrap" FontSize="11" Text="{Binding AdditionalSingersPath}"/>
+                <Button Content="{DynamicResource button.open}" Grid.Column="2" Click="OpenAddlSingersFolder"/>
+              </Grid>
+              <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*,10,*" Margin="0,6,0,0">
+                <Button Grid.Column="0" Content="{DynamicResource button.reset}" HorizontalAlignment="Stretch" Click="ResetAddlSingersPath"/>
+                <Button Grid.Column="2" Content="{DynamicResource button.select}" HorizontalAlignment="Stretch" Click="SelectAddlSingersPath"/>
+                <Button Grid.Column="4" Content="{DynamicResource singers.refresh}" HorizontalAlignment="Stretch" Click="ReloadSingers"/>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.paths.loaddeepfolders}"/>
+              <Grid>
+                <TextBlock Text="{DynamicResource prefs.paths.addlsinger.install}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding InstallToAdditionalSingersPath}"/>
+              </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.paths.loaddeepfolders}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding LoadDeepFolders}"/>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- Editing -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.advanced.lyricshelper}" Margin="0,10,0,0"/>
-          <ComboBox ItemsSource="{Binding LyricsHelpers}" SelectedItem="{Binding LyricsHelper}"/>
-          <Grid>
-            <TextBlock Text="{DynamicResource prefs.advanced.lyricshelper.brackets}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding LyricsHelperBrackets}"/>
-          </Grid>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.editing}"/>
+              <TextBlock Text="{DynamicResource prefs.advanced.lyricshelper}" Margin="0,4,0,0"/>
+              <ComboBox ItemsSource="{Binding LyricsHelpers}" SelectedItem="{Binding LyricsHelper}"/>
+              <Grid Margin="0,6,0,0">
+                <TextBlock Text="{DynamicResource prefs.advanced.lyricshelper.brackets}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding LyricsHelperBrackets}"/>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- Rendering -->
-        <StackPanel>
-          <Grid>
-            <TextBlock Text="{DynamicResource prefs.rendering.prerender}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding PreRender}"/>
-          </Grid>
-          <Grid ColumnDefinitions="Auto,8,16,8,*">
-            <TextBlock Grid.Column="0" Text="{DynamicResource prefs.rendering.threads.numthreads}"/>
-            <TextBlock Grid.Column="2">
-              <TextBlock.Text>
-                <MultiBinding StringFormat="{}{0:#0}">
-                  <Binding Path="NumRenderThreads"/>
-                </MultiBinding>
-              </TextBlock.Text>
-            </TextBlock>
-            <Slider Grid.Column="4" Classes="fader" Value="{Binding NumRenderThreads}" Minimum="1" Maximum="{Binding LogicalCoreCount, Mode=OneTime}"
-                    TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="true"/>
-          </Grid>
-          <TextBlock TextWrapping="Wrap" Text="{DynamicResource prefs.rendering.threads.cpuwarn}" FontWeight="Bold"
-                      Foreground="Red" Margin="0,0,0,4" IsVisible="{Binding HighThreads}" FontSize="11"/>
-          <TextBlock Classes="restart"/>
-          <Grid>
-            <TextBlock Text="{DynamicResource prefs.rendering.skipmuted}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding SkipRenderingMutedTracks}"/>
-          </Grid>
-          <Grid>
-            <TextBlock Text="{DynamicResource prefs.cache.clearonquit}" HorizontalAlignment="Left" />
-            <ToggleSwitch IsChecked="{Binding ClearCacheOnQuit}" />
-          </Grid>
-          <TextBlock Text="{DynamicResource prefs.rendering.onnxrunner}" Margin="0,10,0,0"/>
-          <ComboBox ItemsSource="{Binding OnnxRunnerOptions}" SelectedItem="{Binding OnnxRunner}"/>
-          <StackPanel IsVisible="{Binding ShowOnnxGpu}">
-            <TextBlock Text="{DynamicResource prefs.rendering.onnxgpu}" Margin="0,10,0,0"/>
-            <ComboBox ItemsSource="{Binding OnnxGpuOptions}" SelectedItem="{Binding OnnxGpu}"/>
-            <TextBlock Classes="restart"/>
-          </StackPanel>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.rendering.prerender}"/>
+              <Grid Margin="0,0,0,4">
+                <TextBlock Text="{DynamicResource prefs.rendering.prerender}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding PreRender}"/>
+              </Grid>
+              <TextBlock Text="{DynamicResource prefs.rendering.threads.numthreads}" Margin="0,4,0,0"/>
+              <Grid ColumnDefinitions="Auto,8,16,8,*">
+                <TextBlock Grid.Column="0" Text="{DynamicResource prefs.rendering.threads.numthreads}"/>
+                <TextBlock Grid.Column="2">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0:#0}">
+                      <Binding Path="NumRenderThreads"/>
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+                <Slider Grid.Column="4" Classes="fader" Value="{Binding NumRenderThreads}" Minimum="1" Maximum="{Binding LogicalCoreCount, Mode=OneTime}"
+                        TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="true"/>
+              </Grid>
+              <TextBlock TextWrapping="Wrap" Text="{DynamicResource prefs.rendering.threads.cpuwarn}" FontWeight="Bold"
+                          Foreground="{DynamicResource AccentBrush1}" Margin="0,4,0,0" IsVisible="{Binding HighThreads}" FontSize="11"/>
+              <TextBlock Classes="restart"/>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.rendering.skipmuted}"/>
+              <Grid>
+                <TextBlock Text="{DynamicResource prefs.rendering.skipmuted}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding SkipRenderingMutedTracks}"/>
+              </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.cache.clearonquit}" HorizontalAlignment="Left" />
+                <ToggleSwitch IsChecked="{Binding ClearCacheOnQuit}" />
+              </Grid>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.rendering.onnxrunner}"/>
+              <ComboBox ItemsSource="{Binding OnnxRunnerOptions}" SelectedItem="{Binding OnnxRunner}"/>
+              <StackPanel IsVisible="{Binding ShowOnnxGpu}" Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.rendering.onnxgpu}" Margin="0,4,0,0"/>
+                <ComboBox ItemsSource="{Binding OnnxGpuOptions}" SelectedItem="{Binding OnnxGpu}"/>
+                <TextBlock Classes="restart"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- Appearance -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.appearance.theme}" Margin="0,10,0,0"/>
-          <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,auto,auto,auto">
-            <ComboBox Grid.Column="0" IsEnabled="{Binding !IsThemeEditorOpen}" ItemsSource="{Binding ThemeItems}" SelectedItem="{Binding ThemeName}"/>
-            <Button Grid.Column="1" IsEnabled="{Binding !IsThemeEditorOpen}" IsVisible="{Binding ThemeEditable}" MinWidth="18" MinHeight="18" 
-                Click="OpenCustomThemeEditor" Margin="5,0,0,0" Padding="0" ToolTip.Tip="{DynamicResource prefs.appearance.customtheme.edit.title}">
-                <Grid Width="18" Height="18">
-                  <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                      Classes="filled" Data="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z" >
-                    <Path.RenderTransform>
-                      <TransformGroup>
-                        <ScaleTransform ScaleX=".6" ScaleY=".6" />
-                        <TranslateTransform X="-2" Y="-2"/>
-                      </TransformGroup>
-                    </Path.RenderTransform>
-                  </Path>
-                </Grid>
-            </Button>
-            <Button Grid.Column="2" IsEnabled="{Binding !IsThemeEditorOpen}" IsVisible="{Binding ThemeEditable}" Click="OnCustomThemeDelete"
-                MinWidth="18" MinHeight="18" Margin="5,0,0,0" Padding="0" ToolTip.Tip="{DynamicResource prefs.appearance.customtheme.delete.title}">
-              <Grid Width="18" Height="18">
-                  <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                    Data="M7.03 2.81c-.23 0-.38.17-.38.37v1.27h-2.65c-.19 0-.38.17-.38.37v.29c0 .21.19.37.38.37h.26v8.9c0 .21.19.37.38.37h8.7c.23 0 .38-.17.38-.42V5.68h.26c.23 0 .38-.17.38-.37v-.29c0-.21-.15-.42-.38-.42h-2.65V3.22c0-.21-.15-.42-.38-.42H7.05zm.76 1.04h2.42v.75h-2.38v-.75zm-2.49 1.79h7.4v8.23H5.29V6.28zm1.82 1.49a.38.38 0 0 0-.38.42v4.32c0 .21.19.42.38.42h.42a.38.38 0 0 0 .38-.42V7.77a.38.38 0 0 0-.38-.42h-.42zm3.37 0a.38.38 0 0 0-.38.42v4.32c0 .21.15.42.38.42h.38a.38.38 0 0 0 .38-.42V7.77a.38.38 0 0 0-.38-.42h-.38z" />
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.appearance.theme}"/>
+              <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,auto,auto,auto">
+                <ComboBox Grid.Column="0" IsEnabled="{Binding !IsThemeEditorOpen}" ItemsSource="{Binding ThemeItems}" SelectedItem="{Binding ThemeName}"/>
+                <Button Grid.Column="1" IsEnabled="{Binding !IsThemeEditorOpen}" IsVisible="{Binding ThemeEditable}" MinWidth="18" MinHeight="18"
+                    Click="OpenCustomThemeEditor" Margin="5,0,0,0" Padding="0" ToolTip.Tip="{DynamicResource prefs.appearance.customtheme.edit.title}">
+                    <Grid Width="18" Height="18">
+                      <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                          Classes="filled" Data="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z" >
+                        <Path.RenderTransform>
+                          <TransformGroup>
+                            <ScaleTransform ScaleX=".6" ScaleY=".6" />
+                            <TranslateTransform X="-2" Y="-2"/>
+                          </TransformGroup>
+                        </Path.RenderTransform>
+                      </Path>
+                    </Grid>
+                </Button>
+                <Button Grid.Column="2" IsEnabled="{Binding !IsThemeEditorOpen}" IsVisible="{Binding ThemeEditable}" Click="OnCustomThemeDelete"
+                    MinWidth="18" MinHeight="18" Margin="5,0,0,0" Padding="0" ToolTip.Tip="{DynamicResource prefs.appearance.customtheme.delete.title}">
+                  <Grid Width="18" Height="18">
+                      <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Data="M7.03 2.81c-.23 0-.38.17-.38.37v1.27h-2.65c-.19 0-.38.17-.38.37v.29c0 .21.19.37.38.37h.26v8.9c0 .21.19.37.38.37h8.7c.23 0 .38-.17.38-.42V5.68h.26c.23 0 .38-.17.38-.37v-.29c0-.21-.15-.42-.38-.42h-2.65V3.22c0-.21-.15-.42-.38-.42H7.05zm.76 1.04h2.42v.75h-2.38v-.75zm-2.49 1.79h7.4v8.23H5.29V6.28zm1.82 1.49a.38.38 0 0 0-.38.42v4.32c0 .21.19.42.38.42h.42a.38.38 0 0 0 .38-.42V7.77a.38.38 0 0 0-.38-.42h-.42zm3.37 0a.38.38 0 0 0-.38.42v4.32c0 .21.15.42.38.42h.38a.38.38 0 0 0 .38-.42V7.77a.38.38 0 0 0-.38-.42h-.38z" />
+                  </Grid>
+                </Button>
+                <Button Grid.Column="3" IsEnabled="{Binding !IsThemeEditorOpen}" Click="OnCustomThemeCreate" MinWidth="18" MinHeight="18"
+                    Margin="5,0,0,0" Padding="0" ToolTip.Tip="{DynamicResource prefs.appearance.customtheme.create.title}" >
+                  <Grid Width="18" Height="18">
+                      <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                        Data="M8.43 3.33 a0.38 0.38 0 0 0 -0.38 0.38 v4.35 H3.7 a0.38 0.38 0 0 0 -0.38 0.38 v1.13 c0 0.23 0.19 0.38 0.38 0.38 h4.35 v4.35 c0 0.23 0.19 0.38 0.38 0.38 h1.13 a0.38 0.38 0 0 0 0.38 -0.38 V9.97 h4.35 a0.38 0.38 0 0 0 0.38 -0.38 v-1.13 a0.38 0.38 0 0 0 -0.38 -0.38 H9.97 V3.7 a0.38 0.38 0 0 0 -0.38 -0.38 h-1.13 z" />
+                  </Grid>
+                </Button>
               </Grid>
-            </Button>
-            <Button Grid.Column="3" IsEnabled="{Binding !IsThemeEditorOpen}" Click="OnCustomThemeCreate" MinWidth="18" MinHeight="18"
-                Margin="5,0,0,0" Padding="0" ToolTip.Tip="{DynamicResource prefs.appearance.customtheme.create.title}" >
-              <Grid Width="18" Height="18">
-                  <Path Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                    Data="M8.43 3.33 a0.38 0.38 0 0 0 -0.38 0.38 v4.35 H3.7 a0.38 0.38 0 0 0 -0.38 0.38 v1.13 c0 0.23 0.19 0.38 0.38 0.38 h4.35 v4.35 c0 0.23 0.19 0.38 0.38 0.38 h1.13 a0.38 0.38 0 0 0 0.38 -0.38 V9.97 h4.35 a0.38 0.38 0 0 0 0.38 -0.38 v-1.13 a0.38 0.38 0 0 0 -0.38 -0.38 H9.97 V3.7 a0.38 0.38 0 0 0 -0.38 -0.38 h-1.13 z" />
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.appearance.degree}"/>
+              <ComboBox SelectedIndex="{Binding DegreeStyle}">
+                <ComboBoxItem Content="{DynamicResource prefs.appearance.degree.off}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.appearance.degree.solfege}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.appearance.degree.numbered}"/>
+              </ComboBox>
+              <Grid Margin="0,6,0,0">
+                <TextBlock Text="{DynamicResource prefs.appearance.trackcolor}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding UseTrackColor}"/>
               </Grid>
-            </Button>
-          </Grid>
-          <TextBlock Text="{DynamicResource prefs.appearance.degree}" Margin="0,10,0,0"/>
-          <ComboBox SelectedIndex="{Binding DegreeStyle}">
-            <ComboBoxItem Content="{DynamicResource prefs.appearance.degree.off}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.appearance.degree.solfege}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.appearance.degree.numbered}"/>
-          </ComboBox>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.appearance.trackcolor}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding UseTrackColor}"/>
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.appearance.showportrait}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding ShowPortrait}"/>
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.appearance.showicon}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding ShowIcon}"/>
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.appearance.showghostnotes}" HorizontalAlignment="Left"/>
-            <ToggleSwitch IsChecked="{Binding ShowGhostNotes}"/>
-          </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.appearance.showportrait}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding ShowPortrait}"/>
+              </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.appearance.showicon}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding ShowIcon}"/>
+              </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.appearance.showghostnotes}" HorizontalAlignment="Left"/>
+                <ToggleSwitch IsChecked="{Binding ShowGhostNotes}"/>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- UTAU -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.rendering.defaultrenderer}" Margin="0,10,0,0"/>
-          <ComboBox ItemsSource="{Binding DefaultRendererOptions}" SelectedItem="{Binding DefaultRenderer}"/>
-          <TextBlock Text="{DynamicResource prefs.otoeditor.select}" Margin="0,10,0,0"/>
-          <ComboBox SelectedIndex="{Binding OtoEditor}">
-            <ComboBoxItem Content="OpenUtau"/>
-            <ComboBoxItem Content="vLabeler"/>
-            <ComboBoxItem Content="setParam"/>
-          </ComboBox>
-          <TextBlock Text="{DynamicResource prefs.advanced.vlabelerpath}" Margin="0,10,0,0"/>
-          <TextBlock HorizontalAlignment="Stretch" Margin="4"
-                      TextWrapping="Wrap" FontSize="11" Text="{Binding VLabelerPath}"/>
-          <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*">
-            <Button Grid.Column="0" Content="{DynamicResource button.reset}"
-                    HorizontalAlignment="Stretch" Click="ResetVLabelerPath"/>
-            <Button Grid.Column="2" Content="{DynamicResource button.select}"
-                    HorizontalAlignment="Stretch" Click="SelectVLabelerPath"/>
-          </Grid>
-          <TextBlock Text="{DynamicResource prefs.otoeditor.setparampath}" Margin="0,10,0,0"/>
-          <TextBlock HorizontalAlignment="Stretch" Margin="4"
-                      TextWrapping="Wrap" FontSize="11" Text="{Binding SetParamPath}"/>
-          <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*">
-            <Button Grid.Column="0" Content="{DynamicResource button.reset}"
-                    HorizontalAlignment="Stretch" Click="ResetSetParamPath"/>
-            <Button Grid.Column="2" Content="{DynamicResource button.select}"
-                    HorizontalAlignment="Stretch" Click="SelectSetParamPath"/>
-          </Grid>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.rendering.defaultrenderer}"/>
+              <ComboBox ItemsSource="{Binding DefaultRendererOptions}" SelectedItem="{Binding DefaultRenderer}"/>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.otoeditor.select}"/>
+              <ComboBox SelectedIndex="{Binding OtoEditor}">
+                <ComboBoxItem Content="OpenUtau"/>
+                <ComboBoxItem Content="vLabeler"/>
+                <ComboBoxItem Content="setParam"/>
+              </ComboBox>
+              <TextBlock Text="{DynamicResource prefs.advanced.vlabelerpath}" Margin="0,8,0,0"/>
+              <TextBlock HorizontalAlignment="Stretch" Margin="0,2"
+                          TextWrapping="Wrap" FontSize="11" Text="{Binding VLabelerPath}"/>
+              <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*" Margin="0,4,0,0">
+                <Button Grid.Column="0" Content="{DynamicResource button.reset}" HorizontalAlignment="Stretch" Click="ResetVLabelerPath"/>
+                <Button Grid.Column="2" Content="{DynamicResource button.select}" HorizontalAlignment="Stretch" Click="SelectVLabelerPath"/>
+              </Grid>
+              <TextBlock Text="{DynamicResource prefs.otoeditor.setparampath}" Margin="0,8,0,0"/>
+              <TextBlock HorizontalAlignment="Stretch" Margin="0,2"
+                          TextWrapping="Wrap" FontSize="11" Text="{Binding SetParamPath}"/>
+              <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*" Margin="0,4,0,0">
+                <Button Grid.Column="0" Content="{DynamicResource button.reset}" HorizontalAlignment="Stretch" Click="ResetSetParamPath"/>
+                <Button Grid.Column="2" Content="{DynamicResource button.select}" HorizontalAlignment="Stretch" Click="SelectSetParamPath"/>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- DiffSinger -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.rendering.diffsingersteps}" Margin="0,10,0,0"/>
-          <ComboBox HorizontalAlignment="Stretch"  ItemsSource="{Binding DiffSingerStepsOptions}" SelectedItem="{Binding DiffSingerSteps}"/>
-          <TextBlock Text="{DynamicResource prefs.rendering.diffsingerstepsvariance}" Margin="0,10,0,0"/>
-          <ComboBox HorizontalAlignment="Stretch"  ItemsSource="{Binding DiffSingerStepsVarianceOptions}" SelectedItem="{Binding DiffSingerStepsVariance}"/>
-          <TextBlock Text="{DynamicResource prefs.rendering.diffsingerstepspitch}" Margin="0,10,0,0"/>
-          <ComboBox HorizontalAlignment="Stretch"  ItemsSource="{Binding DiffSingerStepsPitchOptions}" SelectedItem="{Binding DiffSingerStepsPitch}"/>
-          <Grid ColumnDefinitions="Auto,8,40,8,*" Margin="0,10,0,0">
-              <TextBlock Grid.Column="0" Text="{DynamicResource prefs.rendering.diffsingerdepth}"/>
-              <TextBlock Grid.Column="2">
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="DiffSinger"/>
+              <TextBlock Text="{DynamicResource prefs.rendering.diffsingersteps}" Margin="0,4,0,0"/>
+              <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding DiffSingerStepsOptions}" SelectedItem="{Binding DiffSingerSteps}"/>
+              <TextBlock Text="{DynamicResource prefs.rendering.diffsingerstepsvariance}" Margin="0,8,0,0"/>
+              <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding DiffSingerStepsVarianceOptions}" SelectedItem="{Binding DiffSingerStepsVariance}"/>
+              <TextBlock Text="{DynamicResource prefs.rendering.diffsingerstepspitch}" Margin="0,8,0,0"/>
+              <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding DiffSingerStepsPitchOptions}" SelectedItem="{Binding DiffSingerStepsPitch}"/>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.rendering.diffsingerdepth}"/>
+              <Grid ColumnDefinitions="Auto,8,40,8,*" Margin="0,4,0,0">
+                <TextBlock Grid.Column="0" Text="{DynamicResource prefs.rendering.diffsingerdepth}"/>
+                <TextBlock Grid.Column="2">
                   <TextBlock.Text>
-                      <MultiBinding StringFormat="{}{0:#0}%">
-                          <Binding Path="DiffSingerDepth"/>
-                      </MultiBinding>
+                    <MultiBinding StringFormat="{}{0:#0}%">
+                      <Binding Path="DiffSingerDepth"/>
+                    </MultiBinding>
                   </TextBlock.Text>
-              </TextBlock>
-              <Slider Grid.Column="4" Classes="fader" Value="{Binding DiffSingerDepth}" Minimum="0" Maximum="100"
-                      TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="true"/>
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.cache.diffsingertensorcache}" HorizontalAlignment="Left" />
-            <ToggleSwitch IsChecked="{Binding DiffSingerTensorCache}" />
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.rendering.diffsingervariancelocalpitchpatch}" HorizontalAlignment="Left" />
-            <ToggleSwitch IsChecked="{Binding DiffSingerVarianceLocalPitchPatch}" IsEnabled="{Binding DiffSingerTensorCache}" />
-          </Grid>
-          <Grid Margin="0,5,0,0">
-            <TextBlock Text="{DynamicResource prefs.appearance.diffsingerlangcodehide}" HorizontalAlignment="Left" />
-            <ToggleSwitch IsChecked="{Binding DiffSingerLangCodeHide}" />
-          </Grid>
+                </TextBlock>
+                <Slider Grid.Column="4" Classes="fader" Value="{Binding DiffSingerDepth}" Minimum="0" Maximum="100"
+                        TickPlacement="BottomRight" TickFrequency="1" IsSnapToTickEnabled="true"/>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.cache.diffsingertensorcache}"/>
+              <Grid Margin="0,0,0,4">
+                <TextBlock Text="{DynamicResource prefs.cache.diffsingertensorcache}" HorizontalAlignment="Left" />
+                <ToggleSwitch IsChecked="{Binding DiffSingerTensorCache}" />
+              </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.rendering.diffsingervariancelocalpitchpatch}" HorizontalAlignment="Left" />
+                <ToggleSwitch IsChecked="{Binding DiffSingerVarianceLocalPitchPatch}" IsEnabled="{Binding DiffSingerTensorCache}" />
+              </Grid>
+              <Grid Margin="0,4,0,0">
+                <TextBlock Text="{DynamicResource prefs.appearance.diffsingerlangcodehide}" HorizontalAlignment="Left" />
+                <ToggleSwitch IsChecked="{Binding DiffSingerLangCodeHide}" />
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- Advanced -->
-        <StackPanel>
-          <TextBlock Text="{DynamicResource prefs.advanced.rememberfiletypes}" Margin="0,10,0,0"/>
-          <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="25,25,25" VerticalAlignment="Center" Margin="4">
-            <CheckBox IsChecked="{Binding RememberMid}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
-            <TextBlock Text=" .mid" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
-            <CheckBox IsChecked="{Binding RememberUst}" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
-            <TextBlock Text=" .ust" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
-            <CheckBox IsChecked="{Binding RememberVsqx}" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
-            <TextBlock Text=" .vsqx" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
-          </Grid>
-          <TextBlock Text="{DynamicResource prefs.advanced.winepath}" 
-                      IsVisible="{OnPlatform Windows=False, Default=True}" Margin="0,10,0,0"/>
-          <TextBlock HorizontalAlignment="Stretch" Margin="4"
-                      TextWrapping="Wrap" FontSize="11" Text="{Binding WinePath}"
-                      IsVisible="{OnPlatform Windows=False, Default=True}" />
-          <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*,10,*"
-                IsVisible="{OnPlatform Windows=False, Default=True}">
-            <Button Grid.Column="0" Content="{DynamicResource button.reset}"
-                    HorizontalAlignment="Stretch" Click="ResetWinePath"/>
-            <Button Grid.Column="2" Content="{DynamicResource button.select}"
-                    HorizontalAlignment="Stretch" Click="SelectWinePath"/>
-            <Button Grid.Column="4" Content="{DynamicResource prefs.paths.detect}"
-                    HorizontalAlignment="Stretch" Click="DetectWinePath"/>
-          </Grid>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.advanced.rememberfiletypes}"/>
+              <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="25,25,25" VerticalAlignment="Center" Margin="4">
+                <CheckBox IsChecked="{Binding RememberMid}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+                <TextBlock Text=" .mid" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+                <CheckBox IsChecked="{Binding RememberUst}" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+                <TextBlock Text=" .ust" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+                <CheckBox IsChecked="{Binding RememberVsqx}" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
+                <TextBlock Text=" .vsqx" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard"
+                  IsVisible="{OnPlatform Windows=False, Default=True}">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.advanced.winepath}"/>
+              <TextBlock HorizontalAlignment="Stretch" Margin="0,2"
+                          TextWrapping="Wrap" FontSize="11" Text="{Binding WinePath}"/>
+              <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*,10,*" Margin="0,6,0,0">
+                <Button Grid.Column="0" Content="{DynamicResource button.reset}" HorizontalAlignment="Stretch" Click="ResetWinePath"/>
+                <Button Grid.Column="2" Content="{DynamicResource button.select}" HorizontalAlignment="Stretch" Click="SelectWinePath"/>
+                <Button Grid.Column="4" Content="{DynamicResource prefs.paths.detect}" HorizontalAlignment="Stretch" Click="DetectWinePath"/>
+              </Grid>
+            </StackPanel>
+          </Border>
         </StackPanel>
 
         <!-- OpenUTAU Plus -->
-        <StackPanel>
-          <TextBlock Text="OpenUTAU Plus" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
-
-          <!-- Window Blur Effect -->
-          <TextBlock Text="{DynamicResource prefs.plus.blur}" FontWeight="SemiBold" Margin="0,0,0,4"/>
-          <Grid Margin="0,0,0,4">
-            <TextBlock Text="{DynamicResource prefs.plus.blur.enable}" VerticalAlignment="Center"/>
-            <ToggleSwitch IsChecked="{Binding EnableBlur}" HorizontalAlignment="Right"/>
-          </Grid>
-          <TextBlock Text="{DynamicResource prefs.plus.blur.mode}" Margin="0,4,0,0"/>
-          <ComboBox SelectedIndex="{Binding BlurModeIndex}" IsEnabled="{Binding EnableBlur}">
-            <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.acrylic}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.mica}"/>
-            <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.none}"/>
-          </ComboBox>
-          <TextBlock Text="{DynamicResource prefs.plus.blur.restart}"
-                     FontSize="10" Opacity="0.45" Margin="0,4,0,0"/>
-
-          <TextBlock Text="{DynamicResource prefs.vst.title}" FontWeight="SemiBold" Margin="0,16,0,4"/>
-          <TextBlock Text="{DynamicResource prefs.vst.scanpaths}"
-                     FontSize="11" Opacity="0.7" Margin="0,0,0,6"/>
-          <ListBox Name="VstPathsList" MinHeight="60" MaxHeight="100"
-                   ItemsSource="{Binding VstScanPaths}"/>
-          <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,4,0,0">
-            <TextBox Grid.Column="0" Name="NewVstPath" Watermark="C:\Path\To\VST\Plugins"
-                     VerticalAlignment="Center"/>
-            <Button Grid.Column="1" Content="{DynamicResource prefs.vst.add}" Margin="6,0,2,0" Click="AddVstPath"/>
-            <Button Grid.Column="2" Content="{DynamicResource prefs.vst.remove}" Click="RemoveVstPath"/>
-          </Grid>
-
-          <TextBlock Text="{DynamicResource prefs.vst.discovered}" FontWeight="SemiBold" Margin="0,16,0,4"/>
-          <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Grid.Column="0" FontSize="11" Opacity="0.7"
-                       Text="{Binding VstPluginCount, StringFormat={}{0} plugin(s) found}"
-                       VerticalAlignment="Center"/>
-            <Button Grid.Column="1" Content="{DynamicResource prefs.vst.rescan}" Click="RescanVstPlugins"/>
-          </Grid>
-          <ListBox Name="VstPluginsList" MinHeight="80" MaxHeight="150"
-                   ItemsSource="{Binding VstKnownPlugins}"/>
+        <StackPanel Margin="0,4,0,0">
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.plus.blur}"/>
+              <Grid Margin="0,0,0,4">
+                <TextBlock Text="{DynamicResource prefs.plus.blur.enable}" VerticalAlignment="Center"/>
+                <ToggleSwitch IsChecked="{Binding EnableBlur}" HorizontalAlignment="Right"/>
+              </Grid>
+              <TextBlock Text="{DynamicResource prefs.plus.blur.mode}" Margin="0,4,0,0"/>
+              <ComboBox SelectedIndex="{Binding BlurModeIndex}" IsEnabled="{Binding EnableBlur}">
+                <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.acrylic}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.mica}"/>
+                <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.none}"/>
+              </ComboBox>
+              <TextBlock Text="{DynamicResource prefs.plus.blur.restart}"
+                         FontSize="10" Opacity="0.45" Margin="0,4,0,0"/>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.vst.title}"/>
+              <TextBlock Text="{DynamicResource prefs.vst.scanpaths}" FontSize="11" Opacity="0.7" Margin="0,0,0,6"/>
+              <ListBox Name="VstPathsList" MinHeight="60" MaxHeight="100" ItemsSource="{Binding VstScanPaths}"/>
+              <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,4,0,0">
+                <TextBox Grid.Column="0" Name="NewVstPath" Watermark="C:\Path\To\VST\Plugins" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="{DynamicResource prefs.vst.add}" Margin="6,0,2,0" Click="AddVstPath"/>
+                <Button Grid.Column="2" Content="{DynamicResource prefs.vst.remove}" Click="RemoveVstPath"/>
+              </Grid>
+            </StackPanel>
+          </Border>
+          <Border Classes="prefsCard">
+            <StackPanel>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.vst.discovered}"/>
+              <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,4">
+                <TextBlock Grid.Column="0" FontSize="11" Opacity="0.7"
+                           Text="{Binding VstPluginCount, StringFormat={}{0} plugin(s) found}" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="{DynamicResource prefs.vst.rescan}" Click="RescanVstPlugins"/>
+              </Grid>
+              <ListBox Name="VstPluginsList" MinHeight="80" MaxHeight="150" ItemsSource="{Binding VstKnownPlugins}"/>
+            </StackPanel>
+          </Border>
         </StackPanel>
       </Carousel>
     </ScrollViewer>
