@@ -18,8 +18,8 @@ namespace OpenUtau.Core.Vst {
 
         // ── Lifecycle ─────────────────────────────────────────────
 
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr vst_load(string bundlePath);
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        private static extern IntPtr vst_load([MarshalAs(UnmanagedType.LPWStr)] string bundlePath);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         private static extern void vst_unload(IntPtr handle);
@@ -225,8 +225,8 @@ namespace OpenUtau.Core.Vst {
 
         // ── Probe (scanning) ───────────────────────────────────────
 
-        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int vst_probe(string path, byte[] jsonBuf, int jsonBufSize);
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        private static extern int vst_probe([MarshalAs(UnmanagedType.LPWStr)] string path, byte[] jsonBuf, int jsonBufSize);
 
         /// <summary>
         /// Probe a VST3 plugin WITHOUT creating a component.

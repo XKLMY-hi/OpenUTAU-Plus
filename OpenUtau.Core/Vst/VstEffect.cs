@@ -11,16 +11,19 @@ namespace OpenUtau.Core.Vst {
     public class VstEffect : IEffect, IDisposable {
         private readonly VstPluginSlot _slot;
         private readonly VstPluginEntry _entry;
+        private readonly IVstBridge _bridge;
         private IntPtr _handle;
-        private bool _setupDone;
+        private bool _isSetup;
+        private bool _isActivated;
         public VstPluginSlot Slot => _slot;
         public VstPluginEntry Entry => _entry;
         public string DisplayName => _entry.Name;
         public bool IsLoaded => _handle != IntPtr.Zero;
         public IntPtr GetBridgeHandle() => _handle;
 
-        public VstEffect(VstPluginSlot slot) {
+        public VstEffect(VstPluginSlot slot, IVstBridge? bridge = null) {
             _slot = slot;
+            _bridge = bridge ?? RealVstBridge.Instance;
             _entry = VstPluginRegistry.Inst.TryGet(slot.PluginUid)
                      ?? throw new InvalidOperationException($"Plugin not found: {slot.PluginUid}");
         }
@@ -33,9 +36,9 @@ namespace OpenUtau.Core.Vst {
                 throw new InvalidOperationException(
                     $"Cannot load instrument '{_entry.Name}' as an effect.");
 
-            _handle = VstBridge.Load(_entry.Path);
+            _handle = _bridge.Load(_entry.Path);
             if (_handle == IntPtr.Zero) {
-                string? err = VstBridge.LastError();
+                string? err = _bridge.LastError();
                 throw new InvalidOperationException(
                     $"Failed to load '{_entry.Name}': {err ?? "unknown"}");
             }
@@ -43,16 +46,14 @@ namespace OpenUtau.Core.Vst {
         }
 
         public void Setup(double sampleRate, int maxBlockSize) {
-            if (_handle == IntPtr.Zero || _setupDone) return;
-            if (!VstBridge.Setup(_handle, sampleRate, maxBlockSize)) {
-                Log.Warning($"[VstEffect] Setup failed: {VstBridge.LastError()}");
+            if (_handle == IntPtr.Zero || _isSetup) return;
+            if (!_bridge.Setup(_handle, sampleRate, maxBlockSize)) {
+                Log.Warning($"[VstEffect] Setup failed: {_bridge.LastError()}");
                 return;
             }
-            if (!VstBridge.Activate(_handle, true)) {
-                Log.Warning($"[VstEffect] Activate failed: {VstBridge.LastError()}");
-                return;
-            }
-            _setupDone = true;
+            _isSetup = true;
+            // Activate is deferred to first Process() call —
+            // avoids keeping plugins hot while idle.
         }
 
         // ── IEffect ────────────────────────────────────────────
@@ -60,20 +61,27 @@ namespace OpenUtau.Core.Vst {
         public bool IsBypassed => _slot.Bypassed;
         public void Process(float[] buffer, int offset, int count) {
             if (_slot.Bypassed || _handle == IntPtr.Zero) return;
+            EnsureActivated();
             int frames = count / 2;
             if (frames <= 0) return;
 
             if (offset == 0 && buffer.Length == count) {
-                VstBridge.Process(_handle, buffer, frames);
+                _bridge.Process(_handle, buffer, frames);
             } else {
                 float[] slice = new float[count];
                 Array.Copy(buffer, offset, slice, 0, count);
-                VstBridge.Process(_handle, slice, frames);
+                _bridge.Process(_handle, slice, frames);
                 Array.Copy(slice, 0, buffer, offset, count);
             }
         }
+
+        private void EnsureActivated() {
+            if (_isActivated || !_isSetup) return;
+            _bridge.Activate(_handle, true);
+            _isActivated = true;
+        }
         public void Reset() {
-            if (_handle != IntPtr.Zero) VstBridge.Reset(_handle);
+            if (_handle != IntPtr.Zero) _bridge.Reset(_handle);
         }
 
         // ── Native GUI ─────────────────────────────────────────
@@ -84,11 +92,11 @@ namespace OpenUtau.Core.Vst {
         /// </summary>
         public bool OpenNativeEditor() {
             if (_handle == IntPtr.Zero) return false;
-            bool ok = VstBridge.OpenEditorWindow(_handle);
+            bool ok = _bridge.OpenEditorWindow(_handle);
             if (ok)
                 Log.Information($"[VstEffect] Native editor opened for '{_entry.Name}'");
             else
-                Log.Warning($"[VstEffect] Editor failed for '{_entry.Name}': {VstBridge.LastError()}");
+                Log.Warning($"[VstEffect] Editor failed for '{_entry.Name}': {_bridge.LastError()}");
             return ok;
         }
 
@@ -97,24 +105,24 @@ namespace OpenUtau.Core.Vst {
         /// <summary>Save processor state (for .ustxp). Returns null on failure.</summary>
         public byte[]? SaveState() {
             if (_handle == IntPtr.Zero) return null;
-            return VstBridge.SaveState(_handle);
+            return _bridge.SaveState(_handle);
         }
 
         /// <summary>Restore processor state (from .ustxp). Returns true on success.</summary>
         public bool RestoreState(byte[]? data) {
             if (_handle == IntPtr.Zero || data == null || data.Length == 0) return false;
-            return VstBridge.RestoreState(_handle, data);
+            return _bridge.RestoreState(_handle, data);
         }
 
         // ── IDisposable ────────────────────────────────────────
 
         public void Dispose() {
             if (_handle != IntPtr.Zero) {
-                if (_setupDone) {
-                    VstBridge.Activate(_handle, false);
-                    _setupDone = false;
+                if (_isActivated) {
+                    _bridge.Activate(_handle, false);
+                    _isActivated = false;
                 }
-                VstBridge.Unload(_handle);
+                _bridge.Unload(_handle);
                 Log.Information($"[VstEffect] Disposed '{_entry.Name}' (0x{_handle:X})");
                 _handle = IntPtr.Zero;
             }

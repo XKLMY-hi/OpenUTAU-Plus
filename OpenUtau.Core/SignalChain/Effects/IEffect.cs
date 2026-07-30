@@ -16,5 +16,12 @@ namespace OpenUtau.Core.SignalChain.Effects {
 
         /// <summary>True when the effect produces nothing different from the input.</summary>
         bool IsBypassed { get; }
+
+        /// <summary>
+        /// Reported latency in samples (for PDC — Plugin Delay Compensation).
+        /// Default 0.  Lookahead limiters, convolution reverbs etc. report their
+        /// internal delay so the render engine can align tracks.
+        /// </summary>
+        int LatencySamples => 0; // C# 8 default interface method
     }
 }

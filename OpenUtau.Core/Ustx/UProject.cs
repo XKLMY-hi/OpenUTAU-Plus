@@ -167,6 +167,11 @@ namespace OpenUtau.Core.Ustx {
                 .OrderBy(part => part.trackNo)
                 .ThenBy(part => part.position)
                 .ToList();
+            // Flush live VST plugin state into slot data before serialisation
+            foreach (var track in tracks) {
+                try { Vst.VstPluginManager.Inst.SaveAllStates(track.TrackNo); }
+                catch (Exception ex) { Serilog.Log.Warning(ex, $"Failed to save VST state for track {track.TrackNo}"); }
+            }
         }
 
         public UProject CloneAsTemplate() {

@@ -10,10 +10,16 @@ namespace OpenUtau.Core.Vst {
     public class VstTrackInstances : IDisposable {
         private readonly int _trackNo;
         private readonly object _writeLock = new();
+        public IVstBridge Bridge { get; set; } = RealVstBridge.Instance;
 
         // Array of loaded effects (null = empty slot). Only modified under _writeLock.
         // Audio thread reads snapshot via GetActiveEffects which copies references.
         private volatile VstEffect?[] _effects = Array.Empty<VstEffect?>();
+
+        // Effects unloaded via UnloadAt are moved here to avoid disposing while
+        // the audio thread may still hold a snapshot reference.  Call FlushPendingDispose()
+        // from the render cycle entry point after the previous cycle is guaranteed done.
+        private readonly List<VstEffect?> _pendingDispose = new();
 
         public VstTrackInstances(int trackNo) => _trackNo = trackNo;
 
@@ -29,7 +35,7 @@ namespace OpenUtau.Core.Vst {
                 if (!slot.IsLoaded || slot.Bypassed) return null;
 
                 try {
-                    var fx = new VstEffect(slot);
+                    var fx = new VstEffect(slot, Bridge);
                     fx.Load();
                     fx.Setup(44100, 4096);
 
@@ -57,12 +63,29 @@ namespace OpenUtau.Core.Vst {
             if (index < 0 || index >= _effects.Length) return;
             var fx = _effects[index];
             if (fx != null) {
-                // Save state before dispose so user params persist across reloads
+                // Save state before disposal so user params persist across reloads
                 var state = fx.SaveState();
                 if (state != null && fx.Slot != null) fx.Slot.StateData = state;
 
-                fx.Dispose();
+                // Defer Dispose — audio thread may still be processing this effect.
                 _effects[index] = null;
+                _pendingDispose.Add(fx);
+            }
+        }
+
+        /// <summary>
+        /// Safely dispose all effects queued for removal.  Must only be called when
+        /// the audio render cycle is not using any snapshot of the old _effects array.
+        /// </summary>
+        public void FlushPendingDispose() {
+            List<VstEffect?>? toDispose = null;
+            lock (_writeLock) {
+                if (_pendingDispose.Count == 0) return;
+                toDispose = new List<VstEffect?>(_pendingDispose);
+                _pendingDispose.Clear();
+            }
+            if (toDispose != null) {
+                foreach (var fx in toDispose) fx?.Dispose();
             }
         }
 
@@ -97,6 +120,7 @@ namespace OpenUtau.Core.Vst {
         }
 
         public void Dispose() {
+            FlushPendingDispose();
             lock (_writeLock) {
                 for (int i = 0; i < _effects.Length; i++) {
                     _effects[i]?.Dispose();

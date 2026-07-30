@@ -69,6 +69,9 @@ public partial class MixerControl : UserControl
 
     public void RebuildStrips()
     {
+        foreach (var child in TrackStripsPanel.Children)
+            if (child is MixerTrackStrip strip)
+                strip.DisposeSubscriptions();
         TrackStripsPanel.Children.Clear();
         if (ViewModel.Tracks.Count == 0) return;
         for (int i = 0; i < ViewModel.Tracks.Count; i++)

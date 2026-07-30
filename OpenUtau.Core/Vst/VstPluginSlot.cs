@@ -1,4 +1,5 @@
 using System;
+using Serilog;
 using YamlDotNet.Serialization;
 
 namespace OpenUtau.Core.Vst {
@@ -21,7 +22,14 @@ namespace OpenUtau.Core.Vst {
         /// <summary>Base64 wrapper for YAML serialization.</summary>
         public string? StateDataBase64 {
             get => StateData != null ? Convert.ToBase64String(StateData) : null;
-            set => StateData = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
+            set {
+                if (string.IsNullOrEmpty(value)) { StateData = null; return; }
+                try { StateData = Convert.FromBase64String(value); }
+                catch (FormatException ex) {
+                    Log.Warning(ex, "VstPluginSlot: corrupt Base64 state — discarding");
+                    StateData = null;
+                }
+            }
         }
 
         /// <summary>Zero-based slot index on the track.</summary>

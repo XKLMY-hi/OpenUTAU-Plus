@@ -102,7 +102,7 @@ namespace OpenUtau.Core.Format {
             project.ValidateFull();
 
             // Version check
-            if (project.ustxVersion > kUstxpVersion) {
+            if (project.ustxVersion > Ustx.kUstxVersion) {
                 throw new MessageCustomizableException(
                     $"Project file is newer than software: {filePath}",
                     $"<translate:errors.failed.opennewerproject>:\n{filePath}",

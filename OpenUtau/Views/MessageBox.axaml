@@ -11,7 +11,7 @@
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <ScrollViewer MaxHeight="700" VerticalScrollBarVisibility="Auto">
-      <Grid Margin="{Binding $parent.WindowDecorationMargin}">
+      <Grid>
       <Grid.RowDefinitions>
         <RowDefinition Height="*"/>
         <RowDefinition Height="50"/>

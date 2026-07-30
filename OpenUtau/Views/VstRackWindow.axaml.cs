@@ -5,20 +5,21 @@ using Avalonia.Input;
 using Avalonia.Layout;
 using Avalonia.Media;
 using OpenUtau.App.Controls;
+using OpenUtau.App.ViewModels;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Vst;
 
 namespace OpenUtau.App.Views {
     public partial class VstRackWindow : WindowEx {
         private readonly UTrack track;
+        private readonly VstRackViewModel _vm;
 
         public VstRackWindow() : this(new UTrack()) { }
         public VstRackWindow(UTrack track) {
             InitializeComponent();
             this.track = track;
-            TitleLabel.Text = $"{track.TrackName} — VST Rack";
-            if (track.VstSlots == null || track.VstSlots.Count == 0)
-                track.VstSlots = VstPluginManager.CreateDefaultSlots(3);
+            _vm = new VstRackViewModel(track);
+            TitleLabel.Text = _vm.Title;
             BuildSlotList();
         }
 
@@ -44,7 +45,7 @@ namespace OpenUtau.App.Views {
 
                     var remove = new Button { Classes = { "removeBtn" } };
                     var shot = slot;
-                    remove.Click += (s, e) => { shot.Clear(); BuildSlotList(); };
+                    remove.Click += (s, e) => { _vm.RemoveSlotCommand.Execute(shot); BuildSlotList(); };
                     grid.Children.Add(remove); Grid.SetColumn(remove, 3);
                 } else {
                     var empty = new TextBlock { Classes = { "emptyName" }, Text = "Empty slot" };
@@ -61,24 +62,20 @@ namespace OpenUtau.App.Views {
                 SlotList.Children.Add(row);
             }
 
-            if (track.VstSlots.Count < 8) {
+            if (_vm.CanAddSlot) {
                 var addSlot = new Button {
                     Classes = { "addSlotBtn" },
                     Content = "+ Add slot",
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     Margin = new Thickness(0, 4, 0, 0),
                 };
-                addSlot.Click += (s, e) => {
-                    track.VstSlots.Add(new VstPluginSlot(track.VstSlots.Count));
-                    BuildSlotList();
-                };
+                addSlot.Click += (s, e) => { _vm.AddSlotCommand.Execute(null); BuildSlotList(); };
                 SlotList.Children.Add(addSlot);
             }
         }
 
         private void AddPluginToSlot(VstPluginSlot slot) {
-            VstPluginManager.Inst.ScanPlugins();
-            var plugins = VstPluginManager.Inst.KnownPlugins.Values.OrderBy(p => p.PluginName).ToList();
+            var plugins = _vm.GetAvailablePlugins();
 
             if (plugins.Count == 0) {
                 var msg = new Window { Title = "No VST Plugins Found", Width = 380, Height = 170, WindowStartupLocation = WindowStartupLocation.CenterOwner };
@@ -121,8 +118,7 @@ namespace OpenUtau.App.Views {
 
             load.Click += (s, e) => {
                 if (listBox.SelectedItem is VstPluginInfo sel) {
-                    slot.PluginUid = sel.PluginUid;
-                    VstPluginManager.Inst.LoadPlugin(slot);
+                    _vm.LoadPlugin(slot, sel.PluginUid);
                     BuildSlotList();
                 }
                 picker.Close();

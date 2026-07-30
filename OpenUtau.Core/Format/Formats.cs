@@ -122,7 +122,9 @@ namespace OpenUtau.Core.Format {
         public static void RecoveryProject(string[] files) {
             UProject project = ReadProject(files);
             if (project != null) {
-                string originalPath = project.FilePath.Replace("-autosave.ustx", ".ustx").Replace("-backup.ustx", ".ustx");
+                string originalPath = project.FilePath
+                    .Replace("-autosave.ustxp", ".ustxp").Replace("-backup.ustxp", ".ustxp")
+                    .Replace("-autosave.ustx", ".ustx").Replace("-backup.ustx", ".ustx");
                 if (File.Exists(originalPath)) {
                     project.FilePath = originalPath;
                 } else {

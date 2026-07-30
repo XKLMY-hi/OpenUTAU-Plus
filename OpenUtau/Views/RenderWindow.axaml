@@ -83,7 +83,7 @@
 
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
-    <Border Margin="{Binding $parent.WindowDecorationMargin}">
+    <Border>
     <DockPanel Margin="16" LastChildFill="True">
 
       <!-- ═══ 1. Output Mode ═══ -->

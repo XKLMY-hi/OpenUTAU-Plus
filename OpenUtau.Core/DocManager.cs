@@ -155,7 +155,7 @@ namespace OpenUtau.Core {
                     : Path.GetFileNameWithoutExtension(Project.FilePath);
                 string backup = Path.Join(dir, filename + "-backup.ustxp");
                 Log.Information($"Saving backup {backup}.");
-                Format.Ustx.AutoSave(backup, Project);
+                Format.Ustxp.AutoSave(backup, Project);
                 Log.Information($"Saved backup {backup}.");
             } catch (Exception e) {
                 Log.Error(e, "Save backup failed.");
@@ -184,7 +184,7 @@ namespace OpenUtau.Core {
 
                 string backup = Path.Join(dir, filename + "-autosave.ustxp");
                 Log.Information($"Autosave {backup}.");
-                Format.Ustx.AutoSave(backup, Project);
+                Format.Ustxp.AutoSave(backup, Project);
                 Log.Information($"Autosaved {backup}.");
                 autosavedPoint = undoQueue.LastOrDefault();
             } catch (Exception e) {

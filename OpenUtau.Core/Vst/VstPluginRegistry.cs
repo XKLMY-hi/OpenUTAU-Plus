@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
+using K4os.Hash.xxHash;
 using OpenUtau.Core.Util;
 using Serilog;
 
@@ -21,6 +23,9 @@ namespace OpenUtau.Core.Vst {
     /// </summary>
     public class VstPluginRegistry {
         public static VstPluginRegistry Inst { get; } = new();
+
+        /// <summary>Test seam: inject a fake bridge for unit-testing VST scanning.</summary>
+        public IVstBridge Bridge { get; set; } = RealVstBridge.Instance;
 
         private readonly Dictionary<string, VstPluginEntry> _entries = new();
         private bool _scanned;
@@ -224,7 +229,7 @@ namespace OpenUtau.Core.Vst {
                 using var probe = new Probe(dllPath);
                 if (!probe.IsValid) return false;
                 string dllName = Path.GetFileNameWithoutExtension(dllPath);
-                string uid = $"vst2:{dllName.GetHashCode():x8}";
+                string uid = BuildVst2Uid(dllName);
                 // VST2 has no subcategories — default to effect
                 _entries[uid] = new VstPluginEntry {
                     Uid = uid, Name = dllName, Vendor = "", Path = dllPath,
@@ -234,6 +239,16 @@ namespace OpenUtau.Core.Vst {
                 };
                 return true;
             } catch { return false; }
+        }
+
+        /// <summary>
+        /// Build a stable, cross-machine UID for a VST2 dll from its file name.
+        /// Uses xxHash (deterministic across runs/machines) — NOT string.GetHashCode
+        /// which is non-deterministic in .NET Core+ and would break .ustxp portability.
+        /// </summary>
+        internal static string BuildVst2Uid(string dllName) {
+            ulong hash = XXH64.DigestOf(Encoding.UTF8.GetBytes(dllName));
+            return $"vst2:{hash:x16}";
         }
 
         /// <summary>

@@ -12,6 +12,9 @@ namespace OpenUtau.Core.Vst {
         private static VstPluginManager? _inst;
         public static VstPluginManager Inst => _inst ??= new();
 
+        /// <summary>Test seam: inject a fake bridge for unit-testing VST lifecycle.</summary>
+        public IVstBridge Bridge { get; set; } = RealVstBridge.Instance;
+
         private readonly object _lock = new();
         private readonly Dictionary<int, VstTrackInstances> _tracks = new();
 
@@ -33,8 +36,10 @@ namespace OpenUtau.Core.Vst {
         VstTrackInstances GetOrCreate(int trackNo) {
             lock (_lock) {
                 if (!_tracks.TryGetValue(trackNo, out var ti)) {
-                    ti = new VstTrackInstances(trackNo);
+                    ti = new VstTrackInstances(trackNo) { Bridge = Bridge };
                     _tracks[trackNo] = ti;
+                } else {
+                    ti.Bridge = Bridge;
                 }
                 return ti;
             }
@@ -83,13 +88,23 @@ namespace OpenUtau.Core.Vst {
                 }
             }
         }
+        /// <summary>Safe-dispose all effects queued for removal on all tracks.
+        /// Call from RenderEngine before building the next render cycle.</summary>
+        public void FlushAllPendingDispose() {
+            lock (_lock) {
+                foreach (var kv in _tracks) kv.Value.FlushPendingDispose();
+            }
+        }
+
         public void ClearAll() {
             lock (_lock) {
                 foreach (var kv in _tracks) kv.Value.Dispose();
                 _tracks.Clear();
             }
         }
+        // Obsolete: use LoadEffect(trackNo, slot) directly.
         public bool LoadPlugin(VstPluginSlot slot) => slot.IsLoaded;
+        // Obsolete: use UnloadEffect(trackNo, slotIndex) directly.
         public void UnloadPlugin(VstPluginSlot slot) { }
         public static List<VstPluginSlot> CreateDefaultSlots(int count = 3) {
             var s = new List<VstPluginSlot>();

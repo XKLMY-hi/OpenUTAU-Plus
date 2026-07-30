@@ -1,0 +1,6 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OpenUtau.App.Controls.ResizerBar">
+  <Border x:Name="Bar" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+          Cursor="SizeNorthSouth" Height="6" />
+</UserControl>

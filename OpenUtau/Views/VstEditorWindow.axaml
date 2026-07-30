@@ -7,7 +7,7 @@
         WindowStartupLocation="CenterOwner">
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
-    <Border Margin="{Binding $parent.WindowDecorationMargin}">
+    <Border>
     <DockPanel Margin="14" LastChildFill="True">
       <!-- Plugin info header -->
       <StackPanel DockPanel.Dock="Top" Margin="0,0,0,10" Spacing="4">

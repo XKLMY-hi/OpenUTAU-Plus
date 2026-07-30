@@ -23,7 +23,7 @@ typedef struct VstBridgeInstance VstBridgeInstance;
 
 /// Load a VST3 plugin from a bundle directory path (the .vst3 folder).
 /// Returns NULL on failure; call vst_last_error() for details.
-VSTBRIDGE_API VstBridgeInstance* vst_load(const char* bundlePath);
+VSTBRIDGE_API VstBridgeInstance* vst_load(const wchar_t* bundlePath);
 
 /// Destroy the plugin instance and free all resources.
 VSTBRIDGE_API void vst_unload(VstBridgeInstance* inst);
@@ -102,7 +102,7 @@ VSTBRIDGE_API int vst_restore_state(VstBridgeInstance* inst, const char* data, i
 /// Returns 0 on success; call vst_last_error() on failure.
 ///
 /// This is safe to call on instrument VSTs — no component is created.
-VSTBRIDGE_API int vst_probe(const char* bundleOrDllPath,
+VSTBRIDGE_API int vst_probe(const wchar_t* bundleOrDllPath,
                             char* jsonBuf, int jsonBufSize);
 
 /// ── Error Reporting ────────────────────────────────────────────────

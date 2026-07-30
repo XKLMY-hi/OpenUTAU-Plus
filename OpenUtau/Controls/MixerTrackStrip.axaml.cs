@@ -22,9 +22,12 @@ namespace OpenUtau.App.Controls {
         private bool isDragging;
         private bool suppressingEvents;
         private bool _syncing;
+        private IDisposable? _volumeSubscription;
+        private IDisposable? _panSubscription;
+        private ViewModels.MixerTrackStripViewModel? _vm;
         public UTrack? Track {
             get => track;
-            set { if (track == value) return; track = value; LoadTrackData(); }
+            set { if (track == value) return; track = value; _vm = track != null ? new ViewModels.MixerTrackStripViewModel(track) : null; LoadTrackData(); }
         }
         public int TrackIndex { get; set; } = -1;
 
@@ -39,7 +42,7 @@ namespace OpenUtau.App.Controls {
         public MixerTrackStrip(UTrack track) : this() {
             Track = track;
             // Subscribe to volume/pan changes from main window
-            MessageBus.Current.Listen<VolumeChangeNotification>()
+            _volumeSubscription = MessageBus.Current.Listen<VolumeChangeNotification>()
                 .Where(n => n.TrackNo == track.TrackNo)
                 .Subscribe(n => {
                     if (_syncing) return;
@@ -49,7 +52,7 @@ namespace OpenUtau.App.Controls {
                     UpdateVolValueDisplay(db);
                     _syncing = false;
                 });
-            MessageBus.Current.Listen<PanChangeNotification>()
+            _panSubscription = MessageBus.Current.Listen<PanChangeNotification>()
                 .Where(n => n.TrackNo == track.TrackNo)
                 .Subscribe(n => {
                     if (_syncing) return;
@@ -60,24 +63,40 @@ namespace OpenUtau.App.Controls {
                     suppressingEvents = false;
                     _syncing = false;
                 });
+            Unloaded += OnStripUnloaded;
+        }
+
+        private void OnStripUnloaded(object? sender, EventArgs e) => DisposeSubscriptions();
+
+        public void DisposeSubscriptions() {
+            _volumeSubscription?.Dispose();
+            _volumeSubscription = null;
+            _panSubscription?.Dispose();
+            _panSubscription = null;
+            PanSlider.PropertyChanged -= OnPanSliderValueChanged;
+            _vm = null;
+        }
+
+        private void OnPanSliderValueChanged(object? s, Avalonia.AvaloniaPropertyChangedEventArgs e) {
+            if (e.Property == RangeBase.ValueProperty && !suppressingEvents && track != null && _vm != null) {
+                _vm.ApplyPan(PanSlider.Value);
+                var pn = new PanChangeNotification(track.TrackNo, PanSlider.Value);
+                DocManager.Inst.ExecuteCmd(pn);
+                MessageBus.Current.SendMessage(pn);
+            }
         }
 
         private void LoadTrackData() {
-            if (track == null) return;
+            if (track == null || _vm == null) return;
+            _vm.Refresh();
             suppressingEvents = true;
-            TrackNameLabel.Text = track.TrackName;
-            ColorBar.Background = ThemeManager.GetTrackColor(track.TrackColor).AccentColor;
+            TrackNameLabel.Text = _vm.TrackName;
+            ColorBar.Background = _vm.TrackColor;
             UpdateMuteSoloButtons();
-            PanSlider.Value = track.Pan * 100.0;
-            PanSlider.PropertyChanged += (s, e) => {
-                if (e.Property == RangeBase.ValueProperty && !suppressingEvents && track != null) {
-                    track.Pan = PanSlider.Value / 100.0;
-                    var pn = new PanChangeNotification(track.TrackNo, PanSlider.Value);
-                    DocManager.Inst.ExecuteCmd(pn);
-                    MessageBus.Current.SendMessage(pn);
-                }
-            };
-            UpdateVolValueDisplay(Math.Clamp(track.Volume, FaderMin, FaderMax));
+            PanSlider.Value = _vm.Pan;
+            PanSlider.PropertyChanged -= OnPanSliderValueChanged;
+            PanSlider.PropertyChanged += OnPanSliderValueChanged;
+            UpdateVolValueDisplay(Math.Clamp(_vm.Volume, FaderMin, FaderMax));
             UpdateFaderPosition();
             UpdateFxEntryBtn();
             suppressingEvents = false;
@@ -126,9 +145,9 @@ namespace OpenUtau.App.Controls {
             return new SolidColorBrush(Color.FromArgb(a, r, g, b));
         }
         private void ApplyVolume(double db) {
-            if (track == null) return;
+            if (track == null || _vm == null) return;
             db = Math.Clamp(db, FaderMin, FaderMax);
-            track.Volume = db;
+            _vm.ApplyVolume(db);
             var vn = new VolumeChangeNotification(track.TrackNo, track.Muted ? -24 : db);
             DocManager.Inst.ExecuteCmd(vn);
             MessageBus.Current.SendMessage(vn);
@@ -188,18 +207,11 @@ namespace OpenUtau.App.Controls {
 
         // ── Buttons ─────────────────────────────────────────
         private void OnMuteClick(object? sender, RoutedEventArgs e) {
-            if (track == null) return;
-            track.Mute = !track.Mute; track.Muted = track.Mute;
-            var vn2 = new VolumeChangeNotification(track.TrackNo, track.Muted ? -24 : track.Volume);
-            DocManager.Inst.ExecuteCmd(vn2);
-            MessageBus.Current.SendMessage(vn2);
-            MessageBus.Current.SendMessage(new TracksMuteEvent(track.TrackNo, false));
+            _vm?.ToggleMuteCmd.Execute(null);
             UpdateMuteSoloButtons();
         }
         private void OnSoloClick(object? sender, RoutedEventArgs e) {
-            if (track == null) return;
-            track.Solo = !track.Solo;
-            MessageBus.Current.SendMessage(new TracksSoloEvent(track.TrackNo, track.Solo, false));
+            _vm?.ToggleSoloCmd.Execute(null);
             UpdateMuteSoloButtons();
         }
         private void OnFxEntryClick(object? sender, RoutedEventArgs e) {
@@ -220,9 +232,9 @@ namespace OpenUtau.App.Controls {
         }
         // ── Level Meter ────────────────────────────────────
         public void UpdateLevel(float rawPeakDb) {
-            if (FaderBox.Bounds.Height <= 0 || track == null) return;
-            bool silent = track.Mute || track.Muted || track.Volume <= -24;
-            float gainDb = silent ? -60f : (float)track.Volume;
+            if (FaderBox.Bounds.Height <= 0 || _vm == null) return;
+            bool silent = _vm.IsSilent;
+            float gainDb = silent ? -60f : (float)_vm.Volume;
             float effectiveDb = Math.Clamp(rawPeakDb + gainDb, -60f, 0f);
             double ratio = (effectiveDb + 60) / 60.0;
             double targetH = ratio * FaderBox.Bounds.Height;

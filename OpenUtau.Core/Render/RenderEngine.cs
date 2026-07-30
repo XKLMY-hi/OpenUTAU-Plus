@@ -71,6 +71,9 @@ namespace OpenUtau.Core.Render {
             double startMs = project.timeAxis.TickPosToMsPos(startTick);
             double endMs = endTick == -1 ? double.PositiveInfinity : project.timeAxis.TickPosToMsPos(endTick);
             var faders = new List<Fader>();
+            // Flush any pending effect disposals from the previous render cycle
+            // before the audio thread takes new snapshots of the effects array.
+            Vst.VstPluginManager.Inst.FlushAllPendingDispose();
             // Each track is wrapped with its own UMixFx (no global FX bus).
             // Tracks with MixFx == null or Enabled = false pass through unchanged
             // (zero-overhead bypass).  All tracks sum into a single mix.

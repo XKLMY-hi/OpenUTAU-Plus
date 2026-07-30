@@ -35,6 +35,8 @@ namespace OpenUtau.Core.SignalChain {
         public void SetPosition(int position) {
             this.position = position;
             Waited = 0;
+            // Reset time-domain state on seek (default no-op for non-EffectChain sources)
+            source.Reset();
         }
     }
 }

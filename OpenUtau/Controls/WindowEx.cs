@@ -17,6 +17,7 @@ public class WindowEx : Window
         // ── Custom chrome (title bar + resize border) ────
         if (enableCustomChrome)
         {
+            ExtendClientAreaToDecorationsHint = true;
             ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
             ExtendClientAreaTitleBarHeightHint = 32;
             SystemDecorations = SystemDecorations.BorderOnly;

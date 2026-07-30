@@ -14,7 +14,7 @@
 
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
-    <Border Margin="{Binding $parent.WindowDecorationMargin}">
+    <Border>
       <ContentControl Name="MixerContainer"/>
     </Border>
   </DockPanel>

@@ -8,8 +8,8 @@ namespace OpenUtau.Core.SignalChain {
     /// then applies a list of IEffect processors in series before additively mixing
     /// into the output.
     ///
-    /// Generalised replacement for the hardcoded MixFxSource (EQ → Comp → Reverb).
-    /// Now accepts any IEffect[] so VST plugins can be inserted alongside built-in FX.
+    /// Generalised replacement for the old hardcoded FX chain (EQ → Comp → Reverb).
+    /// Accepts any IEffect[] so VST plugins can be inserted alongside built-in FX.
     /// </summary>
     public class EffectChain : ISignalSource {
         public const int SampleRate = 44100;
@@ -25,6 +25,21 @@ namespace OpenUtau.Core.SignalChain {
         }
 
         public bool IsReady(int position, int count) => source.IsReady(position, count);
+
+        /// <summary>Total reported latency of all effects in the chain (for future PDC).</summary>
+        public int TotalLatency {
+            get {
+                int total = 0;
+                foreach (var fx in effects) total += fx.LatencySamples;
+                return total;
+            }
+        }
+
+        /// <summary>Drop time-domain state of all effects. Call on seek/position jump.</summary>
+        public void Reset() {
+            foreach (var fx in effects)
+                fx.Reset();
+        }
 
         public int Mix(int position, float[] buffer, int index, int count) {
             if (scratch == null || scratch.Length < count)

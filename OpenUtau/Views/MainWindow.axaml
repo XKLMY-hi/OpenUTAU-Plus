@@ -19,7 +19,7 @@
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Grid>
-      <Grid Name="MainGrid" Margin="{Binding $parent[1].WindowDecorationMargin}">
+      <Grid Name="MainGrid">
       <Menu Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24"
                 Opened="OnMainMenuOpened" Closed="OnMainMenuClosed" PointerExited="OnMainMenuPointerLeave"
                 ZIndex="1" IsVisible="{Binding Page}">

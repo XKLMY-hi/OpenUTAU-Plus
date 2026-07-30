@@ -134,15 +134,15 @@ namespace OpenUtau.App.Views {
                         var recorder = new RecordingAdapter(masterAdapter, writer, silentOutput: true);
 
                         float[] buf = new float[4096];
-                        int totalRead = 0;
-                        while ((totalRead = recorder.Read(buf, 0, buf.Length)) > 0) {
-                            var sec = totalRead / 44100.0 / 2.0;
-                            if (totalRead % 88200 == 0) {
+                        DrainExport(
+                            () => recorder.Read(buf, 0, buf.Length),
+                            totalWritten => {
+                                var sec = totalWritten / 44100.0 / 2.0;
                                 Dispatcher.UIThread.Invoke(() => {
                                     ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
                                 });
-                            }
-                        }
+                            },
+                            ctx.Token);
                     } else {
                         var trackMixes = engine.RenderTracks(
                             DocManager.Inst.MainScheduler, ref ctx);
@@ -197,6 +197,24 @@ namespace OpenUtau.App.Views {
             foreach (char c in Path.GetInvalidFileNameChars())
                 name = name.Replace(c.ToString(), "_");
             return name;
+        }
+
+        /// <summary>
+        /// Drain a sample reader into a WAV file until EOF or cancellation.
+        /// Extracted from OnStartRender for testability: the drain loop, cancellation
+        /// check, and accumulated-sample progress tracking are pure logic with no UI deps.
+        /// </summary>
+        /// <param name="readChunk">Reads one chunk; returns sample count, 0 on EOF.</param>
+        /// <param name="onProgress">Receives the running total of samples written.</param>
+        /// <param name="ct">Cancellation token; loop breaks as soon as it is requested.</param>
+        internal static void DrainExport(Func<int> readChunk, Action<long> onProgress, CancellationToken ct) {
+            long totalWritten = 0;
+            int chunkRead;
+            while ((chunkRead = readChunk()) > 0) {
+                if (ct.IsCancellationRequested) break;
+                totalWritten += chunkRead;
+                onProgress(totalWritten);
+            }
         }
 
         public void OnOpenFolder(object? sender, RoutedEventArgs args) {

@@ -60,25 +60,34 @@ extern "C" const char* vst_last_error(void) {
 
 static constexpr int kMaxParams = 4096;
 
+/// Lock-free SPSC ring buffer for GUI→audio parameter updates.
+/// Single producer (GUI thread, BridgeCompHandler::performEdit),
+/// single consumer (audio thread, vst_process drain).
 struct ParamQueue {
-    std::atomic<float> values[kMaxParams] = {};
-    std::atomic<bool>  dirty[kMaxParams] = {};
+    struct Entry { int id; float value; };
+    static constexpr size_t kRingSize = 2048;
+    Entry ring[kRingSize] = {};
+    std::atomic<size_t> writeIdx{0};  // producer cursor
+    std::atomic<size_t> readIdx{0};   // consumer cursor
 
     void push(int id, float v) {
-        if (id < 0 || id >= kMaxParams) return;
-        values[id].store(v, std::memory_order_release);
-        dirty[id].store(true, std::memory_order_release);
+        size_t w = writeIdx.load(std::memory_order_relaxed);
+        size_t r = readIdx.load(std::memory_order_acquire);
+        if ((w - r) >= kRingSize) return; // full — drop silently
+        ring[w % kRingSize] = {id, v};
+        writeIdx.store(w + 1, std::memory_order_release);
     }
-    // Drain all dirty params into a vector, clearing dirty flags.
-    // Returns number drained.
+    // Drain all pending entries. O(pending), not O(kMaxParams).
     int drain(std::vector<std::pair<int,float>>& out) {
         out.clear();
-        for (int i = 0; i < kMaxParams; ++i) {
-            if (dirty[i].exchange(false, std::memory_order_acquire)) {
-                float v = values[i].load(std::memory_order_acquire);
-                out.emplace_back(i, v);
-            }
+        size_t r = readIdx.load(std::memory_order_relaxed);
+        size_t w = writeIdx.load(std::memory_order_acquire);
+        while (r != w) {
+            auto& e = ring[r % kRingSize];
+            out.emplace_back(e.id, e.value);
+            r++;
         }
+        readIdx.store(r, std::memory_order_release);
         return (int)out.size();
     }
 };
@@ -107,6 +116,9 @@ struct VstBridgeInstance {
 
     // Per-instance param channel: GUI writes, audio thread reads
     ParamQueue   paramQueue;
+
+    // Per-instance component handler (fixes global g_handler routing bug)
+    BridgeCompHandler handler;
 
     // Temp buffers for deinterleaving
     std::vector<float> tmpCh0, tmpCh1;
@@ -169,10 +181,9 @@ public:
     uint32 PLUGIN_API release() override { return 1000; }
 };
 
-// ONE global handler — its `inst` pointer is switched per-plugin when
-// setComponentHandler is called.  Since VST3 guarantees only one plugin
-// calls performEdit at a time (UI thread), this is safe.
-static BridgeCompHandler g_handler;
+// Per-instance handler — each VstBridgeInstance owns its BridgeCompHandler.
+// Fixes: global g_handler caused param changes from plugin A to be routed to
+// plugin B's queue when multiple editors were open simultaneously.
 
 // ═════════════════════════════════════════════════════════════════════
 //  State helpers
@@ -192,16 +203,24 @@ static void syncComponentToController(VstBridgeInstance* inst) {
 //  Load / Unload
 // ═════════════════════════════════════════════════════════════════════
 
-extern "C" VstBridgeInstance* vst_load(const char* bundlePath) {
+extern "C" VstBridgeInstance* vst_load(const wchar_t* bundlePath) {
     g_lastError[0] = '\0';
     if (!bundlePath || !bundlePath[0]) { setError("null path"); return nullptr; }
+
+    // B5: convert wide path (C# LPWStr) to UTF-8 for VST3 SDK
+    std::wstring wpath(bundlePath);
+    std::string path;
+    {   int len = WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, nullptr, 0, nullptr, nullptr);
+        path.resize(len - 1);
+        WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, &path[0], len, nullptr, nullptr);
+    }
 
     auto* inst = new (std::nothrow) VstBridgeInstance();
     if (!inst) { setError("oom"); return nullptr; }
 
     // 1. Module
     std::string err;
-    inst->module = VST3::Hosting::Module::create(std::string(bundlePath), err);
+    inst->module = VST3::Hosting::Module::create(path, err);
     if (!inst->module) { setError("module: %s", err.c_str()); delete inst; return nullptr; }
 
     // 2. Context
@@ -234,9 +253,9 @@ extern "C" VstBridgeInstance* vst_load(const char* bundlePath) {
     inst->processor = FUnknownPtr<Vst::IAudioProcessor>(inst->component.get());
     if (!inst->processor) { setError("no IAudioProcessor"); delete inst; return nullptr; }
 
-    // 6. Wire up per-instance handler
-    g_handler.inst = inst;
-    inst->controller->setComponentHandler(&g_handler);
+    // 6. Wire up per-instance handler (each instance has its own queue)
+    inst->handler.inst = inst;
+    inst->controller->setComponentHandler(&inst->handler);
 
     // 7. Params
     inst->paramCount = inst->controller->getParameterCount();
@@ -346,7 +365,18 @@ extern "C" void vst_process(VstBridgeInstance* inst, float* buffer, int frames) 
     pd.inputs = &ib; pd.outputs = &ob;
     pd.inputParameterChanges = &inputChanges;
 
+    // B6: SEH guard prevents a buggy plugin crash from bringing down the host.
+    #ifdef _WIN32
+    __try {
+        inst->processor->process(pd);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        setError("vst_process: plugin crashed (SEH)");
+        inst->isActivated = false;
+        return;
+    }
+    #else
     inst->processor->process(pd);
+    #endif
 
     // Re-interleave
     for (int i = 0; i < nf; ++i) { buffer[i*2] = ch0[i]; buffer[i*2+1] = ch1[i]; }
@@ -573,15 +603,22 @@ static void ja(std::string& j, const char* k, const std::string& v) {
 static void jo(std::string& j, const char* k) { if(j.size()>1)j+=','; j+='"'; j+=k; j+="\":["; }
 static void jc(std::string& j) { j+=']'; }
 
-extern "C" int vst_probe(const char* path, char* jsonBuf, int jsonBufSize) {
+extern "C" int vst_probe(const wchar_t* path, char* jsonBuf, int jsonBufSize) {
     g_lastError[0] = '\0';
     if (!path || !jsonBuf || jsonBufSize <= 0) return -1;
     jsonBuf[0] = '\0';
+    // B5: convert wide path to UTF-8
+    std::wstring wpath(path);
+    std::string u8path;
+    {   int len = WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, nullptr, 0, nullptr, nullptr);
+        u8path.resize(len - 1);
+        WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, &u8path[0], len, nullptr, nullptr);
+    }
     std::string err;
-    auto mod = VST3::Hosting::Module::create(std::string(path), err);
+    auto mod = VST3::Hosting::Module::create(u8path, err);
     if (!mod) { setError("%s", err.c_str()); return -1; }
     auto& f = mod->getFactory();
-    std::string j = "{"; ja(j, "path", path); ja(j, "name", mod->getName()); ja(j, "vendor", "");
+    std::string j = "{"; ja(j, "path", u8path); ja(j, "name", mod->getName()); ja(j, "vendor", "");
     j += ",\"classCount\":"; int cc = 0;
     for (const auto& c : f.classInfos()) if (c.category() == "Audio Module Class") cc++;
     j += std::to_string(cc); jo(j, "classes"); int idx = 0;
