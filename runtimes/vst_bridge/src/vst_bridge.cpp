@@ -93,6 +93,40 @@ struct ParamQueue {
 };
 
 // ═════════════════════════════════════════════════════════════════════
+
+
+// BridgeCompHandler — routes GUI param changes into the per-instance ParamQueue.
+// This is the CRITICAL path for "GUI knob → audio changes".
+struct VstBridgeInstance;
+
+class BridgeCompHandler : public Vst::IComponentHandler,
+                           public Vst::IComponentHandler2 {
+public:
+    VstBridgeInstance* inst = nullptr;
+
+    // IComponentHandler
+    tresult PLUGIN_API beginEdit(Vst::ParamID) override { return kResultOk; }
+    tresult PLUGIN_API performEdit(Vst::ParamID id, Vst::ParamValue v) override;
+    tresult PLUGIN_API endEdit(Vst::ParamID) override { return kResultOk; }
+    tresult PLUGIN_API restartComponent(int32) override { return kResultOk; }
+    // IComponentHandler2
+    tresult PLUGIN_API setDirty(TBool) override { return kResultOk; }
+    tresult PLUGIN_API requestOpenEditor(FIDString) override { return kResultOk; }
+    tresult PLUGIN_API startGroupEdit() override { return kResultOk; }
+    tresult PLUGIN_API finishGroupEdit() override { return kResultOk; }
+
+    tresult PLUGIN_API queryInterface(const TUID iid, void** obj) override {
+        if (FUnknownPrivate::iidEqual(iid, Vst::IComponentHandler::iid) ||
+            FUnknownPrivate::iidEqual(iid, Vst::IComponentHandler2::iid) ||
+            FUnknownPrivate::iidEqual(iid, FUnknown::iid))
+            { *obj = this; addRef(); return kResultTrue; }
+        return kNoInterface;
+    }
+    uint32 PLUGIN_API addRef() override { return 1000; }
+    uint32 PLUGIN_API release() override { return 1000; }
+};
+
+
 //  Instance
 // ═════════════════════════════════════════════════════════════════════
 
@@ -127,6 +161,11 @@ struct VstBridgeInstance {
     std::vector<std::pair<int,float>> drainedParams;
 };
 
+tresult PLUGIN_API BridgeCompHandler::performEdit(Vst::ParamID id, Vst::ParamValue v) {
+    if (inst) inst->paramQueue.push((int)id, (float)v);
+    return kResultOk;
+}
+
 // ═════════════════════════════════════════════════════════════════════
 //  Host context
 // ═════════════════════════════════════════════════════════════════════
@@ -148,40 +187,6 @@ public:
     uint32 PLUGIN_API addRef() override { return 1000; }
     uint32 PLUGIN_API release() override { return 1000; }
 };
-
-// BridgeCompHandler — routes GUI param changes into the per-instance ParamQueue.
-// This is the CRITICAL path for "GUI knob → audio changes".
-class BridgeCompHandler : public Vst::IComponentHandler,
-                           public Vst::IComponentHandler2 {
-public:
-    VstBridgeInstance* inst = nullptr;
-
-    // IComponentHandler
-    tresult PLUGIN_API beginEdit(Vst::ParamID) override { return kResultOk; }
-    tresult PLUGIN_API performEdit(Vst::ParamID id, Vst::ParamValue v) override {
-        if (inst) inst->paramQueue.push((int)id, (float)v);
-        return kResultOk;
-    }
-    tresult PLUGIN_API endEdit(Vst::ParamID) override { return kResultOk; }
-    tresult PLUGIN_API restartComponent(int32) override { return kResultOk; }
-    // IComponentHandler2
-    tresult PLUGIN_API setDirty(TBool) override { return kResultOk; }
-    tresult PLUGIN_API requestOpenEditor(FIDString) override { return kResultOk; }
-    tresult PLUGIN_API startGroupEdit() override { return kResultOk; }
-    tresult PLUGIN_API finishGroupEdit() override { return kResultOk; }
-
-    tresult PLUGIN_API queryInterface(const TUID iid, void** obj) override {
-        if (FUnknownPrivate::iidEqual(iid, Vst::IComponentHandler::iid) ||
-            FUnknownPrivate::iidEqual(iid, Vst::IComponentHandler2::iid) ||
-            FUnknownPrivate::iidEqual(iid, FUnknown::iid))
-            { *obj = this; addRef(); return kResultTrue; }
-        return kNoInterface;
-    }
-    uint32 PLUGIN_API addRef() override { return 1000; }
-    uint32 PLUGIN_API release() override { return 1000; }
-};
-
-// Per-instance handler — each VstBridgeInstance owns its BridgeCompHandler.
 // Fixes: global g_handler caused param changes from plugin A to be routed to
 // plugin B's queue when multiple editors were open simultaneously.
 
@@ -324,6 +329,21 @@ extern "C" int vst_activate(VstBridgeInstance* inst, int enable) {
     return 0;
 }
 
+
+// B6: SEH-safe wrapper — must be in its own function (no local objects with dtors)
+// so the compiler allows __try/__except.
+static void call_process_safe(VstBridgeInstance* inst, Vst::ProcessData& pd) {
+#ifdef _WIN32
+    __try {
+        inst->processor->process(pd);
+    } __except (EXCEPTION_EXECUTE_HANDLER) {
+        setError("vst_process: plugin crashed (SEH)");
+        inst->isActivated = false;
+    }
+#else
+    inst->processor->process(pd);
+#endif
+}
 // ═════════════════════════════════════════════════════════════════════
 //  Audio Processing  (with param queue consumption)
 // ═════════════════════════════════════════════════════════════════════
@@ -365,18 +385,8 @@ extern "C" void vst_process(VstBridgeInstance* inst, float* buffer, int frames) 
     pd.inputs = &ib; pd.outputs = &ob;
     pd.inputParameterChanges = &inputChanges;
 
-    // B6: SEH guard prevents a buggy plugin crash from bringing down the host.
-    #ifdef _WIN32
-    __try {
-        inst->processor->process(pd);
-    } __except (EXCEPTION_EXECUTE_HANDLER) {
-        setError("vst_process: plugin crashed (SEH)");
-        inst->isActivated = false;
-        return;
-    }
-    #else
-    inst->processor->process(pd);
-    #endif
+    call_process_safe(inst, pd);
+    if (!inst->isActivated) return;  // plugin crashed in SEH
 
     // Re-interleave
     for (int i = 0; i < nf; ++i) { buffer[i*2] = ch0[i]; buffer[i*2+1] = ch1[i]; }
