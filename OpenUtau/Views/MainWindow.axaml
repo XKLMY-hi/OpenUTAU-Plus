@@ -109,11 +109,11 @@
               <Setter Property="BorderThickness" Value="3,0,0,0"/>
             </Style>
             <Style Selector="ListBoxItem.welcomeNav:pointerover">
-              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}"/>
+              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
             </Style>
             <Style Selector="ListBoxItem.welcomeNav:selected">
               <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush1}"/>
-              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}"/>
+              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
             </Style>
             <Style Selector="TextBlock.welcomeSideLabel">
               <Setter Property="FontSize" Value="10"/>
@@ -152,6 +152,7 @@
               <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
               <Setter Property="Foreground" Value="White"/>
               <Setter Property="BorderThickness" Value="0"/>
+              <Setter Property="CornerRadius" Value="8"/>
             </Style>
             <Style Selector="Button.welcomePrimary:pointerover">
               <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
@@ -160,9 +161,10 @@
               <Setter Property="Height" Value="36"/>
               <Setter Property="FontSize" Value="13"/>
               <Setter Property="Padding" Value="20,0"/>
-              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
               <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
               <Setter Property="BorderThickness" Value="0.5"/>
+              <Setter Property="CornerRadius" Value="8"/>
             </Style>
             <Style Selector="Button.welcomeSecondary:pointerover">
               <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush1}"/>
@@ -178,9 +180,10 @@
               <Setter Property="Padding" Value="10,6"/>
               <Setter Property="VerticalContentAlignment" Value="Center"/>
               <Setter Property="Background" Value="Transparent"/>
+              <Setter Property="CornerRadius" Value="8"/>
             </Style>
             <Style Selector="ListBox.recentList ListBoxItem:pointerover">
-              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+              <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
             </Style>
             <!-- Template cards -->
             <Style Selector="Border.tplCard">
@@ -270,8 +273,7 @@
                           <Path Data="{StaticResource icon-file}" Width="14" Height="14"
                                 Stretch="Uniform" VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Stroke="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                StrokeThickness="1.5"/>
+                                Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                           <TextBlock FontSize="13" Text="{Binding Name}"/>
@@ -282,7 +284,7 @@
                         <StackPanel Grid.Column="2" VerticalAlignment="Center"
                                     HorizontalAlignment="Right">
                           <Border Background="{DynamicResource AccentBrush1Semi}"
-                                  CornerRadius="2" Padding="4,1"
+                                  CornerRadius="4" Padding="4,1"
                                   HorizontalAlignment="Right">
                             <TextBlock Classes="formatBadge" Text="{Binding Format}" Margin="0"/>
                           </Border>
@@ -362,8 +364,7 @@
                           <Path Data="{StaticResource icon-file}" Width="14" Height="14"
                                 Stretch="Uniform" VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Stroke="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                                StrokeThickness="1.5"/>
+                                Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
                         </Border>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
                           <TextBlock FontSize="13" Text="{Binding Name}"/>
