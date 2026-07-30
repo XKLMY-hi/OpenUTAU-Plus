@@ -360,12 +360,18 @@
   </Style>
 
   <Style Selector="DataGridColumnHeader">
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
   </Style>
   <Style Selector="DataGridCell">
-    <Setter Property="FontSize" Value="12" />
-    <Setter Property="MinHeight" Value="20" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="MinHeight" Value="28" />
+    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+  </Style>
+  <Style Selector="DataGridRow:selected /template/ DataGridFrozenGrid">
+    <Setter Property="Background" Value="{DynamicResource AccentBrush1Semi}" />
   </Style>
   <Style Selector="DataGridCell > TextBox">
     <Setter Property="Margin" Value="0"/>
@@ -496,6 +502,7 @@
   <Style Selector="Slider.fader">
     <Setter Property="Focusable" Value="False"/>
     <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
     <Setter Property="Template">
       <ControlTemplate>
         <DataValidationErrors>
@@ -511,16 +518,26 @@
                 <Track.DecreaseButton>
                   <RepeatButton
                       Name="PART_DecreaseButton"
-                      Theme="{StaticResource FluentSliderHorizontalRepeatButton}"
                       Background="{TemplateBinding Foreground}"
-                      Focusable="False"/>
+                      Focusable="False">
+                    <RepeatButton.Template>
+                      <ControlTemplate>
+                        <Border Background="{TemplateBinding Background}" CornerRadius="2"/>
+                      </ControlTemplate>
+                    </RepeatButton.Template>
+                  </RepeatButton>
                 </Track.DecreaseButton>
                 <Track.IncreaseButton>
                   <RepeatButton
                       Name="PART_IncreaseButton"
-                      Theme="{StaticResource FluentSliderHorizontalRepeatButton}"
                       Background="{TemplateBinding Background}"
-                      Focusable="False"/>
+                      Focusable="False">
+                    <RepeatButton.Template>
+                      <ControlTemplate>
+                        <Border Background="{TemplateBinding Background}" CornerRadius="2"/>
+                      </ControlTemplate>
+                    </RepeatButton.Template>
+                  </RepeatButton>
                 </Track.IncreaseButton>
                 <Thumb
                     Name="thumb"
@@ -530,8 +547,13 @@
                     Padding="0"
                     Background="{TemplateBinding Foreground}"
                     BorderThickness="0"
-                    Theme="{StaticResource FluentSliderThumbTheme}"
-                    DataContext="{TemplateBinding Value}"/>
+                    DataContext="{TemplateBinding Value}">
+                  <Thumb.Template>
+                    <ControlTemplate>
+                      <Border Background="{TemplateBinding Background}" Height="6" Width="16" CornerRadius="2"/>
+                    </ControlTemplate>
+                  </Thumb.Template>
+                </Thumb>
               </Track>
             </Grid>
           </Border>
@@ -540,16 +562,7 @@
     </Setter>
   </Style>
   <Style Selector="Slider:pointerover /template/ RepeatButton#PART_DecreaseButton">
-    <Setter Property="Background" Value="{DynamicResource AccentBrush1}" />
-  </Style>
-  <Style Selector="Slider.fader /template/ Thumb">
-    <Setter Property="Template">
-      <Setter.Value>
-        <ControlTemplate>
-          <Border Background="{TemplateBinding Background}" Height="6" Width="16" CornerRadius="2"/>
-        </ControlTemplate>
-      </Setter.Value>
-    </Setter>
+    <Setter Property="Background" Value="{DynamicResource AccentBrush2}" />
   </Style>
 
   <Style Selector="Expander" >
