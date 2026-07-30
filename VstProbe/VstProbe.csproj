@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
+    <Nullable>enable</Nullable>
+    <AssemblyName>vst_probe</AssemblyName>
+  </PropertyGroup>
+</Project>

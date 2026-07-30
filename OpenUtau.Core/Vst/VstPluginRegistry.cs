@@ -226,18 +226,26 @@ namespace OpenUtau.Core.Vst {
 
         private bool ScanVst2Dll(string dllPath) {
             try {
+                // ── B4: Process-isolated probe ──
+                // Launch a subprocess to safely call VSTPluginMain() and read
+                // AEffect.flags (effFlagsIsSynth). If the DLL crashes, only the
+                // subprocess dies — OpenUTAU keeps running.
+                var isolated = VstProbeProcess.ProbeVst2(dllPath);
+                if (isolated != null) {
+                    _entries[isolated.Uid] = isolated;
+                    return true;
+                }
+
+                // ── Fallback: lightweight probe (in-process, no execution) ──
                 using var probe = new Probe(dllPath);
                 if (!probe.IsValid) return false;
                 string dllName = Path.GetFileNameWithoutExtension(dllPath);
                 string uid = BuildVst2Uid(dllName);
-                // VST2: cannot detect instrument vs effect without calling VSTPluginMain()
-                // (to read AEffect.flags & effFlagsIsSynth). Calling DLL entry points in-process
-                // risks crashing the host — process-isolated scanning (B4) is the prerequisite.
                 _entries[uid] = new VstPluginEntry {
                     Uid = uid, Name = dllName, Vendor = "", Path = dllPath,
                     Type = VstPluginType.VST2,
                     SubCategories = new List<string>(),
-                    IsEffect = true,
+                    IsEffect = true, // conservative fallback
                 };
                 return true;
             } catch { return false; }
