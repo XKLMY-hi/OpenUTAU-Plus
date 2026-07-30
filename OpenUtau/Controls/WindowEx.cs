@@ -43,9 +43,9 @@ public class WindowEx : Window
         // as DynamicResource (set by global style in Styles.axaml)
         var levels = prefs.BlurMode switch
         {
-            "Mica" => new[] { WindowTransparencyLevel.Mica, WindowTransparencyLevel.AcrylicBlur },
+            "Mica" => new[] { WindowTransparencyLevel.Mica, WindowTransparencyLevel.AcrylicBlur, WindowTransparencyLevel.Blur },
             "None" => new[] { WindowTransparencyLevel.None },
-            _      => new[] { WindowTransparencyLevel.AcrylicBlur },
+            _      => new[] { WindowTransparencyLevel.AcrylicBlur, WindowTransparencyLevel.Blur },
         };
         TransparencyLevelHint = levels;
     }
