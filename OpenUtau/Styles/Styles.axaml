@@ -513,19 +513,21 @@
   <Style Selector="Slider.fader">
     <Setter Property="Focusable" Value="False"/>
     <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
+    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
     <Setter Property="Template">
       <ControlTemplate>
         <DataValidationErrors>
           <Border>
-            <Grid x:Name="SliderContainer">
+            <Grid x:Name="SliderContainer" MinHeight="16">
               <Track
                   Name="PART_Track"
                   Minimum="{TemplateBinding Minimum}"
                   Maximum="{TemplateBinding Maximum}"
                   Value="{TemplateBinding Value, Mode=TwoWay}"
                   IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
-                  Orientation="Horizontal">
+                  Orientation="Horizontal"
+                  Height="4"
+                  VerticalAlignment="Center">
                 <Track.DecreaseButton>
                   <RepeatButton
                       Name="PART_DecreaseButton"
@@ -533,7 +535,7 @@
                       Focusable="False">
                     <RepeatButton.Template>
                       <ControlTemplate>
-                        <Border Background="{TemplateBinding Background}" CornerRadius="2"/>
+                        <Border Height="4" Background="{TemplateBinding Background}" CornerRadius="2"/>
                       </ControlTemplate>
                     </RepeatButton.Template>
                   </RepeatButton>
@@ -545,7 +547,7 @@
                       Focusable="False">
                     <RepeatButton.Template>
                       <ControlTemplate>
-                        <Border Background="{TemplateBinding Background}" CornerRadius="2"/>
+                        <Border Height="4" Background="{TemplateBinding Background}" CornerRadius="2"/>
                       </ControlTemplate>
                     </RepeatButton.Template>
                   </RepeatButton>
