@@ -1,10 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 
 namespace OpenUtau.App.Views {
-    public partial class LyricsReplaceDialog : Window {
+    public partial class LyricsReplaceDialog : WindowEx {
         public LyricsReplaceDialog() {
             InitializeComponent();
         }

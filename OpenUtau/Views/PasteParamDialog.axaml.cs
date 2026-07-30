@@ -1,9 +1,10 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 
 namespace OpenUtau.App.Views {
-    public partial class PasteParamDialog : Window {
+    public partial class PasteParamDialog : WindowEx {
         public bool Apply { get; private set; } = false;
 
         public PasteParamDialog() {

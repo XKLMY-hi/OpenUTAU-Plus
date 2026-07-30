@@ -6,13 +6,14 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using OpenUtau.App;
+using OpenUtau.App.Controls;
 using OpenUtau.Classic;
 using OpenUtau.Core;
 using ReactiveUI;
 using Serilog;
 
 namespace OpenUtau.App.Views {
-    public partial class SplashWindow : Window, IDisposable {
+    public partial class SplashWindow : WindowEx, IDisposable {
         public SplashWindow() {
             InitializeComponent();
             UpdateLogo();

@@ -4,9 +4,10 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using ReactiveUI.Fody.Helpers;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class TimeSignatureDialog : Window {
+    public partial class TimeSignatureDialog : WindowEx {
         static readonly List<int> beatPerBars = Enumerable.Range(1, 32).ToList();
         static readonly List<int> beatUnits = new List<int> { 1, 2, 4, 8, 16, 32 };
 

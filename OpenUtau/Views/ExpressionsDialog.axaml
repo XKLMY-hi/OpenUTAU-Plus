@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,10 +14,13 @@
   <Design.DataContext>
     <vm:ExpressionsViewModel/>
   </Design.DataContext>
-  <Window.Styles>
+  <controls:WindowEx.Styles>
     <StyleInclude Source="/Styles/PianoRollStyles.axaml"/>
-  </Window.Styles>
+  </controls:WindowEx.Styles>
 
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Grid RowDefinitions="Auto,*,Auto">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" IsVisible="{Binding IsSwitchVisible}">
       <ToggleButton Content="{DynamicResource exps.project}" IsChecked="{Binding !IsTrackOverride}" CornerRadius="5,0,0,5" Classes="switch" Command="{Binding OnClickProject}"/>
@@ -132,4 +136,6 @@
             Content="{DynamicResource button.apply}" Click="ApplyButtonClicked"/>
     </StackPanel>
   </Grid>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

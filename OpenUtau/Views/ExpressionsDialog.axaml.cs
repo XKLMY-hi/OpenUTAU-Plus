@@ -3,9 +3,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core.Ustx;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class ExpressionsDialog : Window {
+    public partial class ExpressionsDialog : WindowEx {
         public ExpressionsDialog() {
             InitializeComponent();
         }

@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,6 +11,9 @@
   <Design.DataContext>
     <vm:PackageManagerViewModel/>
   </Design.DataContext>
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Grid Margin="10">
     <Grid.RowDefinitions>
       <RowDefinition Height="*"/>
@@ -47,4 +51,6 @@
       <Button Content="{DynamicResource packages.refresh}" Command="{Binding RefreshCommand}"/>
     </StackPanel>
   </Grid>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

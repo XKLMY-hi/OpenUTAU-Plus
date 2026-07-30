@@ -4,9 +4,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class SingerSetupDialog : Window {
+    public partial class SingerSetupDialog : WindowEx {
         public SingerSetupDialog() {
             InitializeComponent();
         }

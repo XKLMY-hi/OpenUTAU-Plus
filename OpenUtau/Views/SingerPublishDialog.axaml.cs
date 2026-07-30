@@ -6,9 +6,10 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Serilog;
 using OpenUtau.App.ViewModels;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class SingerPublishDialog : Window {
+    public partial class SingerPublishDialog : WindowEx {
         public SingerPublishDialog() {
             InitializeComponent();
         }

@@ -1,13 +1,14 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 
 namespace OpenUtau.App.Views {
-    public partial class TrackColorDialog : Window {
+    public partial class TrackColorDialog : WindowEx {
         public TrackColorDialog() {
             InitializeComponent();
         }

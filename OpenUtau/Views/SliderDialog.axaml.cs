@@ -1,11 +1,12 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 using ReactiveUI;
 
 namespace OpenUtau.App.Views {
-    public partial class SliderDialog : Window {
+    public partial class SliderDialog : WindowEx {
         public Action<double>? onFinish;
 
         public SliderDialog() {

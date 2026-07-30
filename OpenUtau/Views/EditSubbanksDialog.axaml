@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,6 +10,9 @@
         Title="{DynamicResource singers.subbanks.edit}"
         WindowStartupLocation="CenterScreen"
         MinWidth="500" MinHeight="600" Width="500" Height="600">
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Grid ColumnDefinitions="*,10,160" Margin="10">
     <DataGrid Name="SuffixGrid" Grid.Column="0" SelectionMode="Extended" IsReadOnly="True"
               CanUserReorderColumns="False" CanUserSortColumns="False" AutoGenerateColumns="False"
@@ -49,4 +53,6 @@
       </Grid>
     </Grid>
   </Grid>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

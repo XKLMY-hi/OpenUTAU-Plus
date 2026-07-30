@@ -2,9 +2,10 @@
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core.Util;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class NoteDefaultsDialog : Window {
+    public partial class NoteDefaultsDialog : WindowEx {
         internal readonly NoteDefaultsViewModel ViewModel;
         public NoteDefaultsDialog() {
             InitializeComponent();

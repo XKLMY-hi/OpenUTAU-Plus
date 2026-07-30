@@ -1,10 +1,11 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 
 namespace OpenUtau.App.Views {
-    public partial class TypeInDialog : Window {
+    public partial class TypeInDialog : WindowEx {
         public Action<string>? onFinish;
 
         public TypeInDialog() {

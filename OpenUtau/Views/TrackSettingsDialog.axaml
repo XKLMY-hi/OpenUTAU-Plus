@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +8,9 @@
         Icon="/Assets/open-utau.ico"
         Title="{DynamicResource dialogs.tracksettings.caption}"
         Height="184" Width="320" WindowStartupLocation="CenterOwner" CanResize="False">
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Border>
     <StackPanel Margin="8">
       <TextBlock Text="{DynamicResource warning.renderer}" IsVisible="{Binding IsNotClassic}"/>
@@ -34,4 +38,6 @@
               HorizontalAlignment="Stretch" Click="OnOkClicked"/>
     </StackPanel>
   </Border>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

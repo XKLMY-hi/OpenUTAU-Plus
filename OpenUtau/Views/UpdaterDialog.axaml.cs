@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using OpenUtau.App.ViewModels;
 using Serilog;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class UpdaterDialog : Window {
+    public partial class UpdaterDialog : WindowEx {
         public readonly UpdaterViewModel ViewModel;
         public UpdaterDialog() {
             InitializeComponent();

@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,6 +7,9 @@
         x:Class="OpenUtau.App.Views.SliderDialog"
         Icon="/Assets/open-utau.ico"
         Title="OpenUTAU Plus" Height="120" Width="300" WindowStartupLocation="CenterOwner">
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <StackPanel VerticalAlignment="Center">
     <StackPanel Orientation="Horizontal" Spacing="10" Margin="10" HorizontalAlignment="Center">
       <Slider Name="Slider" Width="150"
@@ -16,4 +20,6 @@
     <Button Name="OkButton" Content="{DynamicResource button.ok}" Click="OkButtonClick"
             Margin="10" HorizontalAlignment="Center" MinWidth="100" />
   </StackPanel>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

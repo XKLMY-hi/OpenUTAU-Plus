@@ -1,13 +1,14 @@
 using System.IO;
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.Analysis;
 
 namespace OpenUtau.App.Views {
-    public partial class TranscribeDialog : Window {
+    public partial class TranscribeDialog : WindowEx {
         public bool Confirmed { get; private set; }
 
         public TranscribeDialog() {

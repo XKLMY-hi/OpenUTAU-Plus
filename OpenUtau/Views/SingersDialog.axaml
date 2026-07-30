@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,6 +14,9 @@
   <Design.DataContext>
     <vm:SingersViewModel/>
   </Design.DataContext>
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="140" MinHeight="140"/>
@@ -257,4 +261,6 @@
       <c:OtoPlot Name="OtoPlot" ZoomInMel="{Binding ZoomInMel}"/>
     </Border>
   </Grid>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

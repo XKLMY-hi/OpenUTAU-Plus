@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,10 +8,7 @@
         Title="OpenUTAU Plus" MinWidth="300" MinHeight="150"
         Icon="/Assets/open-utau.ico" 
         WindowStartupLocation="CenterScreen"
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1"
-        ExtendClientAreaToDecorationsHint="True"
-        SystemDecorations="BorderOnly">
+        ExtendClientAreaTitleBarHeightHint="-1">
 
     <Grid>
         <Image Margin="20" Width="80" Height="80"
@@ -18,4 +16,4 @@
            Source="/Assets/open-utau.ico"/>
         <TextBlock Margin="0,110,0,10" Grid.Row="0"  HorizontalAlignment="Center" VerticalAlignment="Center" Name="Text" TextWrapping="Wrap" MaxWidth="560"> Loading... </TextBlock>
     </Grid>
-</Window>
+</controls:WindowEx>

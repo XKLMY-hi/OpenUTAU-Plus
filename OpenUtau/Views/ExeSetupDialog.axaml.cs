@@ -2,9 +2,10 @@
 using Avalonia.Interactivity;
 using Classic;
 using OpenUtau.App.ViewModels;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class ExeSetupDialog : Window {
+    public partial class ExeSetupDialog : WindowEx {
         public ExeSetupDialog() {
             InitializeComponent();
         }

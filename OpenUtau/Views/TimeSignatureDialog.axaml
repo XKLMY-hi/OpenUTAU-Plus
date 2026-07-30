@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +8,9 @@
         Icon="/Assets/open-utau.ico"
         Title="{DynamicResource dialogs.timesig.caption}"
         Height="100" Width="320" WindowStartupLocation="CenterOwner">
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <StackPanel VerticalAlignment="Center">
     <Grid ColumnDefinitions="1*,1*" Margin="4,0">
       <ComboBox Grid.Column="0" Margin="4" HorizontalAlignment="Stretch"
@@ -19,4 +23,6 @@
     <Button Content="{DynamicResource button.ok}" Margin="8,4" HorizontalAlignment="Stretch"
             Click="OnOkButtonClick"/>
   </StackPanel>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

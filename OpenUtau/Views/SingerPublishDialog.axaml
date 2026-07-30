@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,6 +10,9 @@
         WindowStartupLocation="CenterScreen"
         MinWidth="500" MinHeight="500" Width="500" Height="500"
         Title="{DynamicResource singers.publish}">
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Grid>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
       <StackPanel Margin="5">
@@ -23,4 +27,6 @@
       </StackPanel>
     </ScrollViewer>
   </Grid>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

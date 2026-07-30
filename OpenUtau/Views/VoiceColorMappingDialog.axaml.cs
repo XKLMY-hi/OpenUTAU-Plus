@@ -1,10 +1,11 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 
 namespace OpenUtau.App.Views {
-    public partial class VoiceColorMappingDialog : Window {
+    public partial class VoiceColorMappingDialog : WindowEx {
         public Action? onFinish;
         public bool Apply { get; private set; } = false;
 

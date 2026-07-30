@@ -1,4 +1,5 @@
-<Window xmlns="https://github.com/avaloniaui"
+<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,9 +11,12 @@
         Title="{DynamicResource pianoroll.menu.notedefaults}"
         WindowStartupLocation="CenterScreen"
         MinWidth="600" MinHeight="560" Width="600" Height="560">
-  <Window.Resources>
+  <controls:WindowEx.Resources>
     <vm:CultureNameConverter x:Key="cultureNameConverter"/>
-  </Window.Resources>
+  </controls:WindowEx.Resources>
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Grid>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
       <StackPanel Margin="5">
@@ -146,4 +150,6 @@
       </StackPanel>
     </ScrollViewer>
   </Grid>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>

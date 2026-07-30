@@ -1,9 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 
 namespace OpenUtau.App.Views {
-    public partial class DsScriptExportDialog : Window {
+    public partial class DsScriptExportDialog : WindowEx {
         public bool Confirmed { get; private set; }
 
         public DsScriptExportDialog() {

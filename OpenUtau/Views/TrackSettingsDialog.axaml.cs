@@ -3,9 +3,10 @@ using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class TrackSettingsDialog : Window {
+    public partial class TrackSettingsDialog : WindowEx {
 
         TrackSettingsViewModel viewModel;
 

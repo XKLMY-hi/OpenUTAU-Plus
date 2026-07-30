@@ -2,9 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class LoadingWindow : Window {
+    public partial class LoadingWindow : WindowEx {
         private static LoadingWindow? loadingDialog;
         private static bool isCurrentlyLoading = false;
         private static CancellationTokenSource? globalLoadingCancellationTokenSource;

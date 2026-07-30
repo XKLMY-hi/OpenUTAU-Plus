@@ -1,11 +1,12 @@
 ﻿using System;
 using Avalonia.Controls;
 using Avalonia.Input;
+using OpenUtau.App.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 
 namespace OpenUtau.App.Views {
-    public partial class LyricsDialog : Window {
+    public partial class LyricsDialog : WindowEx {
         public LyricsDialog() {
             InitializeComponent();
             DIALOG_Box.AddHandler(KeyDownEvent, TextBoxKeyDown, RoutingStrategies.Tunnel);

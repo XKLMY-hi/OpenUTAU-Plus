@@ -5,9 +5,10 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class EditSubbanksDialog : Window {
+    public partial class EditSubbanksDialog : WindowEx {
         internal readonly EditSubbanksViewModel ViewModel;
 
         internal Action? RefreshSinger;

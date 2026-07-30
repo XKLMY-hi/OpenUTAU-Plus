@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using OpenUtau.App.ViewModels;
+using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class MergeVoicebankDialog : Window {
+    public partial class MergeVoicebankDialog : WindowEx {
         public MergeVoicebankDialog() {
             InitializeComponent();
         }

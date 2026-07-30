@@ -1,4 +1,5 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
+﻿<controls:WindowEx xmlns="https://github.com/avaloniaui"
+        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,7 +9,7 @@
         Title="{DynamicResource dialogs.transcribe.caption}"
         WindowStartupLocation="CenterOwner"
         SizeToContent="Height" Width="380" CanResize="False">
-  <Window.Styles>
+  <controls:WindowEx.Styles>
     <Style Selector="TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
@@ -26,7 +27,10 @@
       <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-  </Window.Styles>
+  </controls:WindowEx.Styles>
+<DockPanel LastChildFill="True">
+      <controls:WindowTitleBar DockPanel.Dock="Top"/>
+      <Border>
   <Border>
     <StackPanel Margin="12" Spacing="8">
 
@@ -175,4 +179,6 @@
       </Grid>
     </StackPanel>
   </Border>
-</Window>
+      </Border>
+    </DockPanel>
+</controls:WindowEx>
