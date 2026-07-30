@@ -22,9 +22,18 @@
     </Style>
     <Style Selector="ComboBox">
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="ComboBox /template/ Border#Background">
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="CornerRadius" Value="6"/>
     </Style>
     <Style Selector="Button">
       <Setter Property="MinWidth" Value="50"/>
+      <Setter Property="CornerRadius" Value="6"/>
     </Style>
     <Style Selector="TextBlock.restart">
       <Setter Property="Text" Value="{DynamicResource prefs.note.restart}"/>
@@ -38,19 +47,28 @@
       <Setter Property="OffContent" Value="{DynamicResource button.off}"/>
       <Setter Property="HorizontalAlignment" Value="Right"/>
     </Style>
+    <Style Selector="ToggleSwitch /template/ Border#SwitchKnobBounds">
+      <Setter Property="CornerRadius" Value="10"/>
+    </Style>
+    <Style Selector="ToggleSwitch /template/ Border#OuterBorder">
+      <Setter Property="CornerRadius" Value="12"/>
+      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+    </Style>
     <!-- Card grouping -->
     <Style Selector="Border.prefsCard">
-      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumLowBrush}"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
       <Setter Property="BorderThickness" Value="0.5"/>
       <Setter Property="CornerRadius" Value="8"/>
-      <Setter Property="Padding" Value="12,10"/>
+      <Setter Property="Padding" Value="14,12"/>
       <Setter Property="Margin" Value="0,0,0,10"/>
     </Style>
     <Style Selector="TextBlock.cardTitle">
-      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="FontSize" Value="12"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Margin" Value="0,0,0,6"/>
+      <Setter Property="Margin" Value="0,0,0,8"/>
+      <Setter Property="Opacity" Value="0.7"/>
     </Style>
     <Style Selector="Grid.cardRow">
       <Setter Property="Margin" Value="0,3"/>
@@ -59,96 +77,41 @@
 
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
-    <Grid ColumnDefinitions="150,*">
+    <Grid ColumnDefinitions="120,*">
+    <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+            BorderThickness="0,0,0.5,0" Background="Transparent">
     <ListBox Classes="NoScroll" Name="DrawerList"
               Focusable="{Binding ElementName=LeftDrawer, Path=LeftDrawerOpened}">
       <ListBox.Styles>
         <Style Selector="ListBoxItem">
-          <Setter Property="Height" Value="40" />
-          <Setter Property="Padding" Value="12,0" />
+          <Setter Property="Height" Value="36" />
+          <Setter Property="Padding" Value="8,0" />
           <Setter Property="VerticalContentAlignment" Value="Center" />
           <Setter Property="Background" Value="Transparent"/>
           <Setter Property="BorderBrush" Value="Transparent"/>
-          <Setter Property="BorderThickness" Value="3,0,0,0"/>
-          <Setter Property="FontSize" Value="13"/>
+          <Setter Property="BorderThickness" Value="2,0,0,0"/>
+          <Setter Property="FontSize" Value="12"/>
         </Style>
         <Style Selector="ListBoxItem:pointerover">
-          <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
+          <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
         </Style>
         <Style Selector="ListBoxItem:selected">
           <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush1}"/>
-          <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
-        </Style>
-        <Style Selector="Path.prefsIcon">
-          <Setter Property="Width" Value="16"/>
-          <Setter Property="Height" Value="16"/>
-          <Setter Property="Stretch" Value="Uniform"/>
-          <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
-          <Setter Property="VerticalAlignment" Value="Center"/>
-          <Setter Property="Margin" Value="0,0,10,0"/>
+          <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
         </Style>
       </ListBox.Styles>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-monitor}"/>
-            <TextBlock Text="{DynamicResource prefs.general}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-play}"/>
-            <TextBlock Text="{DynamicResource prefs.playback}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-folder-open}"/>
-            <TextBlock Text="{DynamicResource prefs.paths}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-pencil}"/>
-            <TextBlock Text="{DynamicResource prefs.editing}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-equalizer}"/>
-            <TextBlock Text="{DynamicResource prefs.rendering}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-palette}"/>
-            <TextBlock Text="{DynamicResource prefs.appearance}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-user}"/>
-            <TextBlock Text="{DynamicResource prefs.utau}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-sparkles}"/>
-            <TextBlock Text="{DynamicResource prefs.diffsinger}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-wrench}"/>
-            <TextBlock Text="{DynamicResource prefs.advanced}" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
-      <ListBoxItem>
-          <StackPanel Orientation="Horizontal">
-            <Path Classes="prefsIcon" Data="{StaticResource icon-plus}"/>
-            <TextBlock Text="OpenUTAU Plus" VerticalAlignment="Center"/>
-          </StackPanel>
-        </ListBoxItem>
+      <ListBoxItem Content="{DynamicResource prefs.general}"/>
+      <ListBoxItem Content="{DynamicResource prefs.playback}"/>
+      <ListBoxItem Content="{DynamicResource prefs.paths}"/>
+      <ListBoxItem Content="{DynamicResource prefs.editing}"/>
+      <ListBoxItem Content="{DynamicResource prefs.rendering}"/>
+      <ListBoxItem Content="{DynamicResource prefs.appearance}"/>
+      <ListBoxItem Content="{DynamicResource prefs.utau}"/>
+      <ListBoxItem Content="{DynamicResource prefs.diffsinger}"/>
+      <ListBoxItem Content="{DynamicResource prefs.advanced}"/>
+      <ListBoxItem Content="OpenUTAU Plus"/>
     </ListBox>
+    </Border>
     <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
       <Carousel Name="PageCarousel" Margin="10" HorizontalAlignment="Stretch"
           SelectedIndex="{Binding ElementName=DrawerList, Path=SelectedIndex}">
