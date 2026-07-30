@@ -20,16 +20,16 @@
       <Setter Property="Foreground" Value="#1a1a1a"/>
     </Style>
     <Style Selector="Button.fxEntryBtn">
-      <Setter Property="Height" Value="22"/>
+      <Setter Property="Height" Value="24"/>
       <Setter Property="FontSize" Value="10"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Margin" Value="4,6,4,2"/>
       <Setter Property="HorizontalAlignment" Value="Stretch"/>
-      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
       <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
       <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="2"/>
+      <Setter Property="CornerRadius" Value="8"/>
     </Style>
     <Style Selector="Button.fxEntryBtn.fxActive">
       <Setter Property="BorderBrush" Value="{DynamicResource AccentColor1}"/>
@@ -59,12 +59,12 @@
   </UserControl.Styles>
 
   <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-          BorderThickness="0.5" CornerRadius="6" Margin="2,4"
+          BorderThickness="0.5" CornerRadius="8" Margin="2,4"
           Padding="4,4,4,4"
-          Background="{DynamicResource SystemControlBackgroundAltMediumLowBrush}">
+          Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Name="RootGrid">
       <!-- Row 0: Track color bar -->
-      <Border Name="ColorBar" Height="4" CornerRadius="2"
+      <Border Name="ColorBar" Height="3" CornerRadius="2"
               Margin="4,2,4,2" Background="{DynamicResource AccentBrush1}"/>
 
       <!-- Row 1: Track name + M/S buttons -->
