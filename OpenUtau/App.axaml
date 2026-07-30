@@ -41,7 +41,6 @@
     <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
-    <StyleInclude Source="/Styles/DesignTokens.axaml"/>
     <StyleInclude Source="/Styles/Styles.axaml"/>
   </Application.Styles>
   <NativeMenu.Menu>

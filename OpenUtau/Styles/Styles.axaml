@@ -3,8 +3,8 @@
         xmlns:controls="clr-namespace:OpenUtau.App.Controls">
   <Style>
     <Style.Resources>
-      <CornerRadius x:Key="ControlCornerRadius">8</CornerRadius>
-      <CornerRadius x:Key="OverlayCornerRadius">8</CornerRadius>
+      <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
+      <CornerRadius x:Key="OverlayCornerRadius">6</CornerRadius>
       <x:Double x:Key="MenuFlyoutThemeMinHeight">20</x:Double>
       <Thickness x:Key="MenuFlyoutScrollerMargin">0</Thickness>
       <Thickness x:Key="ComboBoxDropdownContentMargin">0</Thickness>
@@ -12,38 +12,37 @@
   </Style>
   <!-- Rounded popup overlays -->
   <Style Selector="Popup > Border">
-    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="CornerRadius" Value="6"/>
   </Style>
   <Style Selector="ContextMenu">
-    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="CornerRadius" Value="6"/>
   </Style>
   <Style Selector="MenuFlyoutPresenter">
-    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="CornerRadius" Value="6"/>
   </Style>
   <Style Selector="MenuFlyoutPresenter /template/ Border#PART_PopupBorder">
-    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="CornerRadius" Value="6"/>
   </Style>
   <Style Selector="MenuFlyoutPresenter /template/ Border">
-    <Setter Property="CornerRadius" Value="8"/>
+    <Setter Property="CornerRadius" Value="6"/>
   </Style>
 
   <Style Selector="Window">
     <Setter Property="FontFamily" Value="{DynamicResource ui.fontfamily}"/>
     <Setter Property="Icon" Value="/Assets/open-utau.ico"/>
     <Setter Property="Background" Value="{DynamicResource AcrylicTintBrush}"/>
-    <Setter Property="FontSize" Value="13"/>
   </Style>
   <Style Selector="controls|WindowEx">
     <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
   </Style>
   <Style Selector="Menu">
-    <Setter Property="Height" Value="28"/>
+    <Setter Property="Height" Value="24"/>
   </Style>
   <Style Selector="MenuItem">
     <Setter Property="Background" Value="Transparent"/>
-    <Setter Property="FontSize" Value="13"/>
-    <Setter Property="Height" Value="30"/>
-    <Setter Property="Padding" Value="10,4,10,4"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Height" Value="24"/>
+    <Setter Property="Padding" Value="8,2,8,2"/>
   </Style>
   <Style Selector="MenuItem /template/ Path#PART_ChevronPath">
     <Setter Property="RenderTransform" Value="Scale(0.75,0.75)"/>
@@ -99,71 +98,57 @@
   </Style>
 
   <Style Selector="TextBlock">
-    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="FontSize" Value="12"/>
   </Style>
   <Style Selector="Label">
-    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="FontSize" Value="12"/>
   </Style>
   <Style Selector="TextBox">
-    <Setter Property="MinHeight" Value="32"/>
-    <Setter Property="Height" Value="32"/>
-    <Setter Property="Padding" Value="10,4"/>
+    <Setter Property="MinHeight" Value="20"/>
+    <Setter Property="Height" Value="20"/>
+    <Setter Property="Padding" Value="4,1"/>
     <Setter Property="Margin" Value="0,0,0,4"/>
-    <Setter Property="FontSize" Value="13"/>
+    <Setter Property="FontSize" Value="12"/>
     <Setter Property="VerticalAlignment" Value="Top"/>
     <Setter Property="SelectionForegroundBrush" Value="White"/>
-    <Setter Property="CornerRadius" Value="8"/>
   </Style>
   <Style Selector="TextBox:disabled">
     <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
   </Style>
 
-  <!-- Acrylic Button -->
   <Style Selector="Button">
-    <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="FontSize" Value="13"/>
-    <Setter Property="Height" Value="32"/>
-    <Setter Property="MinWidth" Value="64"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Height" Value="20"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="16,4"/>
-    <Setter Property="CornerRadius" Value="8"/>
-    <Setter Property="Background" Value="#452A2838"/>
-    <Setter Property="BorderBrush" Value="#2EC73A3F"/>
-    <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+    <Setter Property="Padding" Value="4,0,4,2"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="Template">
       <ControlTemplate>
-        <Border x:Name="Root"
-                Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                CornerRadius="{TemplateBinding CornerRadius}">
-          <ContentPresenter x:Name="PART_ContentPresenter"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            Padding="{TemplateBinding Padding}"
-                            RecognizesAccessKey="False"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-        </Border>
+        <ContentPresenter x:Name="PART_ContentPresenter"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          Padding="{TemplateBinding Padding}"
+                          RecognizesAccessKey="False"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
       </ControlTemplate>
     </Setter>
   </Style>
   <Style Selector="Button:pressed, RepeatButton:pressed, ToggleButton:pressed">
-    <Setter Property="RenderTransform" Value="scale(0.98)"/>
-  </Style>
-  <Style Selector="Button.accent">
-    <Setter Property="Background" Value="#2EC73A3F"/>
-    <Setter Property="BorderBrush" Value="#66C73A3F"/>
-    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="RenderTransform" Value="scale(1)"/>
   </Style>
   <Style Selector="Button.clear">
     <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="FontSize" Value="13"/>
-    <Setter Property="Height" Value="28"/>
+    <Setter Property="FontSize" Value="12"/>
+    <Setter Property="Height" Value="20"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="8,2,8,2"/>
+    <Setter Property="Padding" Value="4,0,4,2"/>
     <Setter Property="Background" Value="Transparent"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -411,8 +396,8 @@
 
   <Style Selector="HeaderedContentControl.groupbox">
     <Setter Property="Margin" Value="5"/>
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+    <Setter Property="Background" Value="{StaticResource SystemControlBackgroundAltHighBrush}"/>
+    <Setter Property="BorderBrush" Value="{StaticResource SystemControlForegroundBaseMediumBrush}"/>
     <Setter Property="Template">
       <Setter.Value>
         <ControlTemplate>
@@ -457,14 +442,14 @@
                 <Track.DecreaseButton>
                   <RepeatButton
                       Name="PART_DecreaseButton"
-                      Theme="{DynamicResource FluentSliderHorizontalRepeatButton}"
+                      Theme="{StaticResource FluentSliderHorizontalRepeatButton}"
                       Background="{TemplateBinding Foreground}"
                       Focusable="False"/>
                 </Track.DecreaseButton>
                 <Track.IncreaseButton>
                   <RepeatButton
                       Name="PART_IncreaseButton"
-                      Theme="{DynamicResource FluentSliderHorizontalRepeatButton}"
+                      Theme="{StaticResource FluentSliderHorizontalRepeatButton}"
                       Background="{TemplateBinding Background}"
                       Focusable="False"/>
                 </Track.IncreaseButton>
@@ -476,7 +461,7 @@
                     Padding="0"
                     Background="{TemplateBinding Foreground}"
                     BorderThickness="0"
-                    Theme="{DynamicResource FluentSliderThumbTheme}"
+                    Theme="{StaticResource FluentSliderThumbTheme}"
                     DataContext="{TemplateBinding Value}"/>
               </Track>
             </Grid>
@@ -553,37 +538,6 @@
     <Setter Property="Margin" Value="2,4"/>
   </Style>
 
-  <!-- ToggleSwitch — style Fluent default template -->
-  <Style Selector="ToggleSwitch /template/ Border#SwitchKnobBounds">
-    <Setter Property="Background" Value="#48485A"/>
-    <Setter Property="CornerRadius" Value="13"/>
-    <Setter Property="Width" Value="46"/>
-    <Setter Property="Height" Value="26"/>
-  </Style>
-  <Style Selector="ToggleSwitch /template/ Border#SwitchKnob">
-    <Setter Property="Width" Value="20"/>
-    <Setter Property="Height" Value="20"/>
-    <Setter Property="CornerRadius" Value="10"/>
-  </Style>
-  <Style Selector="ToggleSwitch:checked /template/ Border#SwitchKnobBounds">
-    <Setter Property="Background" Value="#C73A3F"/>
-  </Style>
-
-  <!-- Slider — style Fluent default track/thumb -->
-  <Style Selector="Slider">
-    <Setter Property="Height" Value="24"/>
-  </Style>
-  <Style Selector="Slider /template/ Border#TrackBackground">
-    <Setter Property="Height" Value="4"/>
-    <Setter Property="CornerRadius" Value="2"/>
-    <Setter Property="Background" Value="#383848"/>
-  </Style>
-  <Style Selector="Slider /template/ Border#TrackDecrease">
-    <Setter Property="Height" Value="4"/>
-    <Setter Property="CornerRadius" Value="2"/>
-    <Setter Property="Background" Value="#C73A3F"/>
-  </Style>
-
   <!-- ScrollBar thumbs -->
   <Style Selector="ScrollBar /template/ Thumb.thumb">
     <Setter Property="CornerRadius" Value="3"/>
@@ -612,30 +566,5 @@
   </Style>
   <Style Selector="Button.titleBarBtn.closeBtn:pressed Path">
     <Setter Property="Stroke" Value="White"/>
-  </Style>
-
-  <!-- ══ Card accent border hover ══ -->
-  <Style Selector="Border.card">
-    <Setter Property="Background" Value="#40282832"/>
-    <Setter Property="BorderBrush" Value="#18C73A3F"/>
-    <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="CornerRadius" Value="8"/>
-  </Style>
-  <Style Selector="Border.card:pointerover">
-    <Setter Property="BorderBrush" Value="#40C73A3F"/>
-  </Style>
-
-  <!-- ══ Titlebar polish + min/max hover ══ -->
-  <Style Selector="Button.titleBarBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="#30304060"/>
-  </Style>
-
-  <!-- ══ Transitions on interactive controls ══ -->
-  <Style Selector="Button">
-    <Setter Property="Transitions">
-      <Transitions>
-        <DoubleTransition Property="Opacity" Duration="0:0:0.15" />
-      </Transitions>
-    </Setter>
   </Style>
 </Styles>
