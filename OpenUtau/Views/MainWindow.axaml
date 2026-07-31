@@ -16,6 +16,7 @@
       <Setter Property="Focusable" Value="False"/>
     </Style>
   </Window.Styles>
+  <Grid>
   <DockPanel LastChildFill="True">
     <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Grid>
@@ -583,5 +584,25 @@
       </Carousel>
     </Grid>
   </Grid>
-  </DockPanel>
+    </DockPanel>
+
+    <!-- Overlay layer: in-window modal dialog host -->
+    <Grid Name="OverlayLayer" IsVisible="False" ZIndex="1000" Background="Transparent">
+      <Border Name="OverlayBackdrop" Background="#A0000000" PointerPressed="OnOverlayBackdropPressed"/>
+      <Border Name="OverlayCard"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              MinWidth="340" MaxWidth="480"
+              Background="{DynamicResource AcrylicTintBrush}"
+              BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+              BorderThickness="0.5" CornerRadius="12"
+              BoxShadow="0 8 32 0 #3F000000"
+              Padding="24,20">
+        <StackPanel Spacing="12">
+          <TextBlock Name="OverlayTitle" FontSize="15" FontWeight="SemiBold"/>
+          <TextBlock Name="OverlayMessage" TextWrapping="Wrap" FontSize="13" Opacity="0.85" LineHeight="20"/>
+          <StackPanel Name="OverlayButtons" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0"/>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </Grid>
 </controls:WindowEx>

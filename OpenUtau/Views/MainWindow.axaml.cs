@@ -912,6 +912,15 @@ namespace OpenUtau.App.Views {
         }
 
         void OnKeyDown(object sender, KeyEventArgs args) {
+            // Modal overlay open — block shortcuts, Esc dismisses
+            if (OverlayLayer.IsVisible) {
+                if (args.Key == Key.Escape) {
+                    CompleteOverlay(MessageBox.MessageBoxResult.Cancel);
+                }
+                args.Handled = true;
+                return;
+            }
+
             // Global shortcuts — before focus check
             if (args.KeyModifiers == cmdKey) {
                 switch (args.Key) {
@@ -2012,20 +2021,62 @@ namespace OpenUtau.App.Views {
         }
 
         private async Task<bool> AskIfSaveAndContinue() {
-            var result = await MessageBox.Show(
-                this,
-                ThemeManager.GetString("dialogs.exitsave.message"),
-                ThemeManager.GetString("dialogs.exitsave.caption"),
-                MessageBox.MessageBoxButtons.YesNoCancel);
+            var result = await ShowExitConfirmOverlayAsync();
             switch (result) {
                 case MessageBox.MessageBoxResult.Yes:
-                    await Save();
-                    goto case MessageBox.MessageBoxResult.No;
+                    try {
+                        await Save();
+                    } catch (Exception e) {
+                        Log.Error(e, "Failed to save on exit.");
+                        await MessageBox.ShowError(this, e);
+                    }
+                    // Save cancelled or failed (e.g. dismissed the Save As picker) —
+                    // stay in the app instead of exiting.
+                    return viewModel.ProjectSaved;
                 case MessageBox.MessageBoxResult.No:
                     return true; // Continue.
                 default:
                     return false; // Cancel.
             }
+        }
+
+        // In-window modal overlay for the exit-save confirmation.
+        private TaskCompletionSource<MessageBox.MessageBoxResult>? overlayTcs;
+
+        private Task<MessageBox.MessageBoxResult> ShowExitConfirmOverlayAsync() {
+            OverlayTitle.Text = ThemeManager.GetString("dialogs.exitsave.caption");
+            OverlayMessage.Text = ThemeManager.GetString("dialogs.exitsave.message");
+            OverlayButtons.Children.Clear();
+
+            void AddButton(string caption, MessageBox.MessageBoxResult result, bool primary = false) {
+                var btn = new Button { Content = caption };
+                if (primary) {
+                    btn.Classes.Add("primary");
+                }
+                btn.Click += (_, _) => CompleteOverlay(result);
+                OverlayButtons.Children.Add(btn);
+            }
+
+            AddButton(ThemeManager.GetString("button.yes"), MessageBox.MessageBoxResult.Yes, primary: true);
+            AddButton(ThemeManager.GetString("button.no"), MessageBox.MessageBoxResult.No);
+            AddButton(ThemeManager.GetString("button.cancel"), MessageBox.MessageBoxResult.Cancel);
+
+            overlayTcs = new TaskCompletionSource<MessageBox.MessageBoxResult>();
+            OverlayLayer.IsVisible = true;
+            return overlayTcs.Task;
+        }
+
+        private void CompleteOverlay(MessageBox.MessageBoxResult result) {
+            if (!OverlayLayer.IsVisible) {
+                return;
+            }
+            OverlayLayer.IsVisible = false;
+            overlayTcs?.TrySetResult(result);
+            overlayTcs = null;
+        }
+
+        private void OnOverlayBackdropPressed(object? sender, PointerPressedEventArgs e) {
+            CompleteOverlay(MessageBox.MessageBoxResult.Cancel);
         }
 
         public void OnNext(UCommand cmd, bool isUndo) {
