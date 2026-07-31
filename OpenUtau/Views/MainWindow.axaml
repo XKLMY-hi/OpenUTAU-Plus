@@ -123,7 +123,7 @@
             <Style Selector="Border.actionCard">
               <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
               <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-              <Setter Property="BorderThickness" Value="0.5"/>
+              <Setter Property="BorderThickness" Value="0"/>
               <Setter Property="CornerRadius" Value="8"/>
               <Setter Property="Padding" Value="14,10"/>
               <Setter Property="Margin" Value="0,0,0,8"/>
@@ -374,22 +374,22 @@
             <Border Classes="playback" Width="100" HorizontalAlignment="Center">
               <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding PlaybackViewModel.SeekStart}">
-                  <Path Data="{StaticResource icon-skip-back}" Width="10" Height="10"
+                  <Path Data="{StaticResource icon-skip-back}" Width="8" Height="8"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
                 <Button Click="OnPlayOrPause">
-                  <Path Data="{StaticResource icon-play}" Width="10" Height="10"
+                  <Path Data="{StaticResource icon-play}" Width="8" Height="8"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
                 <Button Command="{Binding PlaybackViewModel.Pause}">
-                  <Path Data="{StaticResource icon-pause}" Width="10" Height="10"
+                  <Path Data="{StaticResource icon-pause}" Width="8" Height="8"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
                 <Button Command="{Binding PlaybackViewModel.SeekEnd}">
-                  <Path Data="{StaticResource icon-skip-forward}" Width="10" Height="10"
+                  <Path Data="{StaticResource icon-skip-forward}" Width="8" Height="8"
                         Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center"
                         Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
                 </Button>
@@ -596,7 +596,7 @@
               ClipToBounds="True"
               Background="{DynamicResource AcrylicTintBrush}"
               BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-              BorderThickness="0.5" CornerRadius="12"
+              BorderThickness="0" CornerRadius="12"
               BoxShadow="0 8 32 0 #3F000000">
         <Grid RowDefinitions="Auto,*">
           <!-- Optional dialog header (e.g. Preferences) -->

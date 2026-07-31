@@ -28,7 +28,7 @@
       </StackPanel>
 
       <!-- Parameter list area -->
-      <Border DockPanel.Dock="Bottom" BorderThickness="0.5"
+      <Border DockPanel.Dock="Bottom" BorderThickness="0"
               BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
               CornerRadius="8" Margin="0,4,0,4"
               Background="{DynamicResource SystemControlBackgroundAltHighBrush}">

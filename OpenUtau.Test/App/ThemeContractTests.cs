@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.VisualTree;
 using OpenUtau.App;
 using OpenUtau.Colors;
 using Xunit;
@@ -165,6 +166,116 @@ namespace OpenUtau.Test.App {
             Assert.NotNull(win.Background);
             var brush = Assert.IsAssignableFrom<ISolidColorBrush>(win.Background);
             Assert.True(brush.Color.A >= 0xE0, $"Window bg alpha too low: {brush.Color}");
+        }
+
+        /// <summary>Phase 2：所有新 ControlTheme 模板可应用、无缺失 PART 异常；TextBox 取 PlusTheme 高度。</summary>
+        [AvaloniaFact]
+        public void InputControls_ApplyTemplateWithoutError() {
+            ThemeManager.Apply("Dark");
+            var win = new OpenUtau.App.Controls.WindowEx();
+            var stack = new Avalonia.Controls.StackPanel();
+            win.Content = stack;
+            var controls = new Avalonia.Controls.Control[] {
+                new TextBox(), new ComboBox(), new ToggleSwitch(), new CheckBox(),
+                new RadioButton(), new Slider(), new ProgressBar(), new Avalonia.Controls.Primitives.ToggleButton(),
+            };
+            foreach (var c in controls) {
+                stack.Children.Add(c);
+            }
+            win.Show();
+            foreach (var c in controls) {
+                c.ApplyTemplate();   // 缺必选 PART 会在此抛异常
+            }
+            // TextBox 取 PlusTheme 高度（32）
+            Assert.Equal(32, ((TextBox)controls[0]).Height);
+        }
+
+        /// <summary>视觉树按名查找（Avalonia 11 模板部件经 NameScope 注册，控件无 GetTemplateChild）。</summary>
+        private static Avalonia.Visual? FindPart(Avalonia.Visual root, string name) {
+            if ((root as INamed)?.Name == name) {
+                return root;
+            }
+            foreach (var child in root.GetVisualChildren()) {
+                var r = FindPart(child, name);
+                if (r != null) {
+                    return r;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>诊断：ToggleSwitch off 轨道必须暗色（非红），knob 在左；on 轨道 accent，knob 在右。</summary>
+        [AvaloniaFact]
+        public void ToggleSwitch_TrackAndKnobPerState() {
+            ThemeManager.Apply("Dark");
+            var off = new ToggleSwitch { IsChecked = false };
+            var on = new ToggleSwitch { IsChecked = true };
+            var win = new OpenUtau.App.Controls.WindowEx();
+            var sp = new Avalonia.Controls.StackPanel { Children = { off, on } };
+            win.Content = sp;
+            win.Show();
+            off.ApplyTemplate();
+            on.ApplyTemplate();
+
+            var offTrack = FindPart(off, "SwitchKnobBounds") as Border;
+            var onTrack = FindPart(on, "SwitchKnobBounds") as Border;
+            var offKnob = FindPart(off, "PART_MovingKnobs");
+            var onKnob = FindPart(on, "PART_MovingKnobs");
+            Assert.NotNull(offTrack);
+            Assert.NotNull(onTrack);
+            Assert.NotNull(offKnob);
+            Assert.NotNull(onKnob);
+
+            var offBg = Assert.IsAssignableFrom<ISolidColorBrush>(offTrack!.Background);
+            Assert.True(offBg.Color.R < 0x60, $"off track should be dark, got {offBg.Color}");
+            var onBg = Assert.IsAssignableFrom<ISolidColorBrush>(onTrack!.Background);
+            Assert.True(onBg.Color.R > 0x80 && onBg.Color.G < 0x60, $"on track should be accent, got {onBg.Color}");
+            // off knob 在左（Canvas.Left≈0），on knob 在右（≈行程 20）
+            Assert.True(Canvas.GetLeft(offKnob!) < 1, $"off knob should be left, got {Canvas.GetLeft(offKnob)}");
+            Assert.True(Canvas.GetLeft(onKnob!) >= 18, $"on knob should be right, got {Canvas.GetLeft(onKnob)}");
+        }
+
+        /// <summary>诊断：ListBoxItem 选中背景为 accent-muted（红），hover 不消失。</summary>
+        [AvaloniaFact]
+        public void ListBoxItem_SelectedGetsAccentMuted() {
+            ThemeManager.Apply("Dark");
+            var item = new ListBoxItem { IsSelected = true };
+            var win = new OpenUtau.App.Controls.WindowEx();
+            win.Content = item;
+            win.Show();
+            item.ApplyTemplate();
+            var presenter = FindPart(item, "PART_ContentPresenter") as Avalonia.Controls.Presenters.ContentPresenter;
+            Assert.NotNull(presenter);
+            var bg = Assert.IsAssignableFrom<ISolidColorBrush>(presenter!.Background);
+            Assert.True(bg.Color.R > 0x60, $"selected bg should be reddish (accent-muted), got {bg.Color}");
+        }
+
+        /// <summary>诊断：ComboBox 边框属性取 v4.0 值（PlusBrushBorderDefault + 1px）。</summary>
+        [AvaloniaFact]
+        public void ComboBox_BorderRenders() {
+            ThemeManager.Apply("Dark");
+            var combo = new ComboBox();
+            var win = new OpenUtau.App.Controls.WindowEx();
+            win.Content = combo;
+            win.Show();
+            combo.ApplyTemplate();
+            Assert.NotNull(combo.BorderBrush);
+            Assert.True(combo.BorderThickness.Top > 0, $"BorderThickness should be >0, got {combo.BorderThickness}");
+            var bb = Assert.IsAssignableFrom<ISolidColorBrush>(combo.BorderBrush);
+            Assert.True(bb.Color.R > 0x20, $"BorderBrush should be visible gray, got {bb.Color}");
+        }
+
+        /// <summary>验证 {x:Type} ControlTheme 覆盖 Fluent：Button 取 PlusTheme 值（8/32）而非 Fluent 默认。</summary>
+        [AvaloniaFact]
+        public void Button_GetsPlusTheme() {
+            ThemeManager.Apply("Dark");
+            var win = new OpenUtau.App.Controls.WindowEx();
+            var btn = new Avalonia.Controls.Button();
+            win.Content = btn;
+            win.Show();
+            btn.ApplyTemplate();
+            Assert.Equal(new CornerRadius(8), btn.CornerRadius);
+            Assert.Equal(32, btn.Height);
         }
 
         /// <summary>ChangePianorollColor 不破坏任何投影键。</summary>

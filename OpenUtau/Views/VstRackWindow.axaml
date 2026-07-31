@@ -14,7 +14,7 @@
     <Style Selector="Border.slotRow">
       <Setter Property="Height" Value="32"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="CornerRadius" Value="8"/>
       <Setter Property="Margin" Value="0,0,0,4"/>
       <Setter Property="Padding" Value="8,0"/>
@@ -49,7 +49,7 @@
       <Setter Property="Height" Value="30"/>
       <Setter Property="FontSize" Value="11"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="CornerRadius" Value="8"/>
     </Style>

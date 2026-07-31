@@ -108,7 +108,7 @@
         <!-- ── Left: Avatar + TrackNo badge ── -->
         <Border Grid.Column="0" VerticalAlignment="Top" Margin="0,2,4,0"
                 Width="36" Height="36" CornerRadius="4" ClipToBounds="True"
-                BorderBrush="{DynamicResource NeutralAccentBrushSemi}" BorderThickness="0.5">
+                BorderBrush="{DynamicResource NeutralAccentBrushSemi}" BorderThickness="0">
           <Image Source="{Binding Avatar}" Stretch="Uniform"
                  RenderOptions.BitmapInterpolationMode="HighQuality"
                  ToolTip.Tip="{Binding Singer}"/>

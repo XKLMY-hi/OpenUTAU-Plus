@@ -10,7 +10,7 @@
     <Style Selector="Border.renderCard">
       <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="6"/>
       <Setter Property="Padding" Value="14,10"/>
     </Style>
@@ -62,7 +62,7 @@
       <Setter Property="CornerRadius" Value="4"/>
       <Setter Property="Background" Value="Transparent"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="BorderThickness" Value="0"/>
     </Style>
     <Style Selector="ProgressBar.renderProgress">
       <Setter Property="Height" Value="6"/>

@@ -1,0 +1,49 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    PlusTheme · ListBoxItem（v4.0）
+    统一 hover = 表面提亮 · 选中 = accent-muted 底（+ accent 文字，覆盖全局）。
+    消除 Fluent ListBoxItem 默认 hover/selected 覆盖交互的不可预期表现。
+    PART_ContentPresenter 保留（现有 ListBox.Styles 覆盖继续生效）。
+  -->
+  <ControlTheme x:Key="{x:Type ListBoxItem}" TargetType="ListBoxItem">
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+    <Setter Property="Padding" Value="10,7"/>
+    <Setter Property="CornerRadius" Value="{DynamicResource PlusRadiusSm}"/>
+    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    <Setter Property="VerticalContentAlignment" Value="Center"/>
+    <Setter Property="Foreground" Value="{DynamicResource PlusBrushTextPrimary}"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ContentPresenter x:Name="PART_ContentPresenter"
+                          Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                          Padding="{TemplateBinding Padding}"
+                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                          TemplatedControl.IsTemplateFocusTarget="True"/>
+      </ControlTemplate>
+    </Setter>
+    <!-- 非选中 hover 才提亮；选中项 hover 保持 accent 底（选中的红色背景不消失） -->
+    <Style Selector="^:not(:selected):pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceHover}"/>
+    </Style>
+    <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource PlusBrushAccentMuted}"/>
+    </Style>
+    <Style Selector="^:selected /template/ ContentPresenter#PART_ContentPresenter TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource PlusBrushAccent}"/>
+    </Style>
+    <Style Selector="^:selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource PlusBrushAccentSoft}"/>
+    </Style>
+    <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource PlusBrushTextDisabled}"/>
+    </Style>
+  </ControlTheme>
+</ResourceDictionary>

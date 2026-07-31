@@ -30,7 +30,7 @@
     </Style>
     <Style Selector="Border.column">
       <Setter Property="Padding" Value="10"/>
-      <Setter Property="BorderThickness" Value="0.5"/>
+      <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
       <Setter Property="CornerRadius" Value="8"/>
       <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>

@@ -59,7 +59,7 @@
   </UserControl.Styles>
 
   <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-          BorderThickness="0.5" CornerRadius="8" Margin="2,4"
+          BorderThickness="0" CornerRadius="8" Margin="2,4"
           Padding="4,4,4,4"
           Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
     <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" Name="RootGrid">

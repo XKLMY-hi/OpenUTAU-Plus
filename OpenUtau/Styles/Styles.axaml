@@ -126,78 +126,56 @@
     <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
   </Style>
 
+  <!-- Button 基础模板已由 PlusTheme ControlTheme 接管（v4.0）。此处仅保留应用级布局与类变体。 -->
   <Style Selector="Button">
-    <Setter Property="BorderThickness" Value="0"/>
-    <Setter Property="FontSize" Value="13"/>
-    <Setter Property="Height" Value="32"/>
-    <Setter Property="MinHeight" Value="32"/>
     <Setter Property="Margin" Value="0,4"/>
-    <Setter Property="Padding" Value="12,0"/>
-    <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
-    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    <Setter Property="VerticalContentAlignment" Value="Center"/>
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
-    <Setter Property="Template">
-      <ControlTemplate>
-        <ContentPresenter x:Name="PART_ContentPresenter"
-                          Background="{TemplateBinding Background}"
-                          BorderBrush="{TemplateBinding BorderBrush}"
-                          BorderThickness="{TemplateBinding BorderThickness}"
-                          CornerRadius="{TemplateBinding CornerRadius}"
-                          Content="{TemplateBinding Content}"
-                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                          Padding="{TemplateBinding Padding}"
-                          RecognizesAccessKey="False"
-                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-      </ControlTemplate>
-    </Setter>
-  </Style>
-  <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
-  </Style>
-  <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}"/>
   </Style>
 
-  <!-- Primary (accent) button -->
+  <!-- Primary (accent) button — v4.0：实心 accent + 透明边框 + hover 辉光 -->
   <Style Selector="Button.primary">
-    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Foreground" Value="{DynamicResource PlusBrushTextOnAccent}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="Transparent"/>
   </Style>
   <Style Selector="Button.primary /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushAccent}"/>
   </Style>
   <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushAccentHover}"/>
+    <Setter Property="BoxShadow" Value="{DynamicResource PlusGlowPrimary}"/>
   </Style>
   <Style Selector="Button.primary:pressed /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource AccentBrush3}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushAccentPressed}"/>
   </Style>
 
-  <!-- Outline (border-only) button -->
+  <!-- Outline (border-only) button — v4.0：透明底 + hover 提亮 -->
   <Style Selector="Button.outline">
     <Setter Property="BorderThickness" Value="1"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource PlusBrushBorderHover}"/>
   </Style>
   <Style Selector="Button.outline /template/ ContentPresenter#PART_ContentPresenter">
     <Setter Property="Background" Value="Transparent"/>
   </Style>
   <Style Selector="Button.outline:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceHover}"/>
   </Style>
 
-  <!-- Danger button -->
+  <!-- Danger button — v4.0：语义红描边式，hover 实心 -->
   <Style Selector="Button.danger">
-    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="Foreground" Value="{DynamicResource PlusBrushSemanticDanger}"/>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource PlusBrushSemanticDanger}"/>
   </Style>
   <Style Selector="Button.danger /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="#c73a3f"/>
+    <Setter Property="Background" Value="Transparent"/>
   </Style>
   <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="#d94a50"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushSemanticDanger}"/>
+    <Setter Property="Foreground" Value="White"/>
+    <Setter Property="BoxShadow" Value="{DynamicResource PlusGlowDanger}"/>
   </Style>
   <Style Selector="Button.danger:pressed /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="#b03237"/>
+    <Setter Property="Background" Value="#c62828"/>
   </Style>
   <Style Selector="Button.clear">
     <Setter Property="BorderThickness" Value="0"/>
@@ -211,7 +189,7 @@
     <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
   </Style>
   <Style Selector="Button.clear:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{DynamicResource BackgroundColorPointerOver}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceHover}"/>
   </Style>
 
   <Style Selector="ToggleButton.normal">
@@ -288,20 +266,12 @@
     <Setter Property="BorderThickness" Value="0"/>
   </Style>
 
-  <Style Selector="ToggleSwitch /template/ Border#SwitchKnobBounds">
-    <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
-    <Setter Property="CornerRadius" Value="13"/>
-  </Style>
-  <Style Selector="ToggleSwitch /template/ Border#SwitchKnobBounds:pointerover">
-    <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
-  </Style>
-  <Style Selector="ToggleSwitch /template/ Border#OuterBorder">
-    <Setter Property="CornerRadius" Value="13"/>
-    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
-  </Style>
+  <!-- ToggleSwitch 模板已由 PlusTheme ControlTheme 接管（v4.0：off 暗 / on accent）。
+       旧全局 /template/ 覆盖已删——它无条件把轨道设红，导致所有开关开闭都是红。 -->
+
 
   <Style Selector="ComboBox">
-    <Setter Property="Background" Value="{DynamicResource SystemRegionBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceControl}"/>
     <Setter Property="FontSize" Value="13"/>
     <Setter Property="MinHeight" Value="32"/>
     <Setter Property="Height" Value="32"/>
@@ -337,21 +307,11 @@
     <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
   </Style>
 
+  <!-- CheckBox 模板已由 PlusTheme ControlTheme 接管（v4.0）；仅保留尺寸与 .menu 变体 -->
   <Style Selector="CheckBox">
     <Setter Property="MinHeight" Value="28" />
     <Setter Property="MinWidth" Value="28" />
     <Setter Property="FontSize" Value="13" />
-  </Style>
-  <Style Selector="CheckBox /template/ Grid">
-    <Setter Property="Height" Value="20" />
-    <Setter Property="Width" Value="20" />
-  </Style>
-  <Style Selector="CheckBox /template/ Border#NormalRectangle">
-    <Setter Property="VerticalAlignment" Value="Top" />
-    <Setter Property="CornerRadius" Value="4" />
-  </Style>
-  <Style Selector="CheckBox /template/ Viewbox">
-    <Setter Property="VerticalAlignment" Value="Top" />
   </Style>
 
   <Style Selector="CheckBox.menu">
