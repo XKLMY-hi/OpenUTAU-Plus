@@ -4,7 +4,7 @@
   <system:Boolean x:Key="IsDarkMode">true</system:Boolean>
 
   <!-- Acrylic material background: warm dark tint at 80% opacity -->
-  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#A61e2236"/>
+  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#D91e2028"/>
 
   <!-- Warm gray dark palette — see ui-preview-library Design Tokens -->
   <Color x:Key="BackgroundColor">#1e1e28</Color>
@@ -40,16 +40,16 @@
 
   <Color x:Key="WarningColor">#4a3520</Color>
 
-  <!--Keyboard Background-->
-  <Color x:Key="WhiteKeyColorLeft">#CC2A63</Color>
-  <Color x:Key="WhiteKeyColorRight">#FF347C</Color>
-  <Color x:Key="WhiteKeyNameColor">#FFFFFF</Color>
+  <!-- Keyboard Background — warm gray unified; Right = 80% opacity -->
+  <Color x:Key="WhiteKeyColorLeft">#1c1c2a</Color>
+  <Color x:Key="WhiteKeyColorRight">#CC1c1c2a</Color>
+  <Color x:Key="WhiteKeyNameColor">#c8c8d0</Color>
 
-  <Color x:Key="CenterKeyColorLeft">#CCA5B0</Color>
-  <Color x:Key="CenterKeyColorRight">#FFCEDC</Color>
-  <Color x:Key="CenterKeyNameColor">#FF347C</Color>
+  <Color x:Key="CenterKeyColorLeft">#c73a3f</Color>
+  <Color x:Key="CenterKeyColorRight">#CCc73a3f</Color>
+  <Color x:Key="CenterKeyNameColor">#f0f0f0</Color>
 
-  <Color x:Key="BlackKeyColorLeft">Transparent</Color>
-  <Color x:Key="BlackKeyColorRight">Transparent</Color>
-  <Color x:Key="BlackKeyNameColor">#FFFFFF</Color>
+  <Color x:Key="BlackKeyColorLeft">#181820</Color>
+  <Color x:Key="BlackKeyColorRight">#CC181820</Color>
+  <Color x:Key="BlackKeyNameColor">#808090</Color>
 </ResourceDictionary>
