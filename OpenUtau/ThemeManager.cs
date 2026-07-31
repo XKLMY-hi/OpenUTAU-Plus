@@ -272,7 +272,9 @@ namespace OpenUtau.App {
                 return false;
             }
             IResourceDictionary resDict = Application.Current.Resources;
-            if (resDict.TryGetResource(key, Application.Current.ActualThemeVariant, out var outVar) && outVar is string s) {
+            // 注意：字符串在 MergedDictionaries（多语言），用 ThemeVariant.Default 即可解析；
+            // 不能用 ActualThemeVariant（UI 线程绑定属性），否则后台线程（如 PianoRollViewModel 构造）调用会跨线程崩溃。
+            if (resDict.TryGetResource(key, ThemeVariant.Default, out var outVar) && outVar is string s) {
                 value = s;
                 return true;
             }

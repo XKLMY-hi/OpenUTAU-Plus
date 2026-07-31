@@ -2135,13 +2135,19 @@ namespace OpenUtau.App.Views {
             AddButton(ThemeManager.GetString("button.no"), MessageBox.MessageBoxResult.No);
             AddButton(ThemeManager.GetString("button.cancel"), MessageBox.MessageBoxResult.Cancel);
 
-            var panel = new StackPanel { Spacing = 12 };
+            // 内容填充 20% 卡片并留出边距（避免控件贴边拥挤）
+            var panel = new StackPanel {
+                Spacing = 14,
+                Margin = new Thickness(28, 24),
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
             panel.Children.Add(title);
             panel.Children.Add(message);
             panel.Children.Add(buttons);
 
             overlayTcs = new TaskCompletionSource<MessageBox.MessageBoxResult>();
-            ShowOverlayContent(panel, closable: false);
+            // 退出确认 = 主窗口 20% 大小，宽高同比例（UpdateOverlayCardSize 同 fraction → 比例自动同步主窗口）
+            ShowOverlayContent(panel, closable: false, sizeFraction: 0.20);
             return overlayTcs.Task;
         }
 

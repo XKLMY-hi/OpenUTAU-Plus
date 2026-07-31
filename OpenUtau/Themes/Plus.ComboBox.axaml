@@ -81,12 +81,12 @@
                    PlacementTarget="Background"
                    IsLightDismissEnabled="True">
               <Border x:Name="PopupBorder"
-                      Background="{DynamicResource PlusBrushGlassPopover}"
-                      BorderBrush="{DynamicResource PlusBrushBorderGlass}"
+                      Background="{DynamicResource PlusBrushSurfaceOverlay}"
+                      BorderBrush="{DynamicResource PlusBrushBorderDefault}"
                       BorderThickness="1"
                       CornerRadius="{DynamicResource PlusRadiusLg}"
                       Padding="4"
-                      BoxShadow="{DynamicResource PlusHighlightTop}, {DynamicResource PlusElevationPopup}">
+                      BoxShadow="{DynamicResource PlusElevationPopup}">
                 <ScrollViewer x:Name="PART_ScrollViewer"
                               HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                               VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"

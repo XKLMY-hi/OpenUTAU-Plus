@@ -46,10 +46,16 @@
   </Style>
   <Style Selector="MenuItem /template/ Path#PART_ChevronPath">
     <Setter Property="RenderTransform" Value="Scale(0.75,0.75)"/>
-    <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+    <Setter Property="Fill" Value="{DynamicResource PlusBrushTextSecondary}"/>
+  </Style>
+  <!-- v4.0：菜单 hover = accent-muted（不再是 Fluent 的白色 overlay） -->
+  <Style Selector="MenuItem:pointerover">
+    <Setter Property="Background" Value="{DynamicResource PlusBrushAccentMuted}"/>
+    <Setter Property="Foreground" Value="{DynamicResource PlusBrushAccent}"/>
   </Style>
   <Style Selector="MenuItem:selected">
-    <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrushPointerOver}"/>
+    <Setter Property="Background" Value="{DynamicResource PlusBrushAccentMuted}"/>
+    <Setter Property="Foreground" Value="{DynamicResource PlusBrushAccent}"/>
   </Style>
   <Style Selector="MenuItem /template/ TextBlock#PART_InputGestureText">
     <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutItemForeground}"/>

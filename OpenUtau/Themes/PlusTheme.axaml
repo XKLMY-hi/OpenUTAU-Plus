@@ -14,6 +14,7 @@
         <ResourceInclude Source="/Themes/Plus.Selection.axaml"/>
         <ResourceInclude Source="/Themes/Plus.Slider.axaml"/>
         <ResourceInclude Source="/Themes/Plus.ListBox.axaml"/>
+        <ResourceInclude Source="/Themes/Plus.Menu.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Styles.Resources>
