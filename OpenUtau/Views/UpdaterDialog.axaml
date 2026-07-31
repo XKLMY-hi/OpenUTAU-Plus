@@ -1,16 +1,10 @@
-<controls:WindowEx xmlns="https://github.com/avaloniaui"
-        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
+<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="OpenUtau.App.Views.UpdaterDialog"
-        Width="400" Height="300" CanResize="False" WindowStartupLocation="CenterScreen"
-        Icon="/Assets/open-utau.ico"
-        Title="{DynamicResource updater.caption}" Closing="OnClosing">
-<DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
-      <Border>
+        Width="400" Height="300">
   <Grid RowDefinitions="*, 20, 20, *, *">
     <Image Grid.Row="0" Margin="20" Width="96" Height="96"
            VerticalAlignment="Top" HorizontalAlignment="Center"
@@ -35,6 +29,4 @@
               FontWeight="{Binding UpdateButtonFontWeight}"/>
     </StackPanel>
   </Grid>
-      </Border>
-    </DockPanel>
-</controls:WindowEx>
+</UserControl>

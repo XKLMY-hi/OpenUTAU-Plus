@@ -1,19 +1,14 @@
-<controls:WindowEx xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:OpenUtau.App.ViewModels"
-        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="460"
-        x:Class="OpenUtau.App.Views.PreferencesDialog"
-        Icon="/Assets/open-utau.ico"
-        Title="{DynamicResource prefs.caption}"
-        WindowStartupLocation="CenterScreen"
-        Width="700" Height="460">
-  <Window.Resources>
+        x:Class="OpenUtau.App.Views.PreferencesDialog">
+  <UserControl.Resources>
     <vm:CultureNameConverter x:Key="cultureNameConverter"/>
-  </Window.Resources>
-  <Window.Styles>
+  </UserControl.Resources>
+  <UserControl.Styles>
     <Style Selector="StackPanel">
       <Setter Property="Spacing" Value="4"/>
     </Style>
@@ -73,10 +68,8 @@
     <Style Selector="Grid.cardRow">
       <Setter Property="Margin" Value="0,3"/>
     </Style>
-  </Window.Styles>
+  </UserControl.Styles>
 
-  <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Grid ColumnDefinitions="120,*">
     <Border BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
             BorderThickness="0,0,0.5,0" Background="Transparent">
@@ -520,5 +513,4 @@
       </Carousel>
     </ScrollViewer>
   </Grid>
-  </DockPanel>
-</controls:WindowEx>
+</UserControl>

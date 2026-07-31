@@ -7,14 +7,15 @@ using Serilog;
 using OpenUtau.App.Controls;
 
 namespace OpenUtau.App.Views {
-    public partial class UpdaterDialog : WindowEx {
+    public partial class UpdaterDialog : UserControl {
         public readonly UpdaterViewModel ViewModel;
         public UpdaterDialog() {
             InitializeComponent();
             DataContext = ViewModel = new UpdaterViewModel();
         }
 
-        void OnClosing(object sender, WindowClosingEventArgs e) {
+        /// <summary>Called by the host window when the overlay closes.</summary>
+        public void OnClosed() {
             ViewModel.OnClosing();
         }
 
@@ -22,7 +23,7 @@ namespace OpenUtau.App.Views {
         /// Called at startup to check for updates silently.
         /// Only shows the dialog if an update is available.
         /// </summary>
-        public static void CheckForUpdate(Action<Window> showDialog, Action closeApplication, TaskScheduler scheduler) {
+        public static void CheckForUpdate(Action<UpdaterDialog> showDialog, Action closeApplication, TaskScheduler scheduler) {
             Task.Run(async () => {
                 return await UpdaterViewModel.CheckForUpdateAsync();
             }).ContinueWith(t => {

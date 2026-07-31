@@ -12,6 +12,8 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
 using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
@@ -111,7 +113,7 @@ namespace OpenUtau.App.Views {
 
             Log.Information("Main window checking Update.");
             UpdaterDialog.CheckForUpdate(
-                dialog => dialog.Show(this),
+                dialog => ShowOverlayContent(dialog),
                 () => (Application.Current?.ApplicationLifetime as IControlledApplicationLifetime)?.Shutdown(),
                 TaskScheduler.FromCurrentSynchronizationContext());
             Log.Information("Created main window.");
@@ -660,13 +662,11 @@ namespace OpenUtau.App.Views {
                 Preferences.Reset();
                 dataContext = new PreferencesViewModel();
             }
-            var dialog = new PreferencesDialog() {
-                DataContext = dataContext
+            var prefs = new PreferencesDialog() {
+                DataContext = dataContext,
+                HostWindow = this,
             };
-            dialog.ShowDialog(this);
-            if (dialog.Position.Y < 0) {
-                dialog.Position = dialog.Position.WithY(0);
-            }
+            ShowOverlayContent(prefs, sizeFraction: 0.60, headerTitle: ThemeManager.GetString("prefs.caption"));
         }
 
         void OnMenuFullScreen(object sender, RoutedEventArgs args) {
@@ -817,7 +817,7 @@ namespace OpenUtau.App.Views {
             var dialog = new UpdaterDialog();
             dialog.ViewModel.CloseApplication =
                 () => (Application.Current?.ApplicationLifetime as IControlledApplicationLifetime)?.Shutdown();
-            dialog.ShowDialog(this);
+            ShowOverlayContent(dialog);
         }
 
         void OnMenuLogsLocation(object sender, RoutedEventArgs args) {
@@ -915,7 +915,7 @@ namespace OpenUtau.App.Views {
             // Modal overlay open — block shortcuts, Esc dismisses
             if (OverlayLayer.IsVisible) {
                 if (args.Key == Key.Escape) {
-                    CompleteOverlay(MessageBox.MessageBoxResult.Cancel);
+                    CloseOverlay();
                 }
                 args.Handled = true;
                 return;
@@ -2040,13 +2040,87 @@ namespace OpenUtau.App.Views {
             }
         }
 
-        // In-window modal overlay for the exit-save confirmation.
+        // ── In-window modal overlay host ─────────────────────────
+        // Shows arbitrary content (exit-save confirm, Preferences, Updater)
+        // inside a rounded card, instead of a separate window.
         private TaskCompletionSource<MessageBox.MessageBoxResult>? overlayTcs;
 
+        private void ShowOverlayContent(Control content, bool closable = true, double sizeFraction = 0, string? headerTitle = null) {
+            OverlayContent.Content = content;
+            overlaySizeFraction = sizeFraction;
+            if (headerTitle != null) {
+                // Dialog-style overlay: title + close live in the header bar.
+                OverlayHeader.IsVisible = true;
+                OverlayHeaderTitle.Text = headerTitle;
+                OverlayCloseButton.IsVisible = false;
+            } else {
+                OverlayHeader.IsVisible = false;
+                OverlayCloseButton.IsVisible = closable;
+            }
+            UpdateOverlayCardSize();
+            OverlayLayer.IsVisible = true;
+        }
+
+        private void CloseOverlay() {
+            if (!OverlayLayer.IsVisible) {
+                return;
+            }
+            if (OverlayContent.Content is UpdaterDialog updater) {
+                updater.OnClosed();
+            }
+            OverlayLayer.IsVisible = false;
+            OverlayContent.Content = null;
+            overlayTcs?.TrySetResult(MessageBox.MessageBoxResult.Cancel);
+            overlayTcs = null;
+        }
+
+        private void OnOverlayCloseClicked(object? sender, RoutedEventArgs e) {
+            CloseOverlay();
+        }
+
+        private double overlaySizeFraction;
+
+        private void OnWindowSizeChanged(object? sender, SizeChangedEventArgs e) {
+            if (OverlayLayer.IsVisible) {
+                UpdateOverlayCardSize();
+            }
+        }
+
+        /// <summary>
+        /// Resizes the overlay card to a fraction of the host window
+        /// (e.g. 0.35 = 35%). When fraction is 0 the card sizes to its content.
+        /// </summary>
+        private void UpdateOverlayCardSize() {
+            if (overlaySizeFraction > 0) {
+                double w = Bounds.Width * overlaySizeFraction;
+                double h = Bounds.Height * overlaySizeFraction;
+                OverlayCard.Width = w;
+                OverlayCard.Height = h;
+            } else {
+                OverlayCard.Width = double.NaN;
+                OverlayCard.Height = double.NaN;
+            }
+        }
+
         private Task<MessageBox.MessageBoxResult> ShowExitConfirmOverlayAsync() {
-            OverlayTitle.Text = ThemeManager.GetString("dialogs.exitsave.caption");
-            OverlayMessage.Text = ThemeManager.GetString("dialogs.exitsave.message");
-            OverlayButtons.Children.Clear();
+            var title = new TextBlock {
+                Text = ThemeManager.GetString("dialogs.exitsave.caption"),
+                FontSize = 15,
+                FontWeight = FontWeight.SemiBold,
+            };
+            var message = new TextBlock {
+                Text = ThemeManager.GetString("dialogs.exitsave.message"),
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 13,
+                Opacity = 0.85,
+                LineHeight = 20,
+            };
+            var buttons = new StackPanel {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Spacing = 8,
+                Margin = new Thickness(0, 12, 0, 0),
+            };
 
             void AddButton(string caption, MessageBox.MessageBoxResult result, bool primary = false) {
                 var btn = new Button { Content = caption };
@@ -2054,15 +2128,20 @@ namespace OpenUtau.App.Views {
                     btn.Classes.Add("primary");
                 }
                 btn.Click += (_, _) => CompleteOverlay(result);
-                OverlayButtons.Children.Add(btn);
+                buttons.Children.Add(btn);
             }
 
             AddButton(ThemeManager.GetString("button.yes"), MessageBox.MessageBoxResult.Yes, primary: true);
             AddButton(ThemeManager.GetString("button.no"), MessageBox.MessageBoxResult.No);
             AddButton(ThemeManager.GetString("button.cancel"), MessageBox.MessageBoxResult.Cancel);
 
+            var panel = new StackPanel { Spacing = 12 };
+            panel.Children.Add(title);
+            panel.Children.Add(message);
+            panel.Children.Add(buttons);
+
             overlayTcs = new TaskCompletionSource<MessageBox.MessageBoxResult>();
-            OverlayLayer.IsVisible = true;
+            ShowOverlayContent(panel, closable: false);
             return overlayTcs.Task;
         }
 
@@ -2071,12 +2150,17 @@ namespace OpenUtau.App.Views {
                 return;
             }
             OverlayLayer.IsVisible = false;
+            OverlayContent.Content = null;
             overlayTcs?.TrySetResult(result);
             overlayTcs = null;
         }
 
         private void OnOverlayBackdropPressed(object? sender, PointerPressedEventArgs e) {
-            CompleteOverlay(MessageBox.MessageBoxResult.Cancel);
+            // Only the exit-save confirm is dismissed by clicking the backdrop.
+            // Hosted dialogs (Preferences/Updater) close via their own buttons.
+            if (OverlayContent.Content is StackPanel) {
+                CompleteOverlay(MessageBox.MessageBoxResult.Cancel);
+            }
         }
 
         public void OnNext(UCommand cmd, bool isUndo) {

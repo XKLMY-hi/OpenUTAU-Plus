@@ -12,8 +12,11 @@ using OpenUtau.Core;
 using OpenUtau.Core.Vst;
 
 namespace OpenUtau.App.Views {
-    public partial class PreferencesDialog : WindowEx {
-        private PreferencesViewModel? viewModel => this.DataContext as PreferencesViewModel;   
+    public partial class PreferencesDialog : UserControl {
+        private PreferencesViewModel? viewModel => this.DataContext as PreferencesViewModel;
+
+        /// <summary>The window hosting this control in its overlay.</summary>
+        public Window? HostWindow { get; set; }
 
         public PreferencesDialog() {
             InitializeComponent();
@@ -43,7 +46,7 @@ namespace OpenUtau.App.Views {
         }
 
         async void SelectAddlSingersPath(object sender, RoutedEventArgs e) {
-            var path = await FilePicker.OpenFolderAboutSinger(this, "prefs.paths.addlsinger");
+            var path = await FilePicker.OpenFolderAboutSinger(HostWindow!, "prefs.paths.addlsinger");
             if (string.IsNullOrEmpty(path)) {
                 return;
             }
@@ -53,7 +56,7 @@ namespace OpenUtau.App.Views {
         }
 
         async void ReloadSingers(object sender, RoutedEventArgs e) {
-            LoadingWindow.BeginLoading(this);
+            LoadingWindow.BeginLoading(HostWindow!);
             await Task.Run(() => {
                 SingerManager.Inst.SearchAllSingers();
             });
@@ -67,7 +70,7 @@ namespace OpenUtau.App.Views {
 
         async void SelectVLabelerPath(object sender, RoutedEventArgs e) {
             var type = OS.IsWindows() ? FilePicker.EXE : OS.IsMacOS() ? FilePicker.APP : FilePickerFileTypes.All;
-            var path = await FilePicker.OpenFile(this, "prefs.advanced.vlabelerpath", type);
+            var path = await FilePicker.OpenFile(HostWindow!, "prefs.advanced.vlabelerpath", type);
             if (string.IsNullOrEmpty(path)) {
                 return;
             }
@@ -81,7 +84,7 @@ namespace OpenUtau.App.Views {
         }
 
         async void SelectSetParamPath(object sender, RoutedEventArgs e) {
-            var path = await FilePicker.OpenFile(this, "prefs.otoeditor.setparampath", FilePicker.EXE);
+            var path = await FilePicker.OpenFile(HostWindow!, "prefs.otoeditor.setparampath", FilePicker.EXE);
             if (string.IsNullOrEmpty(path)) {
                 return;
             }
@@ -95,7 +98,7 @@ namespace OpenUtau.App.Views {
         }
 
         async void SelectWinePath(object sender, RoutedEventArgs e) {
-            var path = await FilePicker.OpenFile(this, "prefs.advanced.winepath", FilePicker.UnixExecutable);
+            var path = await FilePicker.OpenFile(HostWindow!, "prefs.advanced.winepath", FilePicker.UnixExecutable);
             if (string.IsNullOrEmpty(path)) {
                 return;
             }
@@ -134,7 +137,7 @@ namespace OpenUtau.App.Views {
             dialog.SetPrompt(ThemeManager.GetString("prefs.appearance.customtheme.create.prompt"));
             dialog.onFinish = s => {
                 if (string.IsNullOrEmpty(s)) {
-                    MessageBox.ShowModal(this, 
+                    MessageBox.ShowModal(HostWindow!,
                         ThemeManager.GetString("prefs.appearance.customtheme.create.empty"),
                         ThemeManager.GetString("prefs.appearance.customtheme.create.title"));
                     return;
@@ -149,7 +152,7 @@ namespace OpenUtau.App.Views {
                     Yaml.DefaultSerializer.Serialize(themeYaml));
                 viewModel!.RefreshThemes();
             };
-            dialog.ShowDialog(this);
+            dialog.ShowDialog(HostWindow!);
         }
 
         // ── OpenUTAU Plus: VST Settings ─────────────────────
@@ -171,7 +174,7 @@ namespace OpenUtau.App.Views {
         async void OnCustomThemeDelete(object sender, RoutedEventArgs e) {
             if (CustomTheme.IsPackageTheme(viewModel!.ThemeName)) return;
             var result = await MessageBox.Show(
-                this,
+                HostWindow!,
                 ThemeManager.GetString("prefs.appearance.customtheme.delete.message"),
                 ThemeManager.GetString("prefs.appearance.customtheme.delete.title"),
                 MessageBox.MessageBoxButtons.YesNo);
