@@ -52,4 +52,46 @@
   <Color x:Key="BlackKeyColorLeft">#181820</Color>
   <Color x:Key="BlackKeyColorRight">#CC181820</Color>
   <Color x:Key="BlackKeyNameColor">#808090</Color>
+
+  <!-- ════════ PlusTheme palette v4.0（覆写 Plus.Resources 默认）════════ -->
+  <!-- Surface 实色 8 档 -->
+  <Color x:Key="PlusSurfaceDeep">#16161e</Color>
+  <Color x:Key="PlusSurfaceBase">#1e1e28</Color>
+  <Color x:Key="PlusSurfaceRaised">#25252f</Color>
+  <Color x:Key="PlusSurfaceControl">#282838</Color>
+  <Color x:Key="PlusSurfaceHover">#303048</Color>
+  <Color x:Key="PlusSurfacePressed">#383858</Color>
+  <Color x:Key="PlusSurfaceDisabled">#222230</Color>
+  <Color x:Key="PlusSurfaceOverlay">#2e2e3e</Color>
+  <!-- Border -->
+  <Color x:Key="PlusBorderSubtle">#2a2a3a</Color>
+  <Color x:Key="PlusBorderDefault">#383848</Color>
+  <Color x:Key="PlusBorderHover">#484868</Color>
+  <Color x:Key="PlusBorderFocus">#c73a3f</Color>
+  <Color x:Key="PlusBorderGlass">#14FFFFFF</Color>
+  <Color x:Key="PlusBorderGlassStrong">#1FFFFFFF</Color>
+  <!-- Accent -->
+  <Color x:Key="PlusAccent">#c73a3f</Color>
+  <Color x:Key="PlusAccentHover">#d94a50</Color>
+  <Color x:Key="PlusAccentPressed">#b03237</Color>
+  <Color x:Key="PlusAccentMuted">#1FC73A3F</Color>
+  <Color x:Key="PlusAccentSoft">#33C73A3F</Color>
+  <Color x:Key="PlusAccentGlow">#4DC73A3F</Color>
+  <!-- Text -->
+  <Color x:Key="PlusTextPrimary">#f0f0f0</Color>
+  <Color x:Key="PlusTextSecondary">#a0a0b0</Color>
+  <Color x:Key="PlusTextDisabled">#585868</Color>
+  <Color x:Key="PlusTextOnAccent">#ffffff</Color>
+  <!-- Semantic -->
+  <Color x:Key="PlusSemanticSuccess">#4caf50</Color>
+  <Color x:Key="PlusSemanticWarning">#ff9800</Color>
+  <Color x:Key="PlusSemanticWarningBg">#4a3520</Color>
+  <Color x:Key="PlusSemanticDanger">#e53935</Color>
+  <Color x:Key="PlusSemanticInfo">#5b9bd5</Color>
+  <!-- Glass（仅浮层） -->
+  <Color x:Key="PlusGlassCard">#EB1E2028</Color>
+  <Color x:Key="PlusGlassPopover">#F0262632</Color>
+  <Color x:Key="PlusGlassBackdrop">#80000000</Color>
+  <Color x:Key="PlusGlassHeader">#0DFFFFFF</Color>
+  <Color x:Key="PlusGlassInsetBottom">#24000000</Color>
 </ResourceDictionary>

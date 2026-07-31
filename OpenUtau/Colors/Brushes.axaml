@@ -149,4 +149,30 @@
   </LinearGradientBrush >
   <SolidColorBrush x:Key="BlackKeyNameBrush"
                    Color="{DynamicResource BlackKeyNameColor}"/>
+
+  <!-- ════════ Fluent 兼容键补齐（删除 FluentTheme 前预备，PlusTheme 承接）════════ -->
+  <!-- 低强调前景：Subtle 文字 / 分隔线 / 图标 -->
+  <SolidColorBrush x:Key="SystemControlForegroundBaseLowBrush"
+                   Color="{DynamicResource ForegroundColorDisabled}" />
+  <!-- 中强调背景（MixerTrackStrip / RenderWindow 引用） -->
+  <SolidColorBrush x:Key="SystemControlBackgroundAltMediumBrush"
+                   Color="{DynamicResource BackgroundColorPressed}" />
+  <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed"
+                   Color="{DynamicResource ForegroundColorPressed}" />
+  <SolidColorBrush x:Key="TextControlForegroundDisabled"
+                   Color="{DynamicResource ForegroundColorDisabled}" />
+  <!-- ComboBox 下拉弹层 -->
+  <SolidColorBrush x:Key="ComboBoxDropDownBackground"
+                   Color="{DynamicResource BackgroundColor}" />
+  <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush"
+                   Color="{DynamicResource BorderColor}" />
+  <!-- RadioButton（PianoRollStyles 模板引用） -->
+  <SolidColorBrush x:Key="RadioButtonOuterEllipseFill"
+                   Color="{DynamicResource ForegroundColor}" />
+  <SolidColorBrush x:Key="RadioButtonOuterEllipseStroke"
+                   Color="{DynamicResource BorderColor}" />
+  <SolidColorBrush x:Key="RadioButtonOuterEllipseFillPointerOver"
+                   Color="{DynamicResource ForegroundColorPressed}" />
+  <SolidColorBrush x:Key="RadioButtonOuterEllipseStrokePointerOver"
+                   Color="{DynamicResource BorderColorPointerOver}" />
 </ResourceDictionary>

@@ -8,8 +8,7 @@
   <Application.Resources>
     <ResourceDictionary>
       <CornerRadius x:Key="OverlayCornerRadius">6</CornerRadius>
-      <!-- Default acrylic tint (overridden by theme files) -->
-      <SolidColorBrush x:Key="AcrylicTintBrush" Color="#D91e2028"/>
+      <!-- AcrylicTintBrush 定义移入 Plus.Resources 兜底 + 主题变体字典（避免根 _inner 遮蔽变体解析） -->
       <ResourceInclude x:Key="strings-en-US" Source="/Strings/Strings.axaml"/>
       <ResourceInclude x:Key="strings-de-DE" Source="/Strings/Strings.de-DE.axaml"/>
       <ResourceInclude x:Key="strings-es-ES" Source="/Strings/Strings.es-ES.axaml"/>
@@ -28,11 +27,14 @@
       <ResourceInclude x:Key="strings-zh-CN" Source="/Strings/Strings.zh-CN.axaml"/>
       <ResourceInclude x:Key="strings-zh-TW" Source="/Strings/Strings.zh-TW.axaml"/>
       <ResourceInclude x:Key="strings-th-TH" Source="/Strings/Strings.th-TH.axaml"/>
-      <ResourceInclude x:Key="themes-dark" Source="/Colors/DarkTheme.axaml"/>
-      <ResourceInclude x:Key="themes-light" Source="/Colors/LightTheme.axaml"/>
-      <ResourceInclude x:Key="themes-custom" Source="/Colors/CustomTheme.axaml"/>
+      <!-- v4.0：调色板挂 ThemeDictionaries，RequestedThemeVariant 驱动解析（CustomTheme.axaml 已被 YAML 运行时变体取代） -->
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceInclude x:Key="Light" Source="/Colors/LightTheme.axaml"/>
+        <ResourceInclude x:Key="Dark" Source="/Colors/DarkTheme.axaml"/>
+      </ResourceDictionary.ThemeDictionaries>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Colors/Brushes.axaml"/>
+        <ResourceInclude Source="/Themes/Plus.Resources.axaml"/>
         <ResourceInclude Source="/Assets/Icons.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>

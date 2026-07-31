@@ -1,0 +1,190 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+  <!--
+    PlusTheme 令牌层 v4.0
+    ────────────────────────────────────────────────────────────
+    Layer 1 = palette（可主题化 Color）：Plus* 颜色键。本文件提供 DARK 默认值兜底，
+              实际值由 Colors/DarkTheme|LightTheme|CustomTheme.axaml 主题字典覆写。
+    Layer 2 = 语义画刷（PlusBrush*）+ 固定几何/动效（PlusRadius*/PlusElevation*...）。
+              固定值只在此定义，不随主题切换。
+    Layer 3 = 控件模板/视图，全部 {DynamicResource Plus*}，禁止字面量。
+    设计纪律：背景纯色（亚克力禁用）；玻璃只用于浮层；hover=表面提亮；选中=accent-muted。
+    ────────────────────────────────────────────────────────────
+  -->
+
+  <system:Boolean x:Key="IsDarkMode">false</system:Boolean>
+
+  <!-- 窗口亚克力底色兜底（主题变体字典覆写；勿在根字典定义以免遮蔽变体解析） -->
+  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#D91e2028"/>
+
+  <!-- ══════════ Layer 1 · palette 颜色（DARK 默认，主题字典覆写）══════════ -->
+  <!-- Surface 实色 8 档 -->
+  <Color x:Key="PlusSurfaceDeep">#16161e</Color>      <!-- 钢琴窗画布 · VU · 波形 -->
+  <Color x:Key="PlusSurfaceBase">#1e1e28</Color>      <!-- 窗口底色 -->
+  <Color x:Key="PlusSurfaceRaised">#25252f</Color>    <!-- 侧栏 · 轨道头 · strip · transport -->
+  <Color x:Key="PlusSurfaceControl">#282838</Color>   <!-- 控件静态面 -->
+  <Color x:Key="PlusSurfaceHover">#303048</Color>     <!-- hover（唯一 hover 语言） -->
+  <Color x:Key="PlusSurfacePressed">#383858</Color>   <!-- pressed -->
+  <Color x:Key="PlusSurfaceDisabled">#222230</Color>  <!-- disabled 面 -->
+  <Color x:Key="PlusSurfaceOverlay">#2e2e3e</Color>   <!-- 弹出层不透明底 -->
+
+  <!-- Border 4 + 玻璃描边 -->
+  <Color x:Key="PlusBorderSubtle">#2a2a3a</Color>
+  <Color x:Key="PlusBorderDefault">#383848</Color>
+  <Color x:Key="PlusBorderHover">#484868</Color>
+  <Color x:Key="PlusBorderFocus">#c73a3f</Color>
+  <Color x:Key="PlusBorderGlass">#14FFFFFF</Color>        <!-- 玻璃面板外描边 -->
+  <Color x:Key="PlusBorderGlassStrong">#1FFFFFFF</Color>  <!-- 浮起玻璃描边 -->
+
+  <!-- Accent 3 实色 + 3 透明 -->
+  <Color x:Key="PlusAccent">#c73a3f</Color>
+  <Color x:Key="PlusAccentHover">#d94a50</Color>
+  <Color x:Key="PlusAccentPressed">#b03237</Color>
+  <Color x:Key="PlusAccentMuted">#1FC73A3F</Color>   <!-- 选中底 · α.12 -->
+  <Color x:Key="PlusAccentSoft">#33C73A3F</Color>    <!-- 描边 · 次级强调 · α.20 -->
+  <Color x:Key="PlusAccentGlow">#4DC73A3F</Color>    <!-- 主按钮 focus 泛光 · α.30 -->
+
+  <!-- Text 4 档 -->
+  <Color x:Key="PlusTextPrimary">#f0f0f0</Color>
+  <Color x:Key="PlusTextSecondary">#a0a0b0</Color>
+  <Color x:Key="PlusTextDisabled">#585868</Color>
+  <Color x:Key="PlusTextOnAccent">#ffffff</Color>
+
+  <!-- Semantic 5 档（仅状态提示，绝不做轨道色） -->
+  <Color x:Key="PlusSemanticSuccess">#4caf50</Color>
+  <Color x:Key="PlusSemanticWarning">#ff9800</Color>
+  <Color x:Key="PlusSemanticWarningBg">#4a3520</Color>
+  <Color x:Key="PlusSemanticDanger">#e53935</Color>
+  <Color x:Key="PlusSemanticInfo">#5b9bd5</Color>
+
+  <!-- Glass 5 个（仅浮层用） -->
+  <Color x:Key="PlusGlassCard">#EB1E2028</Color>          <!-- 弹窗/面板 · .92 -->
+  <Color x:Key="PlusGlassPopover">#F0262632</Color>       <!-- 菜单/下拉/tooltip · .94 -->
+  <Color x:Key="PlusGlassBackdrop">#80000000</Color>      <!-- 弹窗遮罩 -->
+  <Color x:Key="PlusGlassHeader">#0DFFFFFF</Color>        <!-- 顶部高光带 -->
+  <Color x:Key="PlusGlassInsetBottom">#24000000</Color>   <!-- 底部内阴影 -->
+
+  <!-- legacy 33 键暗色默认（变体未设时的启动兜底；Brushes.axaml 依赖这些键解析） -->
+  <Color x:Key="BackgroundColor">#1e1e28</Color>
+  <Color x:Key="BackgroundColorPointerOver">#282838</Color>
+  <Color x:Key="BackgroundColorPressed">#303048</Color>
+  <Color x:Key="BackgroundColorDisabled">#222230</Color>
+  <Color x:Key="ForegroundColor">#f0f0f0</Color>
+  <Color x:Key="ForegroundColorPointerOver">#ffffff</Color>
+  <Color x:Key="ForegroundColorPressed">#e8e8f0</Color>
+  <Color x:Key="ForegroundColorDisabled">#707080</Color>
+  <Color x:Key="BorderColor">#383848</Color>
+  <Color x:Key="BorderColorPointerOver">#484858</Color>
+  <Color x:Key="SystemAccentColor">#c73a3f</Color>
+  <Color x:Key="SystemAccentColorLight1">#d94a50</Color>
+  <Color x:Key="SystemAccentColorDark1">#b03237</Color>
+  <Color x:Key="NeutralAccentColor">#585868</Color>
+  <Color x:Key="NeutralAccentColorPointerOver">#686878</Color>
+  <Color x:Key="AccentColor1">#c73a3f</Color>
+  <Color x:Key="AccentColor2">#d94a50</Color>
+  <Color x:Key="AccentColor3">#b03237</Color>
+  <Color x:Key="TickLineColor">#383848</Color>
+  <Color x:Key="BarNumberColor">#a0a0b0</Color>
+  <Color x:Key="FinalPitchColor">#a0a0b0</Color>
+  <Color x:Key="TrackBackgroundAltColor">#222230</Color>
+  <Color x:Key="WarningColor">#4a3520</Color>
+  <Color x:Key="WhiteKeyColorLeft">#1c1c2a</Color>
+  <Color x:Key="WhiteKeyColorRight">#CC1c1c2a</Color>
+  <Color x:Key="WhiteKeyNameColor">#c8c8d0</Color>
+  <Color x:Key="CenterKeyColorLeft">#c73a3f</Color>
+  <Color x:Key="CenterKeyColorRight">#CCc73a3f</Color>
+  <Color x:Key="CenterKeyNameColor">#f0f0f0</Color>
+  <Color x:Key="BlackKeyColorLeft">#181820</Color>
+  <Color x:Key="BlackKeyColorRight">#CC181820</Color>
+  <Color x:Key="BlackKeyNameColor">#808090</Color>
+
+  <!-- ══════════ Layer 2 · 语义画刷（映射 palette → 消费）══════════ -->
+  <SolidColorBrush x:Key="PlusBrushSurfaceDeep" Color="{DynamicResource PlusSurfaceDeep}"/>
+  <SolidColorBrush x:Key="PlusBrushSurfaceBase" Color="{DynamicResource PlusSurfaceBase}"/>
+  <SolidColorBrush x:Key="PlusBrushSurfaceRaised" Color="{DynamicResource PlusSurfaceRaised}"/>
+  <SolidColorBrush x:Key="PlusBrushSurfaceControl" Color="{DynamicResource PlusSurfaceControl}"/>
+  <SolidColorBrush x:Key="PlusBrushSurfaceHover" Color="{DynamicResource PlusSurfaceHover}"/>
+  <SolidColorBrush x:Key="PlusBrushSurfacePressed" Color="{DynamicResource PlusSurfacePressed}"/>
+  <SolidColorBrush x:Key="PlusBrushSurfaceDisabled" Color="{DynamicResource PlusSurfaceDisabled}"/>
+  <SolidColorBrush x:Key="PlusBrushBorderSubtle" Color="{DynamicResource PlusBorderSubtle}"/>
+  <SolidColorBrush x:Key="PlusBrushBorderDefault" Color="{DynamicResource PlusBorderDefault}"/>
+  <SolidColorBrush x:Key="PlusBrushBorderHover" Color="{DynamicResource PlusBorderHover}"/>
+  <SolidColorBrush x:Key="PlusBrushBorderFocus" Color="{DynamicResource PlusBorderFocus}"/>
+  <SolidColorBrush x:Key="PlusBrushTextPrimary" Color="{DynamicResource PlusTextPrimary}"/>
+  <SolidColorBrush x:Key="PlusBrushTextSecondary" Color="{DynamicResource PlusTextSecondary}"/>
+  <SolidColorBrush x:Key="PlusBrushTextDisabled" Color="{DynamicResource PlusTextDisabled}"/>
+  <SolidColorBrush x:Key="PlusBrushTextOnAccent" Color="{DynamicResource PlusTextOnAccent}"/>
+  <SolidColorBrush x:Key="PlusBrushAccent" Color="{DynamicResource PlusAccent}"/>
+  <SolidColorBrush x:Key="PlusBrushAccentHover" Color="{DynamicResource PlusAccentHover}"/>
+  <SolidColorBrush x:Key="PlusBrushAccentPressed" Color="{DynamicResource PlusAccentPressed}"/>
+  <SolidColorBrush x:Key="PlusBrushAccentMuted" Color="{DynamicResource PlusAccentMuted}"/>
+  <SolidColorBrush x:Key="PlusBrushAccentSoft" Color="{DynamicResource PlusAccentSoft}"/>
+  <SolidColorBrush x:Key="PlusBrushGlassCard" Color="{DynamicResource PlusGlassCard}"/>
+  <SolidColorBrush x:Key="PlusBrushGlassPopover" Color="{DynamicResource PlusGlassPopover}"/>
+  <SolidColorBrush x:Key="PlusBrushSemanticSuccess" Color="{DynamicResource PlusSemanticSuccess}"/>
+  <SolidColorBrush x:Key="PlusBrushSemanticWarning" Color="{DynamicResource PlusSemanticWarning}"/>
+  <SolidColorBrush x:Key="PlusBrushSemanticDanger" Color="{DynamicResource PlusSemanticDanger}"/>
+  <SolidColorBrush x:Key="PlusBrushSemanticInfo" Color="{DynamicResource PlusSemanticInfo}"/>
+
+  <!-- ══════════ Layer 2 · 固定几何令牌（不随主题切换）══════════ -->
+  <!-- Radii -->
+  <CornerRadius x:Key="PlusRadiusXs">4</CornerRadius>
+  <CornerRadius x:Key="PlusRadiusSm">6</CornerRadius>
+  <CornerRadius x:Key="PlusRadiusMd">8</CornerRadius>
+  <CornerRadius x:Key="PlusRadiusLg">12</CornerRadius>
+  <CornerRadius x:Key="PlusRadiusXl">16</CornerRadius>
+  <CornerRadius x:Key="PlusRadiusPill">999</CornerRadius>
+
+  <!-- Sizing -->
+  <system:Double x:Key="PlusControlHeight">32</system:Double>
+  <system:Double x:Key="PlusControlHeightSmall">24</system:Double>
+  <system:Double x:Key="PlusControlHeightLarge">40</system:Double>
+  <system:Double x:Key="PlusIconSize">18</system:Double>
+
+  <!-- Spacing (4px 基准) -->
+  <Thickness x:Key="PlusSpace1">4</Thickness>
+  <Thickness x:Key="PlusSpace2">8</Thickness>
+  <Thickness x:Key="PlusSpace3">12</Thickness>
+  <Thickness x:Key="PlusSpace4">16</Thickness>
+  <Thickness x:Key="PlusSpace5">20</Thickness>
+  <Thickness x:Key="PlusSpace6">24</Thickness>
+  <Thickness x:Key="PlusSpace8">32</Thickness>
+
+  <!-- Typography -->
+  <system:Double x:Key="PlusFontSizeXs">10</system:Double>
+  <system:Double x:Key="PlusFontSizeSm">11</system:Double>
+  <system:Double x:Key="PlusFontSizeBase">13</system:Double>
+  <system:Double x:Key="PlusFontSizeMd">14</system:Double>
+  <system:Double x:Key="PlusFontSizeLg">16</system:Double>
+  <system:Double x:Key="PlusFontSizeXl">20</system:Double>
+  <system:Double x:Key="PlusFontSize2Xl">24</system:Double>
+
+  <!-- 字体（Language 文件可覆写本地化栈） -->
+  <FontFamily x:Key="PlusFontFamily">HarmonyOS Sans SC, Segoe UI, Microsoft YaHei UI, sans-serif</FontFamily>
+  <FontFamily x:Key="PlusFontFamilyMono">Cascadia Code, Consolas, Fira Code, monospace</FontFamily>
+
+  <!-- ══════════ Layer 2 · 固定阴影/焦点/辉光（BoxShadow 字符串，类型转换器解析）══════════ -->
+  <x:String x:Key="PlusElevationContact">0 0 2 0 #40000000</x:String>
+  <x:String x:Key="PlusElevationFloat">0 2 8 0 #4D000000</x:String>
+  <x:String x:Key="PlusElevationRaised">0 6 20 0 #61000000</x:String>
+  <x:String x:Key="PlusElevationPopup">0 12 32 0 #80000000</x:String>
+  <x:String x:Key="PlusHighlightTop">inset 0 1 0 0 #0FFFFFFF</x:String>
+  <x:String x:Key="PlusHighlightTopStrong">inset 0 1 0 0 #1AFFFFFF</x:String>
+  <x:String x:Key="PlusShadowBottom">inset 0 -1 0 0 #24000000</x:String>
+  <x:String x:Key="PlusFocusRing">0 0 0 3 #33C73A3F</x:String>
+  <x:String x:Key="PlusGlowPrimary">0 0 0 1 #8CC73A3F, 0 0 10 0 #47C73A3F</x:String>
+  <x:String x:Key="PlusGlowDanger">0 0 0 1 #80FF7874, 0 0 10 0 #47FF7874</x:String>
+
+  <!-- ══════════ Fluent 兼容几何键（删除 Fluent 前预备）══════════ -->
+  <system:Double x:Key="SliderHorizontalThumbWidth">16</system:Double>
+  <system:Double x:Key="SliderHorizontalThumbHeight">16</system:Double>
+  <system:Double x:Key="ControlContentThemeFontSize">13</system:Double>
+  <system:Double x:Key="ComboBoxThemeMinWidth">120</system:Double>
+  <system:Double x:Key="ComboBoxMinHeight">32</system:Double>
+  <Thickness x:Key="ComboBoxPadding">8,4,8,4</Thickness>
+  <Thickness x:Key="ComboBoxDropdownBorderThickness">1</Thickness>
+  <Thickness x:Key="ComboBoxDropdownBorderPadding">0</Thickness>
+  <Thickness x:Key="AutoCompleteListPadding">8,4,8,4</Thickness>
+  <Thickness x:Key="RadioButtonBorderThemeThickness">2</Thickness>
+</ResourceDictionary>

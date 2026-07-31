@@ -1,6 +1,8 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using ReactiveUI;
 
 namespace OpenUtau.App.Controls;
 
@@ -10,6 +12,8 @@ namespace OpenUtau.App.Controls;
 /// </summary>
 public class WindowEx : Window
 {
+    private IDisposable? _themeSub;
+
     public WindowEx() : this(enableCustomChrome: true) { }
 
     public WindowEx(bool enableCustomChrome)
@@ -25,6 +29,10 @@ public class WindowEx : Window
 
         // ── Blur / transparency (driven by Preferences) ──
         ApplyBlurSettings();
+        // 主题切换时重应用模糊/背景（背景画刷是静态实例，需随主题刷新，避免"切换不完全"）
+        _themeSub = MessageBus.Current.Listen<ThemeChangedEvent>()
+            .Subscribe(_ => ApplyBlurSettings());
+        Closed += (_, _) => _themeSub?.Dispose();
     }
 
     private void ApplyBlurSettings()
@@ -52,7 +60,16 @@ public class WindowEx : Window
 
     private static IBrush? TryGetBrush(string key)
     {
-        try { return Application.Current?.Resources[key] as IBrush; }
-        catch { return null; }
+        // 必须用变体感知解析（普通索引器只查根字典直接条目，取不到 merged/ThemeDictionaries 里的画刷）
+        try
+        {
+            if (Application.Current != null &&
+                Application.Current.Resources.TryGetResource(key, Application.Current.ActualThemeVariant, out var value))
+            {
+                return value as IBrush;
+            }
+        }
+        catch { }
+        return null;
     }
 }

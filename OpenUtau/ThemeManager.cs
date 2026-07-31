@@ -7,11 +7,12 @@ using Avalonia.Styling;
 using OpenUtau.App.Controls;
 using OpenUtau.Core.Util;
 using ReactiveUI;
+using Serilog;
 
 namespace OpenUtau.App {
     public class ThemeChangedEvent { }
 
-    class ThemeManager {
+    public class ThemeManager {
         public static bool IsDarkMode = false;
         public static IBrush ForegroundBrush = Brushes.Black;
         public static IBrush BackgroundBrush = Brushes.White;
@@ -80,81 +81,77 @@ namespace OpenUtau.App {
             return ["Light", "Dark", ..Colors.CustomTheme.Themes.Select(v => v.Key)];
         }
 
-        public static void LoadTheme() {
+        /// <summary>
+        /// 主题唯一写入口（v4.0 ThemeVariant 架构）：
+        /// Light/Dark → 直接切 RequestedThemeVariant；自定义 YAML → 注册为 ThemeVariant（InheritVariant 按 IsDarkMode）。
+        /// 调色板全部经 ThemeDictionaries + DynamicResource 解析，不再逐键拷贝根字典。
+        /// 调用方：App.SetTheme / PreferencesViewModel / ThemeEditorWindow / CustomTheme。
+        /// </summary>
+        public static void Apply(string themeName) {
+            if (Application.Current == null) {
+                return;
+            }
+            if (themeName is "Light" or "Dark") {
+                Application.Current.RequestedThemeVariant = themeName == "Dark" ? ThemeVariant.Dark : ThemeVariant.Light;
+            } else {
+                var variant = Colors.CustomTheme.RegisterVariant(themeName);
+                Application.Current.RequestedThemeVariant = variant;
+            }
+            RebuildProjection();
+        }
+
+        /// <summary>供 ThemeEditor 实时改写资源键后刷新静态画刷投影（不改主题本身）。</summary>
+        public static void RefreshProjection() {
+            RebuildProjection();
+        }
+
+        /// <summary>
+        /// 静态画刷投影：从资源根字典按 schema 重读绑定键。缺键打 WARN 且不覆写旧值（有兜底）。
+        /// 单一真相 = Application.Current.Resources；本方法是纯投影，不再有并行真相。
+        /// </summary>
+        private static void RebuildProjection() {
             if (Application.Current == null) {
                 return;
             }
             IResourceDictionary resDict = Application.Current.Resources;
-            object? outVar;
-            IsDarkMode = false;
-            var themeVariant = ThemeVariant.Default;
-            if (resDict.TryGetResource("IsDarkMode", themeVariant, out outVar)) {
-                if (outVar is bool b) {
-                    IsDarkMode = b;
+            var themeVariant = Application.Current.ActualThemeVariant;
+            if (resDict.TryGetResource("IsDarkMode", themeVariant, out var isDarkObj) && isDarkObj is bool isDark) {
+                IsDarkMode = isDark;
+            }
+            foreach (var (key, setter) in BrushBindings) {
+                if (resDict.TryGetResource(key, themeVariant, out var val) && val is IBrush brush) {
+                    setter(brush);
+                } else {
+                    Log.Warning("[Theme] missing brush key '{0}' — keeping previous value", key);
                 }
-            }
-            if (resDict.TryGetResource("SystemControlForegroundBaseHighBrush", themeVariant, out outVar)) {
-                ForegroundBrush = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("SystemControlBackgroundAltHighBrush", themeVariant, out outVar)) {
-                BackgroundBrush = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("NeutralAccentBrush", themeVariant, out outVar)) {
-                NeutralAccentBrush = (IBrush)outVar!;
-                NeutralAccentPen = new Pen(NeutralAccentBrush, 1);
-            }
-            if (resDict.TryGetResource("NeutralAccentBrushSemi", themeVariant, out outVar)) {
-                NeutralAccentBrushSemi = (IBrush)outVar!;
-                NeutralAccentPenSemi = new Pen(NeutralAccentBrushSemi, 1);
-            }
-            if (resDict.TryGetResource("AccentBrush1", themeVariant, out outVar)) {
-                AccentBrush1 = (IBrush)outVar!;
-                AccentPen1 = new Pen(AccentBrush1);
-                AccentPen1Thickness2 = new Pen(AccentBrush1, 2);
-                AccentPen1Thickness3 = new Pen(AccentBrush1, 3);
-            }
-            if (resDict.TryGetResource("AccentBrush1Semi", themeVariant, out outVar)) {
-                AccentBrush1Semi = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("AccentBrush2", themeVariant, out outVar)) {
-                AccentBrush2 = (IBrush)outVar!;
-                AccentPen2 = new Pen(AccentBrush2, 1);
-                AccentPen2Thickness2 = new Pen(AccentBrush2, 2);
-                AccentPen2Thickness3 = new Pen(AccentBrush2, 3);
-            }
-            if (resDict.TryGetResource("AccentBrush2Semi", themeVariant, out outVar)) {
-                AccentBrush2Semi = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("AccentBrush3", themeVariant, out outVar)) {
-                AccentBrush3 = (IBrush)outVar!;
-                AccentPen3 = new Pen(AccentBrush3, 1);
-                AccentPen3Thick = new Pen(AccentBrush3, 3);
-            }
-            if (resDict.TryGetResource("AccentBrush3Semi", themeVariant, out outVar)) {
-                AccentBrush3Semi = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("TickLineBrushLow", themeVariant, out outVar)) {
-                TickLineBrushLow = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("BarNumberBrush", themeVariant, out outVar)) {
-                BarNumberBrush = (IBrush)outVar!;
-                BarNumberPen = new Pen(BarNumberBrush, 1);
-            }
-            if (resDict.TryGetResource("FinalPitchBrush", themeVariant, out outVar)) {
-                FinalPitchBrush = (IBrush)outVar!;
-                FinalPitchPen = new Pen(FinalPitchBrush, 1);
-            }
-            if (resDict.TryGetResource("RealCurveFillBrush", themeVariant, out outVar)) {
-                RealCurveFillBrush = (IBrush)outVar!;
-            }
-            if (resDict.TryGetResource("RealCurveStrokeBrush", themeVariant, out outVar)) {
-                RealCurveStrokeBrush = (IBrush)outVar!;
-                RealCurvePen = new Pen(RealCurveStrokeBrush, 2, DashStyle.Dash);
             }
             SetKeyboardBrush();
             TextLayoutCache.Clear();
             MessageBus.Current.SendMessage(new ThemeChangedEvent());
         }
+
+        private delegate void BrushSetter(IBrush brush);
+
+        /// <summary>
+        /// 键 → 静态字段投影 schema。新增画笔在此登记一行即可，杜绝"新画笔不同步拿到 null"。
+        /// </summary>
+        private static readonly (string Key, BrushSetter Setter)[] BrushBindings = {
+            ("SystemControlForegroundBaseHighBrush", b => ForegroundBrush = b),
+            ("SystemControlBackgroundAltHighBrush", b => BackgroundBrush = b),
+            ("NeutralAccentBrush", b => { NeutralAccentBrush = b; NeutralAccentPen = new Pen(b, 1); }),
+            ("NeutralAccentBrushSemi", b => { NeutralAccentBrushSemi = b; NeutralAccentPenSemi = new Pen(b, 1); }),
+            ("AccentBrush1", b => { AccentBrush1 = b; AccentPen1 = new Pen(b); AccentPen1Thickness2 = new Pen(b, 2); AccentPen1Thickness3 = new Pen(b, 3); }),
+            ("AccentBrush1Semi", b => AccentBrush1Semi = b),
+            ("AccentBrush2", b => { AccentBrush2 = b; AccentPen2 = new Pen(b, 1); AccentPen2Thickness2 = new Pen(b, 2); AccentPen2Thickness3 = new Pen(b, 3); }),
+            ("AccentBrush2Semi", b => AccentBrush2Semi = b),
+            ("AccentBrush3", b => { AccentBrush3 = b; AccentPen3 = new Pen(b, 1); AccentPen3Thick = new Pen(b, 3); }),
+            ("AccentBrush3Semi", b => AccentBrush3Semi = b),
+            ("TickLineBrushLow", b => TickLineBrushLow = b),
+            ("BarNumberBrush", b => { BarNumberBrush = b; BarNumberPen = new Pen(b, 1); }),
+            ("FinalPitchBrush", b => { FinalPitchBrush = b; FinalPitchPen = new Pen(b, 1); }),
+            ("RealCurveFillBrush", b => RealCurveFillBrush = b),
+            ("RealCurveStrokeBrush", b => { RealCurveStrokeBrush = b; RealCurvePen = new Pen(b, 2, DashStyle.Dash); }),
+        };
 
         public static void ChangePianorollColor(string color) {
             if (Application.Current == null) {
@@ -163,16 +160,15 @@ namespace OpenUtau.App {
             try {
                 IResourceDictionary resDict = Application.Current.Resources;
                 TrackColor tcolor = GetTrackColor(color);
-                
+
                 resDict["SelectedTrackAccentBrush"] = tcolor.AccentColor;
                 resDict["SelectedTrackAccentLightBrush"] = tcolor.AccentColorLight;
                 resDict["SelectedTrackAccentLightBrushSemi"] = tcolor.AccentColorLightSemi;
                 resDict["SelectedTrackAccentDarkBrush"] = tcolor.AccentColorDark;
                 resDict["SelectedTrackCenterKeyBrush"] = tcolor.AccentColorCenterKey;
 
-                SetKeyboardBrush();
+                RebuildProjection();
             } catch { }
-            MessageBus.Current.SendMessage(new ThemeChangedEvent());
         }
         private static void SetKeyboardBrush() {
             if (Application.Current == null) {
@@ -180,7 +176,7 @@ namespace OpenUtau.App {
             }
             IResourceDictionary resDict = Application.Current.Resources;
             object? outVar;
-            var themeVariant = ThemeVariant.Default;
+            var themeVariant = Application.Current.ActualThemeVariant;
 
             if (Preferences.Default.UseTrackColor) {
                 if (IsDarkMode) {
@@ -276,7 +272,7 @@ namespace OpenUtau.App {
                 return false;
             }
             IResourceDictionary resDict = Application.Current.Resources;
-            if (resDict.TryGetResource(key, ThemeVariant.Default, out var outVar) && outVar is string s) {
+            if (resDict.TryGetResource(key, Application.Current.ActualThemeVariant, out var outVar) && outVar is string s) {
                 value = s;
                 return true;
             }

@@ -120,7 +120,7 @@ namespace OpenUtau.App.ViewModels {
                     } else {
                         Application.Current.RequestedThemeVariant = ThemeVariant.Light;
                     }
-                    ThemeManager.LoadTheme();
+                    ThemeManager.RefreshProjection();
                 });
 
             this.WhenAnyValue(vm => vm.BackgroundColor)
