@@ -7,6 +7,7 @@ using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Primitives;
@@ -14,6 +15,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using OpenUtau.App.Controls;
 using OpenUtau.App.ViewModels;
@@ -2059,6 +2061,22 @@ namespace OpenUtau.App.Views {
             }
             UpdateOverlayCardSize();
             OverlayLayer.IsVisible = true;
+            // Suki 卡片浮层：显示时卡片 + 遮罩淡入（Avalonia 12 Animation.RunAsync 代码动画）
+            OverlayCard.Opacity = 0;
+            OverlayBackdrop.Opacity = 0;
+            MakeOverlayFadeIn().RunAsync(OverlayCard);
+            MakeOverlayFadeIn().RunAsync(OverlayBackdrop);
+        }
+
+        /// <summary>Suki 卡片浮层淡入动画（160ms Opacity 0→1）。</summary>
+        private static Animation MakeOverlayFadeIn() {
+            var anim = new Animation {
+                Duration = TimeSpan.FromMilliseconds(160),
+                FillMode = FillMode.Forward,
+            };
+            anim.Children.Add(new KeyFrame { Cue = new Cue(0d), Setters = { new Setter(OpacityProperty, 0d) } });
+            anim.Children.Add(new KeyFrame { Cue = new Cue(1d), Setters = { new Setter(OpacityProperty, 1d) } });
+            return anim;
         }
 
         private void CloseOverlay() {

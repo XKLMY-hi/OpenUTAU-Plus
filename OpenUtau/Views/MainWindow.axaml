@@ -595,7 +595,7 @@
               ClipToBounds="True"
               Background="{DynamicResource PlusSurfaceOverlay}"
               BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-              BorderThickness="0" CornerRadius="12"
+              BorderThickness="0" CornerRadius="14"
               BoxShadow="0 8 32 0 #3F000000">
         <Grid RowDefinitions="Auto,*">
           <!-- Optional dialog header (e.g. Preferences) -->
