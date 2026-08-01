@@ -170,7 +170,10 @@ namespace OpenUtau.Test.App {
             Assert.True(brush.Color.A >= 0xE0, $"Window bg alpha too low: {brush.Color}");
         }
 
-        /// <summary>Phase 2：所有新 ControlTheme 模板可应用、无缺失 PART 异常；TextBox 取 PlusTheme 高度。</summary>
+        /// <summary>
+        /// 模板可应用、无缺失 PART 异常。TextBox 取 PlusTheme 高度 32
+        /// （阶段 A 实证：SukiUI 7.x 无 TextBox 模板，TextBoxExtensions 只做附加属性定制）。
+        /// </summary>
         [AvaloniaFact]
         public void InputControls_ApplyTemplateWithoutError() {
             ThemeManager.Apply("Dark");
@@ -206,7 +209,11 @@ namespace OpenUtau.Test.App {
             return null;
         }
 
-        /// <summary>诊断：ToggleSwitch off 轨道必须暗色（非红），knob 在左；on 轨道 accent，knob 在右。</summary>
+        /// <summary>
+        /// 诊断：Suki ToggleSwitch（模板 PART：SwitchBackground 轨道 + PanelSelected 选中填充 +
+        /// PART_SwitchKnob/SwitchKnob）。off：填充在轨道外（Clip 缩回）、knob 在左；
+        /// on：填充覆盖轨道、knob 在右。轨道底色动态渐变无法断言颜色，用相对位置断言。
+        /// </summary>
         [AvaloniaFact]
         public void ToggleSwitch_TrackAndKnobPerState() {
             ThemeManager.Apply("Dark");
@@ -219,22 +226,25 @@ namespace OpenUtau.Test.App {
             off.ApplyTemplate();
             on.ApplyTemplate();
 
-            var offTrack = FindPart(off, "SwitchKnobBounds") as Border;
-            var onTrack = FindPart(on, "SwitchKnobBounds") as Border;
-            var offKnob = FindPart(off, "PART_MovingKnobs");
-            var onKnob = FindPart(on, "PART_MovingKnobs");
+            var offTrack = FindPart(off, "SwitchBackground") as Border;
+            var onTrack = FindPart(on, "SwitchBackground") as Border;
+            var offFill = FindPart(off, "PanelSelected") as Avalonia.Controls.Panel;
+            var onFill = FindPart(on, "PanelSelected") as Avalonia.Controls.Panel;
+            var offKnob = FindPart(off, "SwitchKnob") as Border;
+            var onKnob = FindPart(on, "SwitchKnob") as Border;
             Assert.NotNull(offTrack);
             Assert.NotNull(onTrack);
+            Assert.NotNull(offFill);
+            Assert.NotNull(onFill);
             Assert.NotNull(offKnob);
             Assert.NotNull(onKnob);
 
-            var offBg = Assert.IsAssignableFrom<ISolidColorBrush>(offTrack!.Background);
-            Assert.True(offBg.Color.R < 0x60, $"off track should be dark, got {offBg.Color}");
-            var onBg = Assert.IsAssignableFrom<ISolidColorBrush>(onTrack!.Background);
-            Assert.True(onBg.Color.R > 0x80 && onBg.Color.G < 0x60, $"on track should be accent, got {onBg.Color}");
-            // off knob 在左（Canvas.Left≈0），on knob 在右（≈行程 20）
-            Assert.True(Canvas.GetLeft(offKnob!) < 1, $"off knob should be left, got {Canvas.GetLeft(offKnob)}");
-            Assert.True(Canvas.GetLeft(onKnob!) >= 18, $"on knob should be right, got {Canvas.GetLeft(onKnob)}");
+            // 选中填充（Clip 动画）：off 缩回轨道外，on 展开覆盖轨道
+            Assert.True(offFill!.Bounds.X > 0, $"off fill should sit outside track, got X={offFill.Bounds.X}");
+            Assert.True(onFill!.Bounds.X < 0, $"on fill should cover track, got X={onFill.Bounds.X}");
+            // knob 相对位置：off 在左、on 在右
+            Assert.True(offKnob!.Bounds.X < onKnob!.Bounds.X,
+                $"off knob should be left of on knob, got off={offKnob.Bounds.X} on={onKnob.Bounds.X}");
         }
 
         /// <summary>诊断：ListBoxItem 选中背景为 accent-muted（红），hover 不消失。</summary>
@@ -267,9 +277,12 @@ namespace OpenUtau.Test.App {
             Assert.True(bb.Color.R > 0x20, $"BorderBrush should be visible gray, got {bb.Color}");
         }
 
-        /// <summary>验证 {x:Type} ControlTheme 覆盖 Fluent：Button 取 PlusTheme 值（8/32）而非 Fluent 默认。</summary>
+        /// <summary>
+        /// 验证 Suki 接管 Button 模板（阶段 A 实证：{x:Type} ControlTheme 按 Styles 顺序后者胜，
+        /// SukiTheme 后挂载覆盖 PlusTheme/Fluent）：圆角 8、高度由 Padding 撑起。
+        /// </summary>
         [AvaloniaFact]
-        public void Button_GetsPlusTheme() {
+        public void Button_GetsSukiTheme() {
             ThemeManager.Apply("Dark");
             var win = new OpenUtau.App.Controls.WindowEx();
             var btn = new Avalonia.Controls.Button();
@@ -277,7 +290,8 @@ namespace OpenUtau.Test.App {
             win.Show();
             btn.ApplyTemplate();
             Assert.Equal(new CornerRadius(8), btn.CornerRadius);
-            Assert.Equal(32, btn.Height);
+            Assert.True(double.IsNaN(btn.Height), $"Suki 按钮高度应由 Padding 决定，实际 {btn.Height}");
+            Assert.Equal(new Thickness(20, 8, 20, 8), btn.Padding);
         }
 
         /// <summary>ChangePianorollColor 不破坏任何投影键。</summary>
