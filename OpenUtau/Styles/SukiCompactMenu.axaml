@@ -41,7 +41,7 @@
                         BorderThickness="1"
                         CornerRadius="{DynamicResource PlusRadiusLg}"
                         BoxShadow="{DynamicResource PlusElevationPopup}"
-                        MinWidth="180" Padding="4" ClipToBounds="True">
+                        MinWidth="180" Padding="4" ClipToBounds="True" Classes="menuPopup">
                   <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                                 VerticalScrollBarVisibility="Auto">
                     <ItemsPresenter/>
@@ -82,7 +82,7 @@
                         BorderThickness="1"
                         CornerRadius="{DynamicResource PlusRadiusLg}"
                         BoxShadow="{DynamicResource PlusElevationPopup}"
-                        MinWidth="180" Padding="4" ClipToBounds="True">
+                        MinWidth="180" Padding="4" ClipToBounds="True" Classes="menuPopup">
                   <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                                 VerticalScrollBarVisibility="Auto">
                     <ItemsPresenter/>
@@ -126,5 +126,20 @@
   <!-- Menu 容器（顶栏一级）用 MenuItemTopLevel 模板：方向由逻辑设向下 -->
   <Style Selector="Menu">
     <Setter Property="ItemContainerTheme" Value="{StaticResource MenuItemTopLevel}"/>
+  </Style>
+
+  <!-- 弹出动画：Popup 打开 = menuPopup Border 附加到 PopupRoot 时淡入
+       （与右键一级一致；Avalonia 12.1 Transition 重构无 From/To，用旧式 KeyFrame） -->
+  <Style Selector="Border.menuPopup">
+    <Style.Animations>
+      <Animation Duration="0:0:0.15">
+        <KeyFrame Cue="0%">
+          <Setter Property="Opacity" Value="0"/>
+        </KeyFrame>
+        <KeyFrame Cue="100%">
+          <Setter Property="Opacity" Value="1"/>
+        </KeyFrame>
+      </Animation>
+    </Style.Animations>
   </Style>
 </Styles>
