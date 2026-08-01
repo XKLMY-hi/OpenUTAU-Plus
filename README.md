@@ -11,7 +11,7 @@
 ### 🪟 现代化 UI 全面翻新
 - **暖灰暗色主题** — 自定义色板（底色 `#1e1e28` · 表面 `#282838` · 强调色 `#c73a3f`），替换 FluentTheme 默认深色
 - **亚克力 / Mica 窗口模糊** — 全部窗口统一启用，右键设置中切换模糊类型或关闭；Tint 65% 深冷灰
-- **自绘窗口边框** — Edge / Office 风格自定义标题栏（图标 + 标题 + Min/Max/Close），全部 30+ 窗口统一 WindowEx
+- **自绘窗口边框** — 按 Avalonia 12 官方 **WindowDrawnDecorations** 规范统一实现（1px 描边 + 阴影分层，图标 + 标题 + Min/Max/Close 标题栏），全部 30+ 窗口统一
 - **HarmonyOS Sans SC 字体** — 四字重（Light/Regular/Medium/Bold），全局应用
 - **Heroicons Solid 图标** — 52 枚 MIT 许可矢量图标，替换 Lucide
 - **8px 统一圆角** — 按钮 / 文本框 / 卡片 / 弹出层全局 8px 圆角 · 32px 控件高度
@@ -41,27 +41,12 @@
 - 向后兼容 `.ustx`
 ---
 
-## 实机截图
+## 2026-08 框架升级：Avalonia 12
 
-<div align="center">
-
-### 欢迎页
-![欢迎页](screenshots/welcome.png)
-
-### 主编辑器
-![主编辑器](screenshots/editor.png)
-
-### 混音台
-![混音台](screenshots/mixer.png)
-
-### VST 效果器
-![VST 效果器](screenshots/vst.png)
-
-### 渲染窗口
-![渲染窗口](screenshots/render.png)
-
-</div>
-
+- **UI 框架升级至 Avalonia 12.1.0**（原 11.2.4）— 渲染架构重写（复杂界面 FPS 大幅提升）、Skia 3.0 渲染管线、Compiled bindings、官方自绘窗口装饰规范
+- **自绘边框重写** — 按 Avalonia 12 官方 **WindowDrawnDecorations** 规范统一实现（替代 11 时代手搓标题栏）：全窗口 1px 描边 + 阴影分层，最大化自动去边框，标题栏拖拽 / 三按钮 / 全屏悬停栏由官方机制接管
+- **依赖迁移** — `Avalonia.ReactiveUI` → `ReactiveUI.Avalonia`（Rx 兼容线，全部 ViewModel 零改动）、xunit v2 → v3、新增 HarfBuzz 文本整形
+- 为后续引入 UI 组件库（Semi.Avalonia 候选）铺平道路
 
 ---
 

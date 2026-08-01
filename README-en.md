@@ -8,6 +8,13 @@ Based on [OpenUTAU](https://github.com/openutau/OpenUtau) (MIT License)
 
 ## What's New
 
+### 🪟 Modern UI Overhaul
+- **Avalonia 12.1** — UI framework upgraded from 11.2.4 (rendering architecture rewrite, Skia 3.0, official drawn-decorations API)
+- **Self-drawn window chrome** — implemented with the official **WindowDrawnDecorations** API (replacing the hand-rolled title bar): 1px border + shadow layering, unified title bar (icon / title / Min / Max / Close) across 30+ windows
+- **Warm-gray dark theme** — custom palette (base `#1e1e28` · surface `#282838` · accent `#c73a3f`)
+- **HarmonyOS Sans SC** fonts + **Heroicons Solid** icons + 8px unified corner radius
+- **Full Chinese localization**
+
 ### 🎚️ DAW-Style Mixer
 - Vertical faders, -24dB ~ +12dB
 - 30fps real-time peak meters (LevelTracker)
@@ -29,27 +36,12 @@ Based on [OpenUTAU](https://github.com/openutau/OpenUtau) (MIT License)
 - Backward-compatible with `.ustx`
 ---
 
-## Screenshots
+## 2026-08 Framework Upgrade: Avalonia 12
 
-<div align="center">
-
-### Welcome Page
-![Welcome](screenshots/welcome.png)
-
-### Main Editor
-![Editor](screenshots/editor.png)
-
-### Mixer Console
-![Mixer](screenshots/mixer.png)
-
-### VST Effects
-![VST](screenshots/vst.png)
-
-### Render Window
-![Render](screenshots/render.png)
-
-</div>
-
+- **Avalonia 12.1.0** (from 11.2.4) — rendering architecture rewrite (significant FPS gains on complex visual trees), Skia 3.0 pipeline, compiled bindings, official drawn window decorations
+- **Window chrome rewritten** — the official **WindowDrawnDecorations** API replaces the hand-rolled title bar: 1px border + shadow layering everywhere, border removed on maximize, drag / caption buttons / fullscreen hover bar handled by the framework
+- **Dependency migration** — `Avalonia.ReactiveUI` → `ReactiveUI.Avalonia` (Rx-compatible line, zero ViewModel changes), xunit v2 → v3, HarfBuzz text shaping added
+- Paves the way for a UI component library (Semi.Avalonia candidate)
 
 ---
 
@@ -199,7 +191,7 @@ See [CLAUDE.md](./CLAUDE.md) for the full architecture and development guide.
 | Layer | Technology |
 |-------|-----------|
 | Runtime | .NET 8.0 / C# 12 |
-| UI Framework | Avalonia 11.x + ReactiveUI MVVM |
+| UI Framework | Avalonia 12.x + ReactiveUI MVVM |
 | Audio Playback | NAudio (WASAPI) / MiniAudio |
 | Audio DSP | NWaves |
 | Signal Chain | Custom ISignalSource / IEffect interface |
@@ -220,7 +212,7 @@ This project is built with the following open source libraries. We are grateful 
 
 | Library | Version | License | Purpose |
 |----|------|------|------|
-| [Avalonia UI](https://avaloniaui.net/) | 11.2.4 | MIT | Cross-platform UI framework |
+| [Avalonia UI](https://avaloniaui.net/) | 12.1.0 | MIT | Cross-platform UI framework |
 | [ReactiveUI](https://www.reactiveui.net/) | 19.5 | MIT | MVVM reactive framework |
 | [NAudio](https://github.com/naudio/NAudio) | 2.2.1 | MIT | Windows audio playback & processing |
 | [NWaves](https://github.com/ar1st0crat/NWaves) | 0.9.6 | MIT | Audio signal processing / DSP |
@@ -242,8 +234,7 @@ This project is built with the following open source libraries. We are grateful 
 
 | Library | Version | License | Purpose |
 |----|------|------|------|
-| [Material.Avalonia](https://github.com/AvaloniaCommunity/Material.Avalonia) | 3.13.3 | MIT | Material Design controls |
-| [Lucide Icons](https://lucide.dev/) | — | ISC | User interface icons |
+| [Heroicons](https://heroicons.com/) | — | MIT | User interface icons |
 | [Dotnet.Bundle](https://github.com/egramtel/dotnet-bundle) | 0.9.13 | MIT | macOS app bundling |
 
 ### File Formats / MIDI
