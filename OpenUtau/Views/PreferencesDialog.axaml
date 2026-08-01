@@ -484,23 +484,6 @@
         <StackPanel Margin="0,4,0,0">
           <Border Classes="prefsCard">
             <StackPanel>
-              <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.plus.blur}"/>
-              <Grid Margin="0,0,0,4">
-                <TextBlock Text="{DynamicResource prefs.plus.blur.enable}" VerticalAlignment="Center"/>
-                <ToggleSwitch IsChecked="{Binding EnableBlur}" HorizontalAlignment="Right"/>
-              </Grid>
-              <TextBlock Text="{DynamicResource prefs.plus.blur.mode}" Margin="0,4,0,0"/>
-              <ComboBox SelectedIndex="{Binding BlurModeIndex}" IsEnabled="{Binding EnableBlur}">
-                <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.acrylic}"/>
-                <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.mica}"/>
-                <ComboBoxItem Content="{DynamicResource prefs.plus.blur.mode.none}"/>
-              </ComboBox>
-              <TextBlock Text="{DynamicResource prefs.plus.blur.restart}"
-                         FontSize="10" Opacity="0.45" Margin="0,4,0,0"/>
-            </StackPanel>
-          </Border>
-          <Border Classes="prefsCard">
-            <StackPanel>
               <TextBlock Classes="cardTitle" Text="{DynamicResource prefs.vst.title}"/>
               <TextBlock Text="{DynamicResource prefs.vst.scanpaths}" FontSize="11" Opacity="0.7" Margin="0,0,0,6"/>
               <ListBox Name="VstPathsList" MinHeight="60" MaxHeight="100" ItemsSource="{Binding VstScanPaths}"/>

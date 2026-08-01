@@ -9,16 +9,17 @@
     Layer 2 = 语义画刷（PlusBrush*）+ 固定几何/动效（PlusRadius*/PlusElevation*...）。
               固定值只在此定义，不随主题切换。
     Layer 3 = 控件模板/视图，全部 {DynamicResource Plus*}，禁止字面量。
-    设计纪律：背景纯色（亚克力禁用）；玻璃只用于浮层；hover=表面提亮；选中=accent-muted。
+    设计纪律：背景实色 + 主题色渐变（底部微注入 accent）；玻璃只用于浮层；
+              hover=表面提亮；选中=accent-muted。
     ────────────────────────────────────────────────────────────
   -->
 
   <system:Boolean x:Key="IsDarkMode">false</system:Boolean>
 
-  <!-- 窗口亚克力底色兜底（主题变体字典覆写；勿在根字典定义以免遮蔽变体解析） -->
-  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#D91e2028"/>
-
   <!-- ══════════ Layer 1 · palette 颜色（DARK 默认，主题字典覆写）══════════ -->
+  <!-- 窗口渐变背景两档（跟随主题色：底部微注入 accent，主题字典覆写） -->
+  <Color x:Key="PlusSurfaceBgTop">#1e1e28</Color>     <!-- 窗口背景顶部（= PlusSurfaceBase） -->
+  <Color x:Key="PlusSurfaceBgBottom">#282029</Color>  <!-- 窗口背景底部（accent 注入 ~6%） -->
   <!-- Surface 实色 8 档 -->
   <Color x:Key="PlusSurfaceDeep">#16161e</Color>      <!-- 钢琴窗画布 · VU · 波形 -->
   <Color x:Key="PlusSurfaceBase">#1e1e28</Color>      <!-- 窗口底色 -->
@@ -100,6 +101,12 @@
   <Color x:Key="BlackKeyNameColor">#808090</Color>
 
   <!-- ══════════ Layer 2 · 语义画刷（映射 palette → 消费）══════════ -->
+  <!-- 窗口背景：顶部 base → 底部 accent 注入（跟随主题色；GradientStop 动态资源随主题字典切换） -->
+  <LinearGradientBrush x:Key="PlusBrushWindowBackground" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Offset="0" Color="{DynamicResource PlusSurfaceBgTop}"/>
+    <GradientStop Offset="0.55" Color="{DynamicResource PlusSurfaceBase}"/>
+    <GradientStop Offset="1" Color="{DynamicResource PlusSurfaceBgBottom}"/>
+  </LinearGradientBrush>
   <SolidColorBrush x:Key="PlusBrushSurfaceDeep" Color="{DynamicResource PlusSurfaceDeep}"/>
   <SolidColorBrush x:Key="PlusBrushSurfaceBase" Color="{DynamicResource PlusSurfaceBase}"/>
   <SolidColorBrush x:Key="PlusBrushSurfaceRaised" Color="{DynamicResource PlusSurfaceRaised}"/>

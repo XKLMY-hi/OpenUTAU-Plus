@@ -3,8 +3,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <system:Boolean x:Key="IsDarkMode">false</system:Boolean>
 
-  <!-- Acrylic material background: warm light tint at 80% opacity -->
-  <SolidColorBrush x:Key="AcrylicTintBrush" Color="#CCf5f2f0"/>
 
   <!-- Warm gray light palette -->
   <Color x:Key="BackgroundColor">#f5f2f0</Color>

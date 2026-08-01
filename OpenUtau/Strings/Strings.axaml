@@ -975,14 +975,6 @@ General
   <system:String x:Key="render.samplerate">Sample Rate</system:String>
   <system:String x:Key="render.ready">Ready</system:String>
 
-  <system:String x:Key="prefs.plus.blur">Window Blur Effect</system:String>
-  <system:String x:Key="prefs.plus.blur.enable">Enable blur effect</system:String>
-  <system:String x:Key="prefs.plus.blur.mode">Blur type</system:String>
-  <system:String x:Key="prefs.plus.blur.mode.acrylic">Acrylic (Win10)</system:String>
-  <system:String x:Key="prefs.plus.blur.mode.mica">Mica (Win11)</system:String>
-  <system:String x:Key="prefs.plus.blur.mode.none">None (opaque)</system:String>
-  <system:String x:Key="prefs.plus.blur.restart">Changes take effect on new windows</system:String>
-
   <system:String x:Key="window.minimize">Minimize</system:String>
   <system:String x:Key="window.maximize">Maximize</system:String>
   <system:String x:Key="window.restore">Restore</system:String>

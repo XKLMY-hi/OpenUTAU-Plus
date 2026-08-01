@@ -272,11 +272,6 @@ errors.txt
             public bool DetachMixer = false;
             public WindowSize MixerWindowSize = new WindowSize();
 
-            // ── UI: Window blur ─────────────────────────
-            // v4.0 设计：背景亚克力默认禁用，纯色为主；用户可在偏好设置重新开启
-            public bool EnableBlur = false;
-            public string BlurMode = "AcrylicBlur";   // AcrylicBlur | Mica | None
-
             // Legacy
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public int? Theme;

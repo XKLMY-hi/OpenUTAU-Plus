@@ -593,7 +593,7 @@
               HorizontalAlignment="Center" VerticalAlignment="Center"
               MinWidth="340"
               ClipToBounds="True"
-              Background="{DynamicResource AcrylicTintBrush}"
+              Background="{DynamicResource PlusSurfaceOverlay}"
               BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
               BorderThickness="0" CornerRadius="12"
               BoxShadow="0 8 32 0 #3F000000">

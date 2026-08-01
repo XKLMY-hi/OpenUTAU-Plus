@@ -140,17 +140,19 @@ namespace OpenUtau.Test.App {
         public void ThemeSwitch_ChangesResolvedColorValues() {
             ThemeManager.Apply("Dark");
             Assert.Equal(Color.Parse("#1e1e28"), ResolveValue("BackgroundColor"));
-            var tintDark = Assert.IsType<SolidColorBrush>(ResolveValue("AcrylicTintBrush"));
-            Assert.Equal(Color.Parse("#D91e2028"), tintDark.Color);
+            Assert.Equal(Color.Parse("#282029"), ResolveValue("PlusSurfaceBgBottom"));
+            // 窗口渐变背景画刷（跟随主题色，替代已删除的 AcrylicTintBrush）
+            var bgDark = Assert.IsType<LinearGradientBrush>(ResolveValue("PlusBrushWindowBackground"));
+            Assert.Equal(3, bgDark.GradientStops.Count);
 
             ThemeManager.Apply("Light");
             Assert.Equal(Color.Parse("#f5f2f0"), ResolveValue("BackgroundColor"));
-            var tintLight = Assert.IsType<SolidColorBrush>(ResolveValue("AcrylicTintBrush"));
-            Assert.Equal(Color.Parse("#CCf5f2f0"), tintLight.Color);
+            Assert.Equal(Color.Parse("#f1e9e7"), ResolveValue("PlusSurfaceBgBottom"));
 
             // 切回 Dark 确认往返
             ThemeManager.Apply("Dark");
             Assert.Equal(Color.Parse("#1e1e28"), ResolveValue("BackgroundColor"));
+            Assert.Equal(Color.Parse("#282029"), ResolveValue("PlusSurfaceBgBottom"));
         }
 
         private static object? ResolveValue(string key) {
