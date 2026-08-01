@@ -11,30 +11,14 @@
   -->
   <Styles.Resources>
     <ResourceDictionary>
+      <!-- 纯 ItemsPresenter（Fluent 同款）：Menu 模板不得含 Popup——Popup 内
+           ItemsPresenter 会无条件挂载宿主 Items，与菜单条双重挂载崩溃（启动实证）。
+           弹出方向由 MenuItem 控件逻辑动态设置（顶层向下/子级向右） -->
       <ControlTheme x:Key="{x:Type Menu}" TargetType="Menu">
         <Setter Property="Template">
           <ControlTemplate>
-            <Grid>
-              <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}"
-                              KeyboardNavigation.TabNavigation="Continue"/>
-              <Popup IsOpen="{TemplateBinding IsOpen}"
-                     Placement="BottomEdgeAlignedLeft" VerticalOffset="2">
-                <!-- 内容用 Border + ItemsPresenter（ItemsPresenter 自动绑定宿主 Items；
-                     Popup 内 TemplateBinding 有兼容风险，且 MenuFlyoutPresenter
-                     需显式 ItemsSource 才能出内容——探针实证） -->
-                <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
-                        BorderBrush="{DynamicResource PlusBrushBorderDefault}"
-                        BorderThickness="1"
-                        CornerRadius="{DynamicResource PlusRadiusLg}"
-                        BoxShadow="{DynamicResource PlusElevationPopup}"
-                        MinWidth="180" Padding="4">
-                  <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                VerticalScrollBarVisibility="Auto">
-                    <ItemsPresenter/>
-                  </ScrollViewer>
-                </Border>
-              </Popup>
-            </Grid>
+            <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}"
+                            KeyboardNavigation.TabNavigation="Continue"/>
           </ControlTemplate>
         </Setter>
       </ControlTheme>
@@ -52,8 +36,10 @@
               <TextBlock Grid.Column="2" Text="{TemplateBinding InputGesture}"
                          FontSize="11" Opacity="0.5" Margin="16,0,0,0"
                          VerticalAlignment="Center"/>
+              <!-- Placement 不硬编码：由 MenuItem 控件逻辑按层级设置（顶层向下/子级向右，
+                   探针实证 Fluent 行为；硬编码会锁死方向） -->
               <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
-                     Placement="RightEdgeAlignedTop" HorizontalOffset="2">
+                     HorizontalOffset="2">
                 <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
                         BorderBrush="{DynamicResource PlusBrushBorderDefault}"
                         BorderThickness="1"
