@@ -1,6 +1,7 @@
 ﻿using Xunit;
 using Avalonia;
 using Avalonia.Headless;
+using Avalonia.Headless.XUnit;
 using Avalonia.Styling;
 using OpenUtau.App;
 
@@ -19,13 +20,12 @@ namespace OpenUtau.App {
             Assert.False(typeof(Program).IsAbstract);
         }
 
-        [Fact]
+        /// <summary>
+        /// 在 headless session 内测多语言资源（改自手动 SetupWithoutStarting——
+        /// 手动建 App 会残留静态 Dispatcher/MediaContext 状态，污染后续 AvaloniaFact 全量顺序）。
+        /// </summary>
+        [AvaloniaFact]
         public void StringsTest() {
-            var appBuilder = TestAppBuilder.BuildAvaloniaApp()
-                .SetupWithoutStarting();
-            var app = appBuilder.Instance as App;
-            Assert.NotNull(app);
-
             var languages = App.GetLanguages();
             Assert.True(languages.Count > 1);
             Assert.Contains("en-US", languages.Keys);

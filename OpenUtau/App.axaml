@@ -37,6 +37,8 @@
         <ResourceInclude Source="/Colors/Brushes.axaml"/>
         <ResourceInclude Source="/Themes/Plus.Resources.axaml"/>
         <ResourceInclude Source="/Assets/Icons.axaml"/>
+        <!-- 紧凑菜单接管：{x:Type} 键进 Resources 层（优先于 Styles 层的 SukiTheme） -->
+        <ResourceInclude Source="/Styles/SukiCompactMenu.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

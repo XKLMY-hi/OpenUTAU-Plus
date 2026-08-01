@@ -1,0 +1,77 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    紧凑菜单接管（探针实证：Suki 菜单条模板高 45 + MenuItem 内容区固定 ~10px，
+    24px 顶栏内文字被压到 6px 半切）。菜单视觉由 Plus 紧凑模板提供（行高 ~25px），
+    弹出容器复用 Plus 浮层样式。经 Application.Resources 合并（MergedDictionaries），
+    {x:Type} 键在 Resources 层优先于 Styles 层（SukiTheme），稳定覆盖。
+  -->
+  <ControlTheme x:Key="{x:Type Menu}" TargetType="Menu">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}"
+                        KeyboardNavigation.TabNavigation="Continue"/>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
+    <Setter Property="Padding" Value="10,5"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid ColumnDefinitions="Auto,*,Auto" Background="Transparent">
+          <ContentPresenter Grid.Column="0" Content="{TemplateBinding Icon}"
+                            Width="16" Height="16" Margin="0,0,8,0"
+                            VerticalAlignment="Center"/>
+          <ContentPresenter Grid.Column="1" Content="{TemplateBinding Header}"
+                            VerticalAlignment="Center" HorizontalAlignment="Left"/>
+          <TextBlock Grid.Column="2" Text="{TemplateBinding InputGesture}"
+                     FontSize="11" Opacity="0.5" Margin="16,0,0,0"
+                     VerticalAlignment="Center"/>
+          <!-- Avalonia 12：属性名 IsSubMenuOpen（11 是 IsSubmenuOpen）；PlacementMode 移除 RightEdgeAlignedLeft -->
+          <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
+                 Placement="RightEdgeAlignedTop" HorizontalOffset="2">
+            <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
+                    BorderBrush="{DynamicResource PlusBrushBorderDefault}"
+                    BorderThickness="1"
+                    CornerRadius="{DynamicResource PlusRadiusLg}"
+                    BoxShadow="{DynamicResource PlusElevationPopup}"
+                    MinWidth="180" Padding="4">
+              <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto">
+                <ItemsPresenter/>
+              </ScrollViewer>
+            </Border>
+          </Popup>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+    <Style Selector="^:pointerover /template/ Grid">
+      <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceHover}"/>
+    </Style>
+    <Style Selector="^:disabled /template/ ContentPresenter">
+      <Setter Property="Opacity" Value="0.4"/>
+    </Style>
+  </ControlTheme>
+
+  <ControlTheme x:Key="{x:Type MenuFlyoutPresenter}" TargetType="MenuFlyoutPresenter">
+    <Setter Property="Padding" Value="4"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border x:Name="PART_PopupBorder"
+                Background="{DynamicResource PlusBrushSurfaceOverlay}"
+                BorderBrush="{DynamicResource PlusBrushBorderDefault}"
+                BorderThickness="1"
+                CornerRadius="{DynamicResource PlusRadiusLg}"
+                Padding="{TemplateBinding Padding}"
+                BoxShadow="{DynamicResource PlusElevationPopup}"
+                MinWidth="180">
+          <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto">
+            <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}"/>
+          </ScrollViewer>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>
