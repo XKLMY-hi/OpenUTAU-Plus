@@ -39,7 +39,7 @@ namespace OpenUtau.Test.App {
         private static readonly string[] PlusBrushKeys = {
             "PlusBrushSurfaceDeep", "PlusBrushSurfaceBase", "PlusBrushSurfaceRaised",
             "PlusBrushSurfaceControl", "PlusBrushSurfaceHover", "PlusBrushSurfacePressed",
-            "PlusBrushSurfaceDisabled",
+            "PlusBrushSurfaceDisabled", "PlusBrushSurfaceOverlay",
             "PlusBrushBorderSubtle", "PlusBrushBorderDefault", "PlusBrushBorderHover", "PlusBrushBorderFocus",
             "PlusBrushTextPrimary", "PlusBrushTextSecondary", "PlusBrushTextDisabled", "PlusBrushTextOnAccent",
             "PlusBrushAccent", "PlusBrushAccentHover", "PlusBrushAccentPressed",

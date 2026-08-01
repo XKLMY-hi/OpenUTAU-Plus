@@ -14,6 +14,10 @@
                    Color="{DynamicResource BackgroundColorPointerOver}"/>
   <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush"
                    Color="{DynamicResource ForegroundColor}" />
+  <!-- 浮层面画刷（Plus.Menu / Plus.ComboBox / SukiCompactMenu 引用；此前从未定义，
+       菜单浮层背景一直解析失败为透明——幽灵键修复） -->
+  <SolidColorBrush x:Key="PlusBrushSurfaceOverlay"
+                   Color="{DynamicResource PlusSurfaceOverlay}" />
   <!-- Avalonia 12 Fluent 文本键（Suki 后挂载会覆盖 Fluent 的同名键导致暗色下黑字，
        本层在 Application.Resources 优先于 Styles 层，强制跟随 ForegroundColor 系） -->
   <SolidColorBrush x:Key="TextFillColorPrimaryBrush"

@@ -37,8 +37,6 @@
         <ResourceInclude Source="/Colors/Brushes.axaml"/>
         <ResourceInclude Source="/Themes/Plus.Resources.axaml"/>
         <ResourceInclude Source="/Assets/Icons.axaml"/>
-        <!-- 紧凑菜单接管：{x:Type} 键进 Resources 层（优先于 Styles 层的 SukiTheme） -->
-        <ResourceInclude Source="/Styles/SukiCompactMenu.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
@@ -54,6 +52,9 @@
     <!-- Suki 尺寸/字体收敛层：Quicksand 15px → Plus 令牌（HarmonyOS 13px），
          必须在 SukiTheme 之后挂载才能覆盖其模板默认值 -->
     <StyleInclude Source="/Styles/SukiOverrides.axaml"/>
+    <!-- 紧凑菜单接管：Suki 菜单模板高 45px 与 Plus 24px 顶栏冲突（文字半切），
+         菜单改由 Plus 紧凑模板提供（向下/向右弹出 + 实色浮层 + 淡入动画） -->
+    <StyleInclude Source="/Styles/SukiCompactMenu.axaml"/>
   </Application.Styles>
   <NativeMenu.Menu>
     <NativeMenu/>
