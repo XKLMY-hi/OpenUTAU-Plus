@@ -90,6 +90,8 @@ namespace OpenUtau.App {
         /// <summary>
         /// SukiUI 主题同步：切换基底明暗 + 选中暖灰定制色。
         /// 必须在 RequestedThemeVariant 赋值之前调用（ChangeBaseTheme 可能覆写该属性）。
+        /// 顺序铁律：先 ChangeBaseTheme 后 ChangeColorTheme —— 实测 ChangeBaseTheme
+        /// 会把 ActiveColorTheme 重置为默认色，色彩切换必须最后执行。
         /// SukiUI 未挂载的环境（如部分测试）静默跳过。
         /// </summary>
         private static void ApplySukiTheme(bool isDark) {
@@ -99,8 +101,8 @@ namespace OpenUtau.App {
                     suki.AddColorTheme(PlusWarmGrayTheme);
                     sukiRegistered = true;
                 }
-                suki.ChangeColorTheme(PlusWarmGrayTheme);
                 suki.ChangeBaseTheme(isDark ? ThemeVariant.Dark : ThemeVariant.Light);
+                suki.ChangeColorTheme(PlusWarmGrayTheme);
             } catch (System.Exception e) {
                 Log.Warning(e, "[Theme] SukiUI 同步失败（SukiUI 未挂载环境正常忽略）");
             }

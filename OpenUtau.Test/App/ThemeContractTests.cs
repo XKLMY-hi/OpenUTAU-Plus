@@ -65,6 +65,9 @@ namespace OpenUtau.Test.App {
         private static readonly string[] FluentCompatKeys = {
             "SystemControlForegroundBaseLowBrush", "SystemControlBackgroundAltMediumBrush",
             "MenuFlyoutItemForegroundPressed", "TextControlForegroundDisabled",
+            // Avalonia 12 Fluent 文本键（Brushes.axaml 提供；Suki 后挂载会覆盖 Fluent 同名键导致暗色下黑字）
+            "TextFillColorPrimaryBrush", "TextFillColorSecondaryBrush",
+            "TextFillColorDisabledBrush", "TextControlForeground",
             "ComboBoxDropDownBackground", "ComboBoxDropDownBorderBrush",
             "RadioButtonOuterEllipseFill", "RadioButtonOuterEllipseStroke",
             "RadioButtonOuterEllipseFillPointerOver", "RadioButtonOuterEllipseStrokePointerOver",
@@ -119,11 +122,14 @@ namespace OpenUtau.Test.App {
             Assert.True(ThemeManager.IsDarkMode);
             Assert.NotNull(ThemeManager.AccentBrush1);
             Assert.NotNull(ThemeManager.ForegroundBrush);
+            // Suki 同步：暖灰为活动主题色（顺序铁律：先 ChangeBaseTheme 后 ChangeColorTheme）
+            Assert.Equal("Plus 暖灰", SukiUI.SukiTheme.GetInstance().ActiveColorTheme?.DisplayName);
 
             ThemeManager.Apply("Light");
             Assert.Equal(ThemeVariant.Light, Application.Current!.RequestedThemeVariant);
             Assert.False(ThemeManager.IsDarkMode);
             Assert.NotNull(ThemeManager.AccentBrush1);
+            Assert.Equal("Plus 暖灰", SukiUI.SukiTheme.GetInstance().ActiveColorTheme?.DisplayName);
 
             // 自定义 YAML（无文件则回退 Light 基座；注册为独立 ThemeVariant，非内置 Light）
             ThemeManager.Apply("SomeCustom");
@@ -153,6 +159,25 @@ namespace OpenUtau.Test.App {
             ThemeManager.Apply("Dark");
             Assert.Equal(Color.Parse("#1e1e28"), ResolveValue("BackgroundColor"));
             Assert.Equal(Color.Parse("#282029"), ResolveValue("PlusSurfaceBgBottom"));
+        }
+
+        /// <summary>
+        /// 回归：TextBlock 默认前景必须跟随主题（防"Suki 后挂覆盖 Fluent 文本键 → 暗色下黑字"）。
+        /// 暗色下亮字、浅色下深字，且解析的是 SolidColorBrush（非 Black 硬默认）。
+        /// </summary>
+        [AvaloniaFact]
+        public void TextBlock_DefaultForegroundFollowsTheme() {
+            ThemeManager.Apply("Dark");
+            var win = new OpenUtau.App.Controls.WindowEx();
+            var tb = new TextBlock { Text = "测试文字" };
+            win.Content = tb;
+            win.Show();
+            var darkFg = Assert.IsAssignableFrom<ISolidColorBrush>(tb.Foreground);
+            Assert.True(darkFg.Color.R > 0x80, $"dark theme fg should be light, got {darkFg.Color}");
+
+            ThemeManager.Apply("Light");
+            var lightFg = Assert.IsAssignableFrom<ISolidColorBrush>(tb.Foreground);
+            Assert.True(lightFg.Color.R < 0x80, $"light theme fg should be dark, got {lightFg.Color}");
         }
 
         private static object? ResolveValue(string key) {
@@ -279,7 +304,8 @@ namespace OpenUtau.Test.App {
 
         /// <summary>
         /// 验证 Suki 接管 Button 模板（阶段 A 实证：{x:Type} ControlTheme 按 Styles 顺序后者胜，
-        /// SukiTheme 后挂载覆盖 PlusTheme/Fluent）：圆角 8、高度由 Padding 撑起。
+        /// SukiTheme 后挂载覆盖 PlusTheme/Fluent）：圆角 8、高度由 Padding 撑起；
+        /// SukiOverrides 收敛层把 Padding 收为 12,5（Suki 默认 20,8 偏大）。
         /// </summary>
         [AvaloniaFact]
         public void Button_GetsSukiTheme() {
@@ -291,7 +317,10 @@ namespace OpenUtau.Test.App {
             btn.ApplyTemplate();
             Assert.Equal(new CornerRadius(8), btn.CornerRadius);
             Assert.True(double.IsNaN(btn.Height), $"Suki 按钮高度应由 Padding 决定，实际 {btn.Height}");
-            Assert.Equal(new Thickness(20, 8, 20, 8), btn.Padding);
+            Assert.Equal(new Thickness(12, 5, 12, 5), btn.Padding);
+            // SukiOverrides 收敛层：字体归 Plus 令牌（HarmonyOS 13px，替代 Suki 默认 Quicksand 15px）
+            Assert.Equal(13, btn.FontSize);
+            Assert.Equal("HarmonyOS Sans SC", btn.FontFamily.Name);
         }
 
         /// <summary>ChangePianorollColor 不破坏任何投影键。</summary>

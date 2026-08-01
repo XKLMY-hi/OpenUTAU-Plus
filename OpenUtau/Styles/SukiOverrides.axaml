@@ -1,0 +1,40 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+    Suki 尺寸/字体收敛层：必须在 SukiTheme 之后挂载（App.axaml Styles 尾部）。
+    Suki 默认 Quicksand 15px 偏大、中文字体回退不佳 → 全局收束到 Plus 令牌
+    （HarmonyOS Sans SC 13px），解决"整体偏大、控件被挤压、文字上下被裁切"。
+    实例级样式优先于 ControlTheme 模板 Setter，可稳定覆盖 Suki 模板默认值。
+  -->
+  <!-- Foreground 显式绑定 TextFillColorPrimaryBrush（Brushes.axaml 提供，跟随 ForegroundColor 系）：
+       Suki 的 TextBlock ControlTheme 后挂覆盖 Fluent 的 Foreground 默认值导致暗色下黑字 -->
+  <Style Selector="TextBlock">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+  </Style>
+  <Style Selector="Button">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+    <Setter Property="Padding" Value="12,5,12,5"/>
+  </Style>
+  <Style Selector="ComboBox, ComboBoxItem, ListBox, ListBoxItem">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+  </Style>
+  <Style Selector="Menu, MenuItem, ContextMenu">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+  </Style>
+  <Style Selector="CheckBox, RadioButton, ToggleSwitch">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+  </Style>
+  <Style Selector="Slider">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+  </Style>
+  <Style Selector="TabControl, TabItem">
+    <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="FontSize" Value="{DynamicResource PlusFontSizeBase}"/>
+  </Style>
+</Styles>
