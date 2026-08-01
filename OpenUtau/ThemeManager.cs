@@ -8,6 +8,8 @@ using OpenUtau.App.Controls;
 using OpenUtau.Core.Util;
 using ReactiveUI;
 using Serilog;
+using SukiUI;
+using SukiUI.Models;
 
 namespace OpenUtau.App {
     public class ThemeChangedEvent { }
@@ -81,6 +83,29 @@ namespace OpenUtau.App {
             return ["Light", "Dark", ..Colors.CustomTheme.Themes.Select(v => v.Key)];
         }
 
+        private static bool sukiRegistered;
+        private static readonly SukiColorTheme PlusWarmGrayTheme =
+            new("Plus 暖灰", Color.Parse("#c73a3f"), Color.Parse("#c73a3f"));
+
+        /// <summary>
+        /// SukiUI 主题同步：切换基底明暗 + 选中暖灰定制色。
+        /// 必须在 RequestedThemeVariant 赋值之前调用（ChangeBaseTheme 可能覆写该属性）。
+        /// SukiUI 未挂载的环境（如部分测试）静默跳过。
+        /// </summary>
+        private static void ApplySukiTheme(bool isDark) {
+            try {
+                var suki = SukiTheme.GetInstance();
+                if (!sukiRegistered) {
+                    suki.AddColorTheme(PlusWarmGrayTheme);
+                    sukiRegistered = true;
+                }
+                suki.ChangeColorTheme(PlusWarmGrayTheme);
+                suki.ChangeBaseTheme(isDark ? ThemeVariant.Dark : ThemeVariant.Light);
+            } catch (System.Exception e) {
+                Log.Warning(e, "[Theme] SukiUI 同步失败（SukiUI 未挂载环境正常忽略）");
+            }
+        }
+
         /// <summary>
         /// 主题唯一写入口（v4.0 ThemeVariant 架构）：
         /// Light/Dark → 直接切 RequestedThemeVariant；自定义 YAML → 注册为 ThemeVariant（InheritVariant 按 IsDarkMode）。
@@ -92,9 +117,11 @@ namespace OpenUtau.App {
                 return;
             }
             if (themeName is "Light" or "Dark") {
+                ApplySukiTheme(themeName == "Dark");   // Suki 先行：ChangeBaseTheme 可能覆写 RequestedThemeVariant
                 Application.Current.RequestedThemeVariant = themeName == "Dark" ? ThemeVariant.Dark : ThemeVariant.Light;
             } else {
                 var variant = Colors.CustomTheme.RegisterVariant(themeName);
+                ApplySukiTheme(Colors.CustomTheme.Default.IsDarkMode);
                 Application.Current.RequestedThemeVariant = variant;
             }
             RebuildProjection();
