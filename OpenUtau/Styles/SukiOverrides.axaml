@@ -7,9 +7,16 @@
     实例级样式优先于 ControlTheme 模板 Setter，可稳定覆盖 Suki 模板默认值。
   -->
   <!-- Foreground 显式绑定 TextFillColorPrimaryBrush（Brushes.axaml 提供，跟随 ForegroundColor 系）：
-       Suki 的 TextBlock ControlTheme 后挂覆盖 Fluent 的 Foreground 默认值导致暗色下黑字 -->
+       Suki 的 TextBlock/Label/Expander ControlTheme 后挂覆盖 Fluent 默认值导致暗色下黑字
+       （探针实证：Label/Expander 深色下 Foreground=Black） -->
   <Style Selector="TextBlock">
     <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+  </Style>
+  <Style Selector="Label">
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+  </Style>
+  <Style Selector="Expander">
     <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
   </Style>
   <Style Selector="Button">

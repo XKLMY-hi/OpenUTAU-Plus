@@ -3,17 +3,13 @@
   <!--
     紧凑菜单接管（探针实证：Suki 菜单条模板高 45 + MenuItem 内容区固定 ~10px，
     24px 顶栏内文字被压到 6px 半切）。菜单视觉由 Plus 紧凑模板提供（行高 ~25px）。
-    结构：Menu 模板含向下 Popup（顶栏弹出），MenuItem 模板含向右 Popup（二级弹出），
-    两者内容统一用 MenuFlyoutPresenter（背景/圆角/投影在此定义）。
-    弹出动画：MenuFlyoutPresenter 附加时 Opacity 渐入（Avalonia 12.1 Transition 重构
-    无 From/To，用 Style.Animations + KeyFrame 旧语法；注意 Transitions 对象不能放
-    资源字典——加载时实例化会崩 headless，探针实证）。
+    弹出方向约定（探针实证 MenuItem 逻辑只在无显式 Placement 时按层级设置）：
+    - 顶栏一级（Menu 直接子项）→ MenuItemTopLevel 模板（无 Placement，逻辑设 Bottom 向下）
+    - 右键一级 / 各级二级 → 默认 MenuItem 模板（Placement=RightEdgeAlignedTop 向右）
+    Menu 模板为纯 ItemsPresenter（Popup 内 ItemsPresenter 会双重挂载崩溃——启动实证）。
   -->
   <Styles.Resources>
     <ResourceDictionary>
-      <!-- 纯 ItemsPresenter（Fluent 同款）：Menu 模板不得含 Popup——Popup 内
-           ItemsPresenter 会无条件挂载宿主 Items，与菜单条双重挂载崩溃（启动实证）。
-           弹出方向由 MenuItem 控件逻辑动态设置（顶层向下/子级向右） -->
       <ControlTheme x:Key="{x:Type Menu}" TargetType="Menu">
         <Setter Property="Template">
           <ControlTemplate>
@@ -23,6 +19,47 @@
         </Setter>
       </ControlTheme>
 
+      <!-- 顶栏一级菜单项：Popup 无 Placement（MenuItem 逻辑按 Menu 直接子项设 Bottom 向下）。
+           由 Menu.ItemContainerTheme 指定（Menu 容器专用） -->
+      <ControlTheme x:Key="MenuItemTopLevel" TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Template">
+          <ControlTemplate>
+            <Grid ColumnDefinitions="Auto,*,Auto" Background="Transparent">
+              <ContentPresenter Grid.Column="0" Content="{TemplateBinding Icon}"
+                                Width="16" Height="16" Margin="0,0,8,0"
+                                VerticalAlignment="Center"/>
+              <ContentPresenter Grid.Column="1" Content="{TemplateBinding Header}"
+                                VerticalAlignment="Center" HorizontalAlignment="Left"/>
+              <TextBlock Grid.Column="2" Text="{TemplateBinding InputGesture}"
+                         FontSize="11" Opacity="0.5" Margin="16,0,0,0"
+                         VerticalAlignment="Center"/>
+              <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
+                     HorizontalOffset="2">
+                <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
+                        BorderBrush="{DynamicResource PlusBrushBorderDefault}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource PlusRadiusLg}"
+                        BoxShadow="{DynamicResource PlusElevationPopup}"
+                        MinWidth="180" Padding="4" ClipToBounds="True">
+                  <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Auto">
+                    <ItemsPresenter/>
+                  </ScrollViewer>
+                </Border>
+              </Popup>
+            </Grid>
+          </ControlTemplate>
+        </Setter>
+        <Style Selector="^:pointerover /template/ Grid">
+          <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceHover}"/>
+        </Style>
+        <Style Selector="^:disabled /template/ ContentPresenter">
+          <Setter Property="Opacity" Value="0.4"/>
+        </Style>
+      </ControlTheme>
+
+      <!-- 默认菜单项：Popup 向右（右键一级 / 各级二级） -->
       <ControlTheme x:Key="{x:Type MenuItem}" TargetType="MenuItem">
         <Setter Property="Padding" Value="10,5"/>
         <Setter Property="Template">
@@ -36,16 +73,16 @@
               <TextBlock Grid.Column="2" Text="{TemplateBinding InputGesture}"
                          FontSize="11" Opacity="0.5" Margin="16,0,0,0"
                          VerticalAlignment="Center"/>
-              <!-- Placement 不硬编码：由 MenuItem 控件逻辑按层级设置（顶层向下/子级向右，
-                   探针实证 Fluent 行为；硬编码会锁死方向） -->
+              <!-- Placement 硬编码向右（右键一级的 MenuItem 逻辑判"顶层"会给 Bottom，
+                   需显式向右；二级亦向右） -->
               <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
-                     HorizontalOffset="2">
+                     Placement="RightEdgeAlignedTop" HorizontalOffset="2">
                 <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
                         BorderBrush="{DynamicResource PlusBrushBorderDefault}"
                         BorderThickness="1"
                         CornerRadius="{DynamicResource PlusRadiusLg}"
                         BoxShadow="{DynamicResource PlusElevationPopup}"
-                        MinWidth="180" Padding="4">
+                        MinWidth="180" Padding="4" ClipToBounds="True">
                   <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                                 VerticalScrollBarVisibility="Auto">
                     <ItemsPresenter/>
@@ -74,7 +111,7 @@
                     CornerRadius="{DynamicResource PlusRadiusLg}"
                     Padding="{TemplateBinding Padding}"
                     BoxShadow="{DynamicResource PlusElevationPopup}"
-                    MinWidth="180">
+                    MinWidth="180" ClipToBounds="True">
               <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                             VerticalScrollBarVisibility="Auto">
                 <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}"/>
@@ -86,4 +123,8 @@
     </ResourceDictionary>
   </Styles.Resources>
 
+  <!-- Menu 容器（顶栏一级）用 MenuItemTopLevel 模板：方向由逻辑设向下 -->
+  <Style Selector="Menu">
+    <Setter Property="ItemContainerTheme" Value="{StaticResource MenuItemTopLevel}"/>
+  </Style>
 </Styles>
