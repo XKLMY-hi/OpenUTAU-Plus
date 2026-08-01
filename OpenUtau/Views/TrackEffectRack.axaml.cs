@@ -414,7 +414,7 @@ namespace OpenUtau.App.Views {
                 FontSize = 11, Margin = new(0, 0, 0, 6), Opacity = 0.55,
             });
 
-            var search = new TextBox { Watermark = ThemeManager.GetString("effects.filter"), FontSize = 11, Margin = new(0, 0, 0, 6) };
+            var search = new TextBox { PlaceholderText = ThemeManager.GetString("effects.filter"), FontSize = 11, Margin = new(0, 0, 0, 6) };
             layout.Children.Add(search);
 
             var lb = new ListBox { ItemsSource = allPlugins.ToList(), Height = 280 };
@@ -453,9 +453,8 @@ namespace OpenUtau.App.Views {
                 picker.Close();
             };
 
+            // Avalonia 12：WindowEx 自绘装饰由 WindowDrawnDecorations 统一接管，无需手动标题栏
             var dp = new DockPanel { LastChildFill = true };
-            dp.Children.Add(new WindowTitleBar());
-            DockPanel.SetDock(dp.Children[0], Dock.Top);
             dp.Children.Add(new Border { Child = layout, Margin = new(0) });
             picker.Content = dp;
             picker.ShowDialog(this);

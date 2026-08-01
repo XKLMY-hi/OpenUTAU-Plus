@@ -536,7 +536,7 @@ namespace OpenUtau.App.Controls {
             dialog.ShowDialog(RootWindow);
         }
 
-        private void OnPianoRollFocus(object sender, GotFocusEventArgs e) {
+        private void OnPianoRollFocus(object sender, FocusChangedEventArgs e) {
             var input = e.Source as InputElement;
             if (input is TextBox or ComboBox or ComboBoxItem) {
                 input.Focus();

@@ -158,7 +158,9 @@ namespace OpenUtau.App.Views {
                 var btn = new Button { Content = ThemeManager.GetString("dialogs.messagebox.copy") };
                 btn.Click += (_, __) => {
                     try {
-                        GetTopLevel(parent)?.Clipboard?.SetTextAsync(text + "\n" + stackTrace);
+                        var data = new Avalonia.Input.DataTransfer();
+                        data.Add(Avalonia.Input.DataTransferItem.CreateText(text + "\n" + stackTrace));
+                        _ = GetTopLevel(parent)?.Clipboard?.SetDataAsync(data);
                     } catch { }
                 };
                 msgbox.Buttons.Children.Add(btn);

@@ -76,6 +76,7 @@ namespace OpenUtau.App {
             }
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+                .UseHarfBuzz()
                 .LogToTrace()
                 .UseReactiveUI()
                 .With(fontOptions)

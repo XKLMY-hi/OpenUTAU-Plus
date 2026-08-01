@@ -1035,7 +1035,7 @@ namespace OpenUtau.App.Views {
                 .Append(Core.Vogen.VogenSingerInstaller.FileExt)
                 .Append(PackageManager.OudepExt)
                 .ToArray();
-            var files = args.Data?.GetFiles()?.Where(i => i != null).Select(i => i.Path.LocalPath).ToArray() ?? new string[] { };
+            var files = args.DataTransfer.TryGetFiles()?.Select(i => i.Path.LocalPath).ToArray() ?? new string[] { };
             if (files.Length == 0) {
                 return;
             }

@@ -12,7 +12,9 @@ namespace OpenUtau.App.Views {
         }
 
         public void OnCopy(object sender, RoutedEventArgs e) {
-            Clipboard?.SetTextAsync(viewModel.Phonemes);
+            var data = new Avalonia.Input.DataTransfer();
+            data.Add(Avalonia.Input.DataTransferItem.CreateText(viewModel.Phonemes));
+            _ = Clipboard?.SetDataAsync(data);
         }
     }
 }
