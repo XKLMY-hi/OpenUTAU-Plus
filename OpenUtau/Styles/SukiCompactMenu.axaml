@@ -19,7 +19,20 @@
                               KeyboardNavigation.TabNavigation="Continue"/>
               <Popup IsOpen="{TemplateBinding IsOpen}"
                      Placement="BottomEdgeAlignedLeft" VerticalOffset="2">
-                <MenuFlyoutPresenter/>
+                <!-- 内容用 Border + ItemsPresenter（ItemsPresenter 自动绑定宿主 Items；
+                     Popup 内 TemplateBinding 有兼容风险，且 MenuFlyoutPresenter
+                     需显式 ItemsSource 才能出内容——探针实证） -->
+                <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
+                        BorderBrush="{DynamicResource PlusBrushBorderDefault}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource PlusRadiusLg}"
+                        BoxShadow="{DynamicResource PlusElevationPopup}"
+                        MinWidth="180" Padding="4">
+                  <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Auto">
+                    <ItemsPresenter/>
+                  </ScrollViewer>
+                </Border>
               </Popup>
             </Grid>
           </ControlTemplate>
@@ -41,7 +54,17 @@
                          VerticalAlignment="Center"/>
               <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
                      Placement="RightEdgeAlignedTop" HorizontalOffset="2">
-                <MenuFlyoutPresenter/>
+                <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
+                        BorderBrush="{DynamicResource PlusBrushBorderDefault}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource PlusRadiusLg}"
+                        BoxShadow="{DynamicResource PlusElevationPopup}"
+                        MinWidth="180" Padding="4">
+                  <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Auto">
+                    <ItemsPresenter/>
+                  </ScrollViewer>
+                </Border>
               </Popup>
             </Grid>
           </ControlTemplate>
@@ -77,17 +100,4 @@
     </ResourceDictionary>
   </Styles.Resources>
 
-  <!-- 弹出动画：MenuFlyoutPresenter 附加（Popup 打开）时淡入 -->
-  <Style Selector="MenuFlyoutPresenter">
-    <Style.Animations>
-      <Animation Duration="0:0:0.15">
-        <KeyFrame Cue="0%">
-          <Setter Property="Opacity" Value="0"/>
-        </KeyFrame>
-        <KeyFrame Cue="100%">
-          <Setter Property="Opacity" Value="1"/>
-        </KeyFrame>
-      </Animation>
-    </Style.Animations>
-  </Style>
 </Styles>
