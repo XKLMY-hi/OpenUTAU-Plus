@@ -63,6 +63,8 @@
   <Color x:Key="PlusSurfacePressed">#ccc8c4</Color>
   <Color x:Key="PlusSurfaceDisabled">#f0edea</Color>
   <Color x:Key="PlusSurfaceOverlay">#e8e4e0</Color>
+  <!-- 对话框卡片（Suki GlassCard 同款质感：亮色近白） -->
+  <Color x:Key="PlusDialogCard">#fdfefefe</Color>
   <!-- Border -->
   <Color x:Key="PlusBorderSubtle">#d0ccc8</Color>
   <Color x:Key="PlusBorderDefault">#c8c4c0</Color>

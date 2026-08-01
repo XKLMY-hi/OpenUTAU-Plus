@@ -20,6 +20,7 @@ namespace OpenUtau.Test.App {
             // Surface 8
             "PlusSurfaceDeep", "PlusSurfaceBase", "PlusSurfaceRaised", "PlusSurfaceControl",
             "PlusSurfaceHover", "PlusSurfacePressed", "PlusSurfaceDisabled", "PlusSurfaceOverlay",
+            "PlusDialogCard",
             // Border 6
             "PlusBorderSubtle", "PlusBorderDefault", "PlusBorderHover", "PlusBorderFocus",
             "PlusBorderGlass", "PlusBorderGlassStrong",
@@ -39,7 +40,7 @@ namespace OpenUtau.Test.App {
         private static readonly string[] PlusBrushKeys = {
             "PlusBrushSurfaceDeep", "PlusBrushSurfaceBase", "PlusBrushSurfaceRaised",
             "PlusBrushSurfaceControl", "PlusBrushSurfaceHover", "PlusBrushSurfacePressed",
-            "PlusBrushSurfaceDisabled", "PlusBrushSurfaceOverlay",
+            "PlusBrushSurfaceDisabled", "PlusBrushSurfaceOverlay", "PlusBrushDialogCard",
             "PlusBrushBorderSubtle", "PlusBrushBorderDefault", "PlusBrushBorderHover", "PlusBrushBorderFocus",
             "PlusBrushTextPrimary", "PlusBrushTextSecondary", "PlusBrushTextDisabled", "PlusBrushTextOnAccent",
             "PlusBrushAccent", "PlusBrushAccentHover", "PlusBrushAccentPressed",

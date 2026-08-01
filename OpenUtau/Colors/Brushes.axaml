@@ -18,6 +18,9 @@
        菜单浮层背景一直解析失败为透明——幽灵键修复） -->
   <SolidColorBrush x:Key="PlusBrushSurfaceOverlay"
                    Color="{DynamicResource PlusSurfaceOverlay}" />
+  <!-- 对话框卡片画刷（Suki GlassCard 同款半透明质感，配合主内容模糊） -->
+  <SolidColorBrush x:Key="PlusBrushDialogCard"
+                   Color="{DynamicResource PlusDialogCard}" />
   <!-- Avalonia 12 Fluent 文本键（Suki 后挂载会覆盖 Fluent 的同名键导致暗色下黑字，
        本层在 Application.Resources 优先于 Styles 层，强制跟随 ForegroundColor 系） -->
   <SolidColorBrush x:Key="TextFillColorPrimaryBrush"

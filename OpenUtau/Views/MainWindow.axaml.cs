@@ -2061,7 +2061,8 @@ namespace OpenUtau.App.Views {
             }
             UpdateOverlayCardSize();
             OverlayLayer.IsVisible = true;
-            // Suki 卡片浮层：显示时卡片 + 遮罩淡入（Avalonia 12 Animation.RunAsync 代码动画）
+            // Suki 卡片浮层：主内容模糊（玻璃质感）+ 卡片/遮罩淡入
+            MainGrid.Effect = new Avalonia.Media.BlurEffect { Radius = 24 };
             OverlayCard.Opacity = 0;
             OverlayBackdrop.Opacity = 0;
             MakeOverlayFadeIn().RunAsync(OverlayCard);
@@ -2087,6 +2088,7 @@ namespace OpenUtau.App.Views {
                 updater.OnClosed();
             }
             OverlayLayer.IsVisible = false;
+            MainGrid.Effect = null;
             OverlayContent.Content = null;
             overlayTcs?.TrySetResult(MessageBox.MessageBoxResult.Cancel);
             overlayTcs = null;
@@ -2174,6 +2176,7 @@ namespace OpenUtau.App.Views {
                 return;
             }
             OverlayLayer.IsVisible = false;
+            MainGrid.Effect = null;
             OverlayContent.Content = null;
             overlayTcs?.TrySetResult(result);
             overlayTcs = null;
