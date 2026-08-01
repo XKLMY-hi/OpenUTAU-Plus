@@ -16,7 +16,6 @@
     <vm:SingerSetupViewModel/>
   </Design.DataContext>
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Carousel SelectedIndex="{Binding Step}">
     <!--Archive File Encoding-->

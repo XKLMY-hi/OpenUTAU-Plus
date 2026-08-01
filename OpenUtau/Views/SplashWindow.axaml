@@ -1,14 +1,13 @@
-<controls:WindowEx xmlns="https://github.com/avaloniaui"
+<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         mc:Ignorable="d" Width="400" Height="180"
         x:Class="OpenUtau.App.Views.SplashWindow"
         Title="OpenUTAU Plus"
         Icon="/Assets/open-utau.ico"
         CanResize="False"
-        ExtendClientAreaTitleBarHeightHint="-1"
+        WindowDecorations="None"
         WindowStartupLocation="CenterScreen">
   <Grid>
     <Image Margin="20" Width="96" Height="96"
@@ -23,4 +22,4 @@
     <ProgressBar VerticalAlignment="Bottom" HorizontalAlignment="Stretch"
            IsIndeterminate="True"/>
   </Grid>
-</controls:WindowEx>
+</Window>

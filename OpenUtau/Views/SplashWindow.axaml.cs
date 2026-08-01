@@ -6,14 +6,14 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using OpenUtau.App;
-using OpenUtau.App.Controls;
 using OpenUtau.Classic;
 using OpenUtau.Core;
 using ReactiveUI;
 using Serilog;
 
 namespace OpenUtau.App.Views {
-    public partial class SplashWindow : WindowEx, IDisposable {
+    // 启动徽标：普通 Window + 无装饰（不继承 WindowEx，完全绕开自绘边框逻辑）
+    public partial class SplashWindow : Window, IDisposable {
         public SplashWindow() {
             InitializeComponent();
             UpdateLogo();

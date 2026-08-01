@@ -13,7 +13,6 @@
         Focusable="True" GotFocus="WindowGotFocus"
         Closing="WindowClosing" Deactivated="WindowDeactivated">
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <ContentControl Name="PianoRollContainer"/>
   </DockPanel>
 </controls:WindowEx>

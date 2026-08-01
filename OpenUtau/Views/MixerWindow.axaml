@@ -13,7 +13,6 @@
         WindowStartupLocation="CenterScreen">
 
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Border>
       <ContentControl Name="MixerContainer"/>
     </Border>

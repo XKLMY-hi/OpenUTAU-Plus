@@ -19,7 +19,6 @@
   </controls:WindowEx.Styles>
 
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid RowDefinitions="Auto,*,Auto">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" IsVisible="{Binding IsSwitchVisible}">

@@ -9,7 +9,6 @@
         Title="{DynamicResource tracks.trackcolor}"
         KeyDown="OnKeyDown">
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid RowDefinitions="*,50" >
     <ListBox ItemsSource="{Binding TrackColors}" SelectedValue="{Binding SelectedColor}"

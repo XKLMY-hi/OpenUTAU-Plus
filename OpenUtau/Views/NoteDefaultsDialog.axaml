@@ -15,7 +15,6 @@
     <vm:CultureNameConverter x:Key="cultureNameConverter"/>
   </controls:WindowEx.Resources>
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid>
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">

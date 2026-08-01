@@ -6,7 +6,6 @@
         Title="{DynamicResource vsteditor.title}" Width="420" Height="500"
         WindowStartupLocation="CenterOwner">
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Border>
     <DockPanel Margin="14" LastChildFill="True">
       <!-- Plugin info header -->

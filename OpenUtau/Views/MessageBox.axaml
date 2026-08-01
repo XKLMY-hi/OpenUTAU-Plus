@@ -9,7 +9,6 @@
         Title="OpenUTAU Plus" MinWidth="300" MinHeight="150"
         WindowStartupLocation="CenterScreen">
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <ScrollViewer MaxHeight="700" VerticalScrollBarVisibility="Auto">
       <Grid>
       <Grid.RowDefinitions>

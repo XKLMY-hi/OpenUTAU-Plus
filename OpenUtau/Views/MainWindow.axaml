@@ -19,7 +19,6 @@
   </Window.Styles>
   <Grid>
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Grid>
       <Grid Name="MainGrid">
       <Menu Grid.Row="0" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="24"

@@ -8,7 +8,6 @@
         Icon="/Assets/open-utau.ico"
         Title="OpenUTAU Plus" Height="120" Width="300" WindowStartupLocation="CenterOwner">
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <StackPanel VerticalAlignment="Center">
     <StackPanel Orientation="Horizontal" Spacing="10" Margin="10" HorizontalAlignment="Center">

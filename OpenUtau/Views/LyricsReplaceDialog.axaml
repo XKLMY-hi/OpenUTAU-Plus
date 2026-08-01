@@ -11,7 +11,6 @@
     <StyleInclude Source="/Styles/PianoRollStyles.axaml"/>
   </controls:WindowEx.Styles>
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid Margin="10" RowDefinitions="auto,10,Auto,10,Auto,10,*,10,Auto">
     <StackPanel Orientation="Horizontal" Grid.Row="0">

@@ -12,7 +12,8 @@
     <StyleInclude Source="/Styles/PianoRollStyles.axaml"/>
   </UserControl.Styles>
   <Border>
-    <Grid Margin="{Binding $parent[1].WindowDecorationMargin}" PointerMoved="BackgroundPointerMoved">
+    <!-- 注：WindowDecorationMargin 已由 WindowEx.OnApplyTemplate 对窗口内容统一处理，此处不再绑 -->
+    <Grid PointerMoved="BackgroundPointerMoved">
       <Grid.RowDefinitions>
         <RowDefinition Height="24"/>
         <RowDefinition Height="24"/>

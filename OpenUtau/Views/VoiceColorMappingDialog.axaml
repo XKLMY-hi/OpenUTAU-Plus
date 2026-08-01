@@ -9,7 +9,6 @@
         Title="{DynamicResource dialogs.voicecolorremapping}"
         WindowStartupLocation="CenterOwner">
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid RowDefinitions="40,1*,30" Margin="10">
     <StackPanel Grid.Row="0" >

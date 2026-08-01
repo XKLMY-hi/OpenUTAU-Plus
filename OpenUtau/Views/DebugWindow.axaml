@@ -15,7 +15,6 @@
     <vm:DebugViewModel/>
   </Design.DataContext>
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Grid Margin="4" RowDefinitions="*,10,20">
     <ListBox Grid.Row="0" Focusable="False" ItemsSource="{Binding LogEvents}" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
       <ListBox.ItemTemplate>

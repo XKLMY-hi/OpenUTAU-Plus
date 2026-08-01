@@ -29,7 +29,6 @@
     </Style>
   </controls:WindowEx.Styles>
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Border>
     <StackPanel Margin="12" Spacing="8">

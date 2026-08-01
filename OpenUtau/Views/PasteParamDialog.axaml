@@ -9,7 +9,6 @@
         Title="{DynamicResource context.note.pasteparameters}"
         WindowStartupLocation="CenterOwner">
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid RowDefinitions="*, 40" >
     <ListBox SelectionMode="Multiple,Toggle" ItemsSource="{Binding Params}"

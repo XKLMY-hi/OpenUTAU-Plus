@@ -10,7 +10,6 @@
         WindowStartupLocation="CenterScreen"
         Width="400" Height="136" CanResize="False">
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid>
     <StackPanel Margin="10">

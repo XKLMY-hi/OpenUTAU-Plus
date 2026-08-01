@@ -60,7 +60,6 @@
   </Window.Styles>
 
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Border>
     <DockPanel Margin="12" LastChildFill="True">
       <!-- Header -->

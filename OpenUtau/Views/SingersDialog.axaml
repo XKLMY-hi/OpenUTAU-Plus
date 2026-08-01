@@ -15,7 +15,6 @@
     <vm:SingersViewModel/>
   </Design.DataContext>
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Grid>
     <Grid.RowDefinitions>

@@ -45,7 +45,6 @@
     </Style>
   </Window.Styles>
   <DockPanel LastChildFill="True">
-    <controls:WindowTitleBar DockPanel.Dock="Top"/>
     <Border>
       <DockPanel Margin="14" LastChildFill="True">
 

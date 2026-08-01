@@ -9,7 +9,6 @@
         Title="{DynamicResource dialogs.tracksettings.caption}"
         Height="184" Width="320" WindowStartupLocation="CenterOwner" CanResize="False">
 <DockPanel LastChildFill="True">
-      <controls:WindowTitleBar DockPanel.Dock="Top"/>
       <Border>
   <Border>
     <StackPanel Margin="8">
