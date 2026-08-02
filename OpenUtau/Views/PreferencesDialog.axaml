@@ -57,6 +57,28 @@
     <Style Selector="GroupBox StackPanel.settingsContent">
       <Setter Property="Margin" Value="2,6,2,2"/>
     </Style>
+    <!-- 左侧导航 chip 尺寸覆盖：Suki MenuChip 默认偏大（高约 40），
+         按实机反馈高度/文字/左右边距减半；文字居中，圆点+间距收窄 -->
+    <Style Selector="RadioButton.MenuChip">
+      <Setter Property="Height" Value="20"/>
+      <Setter Property="MinWidth" Value="0"/>
+      <Setter Property="Padding" Value="2,0"/>
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="RadioButton.MenuChip /template/ ContentPresenter">
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="RadioButton.MenuChip StackPanel">
+      <!-- 圆点与文字间距减小 80% -->
+      <Setter Property="Spacing" Value="1"/>
+    </Style>
+    <Style Selector="RadioButton.MenuChip Ellipse">
+      <Setter Property="Width" Value="3"/>
+      <Setter Property="Height" Value="3"/>
+    </Style>
   </UserControl.Styles>
 
   <!-- B3: Suki SettingsLayout 设置页形态（顶部 MenuChip 摘要导航 + 竖排 GroupBox 卡片）。
@@ -65,7 +87,12 @@
        不沿继承链（模板丢失）。故 item 声明在隐藏容器（保留 x:Name/事件绑定），
        构造后由代码统一赋给 Items（setter → SetAndRaise 写入内部字段）。 -->
   <Grid>
-    <suki:SettingsLayout x:Name="PrefsLayout"/>
+    <!-- MinWidthWhetherStackSummaryShow：上游默认 1100px 才显示左侧导航，偏好设置浮层
+         （约 60% 主窗口）宽度不足被折叠——降到 100 强制显示；StackSummaryWidth 默认
+         400 太宽，按实机反馈收窄到 170（按钮尺寸由下方 MenuChip 覆盖单独缩小） -->
+    <suki:SettingsLayout x:Name="PrefsLayout"
+                         MinWidthWhetherStackSummaryShow="100"
+                         StackSummaryWidth="170"/>
     <Grid x:Name="PrefsItemsHost" IsVisible="False">
       <!-- General -->
         <suki:SettingsLayoutItem Header="{DynamicResource prefs.general}">
