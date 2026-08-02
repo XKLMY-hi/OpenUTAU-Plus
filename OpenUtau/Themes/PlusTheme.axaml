@@ -1,20 +1,17 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <!--
-    PlusTheme 根：合并全部控件主题分文件。
-    ControlTheme 用 {x:Type} 隐式键全局生效（排在 Fluent 之后即可覆盖）。
+    PlusTheme 根（阶段 C：PlusTheme 退役收敛中）。
+    Suki 后挂已接管：Button/ToggleButton/ComboBox/ComboBoxItem/ToggleSwitch/
+    CheckBox/RadioButton/Slider/ProgressBar/ListBoxItem/MenuFlyoutPresenter/ToolTip
+    （{x:Type} ControlTheme 按 Styles 顺序后者胜）。
+    仅保留 Suki 无模板的 TextBox（Suki 7.x 只有 TextBoxExtensions 附加属性）。
     设计纪律 v4.0：hover=表面提亮 · 选中=accent-muted · 玻璃仅浮层 · 内容面全实色。
   -->
   <Styles.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceInclude Source="/Themes/Plus.Buttons.axaml"/>
         <ResourceInclude Source="/Themes/Plus.TextBox.axaml"/>
-        <ResourceInclude Source="/Themes/Plus.ComboBox.axaml"/>
-        <ResourceInclude Source="/Themes/Plus.Selection.axaml"/>
-        <ResourceInclude Source="/Themes/Plus.Slider.axaml"/>
-        <ResourceInclude Source="/Themes/Plus.ListBox.axaml"/>
-        <ResourceInclude Source="/Themes/Plus.Menu.axaml"/>
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Styles.Resources>
