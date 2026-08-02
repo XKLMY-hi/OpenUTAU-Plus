@@ -5,6 +5,7 @@
         xmlns:vm="using:OpenUtau.App.ViewModels"
         xmlns:c="clr-namespace:OpenUtau.App.Controls"
         xmlns:controls="clr-namespace:OpenUtau.App.Controls"
+        xmlns:suki="using:SukiUI.Controls"
         mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="650"
         x:Class="OpenUtau.App.Views.MainWindow"
         Icon="/Assets/open-utau.ico"
@@ -17,6 +18,11 @@
       <Setter Property="Focusable" Value="False"/>
     </Style>
   </Window.Styles>
+  <!-- B4: Suki 窗口级覆盖层——阶段 D 的 SukiDialog/SukiToast 统一从这里挂 -->
+  <controls:WindowEx.Hosts>
+    <suki:SukiDialogHost x:Name="DialogHost"/>
+    <suki:SukiToastHost x:Name="ToastHost"/>
+  </controls:WindowEx.Hosts>
   <Border Padding="0,8,0,0">
   <Grid>
   <DockPanel LastChildFill="True">
