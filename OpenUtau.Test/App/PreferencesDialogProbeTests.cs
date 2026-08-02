@@ -22,4 +22,14 @@ public class PreferencesDialogProbeTests {
         // 10 个分类 item 全部组装
         Assert.Equal(10, System.Linq.Enumerable.Count(layout.Items));
     }
+
+    [AvaloniaFact]
+    public void PreferencesDialog_SidebarSettings_Applied() {
+        // 左侧导航强制显示：MinWidthWhetherStackSummaryShow=100（默认 1100 折叠）、
+        // StackSummaryWidth=170（默认 400 太宽）
+        var dialog = new PreferencesDialog();
+        var layout = dialog.PrefsLayout;
+        Assert.Equal(100, layout.MinWidthWhetherStackSummaryShow);
+        Assert.Equal(170, layout.StackSummaryWidth);
+    }
 }
