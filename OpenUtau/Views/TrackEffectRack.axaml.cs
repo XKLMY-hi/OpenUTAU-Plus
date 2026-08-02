@@ -403,7 +403,7 @@ namespace OpenUtau.App.Views {
                 return;
             }
 
-            var picker = new WindowEx(true) { Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
+            var picker = new WindowEx() { Title = ThemeManager.GetString("effects.selecteffect"), Width = 520, Height = 420,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var layout = new StackPanel { Margin = new(12) };
 
@@ -453,7 +453,7 @@ namespace OpenUtau.App.Views {
                 picker.Close();
             };
 
-            // Avalonia 12：WindowEx 自绘装饰由 WindowDrawnDecorations 统一接管，无需手动标题栏
+            // 窗口装饰由 WindowEx（SukiWindow）统一提供，无需手动标题栏
             var dp = new DockPanel { LastChildFill = true };
             dp.Children.Add(new Border { Child = layout, Margin = new(0) });
             picker.Content = dp;
@@ -461,7 +461,7 @@ namespace OpenUtau.App.Views {
         }
 
         private void ShowMessage(string text) {
-            var w = new WindowEx(false) { Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
+            var w = new WindowEx() { Title = ThemeManager.GetString("effects.info"), Width = 380, Height = 180,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner };
             var sp = new StackPanel { Margin = new(14) };
             sp.Children.Add(new TextBlock { Text = text, TextWrapping = TextWrapping.Wrap, FontSize = 12 });

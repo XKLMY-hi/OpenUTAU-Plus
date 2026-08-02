@@ -33,9 +33,6 @@
     <!-- 跟随主题色渐变背景（顶部 base → 底部 accent 注入） -->
     <Setter Property="Background" Value="{DynamicResource PlusBrushWindowBackground}"/>
   </Style>
-  <Style Selector="controls|WindowEx">
-    <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
-  </Style>
   <Style Selector="Menu">
     <Setter Property="Height" Value="24"/>
   </Style>

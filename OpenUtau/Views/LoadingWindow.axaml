@@ -6,9 +6,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenUtau.App.Views.LoadingWindow" SizeToContent="WidthAndHeight" CanResize="False"
         Title="OpenUTAU Plus" MinWidth="300" MinHeight="150"
-        Icon="/Assets/open-utau.ico" 
-        WindowStartupLocation="CenterScreen"
-        ExtendClientAreaTitleBarHeightHint="-1">
+        Icon="/Assets/open-utau.ico"
+        WindowStartupLocation="CenterScreen">
 
     <Grid>
         <Image Margin="20" Width="80" Height="80"
