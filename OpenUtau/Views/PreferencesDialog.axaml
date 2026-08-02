@@ -25,7 +25,7 @@
     </Style>
     <Style Selector="TextBlock.restart">
       <Setter Property="Text" Value="{DynamicResource prefs.note.restart}"/>
-      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="FontSize" Value="12"/>
       <Setter Property="TextWrapping" Value="Wrap"/>
       <Setter Property="Margin" Value="0,4,0,0"/>
       <Setter Property="Opacity" Value="0.5"/>
@@ -57,27 +57,28 @@
     <Style Selector="GroupBox StackPanel.settingsContent">
       <Setter Property="Margin" Value="2,6,2,2"/>
     </Style>
-    <!-- 左侧导航 chip 尺寸覆盖：Suki MenuChip 默认偏大（高约 40），
-         按实机反馈高度/文字/左右边距减半；文字居中，圆点+间距收窄 -->
+    <!-- 左侧导航 chip 覆盖：Suki MenuChip 默认偏大且用 Roboto 字体——
+         强制 HarmonyOS（PlusFontFamily）、删圆点装饰、文字缩小居中 -->
     <Style Selector="RadioButton.MenuChip">
+      <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
       <Setter Property="Height" Value="20"/>
       <Setter Property="MinWidth" Value="0"/>
       <Setter Property="Padding" Value="2,0"/>
-      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="FontSize" Value="12"/>
       <Setter Property="VerticalContentAlignment" Value="Center"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+    <Style Selector="RadioButton.MenuChip TextBlock">
+      <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamily}"/>
+      <Setter Property="FontSize" Value="12"/>
     </Style>
     <Style Selector="RadioButton.MenuChip /template/ ContentPresenter">
       <Setter Property="VerticalAlignment" Value="Center"/>
       <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
-    <Style Selector="RadioButton.MenuChip StackPanel">
-      <!-- 圆点与文字间距减小 80% -->
-      <Setter Property="Spacing" Value="1"/>
-    </Style>
+    <!-- 删圆点装饰（MenuChip 模板内 Ellipse #EL） -->
     <Style Selector="RadioButton.MenuChip Ellipse">
-      <Setter Property="Width" Value="3"/>
-      <Setter Property="Height" Value="3"/>
+      <Setter Property="IsVisible" Value="False"/>
     </Style>
   </UserControl.Styles>
 
