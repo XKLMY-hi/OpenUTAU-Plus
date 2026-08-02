@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,30 +6,79 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
-using OpenUtau.App.Controls;
 using OpenUtau.Core;
 using Serilog;
-using SharpCompress;
+using SukiUI.Controls;
+using SukiUI.MessageBox;
 
 namespace OpenUtau.App.Views {
-    public partial class MessageBox : WindowEx {
+    /// <summary>
+    /// MessageBox 门面（阶段 D）：自研窗口 → SukiMessageBox 渲染（SukiWindow 玻璃卡片 + 主题跟随）。
+    /// 60+ 调用点签名零改动：Show/ShowError/ShowModal/ShowProcessing + 结果枚举。
+    /// - Show：简单确认框走 SukiMessageBox.ShowDialogResult 预设按钮
+    /// - ShowError：host 自定义内容（链接化文本 + 详情 Expander + 复制按钮）+ Error 图标
+    /// - ShowModal/ShowProcessing：host 自定义进度内容；窗口引用经
+    ///   AttachedToVisualTree → GetTopLevel 获取（SukiMessageBox 不暴露窗口实例）
+    /// </summary>
+    public class MessageBox {
         public enum MessageBoxButtons { Ok, OkCancel, YesNo, YesNoCancel, OkCopy }
         public enum MessageBoxResult { Ok, Cancel, Yes, No }
 
-        public MessageBox() {
-            InitializeComponent();
-        }
+        // ShowModal/ShowProcessing 持有的运行时状态
+        private SukiMessageBoxHost? _host;
+        private TextBlock? _contentText;
+        private Window? _window;
+        private bool _closeRequested;
 
+        /// <summary>窗口关闭时触发（ShowModal 调用方用它感知取消）。</summary>
+        public event EventHandler? Closed;
+
+        /// <summary>更新对话框正文（进度文本等）。</summary>
         public void SetText(string text) {
             Dispatcher.UIThread.Post(() => {
-                Text.Text = text;
+                if (_contentText != null) {
+                    _contentText.Text = text;
+                }
             });
         }
 
+        /// <summary>程序化关闭对话框（幂等；窗口未挂载时延迟到挂载后执行）。</summary>
+        public void Close() {
+            Dispatcher.UIThread.Post(() => {
+                if (_window == null) {
+                    _closeRequested = true;
+                    return;
+                }
+                _window.Close();
+            });
+        }
+
+        /// <summary>
+        /// 内容控件挂载后捕获宿主窗口（SukiMessageBox 创建的内部 SukiWindow 不对外暴露）。
+        /// 窗口关闭时引用置空，Close() 自然幂等。
+        /// </summary>
+        private void CaptureWindow(Control content) {
+            content.AttachedToVisualTree += (_, __) => {
+                _window = TopLevel.GetTopLevel(content) as Window;
+                if (_window != null) {
+                    _window.Closed += (_, _) => _window = null;
+                }
+                if (_closeRequested && _window != null) {
+                    _closeRequested = false;
+                    _window.Close();
+                }
+            };
+        }
+
+        /// <summary>错误对话框：异常翻译/聚合/版本号逻辑保留，渲染走 SukiMessageBox host。</summary>
         public static Task<MessageBoxResult> ShowError(Window parent, Exception? e, string message = "", bool fromNotif = false) {
             string text = message;
             string title = ThemeManager.GetString("errors.caption");
@@ -119,103 +168,128 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        /// <summary>
+        /// 普通对话框：Ok/OkCancel/YesNo/YesNoCancel 走 SukiMessageBox 预设按钮；OkCopy 走 host（复制按钮）。
+        /// 注意：门面保持同步方法返回 Task（旧实现即如此），避免 CS4014 波及相关 async 调用点。
+        /// </summary>
         public static Task<MessageBoxResult> Show(Window parent, string text, string title, MessageBoxButtons buttons, string? stackTrace = null) {
-            var msgbox = new MessageBox() {
-                Title = title
-            };
-            msgbox.Text.IsVisible = false;
-            msgbox.SetTextWithLink(text, msgbox.TextPanel);
-            if (stackTrace != null) {
-                var stackTracePanel = new StackPanel();
-                var expander = new Expander() { Header = ThemeManager.GetString("errors.details"), Content = stackTracePanel };
-                msgbox.TextPanel.Children.Add(expander);
-                msgbox.SetTextWithLink(stackTrace, stackTracePanel);
-            }
-
-            var res = MessageBoxResult.Ok;
-
-            void AddButton(string caption, MessageBoxResult r, bool def = false) {
-                var btn = new Button { Content = caption };
-                btn.Click += (_, __) => {
-                    res = r;
-                    msgbox.Close();
-                };
-                msgbox.Buttons.Children.Add(btn);
-                if (def)
-                    res = r;
-            }
-
-            if (buttons == MessageBoxButtons.Ok || buttons == MessageBoxButtons.OkCancel || buttons == MessageBoxButtons.OkCopy)
-                AddButton(ThemeManager.GetString("button.ok"), MessageBoxResult.Ok, true);
-            if (buttons == MessageBoxButtons.YesNo || buttons == MessageBoxButtons.YesNoCancel) {
-                AddButton(ThemeManager.GetString("button.yes"), MessageBoxResult.Yes);
-                AddButton(ThemeManager.GetString("button.no"), MessageBoxResult.No, true);
-            }
-
-            if (buttons == MessageBoxButtons.OkCancel || buttons == MessageBoxButtons.YesNoCancel)
-                AddButton(ThemeManager.GetString("button.cancel"), MessageBoxResult.Cancel, true);
             if (buttons == MessageBoxButtons.OkCopy) {
-                var btn = new Button { Content = ThemeManager.GetString("dialogs.messagebox.copy") };
-                btn.Click += (_, __) => {
-                    try {
-                        var data = new Avalonia.Input.DataTransfer();
-                        data.Add(Avalonia.Input.DataTransferItem.CreateText(text + "\n" + stackTrace));
-                        _ = GetTopLevel(parent)?.Clipboard?.SetDataAsync(data);
-                    } catch { }
-                };
-                msgbox.Buttons.Children.Add(btn);
+                return ShowErrorHost(parent, text, title, stackTrace);
             }
-
-            var tcs = new TaskCompletionSource<MessageBoxResult>();
-            msgbox.Closed += delegate { tcs.TrySetResult(res); };
-            if (parent != null)
-                msgbox.ShowDialog(parent);
-            else msgbox.Show();
-            return tcs.Task;
+            var sukiButtons = buttons switch {
+                MessageBoxButtons.Ok => SukiMessageBoxButtons.OK,
+                MessageBoxButtons.OkCancel => SukiMessageBoxButtons.OKCancel,
+                MessageBoxButtons.YesNo => SukiMessageBoxButtons.YesNo,
+                _ => SukiMessageBoxButtons.YesNoCancel,
+            };
+            return ShowCore(parent, text, title, buttons, sukiButtons);
         }
 
-        public static MessageBox ShowModal(Window parent, string text, string title) {
-            var msgbox = new MessageBox() {
-                Title = title
+        private static async Task<MessageBoxResult> ShowCore(Window parent, string text, string title, MessageBoxButtons buttons, SukiMessageBoxButtons sukiButtons) {
+            var result = await SukiMessageBox.ShowDialogResult(parent, text, sukiButtons, title);
+            return MapResult(result, buttons);
+        }
+
+        /// <summary>错误详情 host：链接化正文 + 详情 Expander + [OK][复制] 按钮 + Error 图标。</summary>
+        private static async Task<MessageBoxResult> ShowErrorHost(Window parent, string text, string title, string? stackTrace) {
+            var contentPanel = new StackPanel {
+                MaxWidth = 560,
+                Spacing = 4,
+                VerticalAlignment = VerticalAlignment.Center,
             };
-            msgbox.Text.Text = text;
-            msgbox.ShowDialog(parent);
+            SetTextWithLink(text, contentPanel);
+            if (stackTrace != null) {
+                var stackTracePanel = new StackPanel();
+                contentPanel.Children.Add(new Expander {
+                    Header = ThemeManager.GetString("errors.details"),
+                    Content = stackTracePanel,
+                });
+                SetTextWithLink(stackTrace, stackTracePanel);
+            }
+
+            var host = new SukiMessageBoxHost {
+                Header = title,
+                IconPreset = SukiMessageBoxIcons.Error,
+                Content = contentPanel,
+            };
+            var okBtn = SukiMessageBoxButtonsFactory.CreateButton(
+                ThemeManager.GetString("button.ok"), SukiMessageBoxResult.OK, "Flat");
+            var copyBtn = SukiMessageBoxButtonsFactory.CreateButton(
+                ThemeManager.GetString("dialogs.messagebox.copy"), null, "Flat");
+            copyBtn.Click += (_, __) => {
+                try {
+                    var data = new Avalonia.Input.DataTransfer();
+                    data.Add(Avalonia.Input.DataTransferItem.CreateText(text + "\n" + stackTrace));
+                    _ = TopLevel.GetTopLevel(parent)?.Clipboard?.SetDataAsync(data);
+                } catch { }
+            };
+            host.ActionButtonsSource = new AvaloniaList<Button> { okBtn, copyBtn };
+
+            var result = await SukiMessageBox.ShowDialog(parent, host, title);
+            if (result is SukiMessageBoxResult r) {
+                return MapResult(r, MessageBoxButtons.OkCopy);
+            }
+            return DefaultResult(MessageBoxButtons.OkCopy); // 关闭窗口（ESC/X）→ 默认按钮
+        }
+
+        /// <summary>模态进度框：host 进度内容 + OK 按钮；返回实例供 SetText/Close/Closed 使用。</summary>
+        public static MessageBox ShowModal(Window parent, string text, string title) {
+            var msgbox = new MessageBox();
+            var content = new TextBlock {
+                Text = text,
+                TextWrapping = TextWrapping.Wrap,
+                MaxWidth = 560,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            var host = new SukiMessageBoxHost { Header = title, Content = content };
+            host.ActionButtonsSource = new AvaloniaList<Button> {
+                SukiMessageBoxButtonsFactory.CreateButton(
+                    ThemeManager.GetString("button.ok"), SukiMessageBoxResult.OK, "Flat"),
+            };
+            msgbox._host = host;
+            msgbox._contentText = content;
+            msgbox.CaptureWindow(content);
+            _ = SukiMessageBox.ShowDialog(parent, host, title).ContinueWith(t => {
+                msgbox.Closed?.Invoke(msgbox, EventArgs.Empty);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
             return msgbox;
         }
 
         /// <summary>
-        /// Displays a processing message box with a specified text and title, and executes a given action asynchronously.
+        /// 后台任务进度框：host 进度内容 + 取消按钮。取消 → token 取消；任务完成 → 自动关窗。
+        /// 语义与旧实现一致：返回执行任务本身（fault 检查、取消时 Result=Cancel）。
         /// </summary>
-        /// <param name="parent">The parent window to which the message box belongs.</param>
-        /// <param name="text">The text to display in the message box.</param>
-        /// <param name="title">The title of the message box.</param>
-        /// <param name="action">The action to execute asynchronously. This action takes the message box instance and a cancellation token as parameters, so it can show progress on the message box.</param>
-        /// <param name="onFinished">An optional action to execute when the asynchronous operation is completed. Takes the task representing the operation as a parameter. Usually it should check if the task is faulted and handle the error thrown during the task, such as showing an error dialog.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result is a <see cref="MessageBoxResult"/> indicating the user's response.</returns>
-        /// <remarks>
-        /// The method initializes a message box with the specified title and text, and runs the provided action in a separate task.
-        /// It supports cancellation through the provided cancellation token. The optional onFinished action allows for additional
-        /// operations to be performed once the asynchronous action completes.
-        /// </remarks>
         public static Task<MessageBoxResult> ShowProcessing(
-                Window parent, 
-                string text, 
-                string title, 
-                Action<MessageBox, 
-                CancellationToken> action,
-                Action<Task>? onFinished= null) {
-            var msgbox = new MessageBox() {
-                Title = title
+                Window parent,
+                string text,
+                string title,
+                Action<MessageBox, CancellationToken> action,
+                Action<Task>? onFinished = null) {
+            var msgbox = new MessageBox();
+            var content = new TextBlock {
+                Text = text,
+                TextWrapping = TextWrapping.Wrap,
+                MaxWidth = 560,
+                VerticalAlignment = VerticalAlignment.Center,
             };
-            msgbox.Text.Text = text;
+            var host = new SukiMessageBoxHost { Header = title, Content = content };
+            host.ActionButtonsSource = new AvaloniaList<Button> {
+                SukiMessageBoxButtonsFactory.CreateButton(
+                    ThemeManager.GetString("button.cancel"), SukiMessageBoxResult.Cancel, "Flat"),
+            };
+            msgbox._host = host;
+            msgbox._contentText = content;
+            msgbox.CaptureWindow(content);
+
             var res = MessageBoxResult.Ok;
             var tokenSource = new CancellationTokenSource();
-
             var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             var task = Task.Run(() => {
                 action.Invoke(msgbox, tokenSource.Token);
                 return res;
             }, tokenSource.Token);
+
+            // 任务完成 → 关窗（若还在）+ 通知调用方
             task.ContinueWith(t => {
                 msgbox.Close();
                 if (onFinished != null) {
@@ -223,29 +297,48 @@ namespace OpenUtau.App.Views {
                 }
             }, scheduler);
 
-            var btn = new Button { Content = ThemeManager.GetString("button.cancel") };
-            btn.Click += (_, __) => {
-                msgbox.Close();
-            };
-            msgbox.Buttons.Children.Add(btn);
-            msgbox.Closed += delegate {
-                if (task.IsCompleted) return;
-                res = MessageBoxResult.Cancel;
-                tokenSource.Cancel();
-            };
-            msgbox.ShowDialog(parent);
+            // 窗口关闭（用户点取消/关窗）→ 若任务未完成则取消
+            _ = SukiMessageBox.ShowDialog(parent, host, title).ContinueWith(dialogTask => {
+                if (!task.IsCompleted) {
+                    res = MessageBoxResult.Cancel;
+                    tokenSource.Cancel();
+                }
+            });
 
             return task;
         }
 
-        private void SetTextWithLink(string text, StackPanel textPanel) {
+        private static MessageBoxResult MapResult(SukiMessageBoxResult r, MessageBoxButtons buttons) {
+            return r switch {
+                SukiMessageBoxResult.OK => MessageBoxResult.Ok,
+                SukiMessageBoxResult.Cancel => MessageBoxResult.Cancel,
+                SukiMessageBoxResult.Yes => MessageBoxResult.Yes,
+                SukiMessageBoxResult.No => MessageBoxResult.No,
+                _ => DefaultResult(buttons), // Close（ESC/X）
+            };
+        }
+
+        /// <summary>旧实现"关闭窗口返回最后设置的默认按钮"语义。</summary>
+        private static MessageBoxResult DefaultResult(MessageBoxButtons buttons) {
+            return buttons switch {
+                MessageBoxButtons.Ok => MessageBoxResult.Ok,
+                MessageBoxButtons.OkCancel => MessageBoxResult.Cancel,
+                MessageBoxButtons.YesNo => MessageBoxResult.No,
+                _ => MessageBoxResult.Cancel, // YesNoCancel
+            };
+        }
+
+        private static void SetTextWithLink(string text, StackPanel textPanel) {
             // @"http(s)?://([\w-]+\.)+[\w-]+(/[A-Z0-9-.,_/?%&=]*)?"
             var regex = new Regex(@"http(s)?://[^(\r\n|\n| )]+", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var match = regex.Match(text);
             if (match.Success) {
                 textPanel.Children.Add(new TextBlock { Text = text.Substring(0, match.Index) });
-                var hyperlink = new Button();
-                hyperlink.Content = match.Value.Trim();
+                var hyperlink = new Button {
+                    Content = match.Value.Trim(),
+                    Cursor = new Cursor(StandardCursorType.Hand),
+                    Classes = { "linkButton" },
+                };
                 hyperlink.Click += OnUrlClick;
                 textPanel.Children.Add(hyperlink);
 
@@ -256,7 +349,8 @@ namespace OpenUtau.App.Views {
                 }
             }
         }
-        private void OnUrlClick(object? sender, RoutedEventArgs e) {
+
+        private static void OnUrlClick(object? sender, RoutedEventArgs e) {
             try {
                 if (sender is Button button && button.Content is string url) {
                     OS.OpenWeb(url);

@@ -196,6 +196,21 @@
     <Setter Property="Background" Value="{DynamicResource PlusBrushSurfaceHover}"/>
   </Style>
 
+  <!-- 链接按钮（MessageBox 错误详情 URL 化，阶段 D 自 MessageBox.axaml 迁出） -->
+  <Style Selector="Button.linkButton">
+    <Setter Property="Background" Value="Transparent"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Cursor" Value="Hand"/>
+  </Style>
+  <Style Selector="Button.linkButton TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+    <Setter Property="TextDecorations" Value="Underline"/>
+  </Style>
+  <Style Selector="Button.linkButton:pointerover TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource AccentBrush2}"/>
+  </Style>
+
   <Style Selector="ToggleButton.normal">
     <Setter Property="BorderThickness" Value="0"/>
     <Setter Property="FontSize" Value="13"/>
