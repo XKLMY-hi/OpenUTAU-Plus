@@ -20,6 +20,9 @@ namespace OpenUtau.App.Views {
 
         public PreferencesDialog() {
             InitializeComponent();
+            // B3：SettingsLayout.Items 只读 DirectProperty，XamlIl 集合填充会 NRE——
+            // item 声明在隐藏容器，构造后统一赋值（setter → SetAndRaise）
+            PrefsLayout.Items = PrefsItemsHost.Children.Cast<SukiUI.Controls.SettingsLayoutItem>().ToArray();
         }
 
         void OpenSingersFolder(object sender, RoutedEventArgs e) {

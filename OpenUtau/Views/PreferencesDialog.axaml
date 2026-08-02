@@ -59,12 +59,17 @@
     </Style>
   </UserControl.Styles>
 
-  <!-- B3: Suki SettingsLayout 设置页形态（顶部 MenuChip 摘要导航 + 竖排 GroupBox 卡片） -->
-  <suki:SettingsLayout>
-    <suki:SettingsLayout.Items>
+  <!-- B3: Suki SettingsLayout 设置页形态（顶部 MenuChip 摘要导航 + 竖排 GroupBox 卡片）。
+       上游坑：SettingsLayout.Items 是只读 DirectProperty（模板前 getter 返回 null），XamlIl 对
+       <SettingsLayout.Items> 属性元素生成 getter().Add() 会 NRE；且派生类 ControlTheme 查找
+       不沿继承链（模板丢失）。故 item 声明在隐藏容器（保留 x:Name/事件绑定），
+       构造后由代码统一赋给 Items（setter → SetAndRaise 写入内部字段）。 -->
+  <Grid>
+    <suki:SettingsLayout x:Name="PrefsLayout"/>
+    <Grid x:Name="PrefsItemsHost" IsVisible="False">
       <!-- General -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.general}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.general}">
+          <suki:SettingsLayoutItem.Content>
           <StackPanel Classes="settingsContent">
             <TextBlock Text="{DynamicResource prefs.appearance.lang}" Margin="0,4,0,0"/>
             <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}">
@@ -85,11 +90,11 @@
             <TextBlock Classes="restart"/>
           </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- Playback -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.playback.device}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.playback.device}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <Grid>
             <TextBlock Text="{DynamicResource prefs.playback.systemdefault}" HorizontalAlignment="Left"/>
@@ -130,11 +135,11 @@
           </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- Paths -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.paths}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.paths}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.paths.singer}" FontSize="12" FontWeight="SemiBold" Opacity="0.7"/>
           <Grid ColumnDefinitions="*,10,Auto" Margin="0,4,0,6" HorizontalAlignment="Stretch">
@@ -166,11 +171,11 @@
           </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- Editing -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.editing}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.editing}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.advanced.lyricshelper}" Margin="0,4,0,0"/>
           <ComboBox ItemsSource="{Binding LyricsHelpers}" SelectedItem="{Binding LyricsHelper}"/>
@@ -180,11 +185,11 @@
           </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- Rendering -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.rendering}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.rendering}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.rendering.prerender}" FontSize="12" FontWeight="SemiBold" Opacity="0.7"/>
           <Grid Margin="0,4,0,0">
@@ -225,11 +230,11 @@
           </StackPanel>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- Appearance -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.appearance}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.appearance}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.appearance.theme}" FontSize="12" FontWeight="SemiBold" Opacity="0.7"/>
           <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,auto,auto,auto" Margin="0,4,0,0">
@@ -287,11 +292,11 @@
           </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- UTAU -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.utau}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.utau}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.rendering.defaultrenderer}" Margin="0,4,0,0"/>
           <ComboBox ItemsSource="{Binding DefaultRendererOptions}" SelectedItem="{Binding DefaultRenderer}"/>
@@ -317,11 +322,11 @@
           </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- DiffSinger -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.diffsinger}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.diffsinger}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.rendering.diffsingersteps}" Margin="0,4,0,0"/>
           <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding DiffSingerStepsOptions}" SelectedItem="{Binding DiffSingerSteps}"/>
@@ -357,11 +362,11 @@
           </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- Advanced -->
-      <suki:SettingsLayoutItem Header="{DynamicResource prefs.advanced}">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="{DynamicResource prefs.advanced}">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.advanced.rememberfiletypes}" Margin="0,4,0,0"/>
           <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="25,25,25" VerticalAlignment="Center" Margin="4">
@@ -386,11 +391,11 @@
           </Border>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
+        </suki:SettingsLayoutItem>
 
       <!-- OpenUTAU Plus -->
-      <suki:SettingsLayoutItem Header="OpenUTAU Plus">
-        <suki:SettingsLayoutItem.Content>
+        <suki:SettingsLayoutItem Header="OpenUTAU Plus">
+          <suki:SettingsLayoutItem.Content>
         <StackPanel Classes="settingsContent">
           <TextBlock Text="{DynamicResource prefs.vst.title}" FontSize="12" FontWeight="SemiBold" Opacity="0.7"/>
           <TextBlock Text="{DynamicResource prefs.vst.scanpaths}" FontSize="11" Opacity="0.7" Margin="0,0,0,6"/>
@@ -409,7 +414,7 @@
           <ListBox Name="VstPluginsList" MinHeight="80" MaxHeight="150" ItemsSource="{Binding VstKnownPlugins}"/>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
-      </suki:SettingsLayoutItem>
-    </suki:SettingsLayout.Items>
-  </suki:SettingsLayout>
+        </suki:SettingsLayoutItem>
+    </Grid>
+  </Grid>
 </UserControl>
