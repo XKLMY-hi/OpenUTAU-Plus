@@ -15,13 +15,14 @@ OpenUTAU Plus 是开源歌声合成平台 OpenUTAU 的增强分支，目标：
 | 技术 | 用途 |
 |------|------|
 | **.NET 8.0** / C# 12 | 运行时和语言 |
-| **Avalonia UI 11.x** | 跨平台桌面 UI 框架 |
-| **ReactiveUI** + Fody | MVVM 框架 |
+| **Avalonia UI 12.1.0** | 跨平台桌面 UI 框架（2026-08-01 从 11.2.4 升级） |
+| **SukiUI 7.0.2-nightly** | 主题+控件库（渐进接管中：阶段 A 主题/菜单/浮层完成，B-D 进行中） |
+| **ReactiveUI** + Fody | MVVM 框架（Avalonia 12 用 ReactiveUI.Avalonia 14.7.1 兼容线） |
 | **ONNX Runtime** | AI/ML 推理（DiffSinger 等） |
 | **NAudio** / MiniAudio | 音频播放 |
 | **YamlDotNet** | USTX 项目文件序列化 |
 | **Serilog** | 结构化日志 |
-| **xUnit** | 单元测试 |
+| **xUnit** | 单元测试（xunit v3） |
 
 ## 项目结构
 
@@ -31,8 +32,8 @@ OpenUtau.sln
 │   ├── Views/             # 窗口和控件
 │   ├── ViewModels/        # MVVM ViewModel
 │   ├── Strings/           # 多语言 .axaml 资源文件
-│   ├── Colors/            # 主题色
-│   ├── Styles/            # 样式
+│   ├── Colors/            # 主题色（Brushes.axaml 兼容键 / DarkTheme·LightTheme 变体）
+│   ├── Styles/            # 样式（SukiOverrides 收敛层 / SukiCompactMenu 紧凑菜单）
 │   ├── Controls/          # 自定义控件
 │   ├── App.axaml           # 应用入口 + 语言注册
 │   └── ThemeManager.cs     # 主题和字符串管理
@@ -109,3 +110,24 @@ git merge master
 - 部分 C++ 原生代码（Worldline 引擎）需要 Bazel 构建，纯 C# 开发不需要
 - Windows 路径中包含非 ASCII 字符可能导致某些 resampler 无法工作
 - 代码中的 `OpenUtau` 命名空间保留不变，仅应用名称和显示文字改为 Plus
+
+## SukiUI 现状与约定（2026-08-02）
+
+- **主题挂载**：`<suki:SukiTheme />` 在 App.axaml Styles 尾部（SukiTheme 自身是 IStyle）；尺寸/字体收敛在 `Styles/SukiOverrides.axaml`（HarmonyOS 13px、TextBlock/Label/Expander Foreground 显式绑定 TextFillColorPrimaryBrush 防暗色黑字）
+- **紧凑菜单**：`Styles/SukiCompactMenu.axaml`（Menu 模板=纯 ItemsPresenter；MenuItem 弹出方向由控件逻辑按层级设，顶栏一级走 MenuItemTopLevel + ItemContainerTheme；右键一级/二级硬编码 RightEdgeAlignedTop；Popup 内容 Border+ItemsPresenter，**禁 TemplateBinding Items**）
+- **玻璃浮层**：对话框/弹出卡片 = 半透明（PlusDialogCard 令牌）+ 主内容 BlurEffect；**内容面仍全实色**
+- **主题切换顺序铁律**：ThemeManager.ApplySukiTheme 先 ChangeBaseTheme 后 ChangeColorTheme（后者会被前者重置）
+- **窗口迁移**：阶段 B 进行中——WindowEx 将改继承 SukiWindow（删 WindowDrawnDecorations 自绘边框）；SukiWindow 派生窗口 x:Name 字段不填充，需 FindControl 兜底
+- 详细踩坑记录在记忆 [[sukiui-replacement]]（SukiUI 7.x API 全集）
+
+## 界面自检流程（视觉验证闭环）
+
+本项目是桌面程序，修改 UI（`Views/*.axaml`、`Styles/`、`Controls/`）后需要视觉验证。
+
+**约定（2026-08-02 用户规定）：一般情况下不使用自截图**；当需要截图参考时由**用户主动提供**截图（用户提供图片 → 用 image-recognize skill 识别）。
+
+识别工具（用户提供截图时使用）：
+- `python "...\image-recognize\recognize.py" <图片路径>`：识别图片内容（布局/颜色/坐标/文字）
+- `auto-look.py --window OpenUTAU --list / --hwnd <句柄>`：用户需要指定窗口截图时用
+- 模型为智谱 `glm-4v-flash`（免费），配置在全局 skill 的 config.json
+- 注意：截图内容会发送到智谱服务器，注意图片内容
