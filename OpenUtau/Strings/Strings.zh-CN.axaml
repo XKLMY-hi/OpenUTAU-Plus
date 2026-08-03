@@ -658,6 +658,16 @@ Curve Type
   <system:String x:Key="welcome.start">开始</system:String>
   <system:String x:Key="welcome.template">模板</system:String>
 
+  <!-- Sidebar (phase E) -->
+  <system:String x:Key="sidebar.projects">项目</system:String>
+  <system:String x:Key="sidebar.library">素材库</system:String>
+  <system:String x:Key="sidebar.recentprojects">最近项目</system:String>
+  <system:String x:Key="sidebar.singers">歌手</system:String>
+  <system:String x:Key="sidebar.samples">采样</system:String>
+  <system:String x:Key="sidebar.vst">VST</system:String>
+  <system:String x:Key="sidebar.vst.comingsoon">即将推出</system:String>
+  <system:String x:Key="sidebar.library.empty">素材库功能开发中</system:String>
+
   <!-- Mix Effects -->
   <system:String x:Key="mixfx.caption">试听效果</system:String>
   <system:String x:Key="mixfx.enabled">在该轨道启用</system:String>

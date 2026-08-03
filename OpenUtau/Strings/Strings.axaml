@@ -829,6 +829,16 @@ General
   <system:String x:Key="welcome.start">Start</system:String>
   <system:String x:Key="welcome.template">Template</system:String>
 
+  <!-- Sidebar (phase E) -->
+  <system:String x:Key="sidebar.projects">Projects</system:String>
+  <system:String x:Key="sidebar.library">Library</system:String>
+  <system:String x:Key="sidebar.recentprojects">Recent Projects</system:String>
+  <system:String x:Key="sidebar.singers">Singers</system:String>
+  <system:String x:Key="sidebar.samples">Samples</system:String>
+  <system:String x:Key="sidebar.vst">VST</system:String>
+  <system:String x:Key="sidebar.vst.comingsoon">Coming soon</system:String>
+  <system:String x:Key="sidebar.library.empty">Library is under development</system:String>
+
   <!-- Mix Effects (post-processing) -->
   <system:String x:Key="mixfx.caption">Track Polish</system:String>
   <system:String x:Key="mixfx.enabled">Enable on this track</system:String>
