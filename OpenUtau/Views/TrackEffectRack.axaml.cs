@@ -523,8 +523,14 @@ namespace OpenUtau.App.Views {
         // ── ICmdSubscriber ────────────────────────────────────────
 
         public void OnNext(Core.UCommand cmd, bool isUndo) {
-            // 异步 Load 完成 → 重建行 UI（DocManager.ExecuteCmd 非 UI 线程自动回投）
+            // 1) VST 槽位异步加载完成（通知）→ 重建行 UI（非 UI 线程自动回投）
             if (cmd is VstSlotChangedNotification n && n.TrackNo == track.TrackNo) {
+                BuildUI();
+                return;
+            }
+            // 2) VST 槽位命令被撤销/重做（Publish 原命令，isUndo=true）→ 重建行 UI，
+            //    否则界面停留旧状态（开关/卡片与实际不符）
+            if (isUndo && cmd.ToString().Contains("VST")) {
                 BuildUI();
             }
         }

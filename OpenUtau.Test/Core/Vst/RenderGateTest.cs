@@ -8,7 +8,9 @@ namespace OpenUtau.Core.Vst {
     /// RenderGate 在飞计数 + TryFlushAllPendingDispose 的条件拒绝。
     /// 注意：VstPluginManager.Inst 是单例且依赖 PlaybackManager（DummyAudioOutput
     /// 默认 Stopped → OutputActive == false），测试间共享状态——每用例 ClearAll 兜底。
+    /// 共享静态计数的测试方法必须串行（类内并行会互相干扰精确断言）。
     /// </summary>
+    [Collection("VstShared")]
     public class RenderGateTest {
         [Fact]
         public void EnterLeave_CountsInFlight() {

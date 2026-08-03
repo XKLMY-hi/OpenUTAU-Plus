@@ -83,7 +83,8 @@ namespace OpenUtau.Core.Vst {
                 }, ct).ConfigureAwait(false);
 
                 lock (_writeLock) {
-                    if (ct.IsCancellationRequested) {
+                    // 复查：加载期间可能被撤销/清空（uid 已空）——丢弃实例
+                    if (ct.IsCancellationRequested || !slot.IsLoaded || slot.Bypassed) {
                         fx.Dispose();
                         return null;
                     }

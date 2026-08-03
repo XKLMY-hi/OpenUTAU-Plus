@@ -116,15 +116,42 @@ namespace OpenUtau.Core {
             public override string ToString() => $"VST slot {track.TrackName}[{slotIndex}] → {newUid}";
         }
 
-        /// <summary>槽位旁路（数据级，下次渲染快照生效——无需重载实例）。</summary>
+        /// <summary>
+        /// 槽位旁路（数据级，下次渲染快照生效——无需重载实例）。
+        /// 自定义命令类：do 首次执行捕获旧值，取反**当前**值（toggle 语义——
+        /// LambdaCommand 的固定 !old 在"撤销后新命令"场景会把启用点成关闭）。
+        /// </summary>
         public static UCommand ToggleVstBypass(UTrack track, int slotIndex) {
-            if (slotIndex >= track.VstSlots.Count) return new LambdaCommand(() => { }, () => { }, "noop");
-            var slot = track.VstSlots[slotIndex];
-            bool old = slot.Bypassed;
-            return new LambdaCommand(
-                () => slot.Bypassed = !old,
-                () => slot.Bypassed = old,
-                $"Toggle bypass {track.TrackName}[{slotIndex}]");
+            return new ToggleVstBypassCommand(track, slotIndex);
+        }
+
+        sealed class ToggleVstBypassCommand : UCommand {
+            readonly UTrack track;
+            readonly int slotIndex;
+            bool oldValue;
+            bool captured;
+
+            public ToggleVstBypassCommand(UTrack track, int slotIndex) {
+                this.track = track;
+                this.slotIndex = slotIndex;
+            }
+
+            public override void Execute() {
+                if (slotIndex >= track.VstSlots.Count) return;
+                var slot = track.VstSlots[slotIndex];
+                if (!captured) {
+                    oldValue = slot.Bypassed;
+                    captured = true;
+                }
+                slot.Bypassed = !oldValue;
+            }
+
+            public override void Unexecute() {
+                if (slotIndex >= track.VstSlots.Count) return;
+                track.VstSlots[slotIndex].Bypassed = oldValue;
+            }
+
+            public override string ToString() => $"Toggle VST bypass {track.TrackName}[{slotIndex}]";
         }
 
         // ── helpers ───────────────────────────────────────────────

@@ -2,6 +2,7 @@ using System;
 using Xunit;
 
 namespace OpenUtau.Core.Vst {
+    [Collection("VstShared")]
     public class VstEffectTest {
         private const string TestUid = "test:fake-plugin";
 

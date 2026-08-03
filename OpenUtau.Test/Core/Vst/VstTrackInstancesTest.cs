@@ -5,6 +5,7 @@ using Xunit;
 
 namespace OpenUtau.Core.Vst {
     /// <summary>LoadAtAsync 的串行化与生命周期（FakeVstBridge 注入）。</summary>
+    [Collection("VstShared")]
     public class VstTrackInstancesTest {
         private const string TestUid = "test:async-load";
 

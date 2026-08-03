@@ -9,7 +9,10 @@ namespace OpenUtau.Core.Vst {
     /// <summary>
     /// TrackMixCommands 的 VST 槽位命令 do/undo 往返——数据层（slot）与实例层
     /// （VstPluginManager 异步加载）双重断言。FakeVstBridge 注入 + 轮询等待异步 Load。
+    /// 共享 VstPluginManager/Registry 单例的测试类需串行（fire-and-forget 异步
+    /// Load 任务可能跨测试残留）。
     /// </summary>
+    [Collection("VstShared")]
     public class TrackMixCommandsTest {
         const string UidA = "test:cmd-a";
         const string UidB = "test:cmd-b";
