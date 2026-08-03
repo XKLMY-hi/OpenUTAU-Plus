@@ -88,6 +88,7 @@ namespace OpenUtau.App.Views {
             // 阶段 E4：侧栏素材库 VM（歌手列表 + 伴奏库）
             sidebarViewModel = new SidebarViewModel();
             SingersPanel.DataContext = sidebarViewModel;
+            SamplesPanel.DataContext = sidebarViewModel;
 
             viewModel.NewProject();
             viewModel.AddTempoChangeCmd = ReactiveCommand.Create<int>(tick => AddTempoChange(tick));
@@ -868,6 +869,38 @@ namespace OpenUtau.App.Views {
             await Task.Run(() => SingerManager.Inst.SearchAllSingers());
             DocManager.Inst.ExecuteCmd(new SingersRefreshedNotification());
             LoadingWindow.EndLoading();
+        }
+
+        /// <summary>双击伴奏卡片 → 新建轨道添加音频。</summary>
+        private void OnSampleDoubleTap(object? sender, TappedEventArgs e) {
+            if (sender is Border { DataContext: SampleItem item }) {
+                ImportAudioSafely(item.Path);
+            }
+        }
+
+        /// <summary>试听伴奏（PlaybackManager 会中断当前播放）。</summary>
+        private void OnSamplePlay(object? sender, RoutedEventArgs e) {
+            if (sender is Button { DataContext: SampleItem item }) {
+                try {
+                    PlaybackManager.Inst.PlayFile(item.Path);
+                } catch (Exception ex) {
+                    Log.Error(ex, $"Failed to play sample {item.Path}");
+                }
+            }
+        }
+
+        /// <summary>重扫伴奏目录（仅枚举文件名，不读元数据）。</summary>
+        private void OnRefreshSamples(object? sender, RoutedEventArgs e) {
+            sidebarViewModel.RefreshSamples();
+        }
+
+        private void ImportAudioSafely(string path) {
+            try {
+                viewModel.ImportAudio(path);
+            } catch (Exception e) {
+                Log.Error(e, $"Failed to import audio {path}");
+                _ = MessageBox.ShowError(this, new MessageCustomizableException("Failed to import audio", "<translate:errors.failed.importaudio>", e));
+            }
         }
 
         private void OnShowProjects(object? sender, RoutedEventArgs e) {

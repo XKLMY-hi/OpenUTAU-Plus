@@ -838,6 +838,7 @@ General
   <system:String x:Key="sidebar.samples">Samples</system:String>
   <system:String x:Key="sidebar.vst">VST</system:String>
   <system:String x:Key="sidebar.vst.comingsoon">Coming soon</system:String>
+  <system:String x:Key="sidebar.play">Preview</system:String>
   <system:String x:Key="sidebar.refresh">Refresh</system:String>
   <system:String x:Key="sidebar.singers.empty">No singers found</system:String>
   <system:String x:Key="sidebar.samples.empty">No audio files found. Add a folder in Preferences → Paths</system:String>

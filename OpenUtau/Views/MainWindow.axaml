@@ -407,18 +407,55 @@
                     </Border>
                   </StackPanel>
                 </Grid>
-                <!-- 采样音频（占位） -->
-                <StackPanel Grid.Row="1" x:Name="SamplesPanel" Margin="8,6,8,0" IsVisible="False">
-                  <Border Classes="sideCard" Margin="0,8,0,0">
-                    <StackPanel>
-                      <Path Data="{StaticResource icon-music}" Width="16" Height="16" Stretch="Uniform"
-                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            HorizontalAlignment="Left" Margin="0,0,0,6"/>
-                      <TextBlock FontSize="11" Opacity="0.55"
-                                 Text="{DynamicResource sidebar.library.empty}"/>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
+                <!-- 伴奏库（E4：双击新建轨道 / 拖拽 / 试听） -->
+                <Grid Grid.Row="1" x:Name="SamplesPanel" Margin="8,6,8,0" IsVisible="False" RowDefinitions="Auto,*">
+                  <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,2">
+                    <TextBlock Text="{DynamicResource sidebar.samples}" FontSize="11" Opacity="0.45"
+                               Margin="2,4,0,4" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Classes="iconBtn" Width="24" Height="24" Click="OnRefreshSamples"
+                            ToolTip.Tip="{DynamicResource sidebar.refresh}">
+                      <Path Data="{StaticResource icon-refresh-cw}" Width="12" Height="12" Stretch="Uniform"
+                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    </Button>
+                  </Grid>
+                  <ListBox Grid.Row="1" ItemsSource="{Binding Samples}" Background="Transparent"
+                           BorderThickness="0" IsVisible="{Binding HasSamples}">
+                    <ListBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:SampleItem">
+                        <Border Classes="sideItem small" DoubleTapped="OnSampleDoubleTap"
+                                PointerPressed="OnSidebarPointerPressed" PointerMoved="OnSidebarPointerMoved">
+                          <Grid ColumnDefinitions="26,8,*,Auto" Background="Transparent">
+                            <Border Grid.Column="0" Width="26" Height="26" CornerRadius="6"
+                                    Background="{DynamicResource PlusSurfaceControl}" HorizontalAlignment="Left">
+                              <Path Data="{StaticResource icon-music}" Width="13" Height="13" Stretch="Uniform"
+                                    Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Grid.Column="2" FontSize="12" VerticalAlignment="Center"
+                                       Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                            <Button Grid.Column="3" Classes="iconBtn" Width="26" Height="26" Margin="4,0,0,0"
+                                    Click="OnSamplePlay" ToolTip.Tip="{DynamicResource sidebar.play}">
+                              <Path Data="{StaticResource icon-play}" Width="11" Height="11" Stretch="Uniform"
+                                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                            </Button>
+                          </Grid>
+                        </Border>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                  <!-- 空状态 -->
+                  <StackPanel Grid.Row="1" IsVisible="{Binding !HasSamples}">
+                    <Border Classes="sideCard" Margin="0,8,0,0">
+                      <StackPanel>
+                        <Path Data="{StaticResource icon-music}" Width="16" Height="16" Stretch="Uniform"
+                              Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                              HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                        <TextBlock FontSize="11" Opacity="0.55" TextWrapping="Wrap"
+                                   Text="{DynamicResource sidebar.samples.empty}"/>
+                      </StackPanel>
+                    </Border>
+                  </StackPanel>
+                </Grid>
                 <!-- VST 乐器音源（占位：未来功能） -->
                 <Grid Grid.Row="1" x:Name="VstPanel" IsVisible="False">
                   <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-30,0,0">

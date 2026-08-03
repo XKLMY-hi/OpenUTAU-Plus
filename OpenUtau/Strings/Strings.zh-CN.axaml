@@ -667,6 +667,7 @@ Curve Type
   <system:String x:Key="sidebar.samples">伴奏</system:String>
   <system:String x:Key="sidebar.vst">VST</system:String>
   <system:String x:Key="sidebar.vst.comingsoon">即将推出</system:String>
+  <system:String x:Key="sidebar.play">试听</system:String>
   <system:String x:Key="sidebar.refresh">刷新</system:String>
   <system:String x:Key="sidebar.singers.empty">未找到歌手</system:String>
   <system:String x:Key="sidebar.samples.empty">未找到音频文件。可在偏好设置 → 路径中添加目录</system:String>
