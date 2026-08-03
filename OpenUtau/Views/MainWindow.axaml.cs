@@ -791,12 +791,14 @@ namespace OpenUtau.App.Views {
                 SidebarSplitter.IsVisible = false;
                 SidebarCloseIcon.IsVisible = false;
                 SidebarOpenIcon.IsVisible = true;
+                SidebarOpenBtn.IsVisible = true; // 浮出打开按钮
             } else {
                 MainLayout.ColumnDefinitions[0].Width = new GridLength(208);
                 MainLayout.ColumnDefinitions[1].Width = new GridLength(6);
                 SidebarSplitter.IsVisible = true;
                 SidebarCloseIcon.IsVisible = true;
                 SidebarOpenIcon.IsVisible = false;
+                SidebarOpenBtn.IsVisible = false;
             }
         }
 

@@ -30,24 +30,18 @@
     <Style Selector="Button.iconBtn:pointerover">
       <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
     </Style>
-    <!-- 阶段 E：播放控制按钮（Suki 风格圆钮） -->
+    <!-- 阶段 E：播放控制按钮（无背景，hover 微亮；主播放键以 accent 色图标区分） -->
     <Style Selector="Button.playBtn">
       <Setter Property="Width" Value="30"/>
       <Setter Property="Height" Value="30"/>
       <Setter Property="Padding" Value="0"/>
-      <Setter Property="Background" Value="{DynamicResource PlusSurfaceControl}"/>
+      <Setter Property="Background" Value="Transparent"/>
       <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="15"/>
       <Setter Property="Cursor" Value="Hand"/>
     </Style>
     <Style Selector="Button.playBtn:pointerover">
       <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
-    </Style>
-    <Style Selector="Button.playBtn.accent">
-      <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
-    </Style>
-    <Style Selector="Button.playBtn.accent:pointerover">
-      <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
     </Style>
     <!-- 阶段 E：侧栏主选项卡（项目/素材库） -->
     <Style Selector="Button.sideTab">
@@ -121,23 +115,16 @@
   <Border Padding="0,8,0,0">
   <Grid>
     <!-- MainGrid：主内容（overlay 时模糊目标） -->
-    <Grid x:Name="MainGrid" RowDefinitions="40,36,*,28">
-      <!-- ══════════ 顶栏 40px：Logo + 文字菜单 + 右侧图标动作 ══════════ -->
+    <Grid x:Name="MainGrid" RowDefinitions="40,*,28">
+      <!-- ══════════ 顶栏 40px：菜单 + 播放控制（BPM/拍号/播放按钮）+ 动作 ══════════ -->
       <Border Grid.Row="0" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1">
-        <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
-          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <Border Width="26" Height="26" CornerRadius="7"
-                    Background="{DynamicResource AccentBrush1}" Margin="0,0,10,0"
-                    VerticalAlignment="Center">
-              <Path Data="{StaticResource icon-music}" Width="13" Height="13"
-                    Stretch="Uniform" Fill="White" HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
-            </Border>
-            <TextBlock Text="OpenUTAU Plus" FontSize="14" FontWeight="SemiBold"
-                       VerticalAlignment="Center" Margin="0,0,24,0"/>
-            <Menu VerticalAlignment="Center" Margin="0,-3,0,0"
-                  Opened="OnMainMenuOpened" Closed="OnMainMenuClosed"
-                  PointerExited="OnMainMenuPointerLeave">
+        <!-- 双层：底层放左右两翼，播放组放覆盖层——左右翼宽度不等时播放组仍相对窗口真居中 -->
+        <Grid Margin="12,0,12,0">
+          <!-- 底层：左菜单 + 右动作（* 列占满，右动作贴右缘） -->
+          <Grid ColumnDefinitions="Auto,*">
+          <Menu VerticalAlignment="Center" Margin="0,-3,0,0"
+                Opened="OnMainMenuOpened" Closed="OnMainMenuClosed"
+                PointerExited="OnMainMenuPointerLeave">
               <MenuItem Header="{DynamicResource menu.file}" IsEnabled="{Binding Page}">
                 <MenuItem Header="{DynamicResource menu.file.new}" InputGesture="Ctrl+N" Click="OnMenuNew"/>
                 <MenuItem Header="{DynamicResource menu.file.newfromtemplate}" ItemsSource="{Binding OpenTemplatesMenuItems}" Classes="MenuItemWithSubMenu"/>
@@ -204,53 +191,42 @@
                 <MenuItem Header="{DynamicResource menu.help.logslocation}" Click="OnMenuLogsLocation"/>
               </MenuItem>
             </Menu>
-          </StackPanel>
-          <!-- 右侧动作：撤销/重做/偏好设置 -->
-          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-            <Button Classes="iconBtn" Command="{Binding Undo}" IsEnabled="{Binding CanUndo}">
-              <Path Data="{StaticResource icon-undo}" Width="14" Height="14" Stretch="Uniform"
-                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-            </Button>
-            <Button Classes="iconBtn" Command="{Binding Redo}" IsEnabled="{Binding CanRedo}">
-              <Path Data="{StaticResource icon-redo}" Width="14" Height="14" Stretch="Uniform"
-                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-            </Button>
-            <Border Width="1" Height="18" Background="{DynamicResource PlusBorderSubtle}" Margin="6,0"/>
-            <Button Classes="iconBtn" Click="OnMenuPreferences">
-              <Path Data="{StaticResource icon-settings}" Width="15" Height="15" Stretch="Uniform"
-                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-            </Button>
-          </StackPanel>
-        </Grid>
-      </Border>
 
-      <!-- ══════════ 播放条 36px：播放控制 + BPM/拍号 + 位置 + 缩放 ══════════ -->
-      <Border Grid.Row="1" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1">
-        <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
-          <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-            <Button Classes="playBtn" Command="{Binding PlaybackViewModel.SeekStart}">
-              <Path Data="{StaticResource icon-skip-back}" Width="11" Height="11" Stretch="Uniform"
-                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-            </Button>
-            <Button Classes="playBtn accent" Click="OnPlayOrPause">
-              <Path Data="{StaticResource icon-play}" Width="12" Height="12" Stretch="Uniform"
-                    Fill="White" Margin="1,0,0,0"/>
-            </Button>
-            <Button Classes="playBtn" Command="{Binding PlaybackViewModel.Pause}">
-              <Path Data="{StaticResource icon-pause}" Width="11" Height="11" Stretch="Uniform"
-                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-            </Button>
-            <Button Classes="playBtn" Command="{Binding PlaybackViewModel.SeekEnd}">
-              <Path Data="{StaticResource icon-skip-forward}" Width="11" Height="11" Stretch="Uniform"
-                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
-            </Button>
+          <!-- 右：动作 + 播放位置 + 缩放 -->
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center"
+                      HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal" Spacing="4">
+              <Button Classes="iconBtn" Command="{Binding Undo}" IsEnabled="{Binding CanUndo}">
+                <Path Data="{StaticResource icon-undo}" Width="14" Height="14" Stretch="Uniform"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              </Button>
+              <Button Classes="iconBtn" Command="{Binding Redo}" IsEnabled="{Binding CanRedo}">
+                <Path Data="{StaticResource icon-redo}" Width="14" Height="14" Stretch="Uniform"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              </Button>
+              <Button Classes="iconBtn" Click="OnMenuPreferences">
+                <Path Data="{StaticResource icon-settings}" Width="15" Height="15" Stretch="Uniform"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              </Button>
+            </StackPanel>
+            <Border Width="1" Height="18" Background="{DynamicResource PlusBorderSubtle}" Margin="4,0"/>
+            <TextBlock Text="{Binding Path=PlaybackViewModel.PlayPosTime, StringFormat={}{0:mm\\:ss\\.fff}}"
+                       FontSize="12" VerticalAlignment="Center"/>
+            <Border Width="1" Height="18" Background="{DynamicResource PlusBorderSubtle}" Margin="4,0"/>
+            <Border Height="24" VerticalAlignment="Center"
+                    PointerWheelChanged="ViewScalerPointerWheelChanged">
+              <c:ViewScaler Name="VScaler" DataContext="{Binding TracksViewModel}"
+                            Value="{Binding TrackHeight}"
+                            Min="{Binding TrackHeightMin}" Max="{Binding TrackHeightMax}"/>
+            </Border>
           </StackPanel>
+          </Grid>
 
-          <!-- BPM / 拍号（点击编辑） -->
-          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14"
+          <!-- 中：BPM + 拍号 + 播放控制（覆盖层，相对窗口真居中） -->
+          <StackPanel Orientation="Horizontal" Spacing="14"
                       HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Background="Transparent" PointerPressed="OnEditBpm" Cursor="Hand"
-                       FontSize="13" FontWeight="SemiBold"
+                       FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"
                        Foreground="{DynamicResource AccentBrush1}">
               <TextBlock.Text>
                 <MultiBinding StringFormat="{}{0:#0.00}">
@@ -267,25 +243,30 @@
                 </MultiBinding>
               </TextBlock.Text>
             </TextBlock>
-          </StackPanel>
-
-          <!-- 播放位置 + 轨道高度缩放 -->
-          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-            <TextBlock Text="{Binding Path=PlaybackViewModel.PlayPosTime, StringFormat={}{0:mm\\:ss\\.fff}}"
-                       FontSize="12" VerticalAlignment="Center"/>
-            <Border Width="1" Height="18" Background="{DynamicResource PlusBorderSubtle}" Margin="4,0"/>
-            <Border Height="24" VerticalAlignment="Center"
-                    PointerWheelChanged="ViewScalerPointerWheelChanged">
-              <c:ViewScaler Name="VScaler" DataContext="{Binding TracksViewModel}"
-                            Value="{Binding TrackHeight}"
-                            Min="{Binding TrackHeightMin}" Max="{Binding TrackHeightMax}"/>
-            </Border>
+            <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <Button Classes="playBtn" Command="{Binding PlaybackViewModel.SeekStart}">
+                <Path Data="{StaticResource icon-skip-back}" Width="12" Height="12" Stretch="Uniform"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              </Button>
+              <Button Classes="playBtn" Click="OnPlayOrPause">
+                <Path Data="{StaticResource icon-play}" Width="12" Height="12" Stretch="Uniform"
+                      Fill="{DynamicResource AccentBrush1}"/>
+              </Button>
+              <Button Classes="playBtn" Command="{Binding PlaybackViewModel.Pause}">
+                <Path Data="{StaticResource icon-pause}" Width="12" Height="12" Stretch="Uniform"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              </Button>
+              <Button Classes="playBtn" Command="{Binding PlaybackViewModel.SeekEnd}">
+                <Path Data="{StaticResource icon-skip-forward}" Width="12" Height="12" Stretch="Uniform"
+                      Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              </Button>
+            </StackPanel>
           </StackPanel>
         </Grid>
       </Border>
 
       <!-- ══════════ 主区：侧栏 + 内容页 ══════════ -->
-      <Grid Grid.Row="2" x:Name="MainLayout" ColumnDefinitions="208,6,*">
+      <Grid Grid.Row="1" x:Name="MainLayout" ColumnDefinitions="208,6,*">
         <!-- ── 左侧栏：项目 / 素材库 双选项卡 ── -->
         <Border Grid.Column="0" Background="{DynamicResource PlusSurfaceRaised}"
                 BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
@@ -424,6 +405,14 @@
 
         <GridSplitter Grid.Column="1" x:Name="SidebarSplitter" Width="6" Background="Transparent"
                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="SizeWestEast"/>
+
+        <!-- 侧栏折叠后的浮出打开按钮（贴着编辑区左缘） -->
+        <Button Grid.Column="2" x:Name="SidebarOpenBtn" Classes="iconBtn"
+                HorizontalAlignment="Left" VerticalAlignment="Top" ZIndex="100"
+                Margin="6,6,0,0" IsVisible="False" Click="OnToggleSidebar">
+          <Path Data="{StaticResource icon-chevron-right}" Width="13" Height="13" Stretch="Uniform"
+                Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+        </Button>
 
         <Carousel Grid.Column="2" SelectedIndex="{Binding Page}">
           <!--Welcome page -->
@@ -852,7 +841,7 @@
       </Grid>
 
       <!-- ══════════ 状态条 28px：进度文本 + 进度条 + 版本 ══════════ -->
-      <Border Grid.Row="3" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,1,0,0">
+      <Border Grid.Row="2" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,1,0,0">
         <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
           <TextBlock VerticalAlignment="Center" FontSize="11" Opacity="0.6"
                      Text="{Binding ProgressText}"/>
