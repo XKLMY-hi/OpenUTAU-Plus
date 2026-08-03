@@ -198,6 +198,36 @@ namespace OpenUtau.Core {
         public bool StartingToPlay { get; private set; }
         public bool PlayingMaster { get; private set; }
 
+        // 当前 Init 的 provider 包装层——Stop 后靠它确认音频回调线程已退出在飞 Read（B1 竞态屏障）
+        private Audio.CallbackTrackedSampleProvider? trackedProvider;
+
+        /// <summary>统一换源入口：包装 provider 供 drain 追踪。</summary>
+        private void InitOutput(ISampleProvider provider) {
+            var tracked = new Audio.CallbackTrackedSampleProvider(provider);
+            trackedProvider = tracked;
+            AudioOutput.Init(tracked);
+        }
+
+        /// <summary>
+        /// 阻塞直到音频回调线程退出在飞 Read（须在 AudioOutput.Stop() 之后调用）。
+        /// Stop 后设备不再拉取新数据，在飞的 Read 会在毫秒级完成退出；
+        /// 超时保护（回调卡死时不阻塞 UI），超时记日志继续。
+        /// </summary>
+        private void WaitForCallbackDrain() {
+            var provider = trackedProvider;
+            if (provider == null) return;
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            var spin = new System.Threading.SpinWait();
+            while (provider.InCallback) {
+                if (sw.ElapsedMilliseconds > 2000) {
+                    Log.Warning("WaitForCallbackDrain timed out — audio callback stuck in Read.");
+                    return;
+                }
+                spin.SpinOnce();
+            }
+        }
+
         // 混音台主推子（masterMix 创建前暂存，StartPlayback 时应用）
         private double masterVolumeDb = 0;
         public bool MasterMuted { get; private set; }
@@ -225,7 +255,7 @@ namespace OpenUtau.Core {
             masterMix = null;
             PlayingMaster = false;
             AudioOutput.Stop();
-            AudioOutput.Init(new SignalGenerator(44100, 1).Take(TimeSpan.FromSeconds(1)));
+            InitOutput(new SignalGenerator(44100, 1).Take(TimeSpan.FromSeconds(1)));
             AudioOutput.Play();
         }
 
@@ -235,7 +265,7 @@ namespace OpenUtau.Core {
             // If nothing is playing, start editing mix
             if (!OutputActive) {
                 AudioOutput.Stop();
-                AudioOutput.Init(editingMix);
+                InitOutput(editingMix);
                 AudioOutput.Play();
             }
         }
@@ -255,7 +285,7 @@ namespace OpenUtau.Core {
             }
             try{
                 var playSound = Wave.OpenFile(file);
-                AudioOutput.Init(playSound.ToSampleProvider());
+                InitOutput(playSound.ToSampleProvider());
             } catch (Exception ex) {
                 Log.Error(ex, $"Failed to load sample {file}.");
                 return;
@@ -346,6 +376,8 @@ namespace OpenUtau.Core {
 
         public void StopPlayback() {
             AudioOutput.Stop();
+            // 旧回调线程退出后才允许释放其引用的资源（VST 延迟销毁的 Flush 安全点之一）
+            WaitForCallbackDrain();
             PlayingMaster = false;
             loopEndTick = -1;
             TrackLevels.Clear();
@@ -368,7 +400,9 @@ namespace OpenUtau.Core {
             masterMix = masterAdapter;
             masterMix.Scale = MasterMuted ? 0 : DecibelToVolume(masterVolumeDb);
             AudioOutput.Stop();
-            AudioOutput.Init(masterMix);
+            // 换源前确认旧回调线程已退出（B1 竞态屏障——旧链上的 VST handle 可安全延迟销毁）
+            WaitForCallbackDrain();
+            InitOutput(masterMix);
             AudioOutput.Play();
         }
 
