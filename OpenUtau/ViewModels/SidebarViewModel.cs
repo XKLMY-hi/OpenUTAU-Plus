@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Util;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
 
@@ -18,6 +20,8 @@ namespace OpenUtau.App.ViewModels {
         public string Name => Singer.LocalizedName;
         public bool ShowBadge => Singer.SingerType is USingerType.Classic or USingerType.DiffSinger;
         public string BadgeText => Singer.SingerType == USingerType.DiffSinger ? "DiffSinger" : "Classic";
+        public string AvatarFallback => string.IsNullOrEmpty(Name) ? "?" : Name[..1].ToUpperInvariant();
+        public bool ShowAvatarFallback => Avatar == null;
 
         private Bitmap? avatar;
         public Bitmap? Avatar => avatar ??= LoadAvatar(Singer);
@@ -42,9 +46,11 @@ namespace OpenUtau.App.ViewModels {
     }
 
     /// <summary>侧栏伴奏卡片：仅文件名 + 路径（不读元数据，试听/添加时才读取）。</summary>
-    public class SampleItem {
+    public class SampleItem : ReactiveObject {
         public string Name { get; }
         public string Path { get; }
+        public string Format => System.IO.Path.GetExtension(Path).TrimStart('.').ToUpperInvariant();
+        [Reactive] public bool IsPreviewing { get; set; }
 
         public SampleItem(string path) {
             Path = path;
@@ -67,6 +73,14 @@ namespace OpenUtau.App.ViewModels {
 
         public SidebarViewModel() {
             DocManager.Inst.AddSubscriber(this);
+            // 试听状态变化 → 更新伴奏卡片播放状态（跨线程，回 UI 线程处理）
+            PlaybackManager.Inst.PreviewChanged += path => {
+                Dispatcher.UIThread.Post(() => {
+                    foreach (var item in Samples) {
+                        item.IsPreviewing = item.Path == path;
+                    }
+                });
+            };
             RefreshSingers();
             RefreshSamples();
         }

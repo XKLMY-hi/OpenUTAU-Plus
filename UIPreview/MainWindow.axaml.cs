@@ -22,7 +22,7 @@ public partial class MainWindow : SukiWindow {
             SidebarCloseIcon.IsVisible = false;
             SidebarOpenIcon.IsVisible = true;
         } else {
-            MainLayout.ColumnDefinitions[0].Width = new GridLength(208);
+            MainLayout.ColumnDefinitions[0].Width = new GridLength(240);
             MainLayout.ColumnDefinitions[1].Width = new GridLength(6);
             SidebarSplitter.IsVisible = true;
             SidebarCloseIcon.IsVisible = true;

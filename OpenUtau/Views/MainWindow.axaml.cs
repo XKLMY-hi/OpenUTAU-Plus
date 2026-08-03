@@ -811,7 +811,7 @@ namespace OpenUtau.App.Views {
                 SidebarOpenIcon.IsVisible = true;
                 SidebarOpenBtn.IsVisible = true; // 浮出打开按钮
             } else {
-                MainLayout.ColumnDefinitions[0].Width = new GridLength(208);
+                MainLayout.ColumnDefinitions[0].Width = new GridLength(240);
                 MainLayout.ColumnDefinitions[1].Width = new GridLength(6);
                 SidebarSplitter.IsVisible = true;
                 SidebarCloseIcon.IsVisible = true;
@@ -878,13 +878,13 @@ namespace OpenUtau.App.Views {
             }
         }
 
-        /// <summary>试听伴奏（PlaybackManager 会中断当前播放）。</summary>
+        /// <summary>试听/停止伴奏（独立通道，不中断工程播放；再次点击停止）。</summary>
         private void OnSamplePlay(object? sender, RoutedEventArgs e) {
             if (sender is Button { DataContext: SampleItem item }) {
-                try {
-                    PlaybackManager.Inst.PlayFile(item.Path);
-                } catch (Exception ex) {
-                    Log.Error(ex, $"Failed to play sample {item.Path}");
+                if (PlaybackManager.Inst.PreviewPath == item.Path) {
+                    PlaybackManager.Inst.StopPreview();
+                } else {
+                    PlaybackManager.Inst.PlayPreview(item.Path);
                 }
             }
         }

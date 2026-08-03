@@ -223,7 +223,7 @@
     <!-- ══════════ E3 侧栏 + 编辑区 ══════════ -->
     <Grid Grid.Row="2" x:Name="MainLayout">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="208"/>
+        <ColumnDefinition Width="240"/>
         <ColumnDefinition Width="6"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
