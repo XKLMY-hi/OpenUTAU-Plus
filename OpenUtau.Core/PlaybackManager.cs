@@ -349,6 +349,8 @@ namespace OpenUtau.Core {
             PlayingMaster = false;
             loopEndTick = -1;
             TrackLevels.Clear();
+            // 失效旧渲染的 faders 引用（OnNext 已有 null 检查——seek/停止后音量/声像通知不再写入过期链）
+            faders = null;
         }
 
         public void PausePlayback() {
