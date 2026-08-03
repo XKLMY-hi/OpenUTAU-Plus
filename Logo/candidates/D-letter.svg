@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <clipPath id="r"><rect width="240" height="240" rx="52"/></clipPath>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4ea6ea"/>
+      <stop offset="1" stop-color="#4682B4"/>
+    </linearGradient>
+  </defs>
+  <!-- 方案 D：字母 O + 音符 —— 蓝渐变底 + 白色 OU 字标 + 音符 -->
+  <g clip-path="url(#r)">
+    <rect width="240" height="240" fill="url(#g)"/>
+    <!-- O 字母（唱片环） -->
+    <circle cx="120" cy="118" r="64" fill="none" stroke="#fff" stroke-width="20"/>
+    <circle cx="120" cy="118" r="20" fill="#ff71a3"/>
+    <!-- 音符符头 -->
+    <ellipse cx="168" cy="172" rx="16" ry="12" fill="#fff" transform="rotate(-20 168 172)"/>
+    <path fill="#fff" d="M180,170V64l-26,6v18l20-5v90Z"/>
+  </g>
+</svg>

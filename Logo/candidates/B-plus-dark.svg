@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240">
+  <defs>
+    <clipPath id="r"><rect width="240" height="240" rx="52"/></clipPath>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a2a36"/>
+      <stop offset="1" stop-color="#1e1e28"/>
+    </linearGradient>
+  </defs>
+  <!-- 方案 B（定稿）：深色渐变底 + 原版路径音符（主题蓝）+ 原版路径唱片环（粉） -->
+  <g clip-path="url(#r)">
+    <rect width="240" height="240" fill="url(#bg)"/>
+    <!-- 斜切高光（弱化背景分割） -->
+    <path fill="#ffffff" opacity="0.05" d="M0,150 240,99 V240 H0 Z"/>
+    <!-- 矩形（粉标）：原版 cls-4 路径，主题蓝 -->
+    <path fill="#B0C4DE" d="M100.81,168h22L154.15,40H132Z"/>
+    <!-- 音符：原版 cls-5 路径（保证不错位），主题蓝 -->
+    <path fill="#B0C4DE" d="M177.26,58v2.48a11.26,11.26,0,0,1-22.52,0V40H132V60.85C132,79.33,147.05,94,166,94c18.72,0,34-14.67,34-33.15V53.21Z"/>
+    <!-- 唱片环：原版 cls-6 路径，粉 -->
+    <path fill="#ff71a3" d="M40,158.11A42,42,0,1,0,81.94,116,41.85,41.85,0,0,0,40,158.11Zm62-.11A20,20,0,1,1,81.94,138,20.11,20.11,0,0,1,102,158Z"/>
+  </g>
+</svg>
