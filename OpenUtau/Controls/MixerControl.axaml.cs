@@ -90,4 +90,9 @@ public partial class MixerControl : UserControl
         ViewModel.Tracks.CollectionChanged -= OnTracksChanged;
         DocManager.Inst.RemoveSubscriber(ViewModel);
     }
+
+    private void OnAddTrackClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        ViewModel.AddTrack();
+    }
 }
