@@ -83,8 +83,11 @@
   </ItemGroup>
   <Target Name="CopyVstProbe" AfterTargets="Build">
     <MSBuild Projects="..\VstProbe\VstProbe.csproj" Targets="Build" />
-    <Copy SourceFiles="..\VstProbe\bin\$(Configuration)\net8.0\vst_probe.exe"
-          DestinationFolder="$(OutDir)" />
+    <!-- 复制 vst_probe 全部产物：apphost 运行需要同目录的 dll + runtimeconfig.json -->
+    <ItemGroup>
+      <VstProbeFiles Include="..\VstProbe\bin\$(Configuration)\net8.0\vst_probe.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(VstProbeFiles)" DestinationFolder="$(OutDir)" />
   </Target>
   <ItemGroup Condition="'$(Configuration)'=='DEBUG'">
     <None Include="..\runtimes\**" CopyToOutputDirectory="PreserveNewest" LinkBase="runtimes\" />
