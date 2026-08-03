@@ -121,7 +121,8 @@ namespace OpenUtau.App.Views {
                         });
 
                         var renderResult = engine.RenderProject(
-                            DocManager.Inst.MainScheduler, ref ctx);
+                            DocManager.Inst.MainScheduler, ref ctx)
+                            ?? throw new InvalidOperationException("Render cancelled.");
                         var masterAdapter = renderResult.Item1;
 
                         Dispatcher.UIThread.Invoke(() => {

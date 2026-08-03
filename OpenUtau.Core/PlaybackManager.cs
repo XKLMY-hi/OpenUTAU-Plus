@@ -417,6 +417,10 @@ namespace OpenUtau.Core {
                 try {
                     RenderEngine engine = new RenderEngine(project, startTick: tick, endTick: endTick, trackNo: trackNo, cache: PhraseCache);
                     var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
+                    if (result == null) {
+                        // 被新渲染周期取消——不启动旧链（C-3 两批策略的取消保护）
+                        return;
+                    }
                     faders = result.Item2;
                     StartingToPlay = false;
                     StartPlayback(project.timeAxis.TickPosToMsPos(tick), result.Item1);

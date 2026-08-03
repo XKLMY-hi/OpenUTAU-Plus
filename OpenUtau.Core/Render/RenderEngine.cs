@@ -92,13 +92,84 @@ namespace OpenUtau.Core.Render {
             // 注意：不再在此处 Flush 延迟销毁的 VST handle——裸 Flush 无法保证旧
             // AudioOutput 回调线程已退出（B1 竞态）。Flush 收敛到安全点：
             // StopPlayback / StartPlayback（Stop+drain 后）/ 渲染与导出段尾部。
+            var requests = FilterRequests(PrepareRequests(), startMs, endMs);
+            var trackOutputs = BuildTrackOutputs(requests, applyMixFx, faders);
+            var task = Task.Run(async () => {
+                await RenderRequestsAsync(requests, newCancellation, playing: !wait);
+            });
+            task.ContinueWith(task => {
+                if (task.IsFaulted && !wait) {
+                    Log.Error(task.Exception.Flatten(), "Failed to render.");
+                    PlaybackManager.Inst.StopPlayback();
+                    var flatEx = task.Exception.Flatten();
+                    var innerEx = flatEx.InnerExceptions.ToList();
+                    if (innerEx.Count == 1 && innerEx[0] is MessageCustomizableException mce) {
+                        DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(mce));
+                    } else if (innerEx.Any(e => e is DllNotFoundException)) {
+                        DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(
+                            new MessageCustomizableException("Failed to render.", "<translate:errors.failed.render>: <translate:errors.install.cpp>", flatEx)));
+                    } else {
+                        DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(
+                            new MessageCustomizableException("Failed to render.", "<translate:errors.failed.render>", flatEx)));
+                    }
+                }
+            }, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, uiScheduler);
+            if (wait) {
+                task.Wait();
+            }
+            // Build the final mix.  All tracks (FX-wrapped or dry) sum into a single WaveMix.
+            var resultMix = new WaveMix(trackOutputs);
+            return Tuple.Create(resultMix, faders);
+        }
+
+        // for playback
+        /// <summary>
+        /// 播放渲染：同步建链（秒级内完成）→ 等批 1（播放头前方短语）渲染完成即返回
+        /// masterAdapter；批 2（播放头后方）后台继续。返回 null 表示被新渲染周期取消，
+        /// 调用方不得 StartPlayback。
+        /// </summary>
+        public Tuple<MasterAdapter, List<Fader>>? RenderProject(TaskScheduler uiScheduler, ref CancellationTokenSource cancellation) {
+            double startMs = project.timeAxis.TickPosToMsPos(startTick);
+            double endMs = endTick == -1 ? double.PositiveInfinity : project.timeAxis.TickPosToMsPos(endTick);
+            var newCancellation = new CancellationTokenSource();
+            var oldCancellation = Interlocked.Exchange(ref cancellation, newCancellation);
+            if (oldCancellation != null) {
+                oldCancellation.Cancel();
+                oldCancellation.Dispose();
+            }
+
+            var faders = new List<Fader>();
+            var requests = FilterRequests(PrepareRequests(), startMs, endMs);
+            var trackOutputs = BuildTrackOutputs(requests, applyMixFx: true, faders);
+
+            // master 峰值由 MasterAdapter.Read 统计（主推子 Scale 应用之后 = 实际输出）
+            var master = new MasterAdapter(new WaveMix(trackOutputs));
+            master.SetPosition((int)(startMs * SignalChain.AudioSettings.SampleRate / 1000) * SignalChain.AudioSettings.Channels);
+
+            // 两批渲染：等批 1 完成即返回（播放头前方数据必在）；批 2 后台继续
+            RenderPlaybackAsync(requests, newCancellation).GetAwaiter().GetResult();
+            if (newCancellation.IsCancellationRequested) {
+                return null;
+            }
+            return Tuple.Create(master, faders);
+        }
+
+        /// <summary>按渲染窗口过滤短语（startMs/endMs）。</summary>
+        private RenderPartRequest[] FilterRequests(RenderPartRequest[] requests, double startMs, double endMs) {
+            return requests
+                .Where(request => request.sources.Length > 0 && request.sources.Max(s => s.EndMs) > startMs && (double.IsPositiveInfinity(endMs) || request.sources.Min(s => s.offsetMs) < endMs))
+                .ToArray();
+        }
+
+        /// <summary>
+        /// 逐轨构建信号链（WaveMix → Fader → EffectChain/VST → LevelTracker）。
+        /// 同步操作，不含任何渲染。播放与导出共用。
+        /// </summary>
+        private List<ISignalSource> BuildTrackOutputs(RenderPartRequest[] requests, bool applyMixFx, List<Fader> faders) {
             // Each track is wrapped with its own UMixFx (no global FX bus).
             // Tracks with MixFx == null or Enabled = false pass through unchanged
             // (zero-overhead bypass).  All tracks sum into a single mix.
             var trackOutputs = new List<ISignalSource>();
-            var requests = PrepareRequests()
-                .Where(request => request.sources.Length > 0 && request.sources.Max(s => s.EndMs) > startMs && (double.IsPositiveInfinity(endMs) || request.sources.Min(s => s.offsetMs) < endMs))
-                .ToArray();
             for (int i = 0; i < project.tracks.Count; ++i) {
                 if (trackNo != -1 && trackNo != i) {
                     continue;
@@ -140,42 +211,7 @@ namespace OpenUtau.Core.Render {
                 TrackLevels.Register(track.TrackNo, tracker);
                 trackOutputs.Add(tracker);
             }
-            var task = Task.Run(async () => {
-                await RenderRequestsAsync(requests, newCancellation, playing: !wait);
-            });
-            task.ContinueWith(task => {
-                if (task.IsFaulted && !wait) {
-                    Log.Error(task.Exception.Flatten(), "Failed to render.");
-                    PlaybackManager.Inst.StopPlayback();
-                    var flatEx = task.Exception.Flatten();
-                    var innerEx = flatEx.InnerExceptions.ToList();
-                    if (innerEx.Count == 1 && innerEx[0] is MessageCustomizableException mce) {
-                        DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(mce));
-                    } else if (innerEx.Any(e => e is DllNotFoundException)) {
-                        DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(
-                            new MessageCustomizableException("Failed to render.", "<translate:errors.failed.render>: <translate:errors.install.cpp>", flatEx)));
-                    } else {
-                        DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(
-                            new MessageCustomizableException("Failed to render.", "<translate:errors.failed.render>", flatEx)));
-                    }
-                }
-            }, CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, uiScheduler);
-            if (wait) {
-                task.Wait();
-            }
-            // Build the final mix.  All tracks (FX-wrapped or dry) sum into a single WaveMix.
-            var resultMix = new WaveMix(trackOutputs);
-            return Tuple.Create(resultMix, faders);
-        }
-
-        // for playback
-        public Tuple<MasterAdapter, List<Fader>> RenderProject(TaskScheduler uiScheduler, ref CancellationTokenSource cancellation) {
-            double startMs = project.timeAxis.TickPosToMsPos(startTick);
-            var renderMixdownResult = RenderMixdown(uiScheduler, ref cancellation, wait: false);
-            // master 峰值由 MasterAdapter.Read 统计（主推子 Scale 应用之后 = 实际输出）
-            var master = new MasterAdapter(renderMixdownResult.Item1);
-            master.SetPosition((int)(startMs * SignalChain.AudioSettings.SampleRate / 1000) * SignalChain.AudioSettings.Channels);
-            return Tuple.Create(master, renderMixdownResult.Item2);
+            return trackOutputs;
         }
 
         // for export
@@ -334,6 +370,59 @@ namespace OpenUtau.Core.Render {
             } finally {
                 sem.Release();
             }
+        }
+
+        /// <summary>
+        /// 播放两批渲染：批 1（end &gt; startTick 播放头前方，按 end 升序）并行完成即返回，
+        /// 调用方立即 StartPlayback；批 2（后方）fire-and-forget 后台继续
+        /// （运行中的 Task 由线程池持有，不会 GC；取消由 token 传播）。
+        /// 批 2 未就绪短语由既有 Waited 静音保护兜底（WaveMix 取 Max → MasterAdapter 累计）。
+        /// </summary>
+        private async Task RenderPlaybackAsync(RenderPartRequest[] requests, CancellationTokenSource cancellation) {
+            if (requests.Length == 0 || cancellation.IsCancellationRequested) {
+                return;
+            }
+            var allTuples = requests
+                .SelectMany(req => req.phrases
+                    .Zip(req.sources, (phrase, source) => Tuple.Create(phrase, source, req)))
+                .ToArray();
+            var tuples = allTuples
+                .Where(tuple => tuple.Item1.end > startTick)
+                .OrderBy(tuple => tuple.Item1.end)
+                .Concat(allTuples.Where(tuple => tuple.Item1.end <= startTick))
+                .ToArray();
+            int batch1Count = tuples.Count(t => t.Item1.end > startTick);
+            var progress = new Progress(tuples.Sum(t => t.Item1.phones.Length));
+
+            await RenderBatchAsync(tuples.Take(batch1Count).ToArray(), cancellation, progress);
+            var batch2 = tuples.Skip(batch1Count).ToArray();
+            if (batch2.Length == 0) {
+                if (!cancellation.IsCancellationRequested) progress.Clear();
+                if (!PlaybackManager.Inst.OutputActive) {
+                    Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
+                }
+                return;
+            }
+            // 批 2 后台继续；完成时收尾（进度清零 + 机会性 Flush）
+            _ = RenderBatchAsync(batch2, cancellation, progress).ContinueWith(_ => {
+                if (!cancellation.IsCancellationRequested) progress.Clear();
+                if (!PlaybackManager.Inst.OutputActive) {
+                    Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
+                }
+            }, TaskScheduler.Default);
+        }
+
+        /// <summary>并行渲染一批短语（RenderGate 计数内）。</summary>
+        private async Task RenderBatchAsync(
+            Tuple<RenderPhrase, WaveSource, RenderPartRequest>[] tuples,
+            CancellationTokenSource cancellation,
+            Progress progress) {
+            if (tuples.Length == 0) return;
+            using var gate = Vst.RenderGate.Enter();
+            int dop = Math.Clamp(Preferences.Default.NumRenderThreads, 1, 8);
+            using var sem = new SemaphoreSlim(dop);
+            var tasks = tuples.Select(tuple => RenderOneAsync(tuple, cancellation, progress, sem)).ToArray();
+            await Task.WhenAll(tasks);
         }
 
         public static void ReleaseSourceTemp() {
