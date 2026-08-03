@@ -147,7 +147,11 @@ namespace OpenUtau.App.ViewModels {
                 .Where(n => n.TrackNo == track.TrackNo)
                 .Subscribe(n => {
                     _syncing = true;
-                    Volume = n.Volume;
+                    // 静音哨兵（-24，Solo/Mute 静音时广播）不写回 Volume——
+                    // 否则真实音量被污染为 -24，取消 Solo/Mute 后无法恢复（"取消独奏不恢复"根因）
+                    if (!(n.Volume <= -24 && track.Muted)) {
+                        Volume = n.Volume;
+                    }
                     _syncing = false;
                 });
             MessageBus.Current.Listen<PanChangeNotification>()
