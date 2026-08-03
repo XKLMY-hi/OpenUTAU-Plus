@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace OpenUtau.Core.SignalChain {
     public class WaveSource : ISignalSource {
@@ -7,19 +7,24 @@ namespace OpenUtau.Core.SignalChain {
         public readonly int offset;
         public readonly int estimatedLength;
         public readonly int channels;
+        private readonly int sampleRate;
 
         public double EndMs => offsetMs + estimatedLengthMs;
         public bool HasSamples => data != null;
+        public int SampleRate => sampleRate;
+        public int Channels => AudioSettings.Channels; // 混音目标声道（交织布局）
 
         private readonly object lockObj = new object();
         private float[] data;
 
-        public WaveSource(double offsetMs, double estimatedLengthMs, double skipOverMs, int channels) {
+        public WaveSource(double offsetMs, double estimatedLengthMs, double skipOverMs, int channels,
+                          int? sampleRate = null) {
             this.offsetMs = offsetMs;
             this.estimatedLengthMs = estimatedLengthMs;
             this.channels = channels;
-            offset = (int)((offsetMs - skipOverMs) * 44100 / 1000) * channels;
-            estimatedLength = (int)(estimatedLengthMs * 44100 / 1000) * channels;
+            this.sampleRate = sampleRate ?? AudioSettings.SampleRate;
+            offset = (int)((offsetMs - skipOverMs) * sampleRate / 1000) * channels;
+            estimatedLength = (int)(estimatedLengthMs * sampleRate / 1000) * channels;
         }
 
         public void SetSamples(float[] samples) {
@@ -29,14 +34,14 @@ namespace OpenUtau.Core.SignalChain {
         }
 
         public bool IsReady(int position, int count) {
-            int copies = 2 / channels;
+            int copies = AudioSettings.Channels / channels;
             return position + count <= offset * copies
                 || offset * copies + estimatedLength * copies <= position
                 || data != null;
         }
 
         public int Mix(int position, float[] buffer, int index, int count) {
-            int copies = 2 / channels;
+            int copies = AudioSettings.Channels / channels;
             if (data == null) {
                 if (position + count <= offset * copies) {
                     return position + count;

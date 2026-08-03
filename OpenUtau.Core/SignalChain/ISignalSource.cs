@@ -1,5 +1,10 @@
-﻿namespace OpenUtau.Core.SignalChain {
+namespace OpenUtau.Core.SignalChain {
     public interface ISignalSource {
+        /// <summary>采样率。默认取全局 AudioSettings；已知格式的实现覆写。</summary>
+        int SampleRate => AudioSettings.SampleRate;
+        /// <summary>声道数（交织布局）。默认取全局 AudioSettings。</summary>
+        int Channels => AudioSettings.Channels;
+
         bool IsReady(int position, int count);
         /// <summary>
         /// Add float audio samples to existing buffer values.

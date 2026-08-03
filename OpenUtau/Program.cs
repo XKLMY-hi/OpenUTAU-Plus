@@ -21,6 +21,8 @@ namespace OpenUtau.App {
         [STAThread]
         public static void Main(string[] args) {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            // 音频格式事实来源：当前固定 44100/2/4096（行为零变化，未来可接 Preferences）
+            Core.SignalChain.AudioSettings.Configure(44100, 2);
             InitLogging();
             string processName = Process.GetCurrentProcess().ProcessName;
             if (processName != "dotnet") {
