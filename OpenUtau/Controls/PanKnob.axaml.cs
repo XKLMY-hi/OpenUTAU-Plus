@@ -89,8 +89,9 @@ public partial class PanKnob : UserControl {
         var pos = e.GetPosition(trackingRoot);
         double dx = pos.X - dragStartX;
         double dy = pos.Y - dragStartY;
-        // 右半区：向右(dx+)或向下(dy+) → 增大；左半区：向右或向下 → 减小（更左）
-        double delta = rightSide ? (dy + dx) : (dy - dx);
+        // 右半区：向右(dx+)或向下(dy+) → 增大；
+        // 左半区：向左(dx-)或向下(dy+) → 减小（更左），向右 → 回中
+        double delta = rightSide ? (dy + dx) : (dx - dy);
         Value = dragStartValue + delta * (100.0 / DragRange);
         e.Handled = true;
     }
