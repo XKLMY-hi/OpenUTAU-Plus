@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace OpenUtau.Core.Vst {
     /// <summary>
@@ -7,7 +8,13 @@ namespace OpenUtau.Core.Vst {
     /// without requiring real VST plugins or native DLLs.
     /// </summary>
     internal class FakeVstBridge : IVstBridge {
-        public IntPtr Load(string bundlePath) => new(++_nextHandle);
+        /// <summary>Optional artificial Load delay — used to test load serialization.</summary>
+        public TimeSpan LoadDelay { get; set; }
+
+        public IntPtr Load(string bundlePath) {
+            if (LoadDelay > TimeSpan.Zero) Thread.Sleep(LoadDelay);
+            return new(++_nextHandle);
+        }
         public void Unload(IntPtr handle) { _unloaded.Add(handle); }
         public string? LastError() => null;
         public bool Setup(IntPtr handle, double sr, int block) => true;
