@@ -30,6 +30,7 @@ public partial class PanKnob : UserControl {
     }
     public event EventHandler<double>? ValueChanged;
 
+    private double dragStartX;
     private double dragStartY;
     private double dragStartValue;
     private bool lastRightSide;
@@ -56,7 +57,9 @@ public partial class PanKnob : UserControl {
         var topLevel = TopLevel.GetTopLevel(this);
         trackingRoot = topLevel;
         if (topLevel != null) {
-            dragStartY = e.GetPosition(topLevel).Y;
+            var startPos = e.GetPosition(topLevel);
+            dragStartX = startPos.X;
+            dragStartY = startPos.Y;
             topLevel.AddHandler(PointerMovedEvent, OnGlobalMoved,
                 RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
             topLevel.AddHandler(PointerReleasedEvent, OnGlobalReleased,
@@ -66,9 +69,9 @@ public partial class PanKnob : UserControl {
     }
 
     /// <summary>
-    /// FL Studio 侧向拖动：鼠标在旋钮左半区 → 向下拖动增大左声道（值减小），
-    /// 右半区 → 向下拖动增大右声道（值增大）。左右侧实时检测，拖动中
-    /// 穿过中心立即切换方向；切换侧时保留当前值（重置基准，不跳变）。
+    /// FL Studio 侧向拖动：鼠标在旋钮左半区 → 向下/向左拖动增大左声道（值减小），
+    /// 右半区 → 向下/向右拖动增大右声道（值增大）。水平+垂直位移都生效；
+    /// 左右侧实时检测，穿过中心立即切换；切换侧保留当前值（重置基准不跳变）。
     /// </summary>
     private void OnGlobalMoved(object? sender, PointerEventArgs e) {
         if (trackingRoot == null) {
@@ -78,13 +81,17 @@ public partial class PanKnob : UserControl {
         if (rightSide != lastRightSide) {
             // 切换侧：当前值/位置成为新基准，避免方向反转导致数值跳变
             dragStartValue = value;
+            dragStartX = e.GetPosition(trackingRoot).X;
             dragStartY = e.GetPosition(trackingRoot).Y;
             lastRightSide = rightSide;
             return;
         }
-        double dy = e.GetPosition(trackingRoot).Y - dragStartY;
-        double delta = dy * (100.0 / DragRange);
-        Value = rightSide ? dragStartValue + delta : dragStartValue - delta;
+        var pos = e.GetPosition(trackingRoot);
+        double dx = pos.X - dragStartX;
+        double dy = pos.Y - dragStartY;
+        // 右半区：向右(dx+)或向下(dy+) → 增大；左半区：向右或向下 → 减小（更左）
+        double delta = rightSide ? (dy + dx) : (dy - dx);
+        Value = dragStartValue + delta * (100.0 / DragRange);
         e.Handled = true;
     }
 
