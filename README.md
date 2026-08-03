@@ -6,6 +6,18 @@
 
 ---
 
+## 界面预览
+
+| 欢迎页 | 主窗口 + 侧栏素材库 |
+|---|---|
+| ![欢迎页](screenshots/welcome.png) | ![主窗口](screenshots/main-sidebar.png) |
+
+| 混音台 + VST 效果器架 |
+|---|
+| ![混音台与VST架](screenshots/mixer-vstrack.png) |
+
+---
+
 ## 新增功能
 
 ### 🪟 现代化 UI 全面翻新
