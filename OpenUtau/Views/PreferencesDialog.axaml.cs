@@ -58,6 +58,30 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        void OpenSamplesFolder(object sender, RoutedEventArgs e) {
+            try {
+                if (Directory.Exists(viewModel!.SamplesPath)) {
+                    OS.OpenFolder(viewModel!.SamplesPath);
+                }
+            } catch (Exception ex) {
+                DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(ex));
+            }
+        }
+
+        void ResetSamplesPath(object sender, RoutedEventArgs e) {
+            viewModel!.SetSamplesPath(string.Empty);
+        }
+
+        async void SelectSamplesPath(object sender, RoutedEventArgs e) {
+            var path = await FilePicker.OpenFolderAboutSinger(HostWindow!, "prefs.paths.samples");
+            if (string.IsNullOrEmpty(path)) {
+                return;
+            }
+            if (Directory.Exists(path)) {
+                viewModel!.SetSamplesPath(path);
+            }
+        }
+
         async void ReloadSingers(object sender, RoutedEventArgs e) {
             LoadingWindow.BeginLoading(HostWindow!);
             await Task.Run(() => {

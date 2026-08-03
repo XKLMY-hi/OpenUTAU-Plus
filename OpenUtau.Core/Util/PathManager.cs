@@ -80,6 +80,7 @@ namespace OpenUtau.Core {
         public string PluginsPath => Path.Combine(DataPath, "Plugins");
         public string DictionariesPath => Path.Combine(DataPath, "Dictionaries");
         public string TemplatesPath => Path.Combine(DataPath, "Templates");
+        public string SamplesPath => Path.Combine(DataPath, "Samples");
         public string LogsPath => Path.Combine(DataPath, "Logs");
         public string LogFilePath => Path.Combine(DataPath, "Logs", "log.txt");
         public string PrefsFilePath => Path.Combine(DataPath, "prefs.json");
@@ -95,6 +96,19 @@ namespace OpenUtau.Core {
                 }
                 if (Directory.Exists(AdditionalSingersPath)) {
                     list.Add(AdditionalSingersPath);
+                }
+                return list.Distinct().ToList();
+            }
+        }
+
+        /// <summary>伴奏库目录：默认 Samples 目录 + 用户配置的 SampleSearchPaths（仅存在的）。</summary>
+        public List<string> SamplesPaths {
+            get {
+                var list = new List<string> { SamplesPath };
+                foreach (var path in Preferences.Default.SampleSearchPaths) {
+                    if (Directory.Exists(path)) {
+                        list.Add(path);
+                    }
                 }
                 return list.Distinct().ToList();
             }

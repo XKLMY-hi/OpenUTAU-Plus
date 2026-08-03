@@ -63,6 +63,13 @@ namespace OpenUtau.App.ViewModels {
         // Paths
         public string SingerPath => PathManager.Inst.SingersPath;
         public string AdditionalSingersPath => !string.IsNullOrWhiteSpace(PathManager.Inst.AdditionalSingersPath) ? PathManager.Inst.AdditionalSingersPath : "(None)";
+        public string SamplesPath {
+            get {
+                var paths = Preferences.GetSampleSearchPaths();
+                var path = paths.Count > 0 ? paths[0] : PathManager.Inst.SamplesPath;
+                return string.IsNullOrWhiteSpace(path) ? "(None)" : path;
+            }
+        }
         [Reactive] public bool InstallToAdditionalSingersPath { get; set; }
         [Reactive] public bool LoadDeepFolders { get; set; }
 
@@ -423,6 +430,18 @@ namespace OpenUtau.App.ViewModels {
             Preferences.Default.AdditionalSingerPath = path;
             Preferences.Save();
             this.RaisePropertyChanged(nameof(AdditionalSingersPath));
+        }
+
+        public void SetSamplesPath(string path) {
+            if (string.IsNullOrWhiteSpace(path)) {
+                Preferences.SetSampleSearchPaths(new List<string>());
+            } else {
+                var paths = Preferences.GetSampleSearchPaths();
+                paths.RemoveAll(p => p == path);
+                paths.Insert(0, path);
+                Preferences.SetSampleSearchPaths(paths);
+            }
+            this.RaisePropertyChanged(nameof(SamplesPath));
         }
 
         public void SetVLabelerPath(string path) {

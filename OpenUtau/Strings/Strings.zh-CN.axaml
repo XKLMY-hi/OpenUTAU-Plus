@@ -464,6 +464,7 @@ Syntax: prefix,suffix</system:String>-->
   <system:String x:Key="prefs.paths.detect">检测</system:String>
   <system:String x:Key="prefs.paths.loaddeepfolders">加载歌手时遍历所有子文件夹</system:String>
   <system:String x:Key="prefs.paths.reset">清除</system:String>
+  <system:String x:Key="prefs.paths.samples">伴奏库路径</system:String>
   <system:String x:Key="prefs.paths.select">选择</system:String>
   <system:String x:Key="prefs.penplus">默认使用笔（增强）工具</system:String>
   <system:String x:Key="prefs.playback">回放</system:String>

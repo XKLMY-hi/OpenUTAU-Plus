@@ -55,6 +55,15 @@ namespace OpenUtau.Core.Util {
             Save();
         }
 
+        public static List<string> GetSampleSearchPaths() {
+            return new List<string>(Default.SampleSearchPaths);
+        }
+
+        public static void SetSampleSearchPaths(List<string> paths) {
+            Default.SampleSearchPaths = new List<string>(paths);
+            Save();
+        }
+
         public static void AddRecentFileIfEnabled(string filePath){
             //Users can choose adding .ust, .vsqx and .mid files to recent files or not
             string ext = Path.GetExtension(filePath);
@@ -267,6 +276,8 @@ errors.txt
             public List<string> VstScanPaths = new();
             // OpenUTAU Plus: cached VST registry (avoids re-scan on restart)
             public List<VstCachedEntry> VstCachedPlugins = new();
+            // OpenUTAU Plus: backing track (BGM) library scan paths
+            public List<string> SampleSearchPaths = new();
 
             // ── Mixer attachment ────────────────────────
             public bool DetachMixer = false;

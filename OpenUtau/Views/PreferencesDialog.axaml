@@ -188,6 +188,17 @@
             <Button Grid.Column="2" Content="{DynamicResource button.select}" HorizontalAlignment="Stretch" Click="SelectAddlSingersPath"/>
             <Button Grid.Column="4" Content="{DynamicResource singers.refresh}" HorizontalAlignment="Stretch" Click="ReloadSingers"/>
           </Grid>
+          <TextBlock Text="{DynamicResource prefs.paths.samples}" Margin="0,12,0,0"/>
+          <Grid ColumnDefinitions="*,10,Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+            <Border Classes="pathBox">
+              <TextBlock TextWrapping="Wrap" FontSize="11" Text="{Binding SamplesPath}"/>
+            </Border>
+            <Button Content="{DynamicResource button.open}" Grid.Column="2" Click="OpenSamplesFolder"/>
+          </Grid>
+          <Grid HorizontalAlignment="Stretch" ColumnDefinitions="*,10,*" Margin="0,6,0,0">
+            <Button Grid.Column="0" Content="{DynamicResource button.reset}" HorizontalAlignment="Stretch" Click="ResetSamplesPath"/>
+            <Button Grid.Column="2" Content="{DynamicResource button.select}" HorizontalAlignment="Stretch" Click="SelectSamplesPath"/>
+          </Grid>
           <TextBlock Text="{DynamicResource prefs.paths.loaddeepfolders}" Margin="0,12,0,0" FontSize="12" FontWeight="SemiBold" Opacity="0.7"/>
           <Grid Margin="0,4,0,0">
             <TextBlock Text="{DynamicResource prefs.paths.addlsinger.install}" HorizontalAlignment="Left"/>
