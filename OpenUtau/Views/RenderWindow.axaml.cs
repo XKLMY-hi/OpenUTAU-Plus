@@ -110,32 +110,50 @@ namespace OpenUtau.App.Views {
             _cts = new CancellationTokenSource();
             var ctx = _cts;
 
-            Task.Run(() => {
+            Task.Run(async () => {
                 try {
-                    var session = new ExportSession(project, path,
-                        new ExportSession.Options {
-                            PerTrack = !isMixdown,
-                            ApplyMixFx = applyMixFx,
-                        }, PlaybackManager.Inst.PhraseCache);
+                    if (isMixdown) {
+                        // ── 录制式混音导出：设备播放驱动，与预览完全同路径 ──
+                        //（同一信号链/VST 激活时序——导出的就是预览听到的）
+                        await PlaybackManager.Inst.RecordMixdown(project, path, 0, -1,
+                            new Progress<double>(p => Dispatcher.UIThread.Invoke(() => {
+                                if (p >= 1) {
+                                    ProgressLabel.Text = ThemeManager.GetString("render.status.done");
+                                    ProgressSubLabel.IsVisible = false;
+                                    ProgressBarControl.Value = 100;
+                                } else {
+                                    ProgressLabel.Text = p < 0.4
+                                        ? ThemeManager.GetString("render.status.mixdown")
+                                        : ThemeManager.GetString("render.status.writing");
+                                    ProgressBarControl.Value = p * 100;
+                                }
+                            })), ctx.Token);
+                    } else {
+                        var session = new ExportSession(project, path,
+                            new ExportSession.Options {
+                                PerTrack = true,
+                                ApplyMixFx = false,
+                            }, PlaybackManager.Inst.PhraseCache);
 
-                    session.RunAsync(new Progress<ExportSession.ProgressInfo>(info => {
-                        Dispatcher.UIThread.Invoke(() => {
-                            if (info.Percent >= 1) {
-                                ProgressLabel.Text = ThemeManager.GetString("render.status.done");
-                                ProgressSubLabel.IsVisible = false;
-                                ProgressBarControl.Value = 100;
-                            } else if (info.TrackIndex >= 0) {
-                                var track = project.tracks[info.TrackIndex];
-                                ProgressLabel.Text = string.Format(ThemeManager.GetString("render.status.exporting"), info.TrackIndex + 1, info.TrackCount, track.TrackName);
-                                ProgressBarControl.Value = 20 + (60 * info.TrackIndex / Math.Max(1, info.TrackCount));
-                            } else {
-                                ProgressLabel.Text = info.Percent < 0.4
-                                    ? ThemeManager.GetString("render.status.mixdown")
-                                    : ThemeManager.GetString("render.status.writing");
-                                ProgressBarControl.Value = info.Percent * 100;
-                            }
-                        });
-                    }), ctx.Token).GetAwaiter().GetResult();
+                        session.RunAsync(new Progress<ExportSession.ProgressInfo>(info => {
+                            Dispatcher.UIThread.Invoke(() => {
+                                if (info.Percent >= 1) {
+                                    ProgressLabel.Text = ThemeManager.GetString("render.status.done");
+                                    ProgressSubLabel.IsVisible = false;
+                                    ProgressBarControl.Value = 100;
+                                } else if (info.TrackIndex >= 0) {
+                                    var track = project.tracks[info.TrackIndex];
+                                    ProgressLabel.Text = string.Format(ThemeManager.GetString("render.status.exporting"), info.TrackIndex + 1, info.TrackCount, track.TrackName);
+                                    ProgressBarControl.Value = 20 + (60 * info.TrackIndex / Math.Max(1, info.TrackCount));
+                                } else {
+                                    ProgressLabel.Text = info.Percent < 0.4
+                                        ? ThemeManager.GetString("render.status.mixdown")
+                                        : ThemeManager.GetString("render.status.writing");
+                                    ProgressBarControl.Value = info.Percent * 100;
+                                }
+                            });
+                        }), ctx.Token).GetAwaiter().GetResult();
+                    }
                 } catch (Exception ex) {
                     Log.Error(ex, "[RenderWindow] Render failed");
                     Dispatcher.UIThread.Invoke(() => {

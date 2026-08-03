@@ -339,6 +339,8 @@ namespace OpenUtau.Core {
         }
 
         public void PlayOrPause(int tick = -1, int endTick = -1, int trackNo = -1) {
+            // 导出录制中：禁止播放操作（防止打断录制通道/双渲染并发）
+            if (IsRecording) return;
             if (PlayingMaster) {
                 PausePlayback();
             } else {
@@ -460,9 +462,68 @@ namespace OpenUtau.Core {
 
         // Exporting mixdown
         public async Task RenderMixdown(UProject project, string exportPath) {
-            var session = new Export.ExportSession(project, exportPath,
-                new Export.ExportSession.Options { PerTrack = false, ApplyMixFx = true }, PhraseCache);
-            await RunExportSession(session, exportPath);
+            await RecordMixdown(project, exportPath, 0, -1, null, default);
+        }
+
+        /// <summary>导出录制中（禁止播放操作，防止打断录制通道）。</summary>
+        public bool IsRecording { get; private set; }
+
+        /// <summary>
+        /// 录制式混音导出：导出期间**直接禁用前台音频管线**（主 AudioOutput 临时换
+        /// Dummy——彻底无声，任何播放操作都无声），录制用独立 WasapiOut 通道驱动
+        /// 信号链（与预览完全同路径的 VST 激活时序）——RecordingAdapter 分流写文件。
+        /// 独立通道转 PCM16（设备格式匹配，避免 float 播放破音）+ silentOutput 静音
+        /// （双保险前台无声）；文件为 float 32bit WAV，与预览一致（含 VST 效果）。
+        /// </summary>
+        public Task RecordMixdown(UProject project, string exportPath, int startTick = 0, int endTick = -1,
+                                  IProgress<double>? progress = null, CancellationToken ct = default) {
+            return Task.Run(() => {
+                IsRecording = true;
+                var savedOutput = AudioOutput;
+                try {
+                    StopPlayback();
+                    // ── 直接禁用前台音频管线：主输出换 Dummy（彻底静音） ──
+                    AudioOutput = new Audio.DummyAudioOutput();
+
+                    var engine = new RenderEngine(project, startTick: startTick, endTick: endTick, cache: PhraseCache);
+                    var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
+                    if (result == null) {
+                        throw new Exception("Render cancelled.");
+                    }
+                    faders = result.Item2;
+                    StartingToPlay = false;
+                    var master = result.Item1;
+                    master.Scale = MasterMuted ? 0 : DecibelToVolume(masterVolumeDb);
+
+                    // 录制时长（endTick=-1 → 全曲）
+                    int realEnd = endTick == -1 ? project.EndTick : endTick;
+                    double startMs = project.timeAxis.TickPosToMsPos(startTick);
+                    double endMs = project.timeAxis.TickPosToMsPos(realEnd);
+                    double totalMs = Math.Max(0, endMs - startMs);
+
+                    using var writer = new WaveFileWriter(File.Create(exportPath), master.WaveFormat);
+                    // 静音输出（双保险）——设备播放静音，用户听不到
+                    var recorder = new SignalChain.RecordingAdapter(master, writer, silentOutput: true);
+                    // 独立音频线路：PCM16 转换（设备格式匹配，杜绝 float 破音）+ WasapiOut
+                    using var output = new NAudio.Wave.WasapiOut(NAudio.CoreAudioApi.AudioClientShareMode.Shared, 100);
+                    output.Init(new NAudio.Wave.SampleProviders.SampleToWaveProvider16(recorder));
+                    output.Play();
+
+                    // 等待录制完成（时长或取消）
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
+                    while (sw.ElapsedMilliseconds < totalMs && !ct.IsCancellationRequested) {
+                        Thread.Sleep(50);
+                        if (progress != null) {
+                            progress.Report(Math.Min(1.0, sw.ElapsedMilliseconds / totalMs));
+                        }
+                    }
+                    output.Stop();
+                    progress?.Report(1.0);
+                } finally {
+                    AudioOutput = savedOutput;
+                    IsRecording = false;
+                }
+            }, ct);
         }
 
         // Exporting each tracks
@@ -472,7 +533,7 @@ namespace OpenUtau.Core {
             await RunExportSession(session, exportPath);
         }
 
-        /// <summary>统一导出入口（D 阶段：菜单整曲/分轨共用 ExportSession）。</summary>
+        /// <summary>分轨导出（干轨，无 VST——与播放路径无关，离线安全）。</summary>
         private async Task RunExportSession(Export.ExportSession session, string exportPath) {
             await Task.Run(() => {
                 string file = "";

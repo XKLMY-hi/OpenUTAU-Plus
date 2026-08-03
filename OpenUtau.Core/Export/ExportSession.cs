@@ -48,8 +48,11 @@ namespace OpenUtau.Core.Export {
 
         public Task RunAsync(IProgress<ProgressInfo> progress, CancellationToken ct = default) {
             return Task.Run(() => {
-                // 注意：RenderEngine 的 ref CTS 会 Interlocked.Exchange 替换——不能是 using 变量
-                var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                // 注意：RenderEngine 的 ref CTS 会 Interlocked.Exchange 替换——不能是 using 变量。
+                // 不能用 CreateLinkedTokenSource：RenderMixdown Exchange 时 Cancel 旧 CTS 会
+                // **反向传播**取消用户的 token（写文件循环的 ct 检查直接 break → 文件残缺）。
+                var cts = new CancellationTokenSource();
+                ct.Register(() => cts.Cancel());
                 var engine = new RenderEngine(project,
                     startTick: options.StartTick ?? 0,
                     endTick: options.EndTick ?? -1,
