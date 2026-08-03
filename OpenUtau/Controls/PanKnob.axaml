@@ -4,8 +4,7 @@
              Width="26" Height="26" ToolTip.Tip="Pan (double-click to reset)">
   <Panel Background="Transparent"
          PointerPressed="OnPointerPressed"
-         PointerMoved="OnPointerMoved"
-         PointerReleased="OnPointerReleased"
+         PointerCaptureLost="OnCaptureLost"
          DoubleTapped="OnDoubleTapped">
     <Ellipse Stroke="{DynamicResource SystemControlForegroundBaseLowBrush}" StrokeThickness="1"
              Fill="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>

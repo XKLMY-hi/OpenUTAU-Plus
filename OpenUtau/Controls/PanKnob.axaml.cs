@@ -33,35 +33,60 @@ public partial class PanKnob : UserControl {
     private bool isDragging;
     private double dragStartY;
     private double dragStartValue;
+    private TopLevel? trackingRoot;
 
     public PanKnob() {
         InitializeComponent();
         SizeChanged += (_, _) => UpdateNeedle();
     }
 
+    /// <summary>
+    /// 按下开始全局追踪：控件仅 26px，拖出控件边界后仍跟随鼠标
+    /// （挂窗口级 PointerMoved/PointerReleased，松开或捕获丢失即卸载）。
+    /// </summary>
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e) {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
             return;
         }
         isDragging = true;
-        dragStartY = e.GetPosition(this).Y;
         dragStartValue = value;
+        var topLevel = TopLevel.GetTopLevel(this);
+        trackingRoot = topLevel;
+        if (topLevel != null) {
+            dragStartY = e.GetPosition(topLevel).Y;
+            topLevel.PointerMoved += OnGlobalMoved;
+            topLevel.PointerReleased += OnGlobalReleased;
+        } else {
+            dragStartY = e.GetPosition(this).Y;
+        }
         e.Pointer.Capture(this);
         e.Handled = true;
     }
 
-    private void OnPointerMoved(object? sender, PointerEventArgs e) {
-        if (!isDragging) {
+    private void OnGlobalMoved(object? sender, PointerEventArgs e) {
+        if (!isDragging || trackingRoot == null) {
             return;
         }
-        double dy = e.GetPosition(this).Y - dragStartY;
+        double dy = e.GetPosition(trackingRoot).Y - dragStartY;
         Value = dragStartValue - dy * (100.0 / DragRange);
         e.Handled = true;
     }
 
-    private void OnPointerReleased(object? sender, PointerReleasedEventArgs e) {
+    private void OnGlobalReleased(object? sender, PointerReleasedEventArgs e) {
+        EndTracking();
+    }
+
+    private void OnCaptureLost(object? sender, PointerCaptureLostEventArgs e) {
+        EndTracking();
+    }
+
+    private void EndTracking() {
+        if (trackingRoot != null) {
+            trackingRoot.PointerMoved -= OnGlobalMoved;
+            trackingRoot.PointerReleased -= OnGlobalReleased;
+            trackingRoot = null;
+        }
         isDragging = false;
-        e.Pointer.Capture(null);
     }
 
     private void OnDoubleTapped(object? sender, TappedEventArgs e) {
