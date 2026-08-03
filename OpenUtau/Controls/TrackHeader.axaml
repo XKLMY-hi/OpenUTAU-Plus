@@ -44,12 +44,10 @@
       <Style Selector="^:pressed /template/ RepeatButton#PART_DecreaseButton">
         <Setter Property="Background" Value="{Binding TrackColor.AccentColorDark}" />
       </Style>
-      <!-- Suki thumb 圆形改小一半 -->
-      <Style Selector="^ /template/ Thumb">
+      <!-- Suki thumb 圆形改小一半（内部 Border 是模板固定尺寸，直接覆盖） -->
+      <Style Selector="^ /template/ Thumb /template/ Border">
         <Setter Property="Width" Value="8"/>
         <Setter Property="Height" Value="8"/>
-      </Style>
-      <Style Selector="^ /template/ Thumb /template/ Border">
         <Setter Property="CornerRadius" Value="4"/>
       </Style>
     </Style>
