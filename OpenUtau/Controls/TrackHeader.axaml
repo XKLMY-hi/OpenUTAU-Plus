@@ -101,12 +101,12 @@
 
     <!-- Main card -->
     <Border Margin="0" BorderThickness="1" BorderBrush="{Binding HeaderBorderBrush}"
-            CornerRadius="6" PointerPressed="HeaderPointerPressed"
+            CornerRadius="8" PointerPressed="HeaderPointerPressed"
             Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
       <Grid ColumnDefinitions="auto,*,auto" RowDefinitions="*" Margin="6,3,4,3">
 
         <!-- ── Left: Avatar（圆角矩形，竖居中）+ TrackNo badge（右下角不挡头像） ── -->
-        <Border Grid.Column="0" VerticalAlignment="Center" Margin="0,2,6,0"
+        <Border Grid.Column="0" VerticalAlignment="Top" Margin="0,2,6,0"
                 Width="44" Height="44" CornerRadius="8" ClipToBounds="True"
                 BorderBrush="{DynamicResource NeutralAccentBrushSemi}" BorderThickness="0">
           <Image Source="{Binding Avatar}" Stretch="Uniform"
