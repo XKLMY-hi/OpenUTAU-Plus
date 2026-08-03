@@ -181,6 +181,8 @@ namespace OpenUtau.Core {
         }
 
         public readonly ToneGenerator toneGenerator;
+        /// <summary>内存短语渲染缓存（seek/循环复用，LRU 封顶，LoadProject 清空）。</summary>
+        public readonly Render.PhraseRenderCache PhraseCache = new();
         List<Fader> faders;
         MasterAdapter masterMix;
         MasterAdapter editingMix;
@@ -413,7 +415,7 @@ namespace OpenUtau.Core {
         private void Render(UProject project, int tick, int endTick, int trackNo) {
             Task.Run(() => {
                 try {
-                    RenderEngine engine = new RenderEngine(project, startTick: tick, endTick: endTick, trackNo: trackNo);
+                    RenderEngine engine = new RenderEngine(project, startTick: tick, endTick: endTick, trackNo: trackNo, cache: PhraseCache);
                     var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
                     faders = result.Item2;
                     StartingToPlay = false;

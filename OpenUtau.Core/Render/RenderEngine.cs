@@ -13,13 +13,28 @@ namespace OpenUtau.Core.Render {
     public class Progress {
         readonly int total;
         int completed = 0;
+        int notifiedCount = 0;
+        long lastNotifyMs = 0;
+        readonly object lockObj = new();
+
         public Progress(int total) {
             this.total = total;
         }
 
         public void Complete(int n, string info) {
-            Interlocked.Add(ref completed, n);
-            Notify(completed * 100.0 / total, info);
+            int done = Interlocked.Add(ref completed, n);
+            // 节流：每 50 音素或 ≥200ms 才通知一次，完成时强制——防每音素一条
+            // Task 投 UI 调度器的洪泛（并行渲染后触发频率更高）
+            bool notify = false;
+            lock (lockObj) {
+                long now = Environment.TickCount64;
+                if (done - notifiedCount >= 50 || now - lastNotifyMs >= 200 || done >= total) {
+                    notifiedCount = done;
+                    lastNotifyMs = now;
+                    notify = true;
+                }
+            }
+            if (notify) Notify(done * 100.0 / total, info);
         }
 
         public void Clear() {
@@ -47,12 +62,15 @@ namespace OpenUtau.Core.Render {
         readonly int startTick;
         readonly int endTick;
         readonly int trackNo;
+        readonly PhraseRenderCache? cache;
 
-        public RenderEngine(UProject project, int startTick = 0, int endTick = -1, int trackNo = -1) {
+        public RenderEngine(UProject project, int startTick = 0, int endTick = -1, int trackNo = -1,
+                            PhraseRenderCache? cache = null) {
             this.project = project;
             this.startTick = startTick;
             this.endTick = endTick;
             this.trackNo = trackNo;
+            this.cache = cache;
         }
 
         // for playback or export
@@ -122,8 +140,8 @@ namespace OpenUtau.Core.Render {
                 TrackLevels.Register(track.TrackNo, tracker);
                 trackOutputs.Add(tracker);
             }
-            var task = Task.Run(() => {
-                RenderRequests(requests, newCancellation, playing: !wait);
+            var task = Task.Run(async () => {
+                await RenderRequestsAsync(requests, newCancellation, playing: !wait);
             });
             task.ContinueWith(task => {
                 if (task.IsFaulted && !wait) {
@@ -180,7 +198,8 @@ namespace OpenUtau.Core.Render {
                     if (trackRequests.Length == 0) {
                         trackMixes.Add(null);
                     } else {
-                        RenderRequests(trackRequests, newCancellation);
+                        // RenderTracks 由后台导出任务线程调用（无 UI 上下文依赖），同步等待安全
+                        RenderRequestsAsync(trackRequests, newCancellation).GetAwaiter().GetResult();
                         var mix = new WaveMix(trackRequests.Select(req => req.mix).ToArray());
                         trackMixes.Add(mix);
                     }
@@ -196,13 +215,13 @@ namespace OpenUtau.Core.Render {
                 oldCancellation.Cancel();
                 oldCancellation.Dispose();
             }
-            Task.Run(() => {
+            Task.Run(async () => {
                 try {
                     Thread.Sleep(200);
                     if (newCancellation.Token.IsCancellationRequested) {
                         return;
                     }
-                    RenderRequests(PrepareRequests(), newCancellation);
+                    await RenderRequestsAsync(PrepareRequests(), newCancellation);
                 } catch (Exception e) {
                     if (!newCancellation.IsCancellationRequested) {
                         Log.Error(e, "Failed to pre-render.");
@@ -244,7 +263,7 @@ namespace OpenUtau.Core.Render {
             return requests;
         }
 
-        private void RenderRequests(
+        private async Task RenderRequestsAsync(
             RenderPartRequest[] requests,
             CancellationTokenSource cancellation,
             bool playing = false) {
@@ -258,33 +277,62 @@ namespace OpenUtau.Core.Render {
                     .Zip(req.sources, (phrase, source) => Tuple.Create(phrase, source, req)))
                 .ToArray();
             if (playing) {
-                var orderedTuples = tuples
+                // 播放头前方（end > startTick）的短语先渲染，保证先出声
+                tuples = tuples
                     .Where(tuple => tuple.Item1.end > startTick)
                     .OrderBy(tuple => tuple.Item1.end)
                     .Concat(tuples.Where(tuple => tuple.Item1.end <= startTick))
                     .ToArray();
-                tuples = orderedTuples;
             }
             var progress = new Progress(tuples.Sum(t => t.Item1.phones.Length));
-            foreach (var tuple in tuples) {
+            // 短语级并行：DOP = NumRenderThreads（默认 2，渲染器线程安全未验证前保守）
+            int dop = Math.Clamp(Preferences.Default.NumRenderThreads, 1, 8);
+            using var sem = new SemaphoreSlim(dop);
+            var tasks = tuples.Select(tuple => RenderOneAsync(tuple, cancellation, progress, sem)).ToArray();
+            await Task.WhenAll(tasks);
+            if (!cancellation.IsCancellationRequested) {
+                progress.Clear();
+            }
+            // 机会性 Flush：输出未播放时释放延迟销毁的旧 VST handle（B1 竞态修复）
+            if (!PlaybackManager.Inst.OutputActive) {
+                Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
+            }
+        }
+
+        /// <summary>
+        /// 渲染单个短语：内存缓存命中则跳过合成；SetSamples/SetMix 有锁（并发安全）；
+        /// 写入前检查取消，取消周期不写新周期共享的 part.mix。
+        /// </summary>
+        private async Task RenderOneAsync(
+            Tuple<RenderPhrase, WaveSource, RenderPartRequest> tuple,
+            CancellationTokenSource cancellation,
+            Progress progress,
+            SemaphoreSlim sem) {
+            await sem.WaitAsync().ConfigureAwait(false);
+            try {
+                if (cancellation.IsCancellationRequested) return;
                 var phrase = tuple.Item1;
                 var source = tuple.Item2;
                 var request = tuple.Item3;
-                var task = phrase.renderer.Render(phrase, progress, request.trackNo, cancellation, true);
-                task.Wait();
-                if (cancellation.IsCancellationRequested) {
-                    break;
+
+                float[] samples = cache?.TryGet(phrase.hash) ?? null;
+                if (samples == null) {
+                    var task = phrase.renderer.Render(phrase, progress, request.trackNo, cancellation, true);
+                    await task.ConfigureAwait(false);
+                    if (cancellation.IsCancellationRequested) return;
+                    samples = task.Result.samples;
+                    cache?.Put(phrase.hash, samples);
+                } else {
+                    // 缓存命中：renderer 未运行，手动推进进度（total 含全部短语）
+                    progress.Complete(phrase.phones.Length, "Cached");
                 }
-                source.SetSamples(task.Result.samples);
+                source.SetSamples(samples);
                 if (request.sources.All(s => s.HasSamples)) {
                     request.part.SetMix(request.mix);
                     DocManager.Inst.ExecuteCmd(new PartRenderedNotification(request.part));
                 }
-            }
-            progress.Clear();
-            // 机会性 Flush：输出未播放时释放延迟销毁的旧 VST handle（B1 竞态修复）
-            if (!PlaybackManager.Inst.OutputActive) {
-                Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
+            } finally {
+                sem.Release();
             }
         }
 
