@@ -89,11 +89,17 @@ namespace OpenUtau.Core.Vst {
             }
         }
         /// <summary>Safe-dispose all effects queued for removal on all tracks.
-        /// Call from RenderEngine before building the next render cycle.</summary>
-        public void FlushAllPendingDispose() {
+        /// 仅在所有渲染/导出消费段退出（RenderGate.InFlight == 0）且输出未播放时执行；
+        /// 否则跳过并记日志，延迟到下一安全点（B1 竞态修复——禁止在音频线程仍可
+        /// 触碰旧 handle 时 vst_unload）。</summary>
+        public bool TryFlushAllPendingDispose() {
+            if (RenderGate.InFlight != 0 || PlaybackManager.Inst.OutputActive) {
+                return false;
+            }
             lock (_lock) {
                 foreach (var kv in _tracks) kv.Value.FlushPendingDispose();
             }
+            return true;
         }
 
         public void ClearAll() {

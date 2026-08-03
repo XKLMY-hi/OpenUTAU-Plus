@@ -134,15 +134,18 @@ namespace OpenUtau.App.Views {
                         var recorder = new RecordingAdapter(masterAdapter, writer, silentOutput: true);
 
                         float[] buf = new float[4096];
-                        DrainExport(
-                            () => recorder.Read(buf, 0, buf.Length),
-                            totalWritten => {
-                                var sec = totalWritten / 44100.0 / 2.0;
-                                Dispatcher.UIThread.Invoke(() => {
-                                    ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
-                                });
-                            },
-                            ctx.Token);
+                        // 导出消费段进入在飞计数（防并发 Flush 释放正在被消费的 VST handle）
+                        using (OpenUtau.Core.Vst.RenderGate.Enter()) {
+                            DrainExport(
+                                () => recorder.Read(buf, 0, buf.Length),
+                                totalWritten => {
+                                    var sec = totalWritten / 44100.0 / 2.0;
+                                    Dispatcher.UIThread.Invoke(() => {
+                                        ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
+                                    });
+                                },
+                                ctx.Token);
+                        }
                     } else {
                         var trackMixes = engine.RenderTracks(
                             DocManager.Inst.MainScheduler, ref ctx);
@@ -163,7 +166,10 @@ namespace OpenUtau.App.Views {
                             string trackPath = Path.Combine(
                                 Path.GetDirectoryName(path) ?? "",
                                 $"{Path.GetFileNameWithoutExtension(path)}_{Sanitize(track.TrackName)}.wav");
-                            WriteWavFile(trackPath, trackMixes[i]);
+                            // 导出消费段进入在飞计数（防并发 Flush）
+                            using (OpenUtau.Core.Vst.RenderGate.Enter()) {
+                                WriteWavFile(trackPath, trackMixes[i]);
+                            }
                         }
                     }
 

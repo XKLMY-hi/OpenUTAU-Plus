@@ -383,6 +383,8 @@ namespace OpenUtau.Core {
             TrackLevels.Clear();
             // 失效旧渲染的 faders 引用（OnNext 已有 null 检查——seek/停止后音量/声像通知不再写入过期链）
             faders = null;
+            // 安全点：输出已停 + 回调已 drain，可释放延迟销毁的 VST handle
+            Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
         }
 
         public void PausePlayback() {
@@ -402,6 +404,8 @@ namespace OpenUtau.Core {
             AudioOutput.Stop();
             // 换源前确认旧回调线程已退出（B1 竞态屏障——旧链上的 VST handle 可安全延迟销毁）
             WaitForCallbackDrain();
+            // 安全点：换源完成、新链 Init 前，释放旧链延迟销毁的 VST handle
+            Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
             InitOutput(masterMix);
             AudioOutput.Play();
         }
@@ -455,7 +459,12 @@ namespace OpenUtau.Core {
                     DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exporting to {exportPath}."));
 
                     CheckFileWritable(exportPath);
-                    WaveFileWriter.CreateWaveFile16(exportPath, new ExportAdapter(projectMix));
+                    // 导出消费段进入在飞计数——防止并发 Flush 释放正在被消费的 VST handle
+                    using (Vst.RenderGate.Enter()) {
+                        WaveFileWriter.CreateWaveFile16(exportPath, new ExportAdapter(projectMix));
+                    }
+                    // 安全点：导出消费段已退出
+                    Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
                     DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exported to {exportPath}."));
                 } catch (IOException ioe) {
                     var customEx = new MessageCustomizableException($"Failed to export {exportPath}.", $"<translate:errors.failed.export>: {exportPath}", ioe);
@@ -476,17 +485,22 @@ namespace OpenUtau.Core {
                 try {
                     RenderEngine engine = new RenderEngine(project);
                     var trackMixes = engine.RenderTracks(DocManager.Inst.MainScheduler, ref renderCancellation);
-                    for (int i = 0; i < trackMixes.Count; ++i) {
-                        if (trackMixes[i] == null || i >= project.tracks.Count || project.tracks[i].Muted) {
-                            continue;
-                        }
-                        file = PathManager.Inst.GetExportPath(exportPath, project.tracks[i]);
-                        DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exporting to {file}."));
+                    // 分轨写文件循环：消费段在飞计数（防并发 Flush）
+                    using (Vst.RenderGate.Enter()) {
+                        for (int i = 0; i < trackMixes.Count; ++i) {
+                            if (trackMixes[i] == null || i >= project.tracks.Count || project.tracks[i].Muted) {
+                                continue;
+                            }
+                            file = PathManager.Inst.GetExportPath(exportPath, project.tracks[i]);
+                            DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exporting to {file}."));
 
-                        CheckFileWritable(file);
-                        WaveFileWriter.CreateWaveFile16(file, new ExportAdapter(trackMixes[i]).ToMono(1, 0));
-                        DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exported to {file}."));
+                            CheckFileWritable(file);
+                            WaveFileWriter.CreateWaveFile16(file, new ExportAdapter(trackMixes[i]).ToMono(1, 0));
+                            DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exported to {file}."));
+                        }
                     }
+                    // 安全点：导出消费段已退出
+                    Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
                 } catch (IOException ioe) {
                     var customEx = new MessageCustomizableException($"Failed to export {file}.", $"<translate:errors.failed.export>: {file}", ioe);
                     DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(customEx));

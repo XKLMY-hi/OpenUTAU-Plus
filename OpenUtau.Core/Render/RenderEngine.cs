@@ -71,9 +71,9 @@ namespace OpenUtau.Core.Render {
             double startMs = project.timeAxis.TickPosToMsPos(startTick);
             double endMs = endTick == -1 ? double.PositiveInfinity : project.timeAxis.TickPosToMsPos(endTick);
             var faders = new List<Fader>();
-            // Flush any pending effect disposals from the previous render cycle
-            // before the audio thread takes new snapshots of the effects array.
-            Vst.VstPluginManager.Inst.FlushAllPendingDispose();
+            // 注意：不再在此处 Flush 延迟销毁的 VST handle——裸 Flush 无法保证旧
+            // AudioOutput 回调线程已退出（B1 竞态）。Flush 收敛到安全点：
+            // StopPlayback / StartPlayback（Stop+drain 后）/ 渲染与导出段尾部。
             // Each track is wrapped with its own UMixFx (no global FX bus).
             // Tracks with MixFx == null or Enabled = false pass through unchanged
             // (zero-overhead bypass).  All tracks sum into a single mix.
@@ -248,6 +248,8 @@ namespace OpenUtau.Core.Render {
             RenderPartRequest[] requests,
             CancellationTokenSource cancellation,
             bool playing = false) {
+            // 渲染合成段进入在飞计数——防止并发 Flush 释放正在被消费的 VST handle
+            using var gate = Vst.RenderGate.Enter();
             if (requests.Length == 0 || cancellation.IsCancellationRequested) {
                 return;
             }
@@ -280,6 +282,10 @@ namespace OpenUtau.Core.Render {
                 }
             }
             progress.Clear();
+            // 机会性 Flush：输出未播放时释放延迟销毁的旧 VST handle（B1 竞态修复）
+            if (!PlaybackManager.Inst.OutputActive) {
+                Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
+            }
         }
 
         public static void ReleaseSourceTemp() {
