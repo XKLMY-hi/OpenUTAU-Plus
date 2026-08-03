@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -369,7 +370,7 @@ namespace OpenUtau.App.Views {
                 var edit = new Button { Classes = { "browseBtn" }, Margin = new(2, 0, 2, 0),
                     Content = new TextBlock { Text = ThemeManager.GetString("effects.edit"), FontSize = 9 },
                 };
-                var s2 = slot; edit.Click += (_, _) => OpenVstEditor(s2);
+                var s2 = slot; edit.Click += async (_, _) => await OpenVstEditor(s2);
                 g.Children.Add(edit); Grid.SetColumn(edit, 3);
 
                 var rm = new Button { Classes = { "removeBtn" } };
@@ -433,9 +434,8 @@ namespace OpenUtau.App.Views {
             var load = new Button { Content = ThemeManager.GetString("effects.load"), Width = 64 };
             load.Click += (_, _) => {
                 if (lb.SelectedItem is VstPluginEntry e) {
-                    slot.PluginUid = e.Uid;
-                    VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
-                    BuildUI();
+                    // 异步加载（原生 Load 秒级，移出 UI 线程）——完成后重建行 UI
+                    _ = LoadAndRebuildAsync(slot, e);
                 }
                 picker.Close();
             };
@@ -446,9 +446,7 @@ namespace OpenUtau.App.Views {
 
             lb.DoubleTapped += (_, _) => {
                 if (lb.SelectedItem is VstPluginEntry e) {
-                    slot.PluginUid = e.Uid;
-                    VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
-                    BuildUI();
+                    _ = LoadAndRebuildAsync(slot, e);
                 }
                 picker.Close();
             };
@@ -473,15 +471,15 @@ namespace OpenUtau.App.Views {
             w.ShowDialog(this);
         }
 
-        private void OpenVstEditor(VstPluginSlot slot) {
+        private async Task OpenVstEditor(VstPluginSlot slot) {
             if (!slot.IsLoaded) return;
             if (slot.Entry == null) return;
 
             // Get shared instance — do NOT create new one
             var fx = VstPluginManager.Inst.GetEffect(track.TrackNo, slot.SlotIndex);
             if (fx == null) {
-                // Not yet loaded — load it now
-                fx = VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
+                // Not yet loaded — load it now (async，原生调用移出 UI 线程)
+                fx = await VstPluginManager.Inst.LoadEffectAsync(track.TrackNo, slot);
             }
             if (fx == null) {
                 ShowMessage($"{ThemeManager.GetString("effects.error.load")}\n{VstBridge.LastError() ?? ThemeManager.GetString("effects.error.unknown")}");
@@ -490,6 +488,13 @@ namespace OpenUtau.App.Views {
 
             var editor = new VstEditorWindow(fx);
             editor.Show();
+        }
+
+        /// <summary>写 UID 后异步加载实例并重建行 UI（原生 Load 秒级移出 UI 线程）。</summary>
+        private async Task LoadAndRebuildAsync(VstPluginSlot slot, VstPluginEntry e) {
+            slot.PluginUid = e.Uid;
+            await VstPluginManager.Inst.LoadEffectAsync(track.TrackNo, slot);
+            BuildUI();
         }
 
         // ═══════════════════════════════════════════════════════════════

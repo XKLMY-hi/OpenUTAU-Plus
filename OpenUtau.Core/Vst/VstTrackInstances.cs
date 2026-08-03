@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using OpenUtau.Core.SignalChain;
 using Serilog;
 
 namespace OpenUtau.Core.Vst {
@@ -21,6 +24,9 @@ namespace OpenUtau.Core.Vst {
         // from the render cycle entry point after the previous cycle is guaranteed done.
         private readonly List<VstEffect?> _pendingDispose = new();
 
+        // 串行化同 track 的并发原生加载（Load/Setup/RestoreState 秒级，锁外执行）
+        private readonly SemaphoreSlim _loadGate = new(1, 1);
+
         public VstTrackInstances(int trackNo) => _trackNo = trackNo;
 
         /// <summary>
@@ -37,7 +43,7 @@ namespace OpenUtau.Core.Vst {
                 try {
                     var fx = new VstEffect(slot, Bridge);
                     fx.Load();
-                    fx.Setup(44100, 4096);
+                    fx.Setup(AudioSettings.SampleRate, 4096);
 
                     // Restore saved state if available
                     if (slot.StateData != null)
@@ -51,6 +57,47 @@ namespace OpenUtau.Core.Vst {
                     Log.Warning($"[VstTrack] T{_trackNo}S{index} load failed: {ex.Message}");
                     return null;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Async load: 原生调用（Load/Setup/RestoreState，秒级）在 _writeLock 外执行，
+        /// _loadGate 串行化同 track 并发加载；仅数组替换在锁内。
+        /// 加载期间音频线程继续使用旧实例（平滑过渡），完成后旧实例进延迟销毁队列。
+        /// </summary>
+        public async Task<VstEffect?> LoadAtAsync(int index, VstPluginSlot slot, CancellationToken ct = default) {
+            await _loadGate.WaitAsync(ct).ConfigureAwait(false);
+            try {
+                if (ct.IsCancellationRequested) return null;
+                if (!slot.IsLoaded || slot.Bypassed) {
+                    UnloadAt(index);
+                    return null;
+                }
+
+                var fx = new VstEffect(slot, Bridge);
+                await Task.Run(() => {
+                    fx.Load();
+                    fx.Setup(AudioSettings.SampleRate, 4096);
+                    if (slot.StateData != null)
+                        fx.RestoreState(slot.StateData);
+                }, ct).ConfigureAwait(false);
+
+                lock (_writeLock) {
+                    if (ct.IsCancellationRequested) {
+                        fx.Dispose();
+                        return null;
+                    }
+                    UnloadAtLocked(index);
+                    EnsureCapacity(index + 1);
+                    _effects[index] = fx;
+                }
+                Log.Information($"[VstTrack] T{_trackNo}S{index}: {fx.DisplayName} (async)");
+                return fx;
+            } catch (Exception ex) {
+                Log.Warning($"[VstTrack] T{_trackNo}S{index} load failed: {ex.Message}");
+                return null;
+            } finally {
+                _loadGate.Release();
             }
         }
 

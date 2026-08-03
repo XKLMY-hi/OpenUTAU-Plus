@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Serilog;
 
 namespace OpenUtau.Core.Vst {
@@ -49,6 +51,15 @@ namespace OpenUtau.Core.Vst {
         public VstEffect? LoadEffect(int trackNo, VstPluginSlot slot) {
             var ti = GetOrCreate(trackNo);
             return ti.LoadAt(slot.SlotIndex, slot);
+        }
+
+        /// <summary>
+        /// Async load/reload — 原生 Load/Setup/RestoreState 移出 UI 线程（秒级阻塞消除），
+        /// 同 track 并发加载由 _loadGate 串行化。返回加载后的实例（失败返回 null）。
+        /// </summary>
+        public Task<VstEffect?> LoadEffectAsync(int trackNo, VstPluginSlot slot, CancellationToken ct = default) {
+            var ti = GetOrCreate(trackNo);
+            return ti.LoadAtAsync(slot.SlotIndex, slot, ct);
         }
 
         /// <summary>Unload an effect. Called from UI thread.</summary>
