@@ -156,7 +156,7 @@ namespace OpenUtau.Core.Render {
             var renderMixdownResult = RenderMixdown(uiScheduler, ref cancellation, wait: false);
             // master 峰值由 MasterAdapter.Read 统计（主推子 Scale 应用之后 = 实际输出）
             var master = new MasterAdapter(renderMixdownResult.Item1);
-            master.SetPosition((int)(startMs * 44100 / 1000) * 2);
+            master.SetPosition((int)(startMs * SignalChain.AudioSettings.SampleRate / 1000) * SignalChain.AudioSettings.Channels);
             return Tuple.Create(master, renderMixdownResult.Item2);
         }
 

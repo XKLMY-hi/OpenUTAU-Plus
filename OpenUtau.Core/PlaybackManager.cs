@@ -31,7 +31,7 @@ namespace OpenUtau.Core {
         public bool isPlaying { get; private set; } = true;
 
         public SineGenerator(double freq, float gain, int attackMs = 25, int releaseMs = 25) {
-            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
+            waveFormat = SignalChain.AudioSettings.CreateIeeeFloatWaveFormat();
             this.freq = freq;
             this.gain = gain;
             position = 0;
@@ -255,7 +255,7 @@ namespace OpenUtau.Core {
             masterMix = null;
             PlayingMaster = false;
             AudioOutput.Stop();
-            InitOutput(new SignalGenerator(44100, 1).Take(TimeSpan.FromSeconds(1)));
+            InitOutput(new SignalGenerator(SignalChain.AudioSettings.SampleRate, 1).Take(TimeSpan.FromSeconds(1)));
             AudioOutput.Play();
         }
 
@@ -429,7 +429,9 @@ namespace OpenUtau.Core {
 
         public void UpdatePlayPos() {
             if (AudioOutput != null && AudioOutput.PlaybackState == PlaybackState.Playing && PlayingMaster) {
-                double ms = (AudioOutput.GetPosition() / sizeof(float) - masterMix.Waited / 2) * 1000.0 / 44100;
+                // 硬件位置（字节）→ float 采样数 → 扣除等待静音（帧数）→ ms（格式显式化）
+                double ms = (AudioOutput.GetPosition() / sizeof(float) - masterMix.Waited / masterMix.WaveFormat.Channels)
+                    * 1000.0 / masterMix.WaveFormat.SampleRate;
                 int tick = DocManager.Inst.Project.timeAxis.MsPosToTickPos(startMs + ms);
                 if (loopEndTick > 0 && tick >= loopEndTick) {
                     // Loop back to range start

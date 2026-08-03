@@ -16,7 +16,8 @@ namespace OpenUtau.App {
     public class NAudioOutput : DummyAudioOutput { }
 #else
     public class NAudioOutput : IAudioOutput {
-        const int Channels = 2;
+        // 格式取全局 AudioSettings（B 阶段格式显式化）
+        int Channels => Core.SignalChain.AudioSettings.Channels;
 
         private readonly object lockObj = new object();
         private WaveOutEvent? waveOutEvent;

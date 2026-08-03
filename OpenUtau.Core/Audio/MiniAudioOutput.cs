@@ -8,8 +8,9 @@ using Serilog;
 
 namespace OpenUtau.Audio {
     public class MiniAudioOutput : IAudioOutput, IDisposable {
-        const int channels = 2;
-        const int sampleRate = 44100;
+        // 格式取全局 AudioSettings（B 阶段格式显式化）
+        readonly int channels = Core.SignalChain.AudioSettings.Channels;
+        readonly int sampleRate = Core.SignalChain.AudioSettings.SampleRate;
 
         public PlaybackState PlaybackState { get; private set; }
         public int DeviceNumber { get; private set; }
