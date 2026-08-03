@@ -41,8 +41,9 @@ public partial class PanKnob : UserControl {
     }
 
     /// <summary>
-    /// 按下开始全局追踪：控件仅 26px，拖出控件边界后仍跟随鼠标
-    /// （挂窗口级 PointerMoved/PointerReleased，松开或捕获丢失即卸载）。
+    /// 按下开始全局追踪：控件仅 26px，拖出控件边界后仍跟随鼠标。
+    /// 用 Tunnel + handledEventsToo 挂在窗口根部——混音台内其他控件
+    /// （FaderBox/滑条等）标记 Handled 也不会截断事件。
     /// </summary>
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e) {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
@@ -54,8 +55,10 @@ public partial class PanKnob : UserControl {
         trackingRoot = topLevel;
         if (topLevel != null) {
             dragStartY = e.GetPosition(topLevel).Y;
-            topLevel.PointerMoved += OnGlobalMoved;
-            topLevel.PointerReleased += OnGlobalReleased;
+            topLevel.AddHandler(PointerMovedEvent, OnGlobalMoved,
+                RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
+            topLevel.AddHandler(PointerReleasedEvent, OnGlobalReleased,
+                RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
         } else {
             dragStartY = e.GetPosition(this).Y;
         }
@@ -82,8 +85,8 @@ public partial class PanKnob : UserControl {
 
     private void EndTracking() {
         if (trackingRoot != null) {
-            trackingRoot.PointerMoved -= OnGlobalMoved;
-            trackingRoot.PointerReleased -= OnGlobalReleased;
+            trackingRoot.RemoveHandler(PointerMovedEvent, OnGlobalMoved);
+            trackingRoot.RemoveHandler(PointerReleasedEvent, OnGlobalReleased);
             trackingRoot = null;
         }
         isDragging = false;
