@@ -81,7 +81,7 @@ namespace OpenUtau.App.Controls {
                     if (_syncing) return;
                     _syncing = true;
                     suppressingEvents = true;
-                    PanSlider.Value = Math.Clamp(n.Pan, -100, 100);
+                    PanKnobControl.Value = Math.Clamp(n.Pan, -100, 100);
                     track.Pan = n.Pan / 100.0;
                     suppressingEvents = false;
                     _syncing = false;
@@ -96,14 +96,14 @@ namespace OpenUtau.App.Controls {
             _volumeSubscription = null;
             _panSubscription?.Dispose();
             _panSubscription = null;
-            PanSlider.PropertyChanged -= OnPanSliderValueChanged;
+            PanKnobControl.ValueChanged -= OnPanKnobChanged;
             _vm = null;
         }
 
-        private void OnPanSliderValueChanged(object? s, Avalonia.AvaloniaPropertyChangedEventArgs e) {
-            if (e.Property == RangeBase.ValueProperty && !suppressingEvents && track != null && _vm != null) {
-                _vm.ApplyPan(PanSlider.Value);
-                var pn = new PanChangeNotification(track.TrackNo, PanSlider.Value);
+        private void OnPanKnobChanged(object? s, double pan) {
+            if (!suppressingEvents && track != null && _vm != null) {
+                _vm.ApplyPan(pan);
+                var pn = new PanChangeNotification(track.TrackNo, pan);
                 DocManager.Inst.ExecuteCmd(pn);
                 MessageBus.Current.SendMessage(pn);
             }
@@ -116,9 +116,9 @@ namespace OpenUtau.App.Controls {
             TrackNameLabel.Text = _vm.TrackName;
             ColorBar.Background = _vm.TrackColor;
             UpdateMuteSoloButtons();
-            PanSlider.Value = _vm.Pan;
-            PanSlider.PropertyChanged -= OnPanSliderValueChanged;
-            PanSlider.PropertyChanged += OnPanSliderValueChanged;
+            PanKnobControl.ValueChanged -= OnPanKnobChanged;
+            PanKnobControl.Value = _vm.Pan;
+            PanKnobControl.ValueChanged += OnPanKnobChanged;
             UpdateVolValueDisplay(Math.Clamp(_vm.Volume, FaderMin, FaderMax));
             UpdateFaderPosition();
             UpdateFxEntryBtn();

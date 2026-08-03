@@ -36,13 +36,13 @@ namespace OpenUtau.Test.App {
             strip.Refresh();
             strip.Refresh();
 
-            // Changing the slider value should fire exactly one notification.
-            strip.PanSlider.Value = 50;
+            // Changing the knob value should fire exactly one notification.
+            strip.PanKnobControl.Value = 50;
             Assert.Equal(1, received);
         }
 
         /// <summary>
-        /// DisposeSubscriptions must detach the PropertyChanged handler so no further
+        /// DisposeSubscriptions must detach the ValueChanged handler so no further
         /// notifications fire after a strip is torn down.
         /// </summary>
         [AvaloniaFact]
@@ -55,12 +55,12 @@ namespace OpenUtau.Test.App {
                 .ObserveOn(ImmediateScheduler.Instance)
                 .Subscribe(_ => received++);
 
-            strip.PanSlider.Value = 30;
+            strip.PanKnobControl.Value = 30;
             int beforeDispose = received;
             Assert.Equal(1, beforeDispose);
 
             strip.DisposeSubscriptions();
-            strip.PanSlider.Value = 70;  // should produce no new notification
+            strip.PanKnobControl.Value = 70;  // should produce no new notification
             Assert.Equal(beforeDispose, received);
         }
     }
