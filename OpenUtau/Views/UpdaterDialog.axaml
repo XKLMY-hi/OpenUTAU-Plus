@@ -4,24 +4,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="OpenUtau.App.Views.UpdaterDialog"
-        Width="400" Height="300">
-  <Grid RowDefinitions="*, 20, 20, *, *">
-    <Image Grid.Row="0" Margin="20" Width="96" Height="96"
-           VerticalAlignment="Top" HorizontalAlignment="Center"
+        Width="400" Height="320">
+  <!-- 自适应布局（修复：原版 Row0 固定 Margin 136 定位 logo，高度变化时与版本号重叠） -->
+  <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto">
+    <Image Grid.Row="0" Margin="0,24,0,0" Width="96" Height="96"
+           HorizontalAlignment="Center"
            Source="/Assets/open-utau.ico"/>
-    <Image Grid.Row="0" Height="16" Margin="0,136,0,10"
-           VerticalAlignment="Top" HorizontalAlignment="Center"
+    <Image Grid.Row="1" Height="16" Margin="0,8,0,0"
+           HorizontalAlignment="Center"
            Source="/Assets/logotype.png" IsVisible="{Binding !IsDarkMode}"/>
-    <Image Grid.Row="0" Height="16" Margin="0,136,0,10"
-           VerticalAlignment="Top" HorizontalAlignment="Center"
+    <Image Grid.Row="1" Height="16" Margin="0,8,0,0"
+           HorizontalAlignment="Center"
            Source="/Assets/logotype-w.png" IsVisible="{Binding IsDarkMode}"/>
-    <TextBlock Grid.Row="1" Margin="40,0" TextAlignment="Center"
+    <TextBlock Grid.Row="2" Margin="0,8,0,0" TextAlignment="Center"
                Text="{Binding AppVersion}"/>
-    <TextBlock Grid.Row="2" Margin="40,0" TextAlignment="Center"
+    <TextBlock Grid.Row="3" Margin="40,14,40,0" TextAlignment="Center"
+               VerticalAlignment="Center" TextWrapping="Wrap"
                Text="{DynamicResource updater.description}"/>
-    <TextBlock Grid.Row="3" Margin="40,0" TextAlignment="Center" VerticalAlignment="Bottom"
+    <TextBlock Grid.Row="4" Margin="40,10,40,0" TextAlignment="Center"
                Text="{Binding UpdaterStatus}" FontWeight="Bold"/>
-    <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,20,0,20"
+    <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,18,0,22"
                 HorizontalAlignment="Center" Spacing="20">
       <Button Width="120" Content="{DynamicResource updater.github}" Command="{Binding OnGithub}"/>
       <Button Width="120" Content="{DynamicResource updater.update}" Command="{Binding OnUpdate}"
