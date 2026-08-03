@@ -31,13 +31,36 @@ namespace OpenUtau.App.Controls {
         }
         public int TrackIndex { get; set; } = -1;
 
+        static readonly IBrush LedGreen = new SolidColorBrush(Color.FromRgb(39, 174, 96));
+        static readonly IBrush LedYellow = new SolidColorBrush(Color.FromRgb(251, 192, 45));
+        static readonly IBrush LedRed = new SolidColorBrush(Color.FromRgb(229, 57, 53));
+        private Border[] MeterSegments = Array.Empty<Border>();
+        private double currentSeg;
+
         public MixerTrackStrip() {
             InitializeComponent();
+            BuildMeterSegments();
             FaderBox.SizeChanged += (s, e) => UpdateFaderPosition();
             FaderBox.AddHandler(PointerReleasedEvent, OnFaderReleased,
                 Avalonia.Interactivity.RoutingStrategies.Tunnel | Avalonia.Interactivity.RoutingStrategies.Bubble, true);
             FaderBox.AddHandler(PointerCaptureLostEvent, OnFaderCaptureLost,
                 Avalonia.Interactivity.RoutingStrategies.Tunnel | Avalonia.Interactivity.RoutingStrategies.Bubble, true);
+        }
+
+        /// <summary>LED 电平表：10 段（绿 6 / 黄 2 / 红 2），未点亮段低透明度显示表底。</summary>
+        private void BuildMeterSegments() {
+            MeterSegments = new Border[10];
+            for (int i = 0; i < 10; i++) {
+                var seg = new Border {
+                    Height = 3,
+                    Margin = new Thickness(0),
+                    CornerRadius = new CornerRadius(1.5),
+                    Background = i < 6 ? LedGreen : i < 8 ? LedYellow : LedRed,
+                    Opacity = 0.18,
+                };
+                LevelMeterPanel.Children.Add(seg);
+                MeterSegments[i] = seg;
+            }
         }
         public MixerTrackStrip(UTrack track) : this() {
             Track = track;
@@ -129,20 +152,13 @@ namespace OpenUtau.App.Controls {
         }
         private void UpdateFaderPositionFromDb(double db) {
             if (track == null || FaderBox.Bounds.Height <= 0) return;
-            ThumbBar.Margin = new Thickness(-2, DbToTop(Math.Clamp(db, FaderMin, FaderMax)), -2, 0);
+            ThumbBar.Margin = new Thickness(0, DbToTop(Math.Clamp(db, FaderMin, FaderMax)), 0, 0);
         }
 
         private void UpdateFaderPosition() {
             if (track == null || FaderBox.Bounds.Height <= 0) return;
             double db = Math.Clamp(track.Volume, FaderMin, FaderMax);
-            ThumbBar.Margin = new Thickness(-2, DbToTop(db), -2, 0);
-        }
-        private static IBrush GetLevelBrush(double ratio) {
-            byte r, g, b; const byte a = 100;
-            if (ratio < 0.6) { double t = ratio / 0.6; r = (byte)(39 + 202 * t); g = (byte)(174 + 22 * t); b = (byte)(96 - 96 * t); }
-            else if (ratio < 0.85) { double t = (ratio - 0.6) / 0.25; r = (byte)(241 - 10 * t); g = (byte)(196 - 120 * t); b = 0; }
-            else { double t = (ratio - 0.85) / 0.15; r = 231; g = (byte)(76 * (1 - t) + 39 * t); b = 0; }
-            return new SolidColorBrush(Color.FromArgb(a, r, g, b));
+            ThumbBar.Margin = new Thickness(0, DbToTop(db), 0, 0);
         }
         private void ApplyVolume(double db) {
             if (track == null || _vm == null) return;
@@ -230,20 +246,20 @@ namespace OpenUtau.App.Controls {
             rack.Closed += (_, __) => Refresh();
             rack.Show();
         }
-        // ── Level Meter ────────────────────────────────────
+        // ── Level Meter（LED 10 段）────────────────────────
         public void UpdateLevel(float rawPeakDb) {
-            if (FaderBox.Bounds.Height <= 0 || _vm == null) return;
+            if (_vm == null) return;
             bool silent = _vm.IsSilent;
             float gainDb = silent ? -60f : (float)_vm.Volume;
             float effectiveDb = Math.Clamp(rawPeakDb + gainDb, -60f, 0f);
-            double ratio = (effectiveDb + 60) / 60.0;
-            double targetH = ratio * FaderBox.Bounds.Height;
-            double currentH = LevelFill.Height;
-            double decay = FaderBox.Bounds.Height / 15.0;
-            double newH = targetH >= currentH ? targetH : Math.Max(targetH, currentH - decay);
-            newH = Math.Clamp(newH, 0, FaderBox.Bounds.Height);
-            LevelFill.Height = newH;
-            LevelFill.Background = GetLevelBrush(Math.Clamp(ratio, 0, 1));
+            double ratio = Math.Clamp((effectiveDb + 60) / 60.0, 0, 1);
+            double targetSeg = ratio * MeterSegments.Length;
+            // 追峰 + 衰减（33ms/tick，10 段约 1.5 tick 衰减满程）
+            currentSeg = targetSeg >= currentSeg ? targetSeg : Math.Max(targetSeg, currentSeg - 0.67);
+            int lit = (int)Math.Ceiling(currentSeg);
+            for (int i = 0; i < MeterSegments.Length; i++) {
+                MeterSegments[i].Opacity = i < lit ? 1.0 : 0.18;
+            }
         }
 
         public void Refresh() => LoadTrackData();
