@@ -358,18 +358,55 @@
                   <Button Grid.Column="2" x:Name="VstTab" Classes="subTab" Click="OnShowVst"
                           Content="{DynamicResource sidebar.vst}"/>
                 </Grid>
-                <!-- 歌手列表（素材库功能开发中：空态占位） -->
-                <StackPanel Grid.Row="1" x:Name="SingersPanel" Margin="8,6,8,0">
-                  <Border Classes="sideCard" Margin="0,8,0,0">
-                    <StackPanel>
-                      <Path Data="{StaticResource icon-mic}" Width="16" Height="16" Stretch="Uniform"
-                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                            HorizontalAlignment="Left" Margin="0,0,0,6"/>
-                      <TextBlock FontSize="11" Opacity="0.55"
-                                 Text="{DynamicResource sidebar.library.empty}"/>
-                    </StackPanel>
-                  </Border>
-                </StackPanel>
+                <!-- 歌手列表（E4：双击新建轨道 / 拖拽到主编辑器） -->
+                <Grid Grid.Row="1" x:Name="SingersPanel" Margin="8,6,8,0" RowDefinitions="Auto,*">
+                  <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,2">
+                    <TextBlock Text="{DynamicResource sidebar.singers}" FontSize="11" Opacity="0.45"
+                               Margin="2,4,0,4" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1" Classes="iconBtn" Width="24" Height="24" Click="OnRefreshSingers"
+                            ToolTip.Tip="{DynamicResource sidebar.refresh}">
+                      <Path Data="{StaticResource icon-refresh-cw}" Width="12" Height="12" Stretch="Uniform"
+                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    </Button>
+                  </Grid>
+                  <ListBox Grid.Row="1" ItemsSource="{Binding Singers}" Background="Transparent"
+                           BorderThickness="0" IsVisible="{Binding HasSingers}">
+                    <ListBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:SingerItem">
+                        <Border Classes="sideItem" DoubleTapped="OnSingerDoubleTap"
+                                PointerPressed="OnSidebarPointerPressed" PointerMoved="OnSidebarPointerMoved">
+                          <Grid ColumnDefinitions="34,8,*,Auto" Background="Transparent">
+                            <Border Grid.Column="0" Width="34" Height="34" CornerRadius="8"
+                                    ClipToBounds="True" Background="{DynamicResource PlusSurfaceControl}">
+                              <Image Source="{Binding Avatar}" Width="34" Height="34" Stretch="UniformToFill"/>
+                            </Border>
+                            <TextBlock Grid.Column="2" FontSize="12" VerticalAlignment="Center"
+                                       Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
+                            <Border Grid.Column="3" Background="{DynamicResource AccentBrush1Semi}"
+                                    CornerRadius="4" Padding="5,2" VerticalAlignment="Center"
+                                    IsVisible="{Binding ShowBadge}">
+                              <TextBlock FontSize="9" FontWeight="SemiBold"
+                                         Foreground="{DynamicResource AccentBrush1}"
+                                         Text="{Binding BadgeText}"/>
+                            </Border>
+                          </Grid>
+                        </Border>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                  <!-- 空状态 -->
+                  <StackPanel Grid.Row="1" IsVisible="{Binding !HasSingers}">
+                    <Border Classes="sideCard" Margin="0,8,0,0">
+                      <StackPanel>
+                        <Path Data="{StaticResource icon-mic}" Width="16" Height="16" Stretch="Uniform"
+                              Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                              HorizontalAlignment="Left" Margin="0,0,0,6"/>
+                        <TextBlock FontSize="11" Opacity="0.55"
+                                   Text="{DynamicResource sidebar.singers.empty}"/>
+                      </StackPanel>
+                    </Border>
+                  </StackPanel>
+                </Grid>
                 <!-- 采样音频（占位） -->
                 <StackPanel Grid.Row="1" x:Name="SamplesPanel" Margin="8,6,8,0" IsVisible="False">
                   <Border Classes="sideCard" Margin="0,8,0,0">

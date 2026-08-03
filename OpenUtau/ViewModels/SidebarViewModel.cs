@@ -7,6 +7,7 @@ using Avalonia.Media.Imaging;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Util;
+using ReactiveUI.Fody.Helpers;
 using Serilog;
 
 namespace OpenUtau.App.ViewModels {
@@ -61,6 +62,8 @@ namespace OpenUtau.App.ViewModels {
 
         public ObservableCollection<SingerItem> Singers { get; } = new ObservableCollection<SingerItem>();
         public ObservableCollection<SampleItem> Samples { get; } = new ObservableCollection<SampleItem>();
+        [Reactive] public bool HasSingers { get; set; }
+        [Reactive] public bool HasSamples { get; set; }
 
         public SidebarViewModel() {
             DocManager.Inst.AddSubscriber(this);
@@ -76,6 +79,7 @@ namespace OpenUtau.App.ViewModels {
             foreach (var singer in singers) {
                 Singers.Add(new SingerItem(singer));
             }
+            HasSingers = Singers.Count > 0;
         }
 
         /// <summary>重扫伴奏目录：仅枚举文件名（性能：不读时长/元数据）。</summary>
@@ -96,6 +100,7 @@ namespace OpenUtau.App.ViewModels {
             foreach (var file in files.OrderBy(f => f, StringComparer.OrdinalIgnoreCase)) {
                 Samples.Add(new SampleItem(file));
             }
+            HasSamples = Samples.Count > 0;
         }
 
         public void OnNext(UCommand cmd, bool isUndo) {

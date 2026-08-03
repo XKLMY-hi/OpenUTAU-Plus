@@ -65,6 +65,15 @@ namespace OpenUtau.App.Views {
         private readonly ReactiveCommand<UPart, Unit> PartMergeCommand;
         private readonly ReactiveCommand<UPart, Unit> PartSplitCommand;
 
+        // 阶段 E4：侧栏素材库（Avalonia 12 进程内自定义拖拽格式）
+        static readonly DataFormat<USinger> SingerDragFormat = DataFormat.CreateInProcessFormat<USinger>("OpenUtau.Singer");
+        static readonly DataFormat<string> AudioDragFormat = DataFormat.CreateInProcessFormat<string>("OpenUtau.Audio");
+        private readonly SidebarViewModel sidebarViewModel;
+        private Point sidebarDragStart;
+        private PointerPressedEventArgs? sidebarPressedArgs;
+        private SingerItem? sidebarDragSinger;
+        private SampleItem? sidebarDragSample;
+
         public MainWindow() {
             Log.Information("Creating main window.");
             InitializeComponent();
@@ -76,6 +85,9 @@ namespace OpenUtau.App.Views {
                 // give the viewmodel a way to prompt/save using the view's existing method
                 AskIfSaveAndContinue = AskIfSaveAndContinue
             };
+            // 阶段 E4：侧栏素材库 VM（歌手列表 + 伴奏库）
+            sidebarViewModel = new SidebarViewModel();
+            SingersPanel.DataContext = sidebarViewModel;
 
             viewModel.NewProject();
             viewModel.AddTempoChangeCmd = ReactiveCommand.Create<int>(tick => AddTempoChange(tick));
@@ -807,6 +819,57 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        // ── 阶段 E4：侧栏素材库交互 ─────────────────────────
+
+        /// <summary>双击歌手卡片 → 新建轨道添加歌手。</summary>
+        private void OnSingerDoubleTap(object? sender, TappedEventArgs e) {
+            if (sender is Border { DataContext: SingerItem item }) {
+                viewModel.AddSingerTrack(item.Singer);
+            }
+        }
+
+        /// <summary>侧栏卡片按下：记录起点、按下事件与拖拽载荷（歌手/伴奏）。</summary>
+        private void OnSidebarPointerPressed(object? sender, PointerPressedEventArgs args) {
+            if (!args.GetCurrentPoint(this).Properties.IsLeftButtonPressed ||
+                sender is not Border { DataContext: { } data }) {
+                return;
+            }
+            sidebarDragStart = args.GetPosition(this);
+            sidebarPressedArgs = args;
+            sidebarDragSinger = data as SingerItem;
+            sidebarDragSample = data as SampleItem;
+        }
+
+        /// <summary>侧栏卡片移动超过阈值 → 发起拖拽（进程内自定义格式）。</summary>
+        private async void OnSidebarPointerMoved(object? sender, PointerEventArgs args) {
+            if (sidebarPressedArgs == null || (sidebarDragSinger == null && sidebarDragSample == null)) {
+                return;
+            }
+            var delta = args.GetPosition(this) - sidebarDragStart;
+            if (Math.Abs(delta.X) < 5 && Math.Abs(delta.Y) < 5) {
+                return;
+            }
+            var data = new DataTransfer();
+            if (sidebarDragSinger != null) {
+                data.Add(DataTransferItem.Create(SingerDragFormat, sidebarDragSinger.Singer));
+            } else {
+                data.Add(DataTransferItem.Create(AudioDragFormat, sidebarDragSample!.Path));
+            }
+            var pressed = sidebarPressedArgs;
+            sidebarPressedArgs = null;
+            sidebarDragSinger = null;
+            sidebarDragSample = null;
+            await DragDrop.DoDragDropAsync(pressed, data, DragDropEffects.Copy);
+        }
+
+        /// <summary>刷新歌手列表（重扫歌手库 → 通知侧栏刷新）。</summary>
+        private async void OnRefreshSingers(object? sender, RoutedEventArgs e) {
+            LoadingWindow.BeginLoading(this);
+            await Task.Run(() => SingerManager.Inst.SearchAllSingers());
+            DocManager.Inst.ExecuteCmd(new SingersRefreshedNotification());
+            LoadingWindow.EndLoading();
+        }
+
         private void OnShowProjects(object? sender, RoutedEventArgs e) {
             ProjectPanel.IsVisible = true;
             LibraryPanel.IsVisible = false;
@@ -1099,6 +1162,22 @@ namespace OpenUtau.App.Views {
         }
 
         async void OnDrop(object? sender, DragEventArgs args) {
+            // 阶段 E4：侧栏素材库拖拽——自定义数据格式优先（歌手 / 伴奏）
+            var dragSinger = args.DataTransfer.TryGetValue(SingerDragFormat);
+            if (dragSinger != null) {
+                viewModel.AddSingerTrack(dragSinger);
+                return;
+            }
+            var dragAudio = args.DataTransfer.TryGetValue(AudioDragFormat);
+            if (dragAudio != null && File.Exists(dragAudio)) {
+                try {
+                    viewModel.ImportAudio(dragAudio);
+                } catch (Exception e) {
+                    Log.Error(e, "Failed to import audio");
+                    _ = await MessageBox.ShowError(this, new MessageCustomizableException("Failed to import audio", "<translate:errors.failed.importaudio>", e));
+                }
+                return;
+            }
             string[] ProjectExts = { ".ustxp", ".ustx", ".ust", ".vsqx", ".ufdata", ".musicxml", ".mid", ".midi" };
             string[] ArchiveExts = { ".zip", ".rar", ".uar" };
             string[] AudioExts = { ".mp3", ".wav", ".ogg", ".flac" };
