@@ -1,7 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="OpenUtau.App.Controls.MasterStrip"
-             Width="56" MinHeight="300">
+             Width="56">
   <UserControl.Styles>
     <Style Selector="Button.mixerBtn">
       <Setter Property="Width" Value="18"/>
