@@ -43,7 +43,7 @@ namespace OpenUtau.Core.Vst {
                 try {
                     var fx = new VstEffect(slot, Bridge);
                     fx.Load();
-                    fx.Setup(AudioSettings.SampleRate, 4096);
+                    fx.Setup(AudioSettings.SampleRate, AudioSettings.BlockSize);
 
                     // Restore saved state if available
                     if (slot.StateData != null)
@@ -77,7 +77,7 @@ namespace OpenUtau.Core.Vst {
                 var fx = new VstEffect(slot, Bridge);
                 await Task.Run(() => {
                     fx.Load();
-                    fx.Setup(AudioSettings.SampleRate, 4096);
+                    fx.Setup(AudioSettings.SampleRate, AudioSettings.BlockSize);
                     if (slot.StateData != null)
                         fx.RestoreState(slot.StateData);
                 }, ct).ConfigureAwait(false);

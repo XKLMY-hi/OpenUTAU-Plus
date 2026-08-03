@@ -130,16 +130,16 @@ namespace OpenUtau.App.Views {
                         });
 
                         using var writer = new WaveFileWriter(
-                            File.Create(path), WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
+                            File.Create(path), AudioSettings.CreateIeeeFloatWaveFormat());
                         var recorder = new RecordingAdapter(masterAdapter, writer, silentOutput: true);
 
-                        float[] buf = new float[4096];
+                        float[] buf = new float[AudioSettings.BlockSize];
                         // 导出消费段进入在飞计数（防并发 Flush 释放正在被消费的 VST handle）
                         using (OpenUtau.Core.Vst.RenderGate.Enter()) {
                             DrainExport(
                                 () => recorder.Read(buf, 0, buf.Length),
                                 totalWritten => {
-                                    var sec = totalWritten / 44100.0 / 2.0;
+                                    var sec = totalWritten / AudioSettings.SampleRate / AudioSettings.Channels;
                                     Dispatcher.UIThread.Invoke(() => {
                                         ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
                                     });
