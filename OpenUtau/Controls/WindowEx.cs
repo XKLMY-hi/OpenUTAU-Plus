@@ -3,6 +3,8 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Avalonia.Threading;
 using SukiUI.Controls;
 
@@ -48,6 +50,18 @@ public class WindowEx : SukiWindow
         Background = Brushes.Transparent;
         BorderBrush = Brushes.Transparent;
         BorderThickness = new Thickness(0);
+        // 自绘标题栏左侧显示应用图标（SukiWindow.LogoContent）
+        try {
+            LogoContent = new Image {
+                Source = new Bitmap(AssetLoader.Open(new Uri("avares://OpenUtau/Assets/OpenUtau.png"))),
+                Width = 16,
+                Height = 16,
+                Stretch = Stretch.Uniform,
+                Margin = new Thickness(4, 0, 0, 0),
+            };
+        } catch (Exception) {
+            // 资源缺失时忽略（不阻断窗口创建）
+        }
     }
 
     protected override void OnOpened(EventArgs e) {
