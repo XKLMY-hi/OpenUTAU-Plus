@@ -12,9 +12,7 @@ namespace OpenUtau.Core.SignalChain {
     /// Accepts any IEffect[] so VST plugins can be inserted alongside built-in FX.
     /// </summary>
     public class EffectChain : ISignalSource {
-        public const int SampleRate = 44100;
-        public const int Channels = 2;
-
+        // 采样率/声道取全局 AudioSettings（B 阶段格式显式化）
         private readonly ISignalSource source;
         private readonly IEffect[] effects;
         private float[]? scratch;
@@ -81,20 +79,20 @@ namespace OpenUtau.Core.SignalChain {
             if (fx != null && fx.Enabled) {
                 Log.Information($"[EffectChain] Building chain: Eq={!fx.EqBypassed} Comp={!fx.CompBypassed} Rev={!fx.ReverbBypassed}");
                 if (!fx.EqBypassed) {
-                    var eq = new BiquadEQ(SampleRate, Channels);
+                    var eq = new BiquadEQ(AudioSettings.SampleRate, AudioSettings.Channels);
                     eq.Configure(fx.EqLowDb, fx.EqMidFreq, 0.707, fx.EqMidDb, fx.EqHighDb);
                     Log.Information($"[EffectChain] EQ bypassed={eq.IsBypassed} low={fx.EqLowDb} midF={fx.EqMidFreq} mid={fx.EqMidDb} high={fx.EqHighDb}");
                     if (!eq.IsBypassed) list.Add(eq);
                 }
                 if (!fx.CompBypassed) {
-                    var comp = new SimpleCompressor(SampleRate, Channels);
+                    var comp = new SimpleCompressor(AudioSettings.SampleRate, AudioSettings.Channels);
                     FxPresets.CompParams cParams = FxPresets.Comp.TryGetValue(fx.CompPreset ?? FxPresets.Off, out var cp)
                         ? cp : FxPresets.Comp[FxPresets.Off];
                     comp.Configure(fx.CompThresholdDb, fx.CompRatio, cParams.AttackMs, cParams.ReleaseMs, fx.CompMakeupDb);
                     if (!comp.IsBypassed) list.Add(comp);
                 }
                 if (!fx.ReverbBypassed) {
-                    var reverb = new Freeverb(SampleRate, Channels);
+                    var reverb = new Freeverb(AudioSettings.SampleRate, AudioSettings.Channels);
                     FxPresets.ReverbParams rParams = FxPresets.Reverb.TryGetValue(fx.ReverbPreset ?? FxPresets.Off, out var rp)
                         ? rp : FxPresets.Reverb[FxPresets.Off];
                     double userWet = Math.Clamp(fx.ReverbWet, 0.0, 2.0);

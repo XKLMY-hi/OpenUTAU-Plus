@@ -45,7 +45,8 @@ namespace OpenUtau.Core.SignalChain {
                 } else if (scaleTarget < scale) {
                     scale = Math.Max(scaleTarget, scale - 0.0005f);
                 }
-                buffer[index + i] += scaleBuffer[i] * scale * (i % 2 == 0 ? volumeLeft : volumeRight);
+                // 交织布局显式化：左声道 = 偶数索引（AudioSettings.Channels 声道约定）
+                buffer[index + i] += scaleBuffer[i] * scale * (i % AudioSettings.Channels == 0 ? volumeLeft : volumeRight);
             }
             return ret;
         }

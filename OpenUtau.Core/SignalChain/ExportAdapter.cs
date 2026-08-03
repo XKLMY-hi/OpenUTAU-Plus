@@ -10,8 +10,8 @@ namespace OpenUtau.Core.SignalChain {
         public WaveFormat WaveFormat => waveFormat;
 
         public ExportAdapter(ISignalSource source) {
-            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
             this.source = source;
+            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(source.SampleRate, source.Channels);
         }
 
         public int Read(float[] buffer, int offset, int count) {

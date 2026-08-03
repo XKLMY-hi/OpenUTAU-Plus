@@ -15,8 +15,8 @@ namespace OpenUtau.Core.SignalChain {
 
         private float peak;
         public MasterAdapter(ISignalSource source) {
-            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
             this.source = source;
+            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(source.SampleRate, source.Channels);
         }
 
         public int Read(float[] buffer, int offset, int count) {
