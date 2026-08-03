@@ -77,5 +77,48 @@ namespace OpenUtau.Core.Vst {
                 return null;
             }
         }
+
+        /// <summary>
+        /// Probe a single-file .vst3 DLL in a subprocess (delegates to
+        /// vst_bridge.dll's vst_probe).  Returns the raw factory-metadata JSON
+        /// (same format as the old in-process probe), or null on failure —
+        /// a crashing plugin DLL only kills the subprocess, not OpenUTAU.
+        /// </summary>
+        public static string? ProbeVst3(string dllPath) {
+            if (!OS.IsWindows()) return null;
+
+            string exe = GetExePath();
+            if (!File.Exists(exe)) {
+                Log.Warning($"[VstProbe] exe not found: {exe}");
+                return null;
+            }
+
+            try {
+                using var proc = new Process {
+                    StartInfo = new ProcessStartInfo {
+                        FileName = exe,
+                        Arguments = $"--vst3 \"{dllPath}\"",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true,
+                    },
+                };
+
+                proc.Start();
+                string stdout = proc.StandardOutput.ReadToEnd();
+                proc.WaitForExit(5000); // 5s timeout
+
+                if (proc.ExitCode != 0 || string.IsNullOrWhiteSpace(stdout))
+                    return null;
+
+                using var doc = JsonDocument.Parse(stdout);
+                if (doc.RootElement.TryGetProperty("error", out _)) return null;
+                return stdout;
+            } catch (Exception ex) {
+                Log.Warning($"[VstProbe] Subprocess failed for '{dllPath}': {ex.Message}");
+                return null;
+            }
+        }
     }
 }

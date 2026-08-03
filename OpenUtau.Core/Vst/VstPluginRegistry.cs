@@ -135,8 +135,9 @@ namespace OpenUtau.Core.Vst {
 
         /// <summary>
         /// Probe a single-file .vst3 DLL (not a bundle directory).
-        /// Uses the native vst_probe() which only reads factory metadata
-        /// without creating a component — safe for instrument VSTs.
+        /// Process-isolated: vst_probe.exe spawns vst_bridge.dll's vst_probe()
+        /// in a subprocess, so a crashing plugin DLL can't take down OpenUTAU
+        /// (previously this was in-process LoadLibrary — the crash source).
         /// </summary>
         private bool ScanVst3SingleFile(string filePath) {
             // Skip if file is actually a directory
@@ -153,7 +154,9 @@ namespace OpenUtau.Core.Vst {
             } catch { }
 
             try {
-                string? json = VstBridge.Probe(filePath);
+                // B1 修复：进程外探测（崩溃只杀探针进程）。Bundle 探测（moduleinfo.json
+                // 纯 JSON 读取）仍保持进程内。
+                string? json = VstProbeProcess.ProbeVst3(filePath);
                 if (string.IsNullOrEmpty(json)) return false;
 
                 using var doc = JsonDocument.Parse(json);
