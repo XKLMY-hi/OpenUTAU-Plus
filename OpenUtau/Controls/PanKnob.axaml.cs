@@ -63,12 +63,19 @@ public partial class PanKnob : UserControl {
         e.Handled = true;
     }
 
+    /// <summary>
+    /// FL Studio 侧向拖动：鼠标在旋钮左半区 → 向下拖动增大左声道（值减小），
+    /// 右半区 → 向下拖动增大右声道（值增大）。左右侧实时检测，拖动中
+    /// 穿过中心立即切换方向。
+    /// </summary>
     private void OnGlobalMoved(object? sender, PointerEventArgs e) {
         if (trackingRoot == null) {
             return;
         }
         double dy = e.GetPosition(trackingRoot).Y - dragStartY;
-        Value = dragStartValue - dy * (100.0 / DragRange);
+        bool rightSide = e.GetPosition(this).X >= Bounds.Width / 2;
+        double delta = dy * (100.0 / DragRange);
+        Value = rightSide ? dragStartValue + delta : dragStartValue - delta;
         e.Handled = true;
     }
 
