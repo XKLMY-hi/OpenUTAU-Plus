@@ -2298,6 +2298,7 @@ namespace OpenUtau.App.Views {
                 FontSize = 13,
                 Opacity = 0.85,
                 LineHeight = 20,
+                MaxWidth = 400,
             };
             var buttons = new StackPanel {
                 Orientation = Orientation.Horizontal,
@@ -2306,32 +2307,27 @@ namespace OpenUtau.App.Views {
                 Margin = new Thickness(0, 12, 0, 0),
             };
 
-            void AddButton(string caption, MessageBox.MessageBoxResult result, bool primary = false) {
+            void AddButton(string caption, MessageBox.MessageBoxResult result) {
                 var btn = new Button { Content = caption };
-                if (primary) {
-                    btn.Classes.Add("primary");
-                }
                 btn.Click += (_, _) => CompleteOverlay(result);
                 buttons.Children.Add(btn);
             }
 
-            AddButton(ThemeManager.GetString("button.yes"), MessageBox.MessageBoxResult.Yes, primary: true);
+            AddButton(ThemeManager.GetString("button.yes"), MessageBox.MessageBoxResult.Yes);
             AddButton(ThemeManager.GetString("button.no"), MessageBox.MessageBoxResult.No);
             AddButton(ThemeManager.GetString("button.cancel"), MessageBox.MessageBoxResult.Cancel);
 
-            // 内容填充 20% 卡片并留出边距（避免控件贴边拥挤）
+            // 内容自适应卡片（不写死 20% 窗口比例——窗口缩放时自动重排）
             var panel = new StackPanel {
                 Spacing = 14,
                 Margin = new Thickness(28, 24),
-                VerticalAlignment = VerticalAlignment.Stretch,
             };
             panel.Children.Add(title);
             panel.Children.Add(message);
             panel.Children.Add(buttons);
 
             overlayTcs = new TaskCompletionSource<MessageBox.MessageBoxResult>();
-            // 退出确认 = 主窗口 20% 大小，宽高同比例（UpdateOverlayCardSize 同 fraction → 比例自动同步主窗口）
-            ShowOverlayContent(panel, closable: false, sizeFraction: 0.20);
+            ShowOverlayContent(panel, closable: false, sizeFraction: 0);
             return overlayTcs.Task;
         }
 

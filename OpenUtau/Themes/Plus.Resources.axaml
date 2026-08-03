@@ -183,7 +183,7 @@
   <BoxShadows x:Key="PlusShadowBottom">inset 0 -1 0 0 #24000000</BoxShadows>
   <BoxShadows x:Key="PlusFocusRing">0 0 0 3 #33B0C4DE</BoxShadows>
   <!-- 1px 亮边(spread) + 10px 泛光(blur) 两段合一 -->
-  <BoxShadows x:Key="PlusGlowPrimary">0 0 0 1 #8CC73A3F, 0 0 10 0 #47C73A3F</BoxShadows>
+  <BoxShadows x:Key="PlusGlowPrimary">0 0 0 1 #8CB0C4DE, 0 0 10 0 #47B0C4DE</BoxShadows>
   <BoxShadows x:Key="PlusGlowDanger">0 0 0 1 #80FF7874, 0 0 10 0 #47FF7874</BoxShadows>
 
   <!-- ══════════ Fluent 兼容几何键（删除 Fluent 前预备）══════════ -->
