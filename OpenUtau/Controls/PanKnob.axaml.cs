@@ -32,6 +32,7 @@ public partial class PanKnob : UserControl {
 
     private double dragStartY;
     private double dragStartValue;
+    private bool lastRightSide;
     private TopLevel? trackingRoot;
 
     public PanKnob() {
@@ -51,6 +52,7 @@ public partial class PanKnob : UserControl {
             return;
         }
         dragStartValue = value;
+        lastRightSide = e.GetPosition(this).X >= Bounds.Width / 2;
         var topLevel = TopLevel.GetTopLevel(this);
         trackingRoot = topLevel;
         if (topLevel != null) {
@@ -66,14 +68,21 @@ public partial class PanKnob : UserControl {
     /// <summary>
     /// FL Studio 侧向拖动：鼠标在旋钮左半区 → 向下拖动增大左声道（值减小），
     /// 右半区 → 向下拖动增大右声道（值增大）。左右侧实时检测，拖动中
-    /// 穿过中心立即切换方向。
+    /// 穿过中心立即切换方向；切换侧时保留当前值（重置基准，不跳变）。
     /// </summary>
     private void OnGlobalMoved(object? sender, PointerEventArgs e) {
         if (trackingRoot == null) {
             return;
         }
-        double dy = e.GetPosition(trackingRoot).Y - dragStartY;
         bool rightSide = e.GetPosition(this).X >= Bounds.Width / 2;
+        if (rightSide != lastRightSide) {
+            // 切换侧：当前值/位置成为新基准，避免方向反转导致数值跳变
+            dragStartValue = value;
+            dragStartY = e.GetPosition(trackingRoot).Y;
+            lastRightSide = rightSide;
+            return;
+        }
+        double dy = e.GetPosition(trackingRoot).Y - dragStartY;
         double delta = dy * (100.0 / DragRange);
         Value = rightSide ? dragStartValue + delta : dragStartValue - delta;
         e.Handled = true;
