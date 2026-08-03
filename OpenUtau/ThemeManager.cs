@@ -85,7 +85,7 @@ namespace OpenUtau.App {
 
         private static bool sukiRegistered;
         private static readonly SukiColorTheme PlusWarmGrayTheme =
-            new("Plus 暖灰", Color.Parse("#c73a3f"), Color.Parse("#c73a3f"));
+            new("Plus 暖灰", Color.Parse("#B0C4DE"), Color.Parse("#B0C4DE"));
 
         /// <summary>
         /// SukiUI 主题同步：切换基底明暗 + 选中暖灰定制色。

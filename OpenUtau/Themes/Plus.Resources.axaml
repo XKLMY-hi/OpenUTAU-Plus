@@ -23,10 +23,10 @@
   <!-- Surface 实色 8 档 -->
   <Color x:Key="PlusSurfaceDeep">#16161e</Color>      <!-- 钢琴窗画布 · VU · 波形 -->
   <Color x:Key="PlusSurfaceBase">#1e1e28</Color>      <!-- 窗口底色 -->
-  <Color x:Key="PlusSurfaceRaised">#25252f</Color>    <!-- 侧栏 · 轨道头 · strip · transport -->
+  <Color x:Key="PlusSurfaceRaised">#22222c</Color>    <!-- 侧栏 · 轨道头 · strip · transport -->
   <Color x:Key="PlusSurfaceControl">#282838</Color>   <!-- 控件静态面 -->
-  <Color x:Key="PlusSurfaceHover">#303048</Color>     <!-- hover（唯一 hover 语言） -->
-  <Color x:Key="PlusSurfacePressed">#383858</Color>   <!-- pressed -->
+  <Color x:Key="PlusSurfaceHover">#4682B4</Color>     <!-- hover（钢蓝，2026-08-03） -->
+  <Color x:Key="PlusSurfacePressed">#4682B4</Color>   <!-- pressed（同 hover，2026-08-03） -->
   <Color x:Key="PlusSurfaceDisabled">#222230</Color>  <!-- disabled 面 -->
   <Color x:Key="PlusSurfaceOverlay">#2e2e3e</Color>   <!-- 弹出层不透明底 -->
 
@@ -34,17 +34,17 @@
   <Color x:Key="PlusBorderSubtle">#2a2a3a</Color>
   <Color x:Key="PlusBorderDefault">#383848</Color>
   <Color x:Key="PlusBorderHover">#484868</Color>
-  <Color x:Key="PlusBorderFocus">#c73a3f</Color>
+  <Color x:Key="PlusBorderFocus">#B0C4DE</Color>
   <Color x:Key="PlusBorderGlass">#14FFFFFF</Color>        <!-- 玻璃面板外描边 -->
-  <Color x:Key="PlusBorderGlassStrong">#1FFFFFFF</Color>  <!-- 浮起玻璃描边 -->
+  <Color x:Key="PlusBorderGlassStrong">#1FB0C4DE</Color>  <!-- 浮起玻璃描边 -->
 
   <!-- Accent 3 实色 + 3 透明 -->
-  <Color x:Key="PlusAccent">#c73a3f</Color>
-  <Color x:Key="PlusAccentHover">#d94a50</Color>
-  <Color x:Key="PlusAccentPressed">#b03237</Color>
-  <Color x:Key="PlusAccentMuted">#1FC73A3F</Color>   <!-- 选中底 · α.12 -->
-  <Color x:Key="PlusAccentSoft">#33C73A3F</Color>    <!-- 描边 · 次级强调 · α.20 -->
-  <Color x:Key="PlusAccentGlow">#4DC73A3F</Color>    <!-- 主按钮 focus 泛光 · α.30 -->
+  <Color x:Key="PlusAccent">#B0C4DE</Color>
+  <Color x:Key="PlusAccentHover">#BED4EE</Color>
+  <Color x:Key="PlusAccentPressed">#9BABC1</Color>
+  <Color x:Key="PlusAccentMuted">#1FB0C4DE</Color>   <!-- 选中底 · α.12 -->
+  <Color x:Key="PlusAccentSoft">#33B0C4DE</Color>    <!-- 描边 · 次级强调 · α.20 -->
+  <Color x:Key="PlusAccentGlow">#4DB0C4DE</Color>    <!-- 主按钮 focus 泛光 · α.30 -->
 
   <!-- Text 4 档 -->
   <Color x:Key="PlusTextPrimary">#f0f0f0</Color>
@@ -77,14 +77,14 @@
   <Color x:Key="ForegroundColorDisabled">#707080</Color>
   <Color x:Key="BorderColor">#383848</Color>
   <Color x:Key="BorderColorPointerOver">#484858</Color>
-  <Color x:Key="SystemAccentColor">#c73a3f</Color>
-  <Color x:Key="SystemAccentColorLight1">#d94a50</Color>
-  <Color x:Key="SystemAccentColorDark1">#b03237</Color>
+  <Color x:Key="SystemAccentColor">#B0C4DE</Color>
+  <Color x:Key="SystemAccentColorLight1">#BED4EE</Color>
+  <Color x:Key="SystemAccentColorDark1">#9BABC1</Color>
   <Color x:Key="NeutralAccentColor">#585868</Color>
   <Color x:Key="NeutralAccentColorPointerOver">#686878</Color>
-  <Color x:Key="AccentColor1">#c73a3f</Color>
-  <Color x:Key="AccentColor2">#d94a50</Color>
-  <Color x:Key="AccentColor3">#b03237</Color>
+  <Color x:Key="AccentColor1">#B0C4DE</Color>
+  <Color x:Key="AccentColor2">#BED4EE</Color>
+  <Color x:Key="AccentColor3">#9BABC1</Color>
   <Color x:Key="TickLineColor">#383848</Color>
   <Color x:Key="BarNumberColor">#a0a0b0</Color>
   <Color x:Key="FinalPitchColor">#a0a0b0</Color>
@@ -93,7 +93,7 @@
   <Color x:Key="WhiteKeyColorLeft">#1c1c2a</Color>
   <Color x:Key="WhiteKeyColorRight">#CC1c1c2a</Color>
   <Color x:Key="WhiteKeyNameColor">#c8c8d0</Color>
-  <Color x:Key="CenterKeyColorLeft">#c73a3f</Color>
+  <Color x:Key="CenterKeyColorLeft">#B0C4DE</Color>
   <Color x:Key="CenterKeyColorRight">#CCc73a3f</Color>
   <Color x:Key="CenterKeyNameColor">#f0f0f0</Color>
   <Color x:Key="BlackKeyColorLeft">#181820</Color>
@@ -181,7 +181,7 @@
   <BoxShadows x:Key="PlusHighlightTop">inset 0 1 0 0 #0FFFFFFF</BoxShadows>
   <BoxShadows x:Key="PlusHighlightTopStrong">inset 0 1 0 0 #1AFFFFFF</BoxShadows>
   <BoxShadows x:Key="PlusShadowBottom">inset 0 -1 0 0 #24000000</BoxShadows>
-  <BoxShadows x:Key="PlusFocusRing">0 0 0 3 #33C73A3F</BoxShadows>
+  <BoxShadows x:Key="PlusFocusRing">0 0 0 3 #33B0C4DE</BoxShadows>
   <!-- 1px 亮边(spread) + 10px 泛光(blur) 两段合一 -->
   <BoxShadows x:Key="PlusGlowPrimary">0 0 0 1 #8CC73A3F, 0 0 10 0 #47C73A3F</BoxShadows>
   <BoxShadows x:Key="PlusGlowDanger">0 0 0 1 #80FF7874, 0 0 10 0 #47FF7874</BoxShadows>

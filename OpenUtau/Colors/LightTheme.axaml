@@ -20,18 +20,18 @@
   <Color x:Key="BorderColor">#c8c4c0</Color>
   <Color x:Key="BorderColorPointerOver">#a09890</Color>
 
-  <!-- Accent: warm red #c73a3f -->
-  <Color x:Key="SystemAccentColor">#c73a3f</Color>
+  <!-- Accent: warm red #B0C4DE -->
+  <Color x:Key="SystemAccentColor">#B0C4DE</Color>
   <!-- PointerOver -->
-  <Color x:Key="SystemAccentColorLight1">#d94a50</Color>
+  <Color x:Key="SystemAccentColorLight1">#BED4EE</Color>
   <!-- Pressed -->
-  <Color x:Key="SystemAccentColorDark1">#b03237</Color>
+  <Color x:Key="SystemAccentColorDark1">#9BABC1</Color>
 
   <Color x:Key="NeutralAccentColor">#c8c4c0</Color>
   <Color x:Key="NeutralAccentColorPointerOver">#b0aca8</Color>
-  <Color x:Key="AccentColor1">#c73a3f</Color>
-  <Color x:Key="AccentColor2">#d94a50</Color>
-  <Color x:Key="AccentColor3">#b03237</Color>
+  <Color x:Key="AccentColor1">#B0C4DE</Color>
+  <Color x:Key="AccentColor2">#BED4EE</Color>
+  <Color x:Key="AccentColor3">#9BABC1</Color>
 
   <Color x:Key="TickLineColor">#c8c4c0</Color>
   <Color x:Key="BarNumberColor">#787068</Color>
@@ -51,16 +51,16 @@
 
   <Color x:Key="BlackKeyColorLeft">#FF71A3</Color>
   <Color x:Key="BlackKeyColorRight">#FF347C</Color>
-  <Color x:Key="BlackKeyNameColor">#FFFFFF</Color>
+  <Color x:Key="BlackKeyNameColor">#B0C4DE</Color>
 
   <!-- ════════ PlusTheme palette v4.0（覆写 Plus.Resources 默认）════════ -->
   <!-- Surface 实色 8 档 -->
   <Color x:Key="PlusSurfaceDeep">#efece8</Color>
   <Color x:Key="PlusSurfaceBase">#f5f2f0</Color>
-  <Color x:Key="PlusSurfaceRaised">#eae7e3</Color>
+  <Color x:Key="PlusSurfaceRaised">#22222c</Color>
   <Color x:Key="PlusSurfaceControl">#e0dcd8</Color>
-  <Color x:Key="PlusSurfaceHover">#d6d2ce</Color>
-  <Color x:Key="PlusSurfacePressed">#ccc8c4</Color>
+  <Color x:Key="PlusSurfaceHover">#4682B4</Color>
+  <Color x:Key="PlusSurfacePressed">#4682B4</Color>
   <Color x:Key="PlusSurfaceDisabled">#f0edea</Color>
   <Color x:Key="PlusSurfaceOverlay">#e8e4e0</Color>
   <!-- 对话框卡片（Suki GlassCard 同款质感：亮色近白） -->
@@ -69,16 +69,16 @@
   <Color x:Key="PlusBorderSubtle">#d0ccc8</Color>
   <Color x:Key="PlusBorderDefault">#c8c4c0</Color>
   <Color x:Key="PlusBorderHover">#a09890</Color>
-  <Color x:Key="PlusBorderFocus">#c73a3f</Color>
+  <Color x:Key="PlusBorderFocus">#B0C4DE</Color>
   <Color x:Key="PlusBorderGlass">#1A000000</Color>
   <Color x:Key="PlusBorderGlassStrong">#2A000000</Color>
   <!-- Accent -->
-  <Color x:Key="PlusAccent">#c73a3f</Color>
-  <Color x:Key="PlusAccentHover">#d94a50</Color>
-  <Color x:Key="PlusAccentPressed">#b03237</Color>
-  <Color x:Key="PlusAccentMuted">#1FC73A3F</Color>
-  <Color x:Key="PlusAccentSoft">#33C73A3F</Color>
-  <Color x:Key="PlusAccentGlow">#4DC73A3F</Color>
+  <Color x:Key="PlusAccent">#B0C4DE</Color>
+  <Color x:Key="PlusAccentHover">#BED4EE</Color>
+  <Color x:Key="PlusAccentPressed">#9BABC1</Color>
+  <Color x:Key="PlusAccentMuted">#1FB0C4DE</Color>
+  <Color x:Key="PlusAccentSoft">#33B0C4DE</Color>
+  <Color x:Key="PlusAccentGlow">#4DB0C4DE</Color>
   <!-- Text -->
   <Color x:Key="PlusTextPrimary">#1a1a20</Color>
   <Color x:Key="PlusTextSecondary">#6a6a74</Color>

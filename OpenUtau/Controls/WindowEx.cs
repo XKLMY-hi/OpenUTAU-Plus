@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Threading;
 using SukiUI.Controls;
 
 namespace OpenUtau.App.Controls;
@@ -39,6 +40,8 @@ public class WindowEx : SukiWindow
         TitleBarControlSize = 8;
         ShowTitlebarBackground = false;
         ShowBottomBorder = false;
+        // 阶段 E：背景混合 GradientDarker（选型确认 2026-08-03：对比预览 5 种后选定）
+        BackgroundStyle = SukiUI.Enums.SukiBackgroundStyle.GradientDarker;
         // 阶段 E：四角圆角（Suki 默认 20 的 80%）
         RootCornerRadius = new CornerRadius(16);
         // 圆角外完全透明
@@ -49,19 +52,7 @@ public class WindowEx : SukiWindow
 
     protected override void OnOpened(EventArgs e) {
         base.OnOpened(e);
-        // 移除 DWM 边框：关系统圆角 + 关非客户区渲染 + 边框颜色透明
-        if (TryGetPlatformHandle() is { } handle) {
-            try {
-                int donotround = DWMWCP_DONOTROUND;
-                DwmSetWindowAttribute(handle.Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref donotround, sizeof(int));
-                int ncdisabled = DWMNCRP_DISABLED;
-                DwmSetWindowAttribute(handle.Handle, DWMWA_NCRENDERING_POLICY, ref ncdisabled, sizeof(int));
-                int transparentBorder = 0x00000000; // 透明 COLORREF（Win11 边框颜色）
-                DwmSetWindowAttribute(handle.Handle, DWMWA_BORDER_COLOR, ref transparentBorder, sizeof(int));
-            } catch (Exception) {
-                // 非 Windows 或 dwmapi 不可用时忽略
-            }
-        }
+        ApplyDwmBorderRemoval();
     }
 
     protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
@@ -73,6 +64,27 @@ public class WindowEx : SukiWindow
             TransparencyLevelHint = fullscreen
                 ? new[] { WindowTransparencyLevel.None }
                 : new[] { WindowTransparencyLevel.Transparent };
+            // 合成模式/状态切换后 DWM 属性可能被重置——重新应用
+            if (IsVisible) {
+                Dispatcher.UIThread.Post(ApplyDwmBorderRemoval);
+            }
+        }
+    }
+
+    /// <summary>移除 DWM 边框：关系统圆角 + 关非客户区渲染 + 边框颜色透明。</summary>
+    private void ApplyDwmBorderRemoval() {
+        if (TryGetPlatformHandle() is not { } handle) {
+            return;
+        }
+        try {
+            int donotround = DWMWCP_DONOTROUND;
+            DwmSetWindowAttribute(handle.Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref donotround, sizeof(int));
+            int ncdisabled = DWMNCRP_DISABLED;
+            DwmSetWindowAttribute(handle.Handle, DWMWA_NCRENDERING_POLICY, ref ncdisabled, sizeof(int));
+            int transparentBorder = 0x00000000; // 透明 COLORREF（Win11 边框颜色）
+            DwmSetWindowAttribute(handle.Handle, DWMWA_BORDER_COLOR, ref transparentBorder, sizeof(int));
+        } catch (Exception) {
+            // 非 Windows 或 dwmapi 不可用时忽略
         }
     }
 }
