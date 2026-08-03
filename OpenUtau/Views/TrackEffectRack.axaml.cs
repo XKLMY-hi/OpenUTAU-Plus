@@ -19,7 +19,7 @@ using OpenUtau.Core.Util;
 using ReactiveUI;
 
 namespace OpenUtau.App.Views {
-    public partial class TrackEffectRack : WindowEx {
+    public partial class TrackEffectRack : WindowEx, Core.ICmdSubscriber {
         private readonly UTrack track;
         private UMixFx fx => track.MixFx ??= new();
 
@@ -34,6 +34,10 @@ namespace OpenUtau.App.Views {
             this.track = track;
             _builtInExpanded = false;
             TitleLabel.Text = $"{track.TrackName}";
+
+            // 订阅 VST 槽位变更（异步 Load 完成后重建行 UI）
+            DocManager.Inst.AddSubscriber(this);
+            Closed += (_, _) => DocManager.Inst.RemoveSubscriber(this);
 
             defaultPreset = new Preferences.MixFxUserPreset {
                 Name = ThemeManager.GetString("mixfx.library.default"),
@@ -248,7 +252,11 @@ namespace OpenUtau.App.Views {
             if (track.VstSlots.Count < 8) {
                 var add = new Button { Classes = { "addBtn" }, Content = ThemeManager.GetString("effects.addvstslot"),
                     Margin = new(0, 4, 0, 0) };
-                add.Click += (_, _) => { track.VstSlots.Add(new(track.VstSlots.Count)); BuildUI(); };
+                // 走命令：可撤销
+                add.Click += (_, _) => {
+                    DocManager.Inst.ExecuteCmd(TrackMixCommands.AddVstSlot(track, track.VstSlots.Count, ""));
+                    BuildUI();
+                };
                 SlotList.Children.Add(add);
             }
         }
@@ -361,7 +369,8 @@ namespace OpenUtau.App.Views {
                     FontSize = 10, Margin = new(6, 0, 2, 0),
                 };
                 bt.Tapped += (_, _) => {
-                    slot.Bypassed = !slot.Bypassed;
+                    // 走命令：可撤销（数据级，无需重载实例）
+                    DocManager.Inst.ExecuteCmd(TrackMixCommands.ToggleVstBypass(track, slot.SlotIndex));
                     bt.IsChecked = !slot.Bypassed;
                     BuildUI();
                 };
@@ -374,7 +383,11 @@ namespace OpenUtau.App.Views {
                 g.Children.Add(edit); Grid.SetColumn(edit, 3);
 
                 var rm = new Button { Classes = { "removeBtn" } };
-                var s = slot; rm.Click += (_, _) => { VstPluginManager.Inst.UnloadEffect(track.TrackNo, s.SlotIndex); s.Clear(); BuildUI(); };
+                // 走命令：可撤销（undo 恢复 UID + StateData 重载还原参数）
+                rm.Click += (_, _) => {
+                    DocManager.Inst.ExecuteCmd(TrackMixCommands.RemoveVstSlot(track, slot.SlotIndex));
+                    BuildUI();
+                };
                 g.Children.Add(rm); Grid.SetColumn(rm, 4);
             } else {
                 var browse = new Button { Classes = { "browseBtn" },
@@ -434,8 +447,10 @@ namespace OpenUtau.App.Views {
             var load = new Button { Content = ThemeManager.GetString("effects.load"), Width = 64 };
             load.Click += (_, _) => {
                 if (lb.SelectedItem is VstPluginEntry e) {
-                    // 异步加载（原生 Load 秒级，移出 UI 线程）——完成后重建行 UI
-                    _ = LoadAndRebuildAsync(slot, e);
+                    // 选插件对话框留在命令外；写 UID + 异步加载进命令（可撤销，
+                    // 完成后 VstSlotChangedNotification 触发行 UI 重建）
+                    DocManager.Inst.ExecuteCmd(TrackMixCommands.SetVstPlugin(track, slot.SlotIndex, e.Uid));
+                    BuildUI();
                 }
                 picker.Close();
             };
@@ -446,7 +461,8 @@ namespace OpenUtau.App.Views {
 
             lb.DoubleTapped += (_, _) => {
                 if (lb.SelectedItem is VstPluginEntry e) {
-                    _ = LoadAndRebuildAsync(slot, e);
+                    DocManager.Inst.ExecuteCmd(TrackMixCommands.SetVstPlugin(track, slot.SlotIndex, e.Uid));
+                    BuildUI();
                 }
                 picker.Close();
             };
@@ -490,11 +506,13 @@ namespace OpenUtau.App.Views {
             editor.Show();
         }
 
-        /// <summary>写 UID 后异步加载实例并重建行 UI（原生 Load 秒级移出 UI 线程）。</summary>
-        private async Task LoadAndRebuildAsync(VstPluginSlot slot, VstPluginEntry e) {
-            slot.PluginUid = e.Uid;
-            await VstPluginManager.Inst.LoadEffectAsync(track.TrackNo, slot);
-            BuildUI();
+        // ── ICmdSubscriber ────────────────────────────────────────
+
+        public void OnNext(Core.UCommand cmd, bool isUndo) {
+            // 异步 Load 完成 → 重建行 UI（DocManager.ExecuteCmd 非 UI 线程自动回投）
+            if (cmd is VstSlotChangedNotification n && n.TrackNo == track.TrackNo) {
+                BuildUI();
+            }
         }
 
         // ═══════════════════════════════════════════════════════════════

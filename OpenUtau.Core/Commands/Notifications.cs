@@ -256,6 +256,17 @@ namespace OpenUtau.Core {
         public override string ToString() => "Part rendered.";
     }
 
+    /// <summary>VST 槽位实例加载完成（异步 Load 后通知 UI 重建行）。</summary>
+    public class VstSlotChangedNotification : UNotification {
+        public readonly int TrackNo;
+        public readonly int SlotIndex;
+        public VstSlotChangedNotification(int trackNo, int slotIndex) {
+            TrackNo = trackNo;
+            SlotIndex = slotIndex;
+        }
+        public override string ToString() => $"VST slot {TrackNo}[{SlotIndex}] changed";
+    }
+
     public class GotoOtoNotification : UNotification {
         public readonly USinger? singer;
         public readonly UOto? oto;
