@@ -10,6 +10,8 @@ namespace OpenUtau.Core.SignalChain {
         public WaveFormat WaveFormat => waveFormat;
         public int Waited { get; private set; }
         public bool IsWaiting { get; private set; }
+        /// <summary>主音量增益（混音台主推子，1.0 = 原声）。</summary>
+        public double Scale { get; set; } = 1.0;
         public MasterAdapter(ISignalSource source) {
             waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
             this.source = source;
@@ -28,6 +30,11 @@ namespace OpenUtau.Core.SignalChain {
                 int n = Math.Max(0, pos - position);
                 position = pos;
                 IsWaiting = false;
+                if (Scale != 1.0) {
+                    for (int i = offset; i < offset + count; ++i) {
+                        buffer[i] = (float)(buffer[i] * Scale);
+                    }
+                }
                 return n;
             }
         }

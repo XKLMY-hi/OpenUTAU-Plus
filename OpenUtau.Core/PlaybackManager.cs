@@ -198,6 +198,24 @@ namespace OpenUtau.Core {
         public bool StartingToPlay { get; private set; }
         public bool PlayingMaster { get; private set; }
 
+        // 混音台主推子（masterMix 创建前暂存，StartPlayback 时应用）
+        private double masterVolumeDb = 0;
+        public bool MasterMuted { get; private set; }
+
+        public void ApplyMasterVolume(double db) {
+            masterVolumeDb = db;
+            if (masterMix != null) {
+                masterMix.Scale = MasterMuted ? 0 : DecibelToVolume(db);
+            }
+        }
+
+        public void SetMasterMuted(bool muted) {
+            MasterMuted = muted;
+            if (masterMix != null) {
+                masterMix.Scale = muted ? 0 : DecibelToVolume(masterVolumeDb);
+            }
+        }
+
         public void PlayTestSound() {
             masterMix = null;
             PlayingMaster = false;
@@ -341,6 +359,7 @@ namespace OpenUtau.Core {
             var start = TimeSpan.FromMilliseconds(startMs);
             Log.Information($"StartPlayback at {start}");
             masterMix = masterAdapter;
+            masterMix.Scale = MasterMuted ? 0 : DecibelToVolume(masterVolumeDb);
             AudioOutput.Stop();
             AudioOutput.Init(masterMix);
             AudioOutput.Play();
@@ -472,6 +491,8 @@ namespace OpenUtau.Core {
                 if (faders != null && faders.Count > _cmd!.TrackNo) {
                     faders[_cmd.TrackNo].Pan = (float)_cmd.Pan;
                 }
+            } else if (cmd is MasterVolumeChangeNotification masterVol) {
+                ApplyMasterVolume(masterVol.Volume);
             } else if (cmd is LoadProjectNotification) {
                 StopPlayback();
                 renderCancellation?.Cancel();
