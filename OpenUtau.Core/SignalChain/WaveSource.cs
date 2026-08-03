@@ -23,8 +23,8 @@ namespace OpenUtau.Core.SignalChain {
             this.estimatedLengthMs = estimatedLengthMs;
             this.channels = channels;
             this.sampleRate = sampleRate ?? AudioSettings.SampleRate;
-            offset = (int)((offsetMs - skipOverMs) * sampleRate / 1000) * channels;
-            estimatedLength = (int)(estimatedLengthMs * sampleRate / 1000) * channels;
+            offset = (int)((offsetMs - skipOverMs) * this.sampleRate / 1000) * channels;
+            estimatedLength = (int)(estimatedLengthMs * this.sampleRate / 1000) * channels;
         }
 
         public void SetSamples(float[] samples) {
