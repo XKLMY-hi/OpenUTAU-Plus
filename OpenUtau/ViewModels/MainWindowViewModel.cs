@@ -6,12 +6,14 @@ using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using DynamicData.Binding;
+using OpenUtau.Api;
 using OpenUtau.App.Views;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Util;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Serilog;
 
 namespace OpenUtau.App.ViewModels {
     public class PartsContextMenuArgs {
@@ -285,6 +287,53 @@ namespace OpenUtau.App.ViewModels {
             DocManager.Inst.ExecuteCmd(new AddTrackCommand(project, new UTrack(project) { TrackNo = trackNo }));
             DocManager.Inst.ExecuteCmd(new AddPartCommand(project, part));
             DocManager.Inst.EndUndoGroup();
+        }
+
+        /// <summary>
+        /// 侧栏素材库（E4）：新建轨道 + 添加歌手。命令链（可撤销）——
+        /// 建轨 → 设歌手 → 音素器（用户钉住项 → 歌手默认）→ 渲染设置。
+        /// 参照 TrackHeaderViewModel.ApplySingerToTrack。
+        /// </summary>
+        public void AddSingerTrack(USinger singer) {
+            if (singer == null) {
+                return;
+            }
+            var project = DocManager.Inst.Project;
+            int trackNo = project.tracks.Count;
+            var track = new UTrack(project) { TrackNo = trackNo };
+            DocManager.Inst.StartUndoGroup("command.track.add");
+            DocManager.Inst.ExecuteCmd(new AddTrackCommand(project, track));
+            DocManager.Inst.ExecuteCmd(new TrackChangeSingerCommand(project, track, singer));
+            if (!string.IsNullOrEmpty(singer.Id) &&
+                Preferences.Default.SingerPhonemizers.TryGetValue(singer.Id, out var phonemizerName)) {
+                TryChangePhonemizer(track, phonemizerName);
+            } else if (!string.IsNullOrEmpty(singer.DefaultPhonemizer)) {
+                TryChangePhonemizer(track, singer.DefaultPhonemizer);
+            }
+            if (!singer.Found || singer.SingerType != track.RendererSettings.Renderer?.SingerType) {
+                var settings = new URenderSettings();
+                if (singer.Found) {
+                    settings = new URenderSettings {
+                        renderer = Core.Render.Renderers.GetDefaultRenderer(singer.SingerType),
+                    };
+                }
+                DocManager.Inst.ExecuteCmd(new TrackChangeRenderSettingCommand(project, track, settings));
+            }
+            DocManager.Inst.EndUndoGroup();
+        }
+
+        private bool TryChangePhonemizer(UTrack track, string phonemizerName) {
+            try {
+                var factory = PhonemizerFactory.Get(phonemizerName);
+                var phonemizer = factory?.Create();
+                if (phonemizer != null) {
+                    DocManager.Inst.ExecuteCmd(new TrackChangePhonemizerCommand(DocManager.Inst.Project, track, phonemizer));
+                    return true;
+                }
+            } catch (Exception e) {
+                Log.Error(e, $"Failed to load phonemizer {phonemizerName}");
+            }
+            return false;
         }
 
         public void ImportMidi(string file) {
