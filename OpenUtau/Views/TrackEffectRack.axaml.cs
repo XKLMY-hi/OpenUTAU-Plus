@@ -252,9 +252,9 @@ namespace OpenUtau.App.Views {
             if (track.VstSlots.Count < 8) {
                 var add = new Button { Classes = { "addBtn" }, Content = ThemeManager.GetString("effects.addvstslot"),
                     Margin = new(0, 4, 0, 0) };
-                // 走命令：可撤销
+                // 走命令：可撤销（ExecuteCmd 拒绝 UndoGroup 外命令）
                 add.Click += (_, _) => {
-                    DocManager.Inst.ExecuteCmd(TrackMixCommands.AddVstSlot(track, track.VstSlots.Count, ""));
+                    ExecuteVstCommand(TrackMixCommands.AddVstSlot(track, track.VstSlots.Count, ""));
                     BuildUI();
                 };
                 SlotList.Children.Add(add);
@@ -370,7 +370,7 @@ namespace OpenUtau.App.Views {
                 };
                 bt.Tapped += (_, _) => {
                     // 走命令：可撤销（数据级，无需重载实例）
-                    DocManager.Inst.ExecuteCmd(TrackMixCommands.ToggleVstBypass(track, slot.SlotIndex));
+                    ExecuteVstCommand(TrackMixCommands.ToggleVstBypass(track, slot.SlotIndex));
                     bt.IsChecked = !slot.Bypassed;
                     BuildUI();
                 };
@@ -385,7 +385,7 @@ namespace OpenUtau.App.Views {
                 var rm = new Button { Classes = { "removeBtn" } };
                 // 走命令：可撤销（undo 恢复 UID + StateData 重载还原参数）
                 rm.Click += (_, _) => {
-                    DocManager.Inst.ExecuteCmd(TrackMixCommands.RemoveVstSlot(track, slot.SlotIndex));
+                    ExecuteVstCommand(TrackMixCommands.RemoveVstSlot(track, slot.SlotIndex));
                     BuildUI();
                 };
                 g.Children.Add(rm); Grid.SetColumn(rm, 4);
@@ -449,7 +449,7 @@ namespace OpenUtau.App.Views {
                 if (lb.SelectedItem is VstPluginEntry e) {
                     // 选插件对话框留在命令外；写 UID + 异步加载进命令（可撤销，
                     // 完成后 VstSlotChangedNotification 触发行 UI 重建）
-                    DocManager.Inst.ExecuteCmd(TrackMixCommands.SetVstPlugin(track, slot.SlotIndex, e.Uid));
+                    ExecuteVstCommand(TrackMixCommands.SetVstPlugin(track, slot.SlotIndex, e.Uid));
                     BuildUI();
                 }
                 picker.Close();
@@ -461,7 +461,7 @@ namespace OpenUtau.App.Views {
 
             lb.DoubleTapped += (_, _) => {
                 if (lb.SelectedItem is VstPluginEntry e) {
-                    DocManager.Inst.ExecuteCmd(TrackMixCommands.SetVstPlugin(track, slot.SlotIndex, e.Uid));
+                    ExecuteVstCommand(TrackMixCommands.SetVstPlugin(track, slot.SlotIndex, e.Uid));
                     BuildUI();
                 }
                 picker.Close();
@@ -504,6 +504,20 @@ namespace OpenUtau.App.Views {
 
             var editor = new VstEditorWindow(fx);
             editor.Show();
+        }
+
+        /// <summary>
+        /// 在 UndoGroup 内执行 VST 命令——DocManager.ExecuteCmd 拒绝组外命令
+        /// （"No active UndoGroup"）。deferValidate：VST 槽位数据与音符无关，
+        /// 组结束时补一次 ValidateFull。
+        /// </summary>
+        private void ExecuteVstCommand(Core.UCommand cmd) {
+            DocManager.Inst.StartUndoGroup(deferValidate: true);
+            try {
+                DocManager.Inst.ExecuteCmd(cmd);
+            } finally {
+                DocManager.Inst.EndUndoGroup();
+            }
         }
 
         // ── ICmdSubscriber ────────────────────────────────────────
