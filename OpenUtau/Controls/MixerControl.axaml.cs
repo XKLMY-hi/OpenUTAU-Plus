@@ -60,6 +60,8 @@ public partial class MixerControl : UserControl
                 strip.UpdateLevel(db);
             }
         }
+        // 主输出电平（E5 主推子条）
+        MasterStripControl.UpdateLevel(TrackLevels.ReadMasterAndReset());
     }
 
     private void OnTracksChanged(object? sender, NotifyCollectionChangedEventArgs e)

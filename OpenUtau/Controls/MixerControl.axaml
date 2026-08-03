@@ -1,31 +1,22 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:OpenUtau.App.Controls"
              x:Class="OpenUtau.App.Controls.MixerControl">
-  <UserControl.Styles>
-    <Style Selector="Slider.masterFader">
-      <Setter Property="Orientation" Value="Vertical"/>
-      <Setter Property="Height" Value="180"/>
-      <Setter Property="Width" Value="30"/>
-      <Setter Property="Margin" Value="0,4"/>
-    </Style>
-    <Style Selector="TextBlock.masterLabel">
-      <Setter Property="FontSize" Value="12"/>
-      <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="TextAlignment" Value="Center"/>
-      <Setter Property="Margin" Value="4"/>
-    </Style>
-  </UserControl.Styles>
 
   <Grid RowDefinitions="*,Auto">
-    <!-- Track strips area -->
-    <ScrollViewer Grid.Row="0"
-                  HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Hidden">
-      <StackPanel Name="TrackStripsPanel" Orientation="Horizontal"
-                  HorizontalAlignment="Left" Margin="4,4,0,4">
-        <!-- Track strips added dynamically -->
-      </StackPanel>
-    </ScrollViewer>
+    <!-- Track strips area + fixed master strip on the right -->
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+      <ScrollViewer Grid.Column="0"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Hidden">
+        <StackPanel Name="TrackStripsPanel" Orientation="Horizontal"
+                    HorizontalAlignment="Left" Margin="4,4,0,4">
+          <!-- Track strips added dynamically -->
+        </StackPanel>
+      </ScrollViewer>
+      <!-- 主推子条（E5：右侧固定，不随轨道滚动） -->
+      <c:MasterStrip Grid.Column="1" x:Name="MasterStripControl" Margin="2,4,4,4"/>
+    </Grid>
 
     <!-- Status bar -->
     <Border Grid.Row="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"

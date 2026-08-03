@@ -908,6 +908,7 @@ General
        Plus-specific keys — Mixer
        ============================================================ -->
   <system:String x:Key="mixer.tracks">Tracks: {0}</system:String>
+  <system:String x:Key="mixer.master">Master</system:String>
   <system:String x:Key="mixer.mute">M</system:String>
   <system:String x:Key="mixer.solo">S</system:String>
   <system:String x:Key="mixer.fx">FX</system:String>
