@@ -105,17 +105,17 @@
             Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
       <Grid ColumnDefinitions="auto,*,auto" RowDefinitions="*" Margin="6,3,4,3">
 
-        <!-- ── Left: Avatar + TrackNo badge ── -->
-        <Border Grid.Column="0" VerticalAlignment="Top" Margin="0,2,4,0"
-                Width="36" Height="36" CornerRadius="4" ClipToBounds="True"
+        <!-- ── Left: Avatar（圆角矩形，竖居中）+ TrackNo badge（右下角不挡头像） ── -->
+        <Border Grid.Column="0" VerticalAlignment="Center" Margin="0,2,6,0"
+                Width="44" Height="44" CornerRadius="8" ClipToBounds="True"
                 BorderBrush="{DynamicResource NeutralAccentBrushSemi}" BorderThickness="0">
           <Image Source="{Binding Avatar}" Stretch="Uniform"
                  RenderOptions.BitmapInterpolationMode="HighQuality"
                  ToolTip.Tip="{Binding Singer}"/>
         </Border>
         <Border Background="{Binding TrackAccentColor}" Height="14" Width="20"
-                CornerRadius="3" HorizontalAlignment="Left" VerticalAlignment="Top"
-                Margin="2,2,0,0" Grid.Column="0">
+                CornerRadius="3" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="4,4" Grid.Column="0" ZIndex="1">
           <TextBlock TextAlignment="Center" FontSize="10" FontWeight="Bold"
                      Text="{Binding TrackNo}"
                      Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
