@@ -836,7 +836,7 @@ General
   <system:String x:Key="sidebar.recentprojects">Recent Projects</system:String>
   <system:String x:Key="sidebar.singers">Singers</system:String>
   <system:String x:Key="sidebar.samples">Samples</system:String>
-  <system:String x:Key="sidebar.vst">VST</system:String>
+  <system:String x:Key="sidebar.vst">Instruments</system:String>
   <system:String x:Key="sidebar.vst.comingsoon">Coming soon</system:String>
   <system:String x:Key="sidebar.play">Preview</system:String>
   <system:String x:Key="sidebar.refresh">Refresh</system:String>
