@@ -7,26 +7,27 @@
         Width="680" Height="580" MinWidth="520" MinHeight="440"
         WindowStartupLocation="CenterOwner">
   <Window.Styles>
+    <!-- 阶段 E 风格：卡片圆角 10 + Surface 系 -->
     <Style Selector="Border.renderCard">
-      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltMediumBrush}"/>
-      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="BorderThickness" Value="0"/>
-      <Setter Property="CornerRadius" Value="6"/>
-      <Setter Property="Padding" Value="14,10"/>
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceControl}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource PlusBorderSubtle}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding" Value="16,12"/>
     </Style>
     <Style Selector="TextBlock.cardTitle">
       <Setter Property="FontSize" Value="12"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
-      <Setter Property="Opacity" Value="0.6"/>
+      <Setter Property="Opacity" Value="0.55"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
       <Setter Property="Margin" Value="0,0,0,6"/>
     </Style>
+    <!-- Phosphor 为 fill 图标（非 Stroke） -->
     <Style Selector="Path.cardIcon">
       <Setter Property="Width" Value="14"/>
       <Setter Property="Height" Value="14"/>
       <Setter Property="Stretch" Value="Uniform"/>
-      <Setter Property="Stroke" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
-      <Setter Property="StrokeThickness" Value="1.5"/>
+      <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
       <Setter Property="Margin" Value="0,0,6,0"/>
     </Style>
@@ -39,14 +40,15 @@
       <Setter Property="Height" Value="26"/>
       <Setter Property="Margin" Value="0,0,0,6"/>
     </Style>
+    <!-- 主按钮：accent 实心 + 深色文字（#B0C4DE 浅底白字对比差） -->
     <Style Selector="Button.renderBtn">
       <Setter Property="Height" Value="34"/>
       <Setter Property="FontSize" Value="13"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Padding" Value="24,0"/>
-      <Setter Property="CornerRadius" Value="5"/>
+      <Setter Property="CornerRadius" Value="8"/>
       <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
-      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Foreground" Value="{DynamicResource PlusBrushTextOnAccent}"/>
       <Setter Property="BorderThickness" Value="0"/>
     </Style>
     <Style Selector="Button.renderBtn:pointerover">
@@ -59,17 +61,17 @@
       <Setter Property="Height" Value="28"/>
       <Setter Property="FontSize" Value="11"/>
       <Setter Property="Padding" Value="12,0"/>
-      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="CornerRadius" Value="6"/>
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
-      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource PlusBorderSubtle}"/>
+      <Setter Property="BorderThickness" Value="1"/>
     </Style>
     <Style Selector="ProgressBar.renderProgress">
       <Setter Property="Height" Value="6"/>
       <Setter Property="CornerRadius" Value="3"/>
       <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
     </Style>
-        <Style Selector="TextBlock.subLabel">
+    <Style Selector="TextBlock.subLabel">
       <Setter Property="FontSize" Value="10"/>
       <Setter Property="Opacity" Value="0.4"/>
     </Style>
@@ -77,6 +79,7 @@
       <Setter Property="Width" Value="12"/>
       <Setter Property="Height" Value="12"/>
       <Setter Property="Stretch" Value="Uniform"/>
+      <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
   </Window.Styles>
@@ -90,15 +93,15 @@
         <StackPanel>
           <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
             <Path Classes="cardIcon" Data="{StaticResource icon-layout}"/>
-            <TextBlock Classes="cardTitle" Text="输出模式"/>
+            <TextBlock Classes="cardTitle" Text="{DynamicResource render.mode}"/>
           </StackPanel>
           <StackPanel Orientation="Horizontal">
             <RadioButton Classes="renderOption" GroupName="OutMode"
                          Name="RadioMixdown" IsChecked="True"
-                         Content="立体声混缩（1 个文件）"/>
+                         Content="{DynamicResource render.mixdown}"/>
             <RadioButton Classes="renderOption" GroupName="OutMode"
                          Name="RadioPerTrack"
-                         Content="分轨导出（每轨 1 个文件）"/>
+                         Content="{DynamicResource render.pertrack}"/>
           </StackPanel>
         </StackPanel>
       </Border>
@@ -115,16 +118,16 @@
           <StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
               <Path Classes="cardIcon" Data="{StaticResource icon-play}"/>
-              <TextBlock Classes="cardTitle" Text="渲染范围"/>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource render.range}"/>
             </StackPanel>
             <RadioButton Classes="renderOption" GroupName="Range"
-                         Name="RadioFullSong" IsChecked="True" Content="整曲"/>
+                         Name="RadioFullSong" IsChecked="True" Content="{DynamicResource render.fullsong}"/>
             <RadioButton Classes="renderOption" GroupName="Range"
-                         Name="RadioLoop" Content="循环区间"/>
+                         Name="RadioLoop" Content="{DynamicResource render.loop}"/>
             <RadioButton Classes="renderOption" GroupName="Range"
-                         Name="RadioCustom" Content="自定义"/>
+                         Name="RadioCustom" Content="{DynamicResource render.custom}"/>
             <TextBox Name="CustomRangeBox" FontSize="11" Height="22"
-                     Watermark="0:00 ~ 3:45" Margin="0,4,0,0" IsVisible="False"/>
+                     PlaceholderText="{DynamicResource render.custom.placeholder}" Margin="0,4,0,0" IsVisible="False"/>
           </StackPanel>
         </Border>
 
@@ -133,14 +136,14 @@
           <StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
               <Path Classes="cardIcon" Data="{StaticResource icon-save}"/>
-              <TextBlock Classes="cardTitle" Text="输出格式"/>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource render.format}"/>
             </StackPanel>
-            <TextBlock Classes="subLabel" Text="格式"/>
+            <TextBlock Classes="subLabel" Text="{DynamicResource render.formatlabel}"/>
             <ComboBox Classes="renderCombo" Name="FormatCombo" SelectedIndex="0">
               <ComboBoxItem Content="WAV 16-bit" Tag="Wav16"/>
               <ComboBoxItem Content="WAV 32-bit float" Tag="Wav32"/>
             </ComboBox>
-            <TextBlock Classes="subLabel" Text="采样率"/>
+            <TextBlock Classes="subLabel" Text="{DynamicResource render.samplerate}"/>
             <ComboBox Classes="renderCombo" Name="SampleRateCombo" SelectedIndex="0">
               <ComboBoxItem Content="44100 Hz" Tag="44100"/>
               <ComboBoxItem Content="48000 Hz" Tag="48000"/>
@@ -161,7 +164,7 @@
           <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,4">
               <Path Classes="cardIcon" Data="{StaticResource icon-music}"/>
-              <TextBlock Classes="cardTitle" Text="轨道选择"/>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource render.tracks}"/>
             </StackPanel>
             <ScrollViewer MaxHeight="120" VerticalScrollBarVisibility="Auto">
               <StackPanel Name="TrackCheckPanel"/>
@@ -174,19 +177,19 @@
           <StackPanel Spacing="4">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
               <Path Classes="cardIcon" Data="{StaticResource icon-equalizer}"/>
-              <TextBlock Classes="cardTitle" Text="效果选项"/>
+              <TextBlock Classes="cardTitle" Text="{DynamicResource render.effects}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
               <CheckBox Name="ChkVst" IsChecked="True" VerticalAlignment="Center"/>
-              <TextBlock Text="包含 VST 效果器" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+              <TextBlock Text="{DynamicResource render.effects.vst}" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
               <CheckBox Name="ChkBuiltinFx" IsChecked="True" VerticalAlignment="Center"/>
-              <TextBlock Text="包含内置 EQ / 压限 / 混响" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+              <TextBlock Text="{DynamicResource render.effects.builtin}" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
               <CheckBox Name="ChkVolume" IsChecked="True" VerticalAlignment="Center"/>
-              <TextBlock Text="应用轨道音量 / 声像" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
+              <TextBlock Text="{DynamicResource render.effects.volume}" FontSize="12" VerticalAlignment="Center" Margin="6,0,0,0"/>
             </StackPanel>
           </StackPanel>
         </Border>
@@ -197,13 +200,13 @@
         <StackPanel>
           <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
             <Path Classes="cardIcon" Data="{StaticResource icon-folder-open}"/>
-            <TextBlock Classes="cardTitle" Text="输出路径"/>
+            <TextBlock Classes="cardTitle" Text="{DynamicResource render.outputpath}"/>
           </StackPanel>
           <Grid ColumnDefinitions="*,Auto">
             <TextBox Grid.Column="0" Name="OutputPathBox" FontSize="11"
                      Height="24" Margin="0,0,8,0" VerticalAlignment="Center"
-                     Text="选择文件保存位置..."/>
-            <Button Grid.Column="1" Classes="secondaryBtn" Content="浏览..."
+                     PlaceholderText="{DynamicResource render.outputpath.placeholder}"/>
+            <Button Grid.Column="1" Classes="secondaryBtn" Content="{DynamicResource button.open}"
                     Click="OnBrowsePath"/>
           </Grid>
         </StackPanel>
@@ -216,7 +219,7 @@
                        Value="0" Minimum="0" Maximum="100"/>
           <Grid ColumnDefinitions="Auto,*,Auto,Auto">
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-              <TextBlock Name="ProgressLabel" FontSize="11" Opacity="0.7" Text="准备就绪"/>
+              <TextBlock Name="ProgressLabel" FontSize="11" Opacity="0.7" Text="{DynamicResource render.ready}"/>
               <TextBlock Name="ProgressSubLabel" FontSize="10" Opacity="0.4" IsVisible="False"/>
             </StackPanel>
             <Border Grid.Column="1"/>
@@ -224,19 +227,18 @@
             <Button Grid.Column="2" Classes="secondaryBtn"
                     Click="OnOpenFolder" Margin="0,0,8,0">
               <StackPanel Orientation="Horizontal" Spacing="4">
-                <Path Classes="btnIcon"
-                      Stroke="{DynamicResource SystemControlForegroundBaseHighBrush}" StrokeThickness="1.5"
-                      Data="{StaticResource icon-folder-open}"/>
-                <TextBlock Text="打开文件夹" FontSize="11" VerticalAlignment="Center"/>
+                <Path Classes="btnIcon" Data="{StaticResource icon-folder-open}"/>
+                <TextBlock Text="{DynamicResource render.openfolder}" FontSize="11" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
             <!-- 开始渲染 -->
             <Button Grid.Column="3" Classes="renderBtn"
                     Name="StartBtn" Click="OnStartRender">
               <StackPanel Orientation="Horizontal" Spacing="6">
-                <Path Classes="btnIcon" Stroke="White" StrokeThickness="2.5"
+                <Path Classes="btnIcon" Fill="{DynamicResource PlusBrushTextOnAccent}"
                       Data="{StaticResource icon-play}"/>
-                <TextBlock Text="开始渲染" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" VerticalAlignment="Center"/>
+                <TextBlock Text="{DynamicResource render.start}" FontSize="13" FontWeight="SemiBold"
+                           Foreground="{DynamicResource PlusBrushTextOnAccent}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
           </Grid>

@@ -96,7 +96,7 @@ namespace OpenUtau.App.Views {
             }
 
             StartBtn.IsEnabled = false;
-            ProgressLabel.Text = "正在准备渲染...";
+            ProgressLabel.Text = ThemeManager.GetString("render.status.preparing");
             ProgressSubLabel.IsVisible = true;
             ProgressBarControl.Value = 0;
 
@@ -116,7 +116,7 @@ namespace OpenUtau.App.Views {
                     if (isMixdown) {
                         // ── 实时录制模式（静音播放，绝对精确含全部效果） ──
                         Dispatcher.UIThread.Invoke(() => {
-                            ProgressLabel.Text = "正在渲染混缩...";
+                            ProgressLabel.Text = ThemeManager.GetString("render.status.mixdown");
                             ProgressBarControl.Value = 20;
                         });
 
@@ -125,7 +125,7 @@ namespace OpenUtau.App.Views {
                         var masterAdapter = renderResult.Item1;
 
                         Dispatcher.UIThread.Invoke(() => {
-                            ProgressLabel.Text = "正在写入录音文件...";
+                            ProgressLabel.Text = ThemeManager.GetString("render.status.writing");
                             ProgressBarControl.Value = 70;
                         });
 
@@ -156,7 +156,7 @@ namespace OpenUtau.App.Views {
                             var track = project.tracks[i];
                             int idx = i;
                             Dispatcher.UIThread.Invoke(() => {
-                                ProgressLabel.Text = $"导出轨道 {idx + 1}/{total}: {track.TrackName}";
+                                ProgressLabel.Text = string.Format(ThemeManager.GetString("render.status.exporting"), idx + 1, total, track.TrackName);
                                 ProgressBarControl.Value = 20 + (60 * idx / total);
                             });
 
@@ -168,14 +168,14 @@ namespace OpenUtau.App.Views {
                     }
 
                     Dispatcher.UIThread.Invoke(() => {
-                        ProgressLabel.Text = "渲染完成！";
+                        ProgressLabel.Text = ThemeManager.GetString("render.status.done");
                         ProgressSubLabel.IsVisible = false;
                         ProgressBarControl.Value = 100;
                     });
                 } catch (Exception ex) {
                     Log.Error(ex, "[RenderWindow] Render failed");
                     Dispatcher.UIThread.Invoke(() => {
-                        ProgressLabel.Text = "渲染失败。";
+                        ProgressLabel.Text = ThemeManager.GetString("render.status.failed");
                         ProgressSubLabel.Text = ex.Message;
                     });
                 } finally {
