@@ -4,7 +4,6 @@ namespace OpenUtau.Core.SignalChain {
     public class LevelTracker : ISignalSource {
         private readonly ISignalSource inner;
         public volatile float Peak;
-        private int _callCount;
 
         public LevelTracker(ISignalSource inner) { this.inner = inner; }
 
@@ -18,10 +17,6 @@ namespace OpenUtau.Core.SignalChain {
                 if (abs > max) max = abs;
             }
             if (max > Peak) Peak = max;
-            // Log every ~100 calls to confirm data flow
-            if (++_callCount % 100 == 0 && Peak > 0.0001f) {
-                Serilog.Log.Debug($"[LevelTracker] peak={Peak:F4} calls={_callCount}");
-            }
             return ret;
         }
 

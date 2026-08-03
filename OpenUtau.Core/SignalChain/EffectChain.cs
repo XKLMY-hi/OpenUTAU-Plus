@@ -22,6 +22,8 @@ namespace OpenUtau.Core.SignalChain {
         public EffectChain(ISignalSource source, IEffect[] effects) {
             this.source = source;
             this.effects = effects;
+            // 预分配典型块大小（VST Setup 块 4096），避免播放中按需扩容
+            scratch = new float[4096];
         }
 
         public bool IsReady(int position, int count) => source.IsReady(position, count);
