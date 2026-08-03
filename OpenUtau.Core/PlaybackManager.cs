@@ -559,6 +559,8 @@ namespace OpenUtau.Core {
             } else if (cmd is LoadProjectNotification) {
                 StopPlayback();
                 renderCancellation?.Cancel();
+                // 工程切换：内存短语缓存整体失效（hash 含 Timestamp 已兜底，这里显式清空防膨胀）
+                PhraseCache.Clear();
                 DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(0));
             }
             if (cmd is PreRenderNotification || cmd is LoadProjectNotification) {
