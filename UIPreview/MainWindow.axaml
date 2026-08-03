@@ -1,0 +1,671 @@
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:suki="using:SukiUI.Controls"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="700"
+        x:Class="UIPreview.MainWindow"
+        Width="1200" Height="700" Title="UI 预览 · 阶段 E 新布局">
+  <Window.Styles>
+    <Style Selector="Button,ToggleButton">
+      <Setter Property="Focusable" Value="False"/>
+    </Style>
+    <!-- 顶栏/侧栏图标按钮 -->
+    <Style Selector="Button.iconBtn">
+      <Setter Property="Width" Value="28"/>
+      <Setter Property="Height" Value="28"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="7"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.iconBtn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
+    </Style>
+    <!-- 播放控制按钮 -->
+    <Style Selector="Button.playBtn">
+      <Setter Property="Width" Value="30"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceControl}"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="15"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.playBtn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
+    </Style>
+    <Style Selector="Button.playBtn.accent">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush1}"/>
+    </Style>
+    <Style Selector="Button.playBtn.accent:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AccentBrush2}"/>
+    </Style>
+    <!-- 主选项卡（项目/素材库） -->
+    <Style Selector="Button.sideTab">
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="7"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.sideTab:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
+    </Style>
+    <Style Selector="Button.sideTab.selected">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceControl}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+    </Style>
+    <!-- 素材库子选项卡（歌手/采样/VST） -->
+    <Style Selector="Button.subTab">
+      <Setter Property="Height" Value="24"/>
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="5"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Button.subTab:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
+    </Style>
+    <Style Selector="Button.subTab.selected">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceControl}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AccentBrush1}"/>
+    </Style>
+    <!-- 列表项（歌手/采样/最近项目） -->
+    <Style Selector="Border.sideItem">
+      <Setter Property="Height" Value="44"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Padding" Value="8,0"/>
+      <Setter Property="Margin" Value="0,1"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="Border.sideItem:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
+    </Style>
+    <Style Selector="Border.sideItem.small">
+      <Setter Property="Height" Value="38"/>
+    </Style>
+    <Style Selector="TextBlock.sideHeading">
+      <Setter Property="FontSize" Value="11"/>
+      <Setter Property="Opacity" Value="0.45"/>
+      <Setter Property="Margin" Value="10,14,0,6"/>
+    </Style>
+    <!-- 项目信息卡 -->
+    <Style Selector="Border.sideCard">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceControl}"/>
+      <Setter Property="CornerRadius" Value="10"/>
+      <Setter Property="Padding" Value="12,10"/>
+      <Setter Property="Margin" Value="8,8,8,0"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource PlusBorderSubtle}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+  </Window.Styles>
+
+  <Grid RowDefinitions="40,36,*,28">
+    <!-- ══════════ E1 顶栏 40px：Logo + 文字菜单 + 右侧图标动作 ══════════ -->
+    <Border Grid.Row="0" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1">
+      <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <!-- Logo -->
+          <Border Width="26" Height="26" CornerRadius="7"
+                  Background="{DynamicResource AccentBrush1}" Margin="0,0,10,0"
+                  VerticalAlignment="Center">
+            <Path Data="{StaticResource icon-music}" Width="13" Height="13"
+                  Stretch="Uniform" Fill="White" HorizontalAlignment="Center"
+                  VerticalAlignment="Center"/>
+          </Border>
+          <TextBlock Text="OpenUTAU Plus" FontSize="14" FontWeight="SemiBold"
+                     VerticalAlignment="Center" Margin="0,0,24,0"/>
+          <!-- 文字菜单（复用 SukiCompactMenu 顶栏模板） -->
+          <Menu VerticalAlignment="Center" Margin="0,-3,0,0">
+            <MenuItem Header="文件">
+              <MenuItem Header="新建项目"/>
+              <MenuItem Header="打开…"/>
+              <MenuItem Header="保存"/>
+              <MenuItem Header="导出音频…"/>
+              <MenuItem Header="退出"/>
+            </MenuItem>
+            <MenuItem Header="编辑">
+              <MenuItem Header="撤销" InputGesture="Ctrl+Z"/>
+              <MenuItem Header="重做" InputGesture="Ctrl+Y"/>
+            </MenuItem>
+            <MenuItem Header="项目">
+              <MenuItem Header="音素与表情…"/>
+              <MenuItem Header="时间轴重映射…"/>
+            </MenuItem>
+            <MenuItem Header="工具">
+              <MenuItem Header="混音器" InputGesture="Ctrl+M"/>
+              <MenuItem Header="歌手管理…"/>
+              <MenuItem Header="包管理器…"/>
+              <MenuItem Header="偏好设置…"/>
+            </MenuItem>
+            <MenuItem Header="帮助">
+              <MenuItem Header="Wiki"/>
+              <MenuItem Header="检查更新"/>
+            </MenuItem>
+          </Menu>
+        </StackPanel>
+        <!-- 右侧动作 -->
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+          <Button Classes="iconBtn">
+            <Path Data="{StaticResource icon-undo}" Width="14" Height="14" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+          <Button Classes="iconBtn">
+            <Path Data="{StaticResource icon-redo}" Width="14" Height="14" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+          <Border Width="1" Height="18" Background="{DynamicResource PlusBorderSubtle}" Margin="6,0"/>
+          <Button Classes="iconBtn">
+            <Path Data="{StaticResource icon-settings}" Width="15" Height="15" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ══════════ E2 播放条 36px：播放控制 + BPM/拍号 + 位置 + 缩放 ══════════ -->
+    <Border Grid.Row="1" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1">
+      <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <Button Classes="playBtn">
+            <Path Data="{StaticResource icon-skip-back}" Width="11" Height="11" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+          <Button Classes="playBtn accent">
+            <Path Data="{StaticResource icon-play}" Width="12" Height="12" Stretch="Uniform"
+                  Fill="White" Margin="1,0,0,0"/>
+          </Button>
+          <Button Classes="playBtn">
+            <Path Data="{StaticResource icon-pause}" Width="11" Height="11" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+          <Button Classes="playBtn">
+            <Path Data="{StaticResource icon-skip-forward}" Width="11" Height="11" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+        </StackPanel>
+
+        <!-- 中央：BPM / 拍号（点击可编辑，预览占位） -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="14"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+          <TextBlock Text="120.00" FontSize="13" FontWeight="SemiBold"
+                     Foreground="{DynamicResource AccentBrush1}" Cursor="Hand"/>
+          <TextBlock Text="4/4" FontSize="12" Opacity="0.6" VerticalAlignment="Center" Cursor="Hand"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <TextBlock Text="0:05.300" FontSize="12" VerticalAlignment="Center"
+                     FontFamily="{DynamicResource PlusFontFamily}"/>
+          <Border Width="1" Height="18" Background="{DynamicResource PlusBorderSubtle}" Margin="4,0"/>
+          <Button Classes="iconBtn">
+            <Path Data="{StaticResource icon-zoom-out}" Width="13" Height="13" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+          <Button Classes="iconBtn">
+            <Path Data="{StaticResource icon-zoom-in}" Width="13" Height="13" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+          <Button Classes="iconBtn">
+            <Path Data="{StaticResource icon-sliders}" Width="14" Height="14" Stretch="Uniform"
+                  Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ══════════ E3 侧栏 + 编辑区 ══════════ -->
+    <Grid Grid.Row="2" x:Name="MainLayout">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="208"/>
+        <ColumnDefinition Width="6"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- ── 左侧栏 208px：项目信息 + 工具入口 + 折叠 ── -->
+      <Border Grid.Column="0" Background="{DynamicResource PlusSurfaceRaised}"
+              BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
+        <DockPanel>
+          <!-- 顶部：折叠按钮 -->
+          <Button DockPanel.Dock="Top" Classes="iconBtn" HorizontalAlignment="Right"
+                  Margin="0,6,6,0" Click="OnToggleSidebar">
+            <Panel>
+              <Path x:Name="SidebarCloseIcon" Data="{StaticResource icon-chevron-left}"
+                    Width="13" Height="13" Stretch="Uniform"
+                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+              <Path x:Name="SidebarOpenIcon" Data="{StaticResource icon-chevron-right}"
+                    Width="13" Height="13" Stretch="Uniform" IsVisible="False"
+                    Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+            </Panel>
+          </Button>
+          <!-- 底部：帮助 -->
+          <StackPanel DockPanel.Dock="Bottom" Margin="8,0,8,8">
+            <Border Classes="toolItem">
+              <Grid ColumnDefinitions="Auto,*">
+                <Path Grid.Column="0" Data="{StaticResource icon-book-open}" Width="14" Height="14"
+                      Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,10,0"
+                      Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                <TextBlock Grid.Column="1" Text="帮助" FontSize="12" VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+          </StackPanel>
+          <!-- 主内容：选项卡切换 -->
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <!-- 主选项卡：项目 | 素材库 -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,*" Margin="8,8,8,0">
+              <Button x:Name="ProjectsTab" Classes="sideTab selected" Click="OnShowProjects">项目</Button>
+              <Button Grid.Column="1" x:Name="LibraryTab" Classes="sideTab" Click="OnShowLibrary">素材库</Button>
+            </Grid>
+
+            <!-- ── 项目面板 ── -->
+            <Grid Grid.Row="1" x:Name="ProjectPanel" RowDefinitions="Auto,Auto,*">
+              <Border Classes="sideCard" Grid.Row="0">
+                <StackPanel>
+                  <TextBlock Text="未命名项目" FontSize="13" FontWeight="SemiBold"/>
+                  <TextBlock Text="120.00 BPM · 4/4" FontSize="11" Opacity="0.5" Margin="0,3,0,0"/>
+                  <TextBlock Text="音色库：暂无" FontSize="11" Opacity="0.5" Margin="0,1,0,0"/>
+                </StackPanel>
+              </Border>
+              <TextBlock Classes="sideHeading" Grid.Row="1" Text="最近项目"/>
+              <StackPanel Grid.Row="2" Margin="8,0">
+                <Border Classes="sideItem small">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel VerticalAlignment="Center">
+                      <TextBlock Text="夏日回忆.ustx" FontSize="12"/>
+                      <TextBlock Text="D:\歌曲\夏日回忆" FontSize="9" Opacity="0.4"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="{DynamicResource AccentBrush1Semi}"
+                            CornerRadius="4" Padding="5,2" VerticalAlignment="Center">
+                      <TextBlock Text="USTX" FontSize="9" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource AccentBrush1}"/>
+                    </Border>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem small">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel VerticalAlignment="Center">
+                      <TextBlock Text="星尘之路.ustx" FontSize="12"/>
+                      <TextBlock Text="D:\歌曲\星尘之路" FontSize="9" Opacity="0.4"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="{DynamicResource AccentBrush1Semi}"
+                            CornerRadius="4" Padding="5,2" VerticalAlignment="Center">
+                      <TextBlock Text="USTX" FontSize="9" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource AccentBrush1}"/>
+                    </Border>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem small">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel VerticalAlignment="Center">
+                      <TextBlock Text="demo.ust" FontSize="12"/>
+                      <TextBlock Text="C:\ust\demo" FontSize="9" Opacity="0.4"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                            CornerRadius="4" Padding="5,2" VerticalAlignment="Center">
+                      <TextBlock Text="UST" FontSize="9" FontWeight="SemiBold" Opacity="0.7"/>
+                    </Border>
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Grid>
+
+            <!-- ── 素材库面板 ── -->
+            <Grid Grid.Row="1" x:Name="LibraryPanel" IsVisible="False" RowDefinitions="Auto,*">
+              <!-- 子选项卡：歌手 | 采样 | VST -->
+              <Grid Grid.Row="0" ColumnDefinitions="*,*,*" Margin="8,8,8,0">
+                <Button x:Name="SingersTab" Classes="subTab selected" Click="OnShowSingers">歌手</Button>
+                <Button Grid.Column="1" x:Name="SamplesTab" Classes="subTab" Click="OnShowSamples">采样</Button>
+                <Button Grid.Column="2" x:Name="VstTab" Classes="subTab" Click="OnShowVst">VST</Button>
+              </Grid>
+              <!-- 歌手列表（头像 + 名称） -->
+              <StackPanel Grid.Row="1" x:Name="SingersPanel" Margin="8,6,8,0">
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <Border Width="34" Height="34" CornerRadius="17"
+                            Background="{DynamicResource AccentBrush1}" VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+                      <TextBlock Text="夏" FontSize="13" FontWeight="Bold" Foreground="White"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock Text="夏语遥" FontSize="12" FontWeight="SemiBold"/>
+                      <TextBlock Text="DiffSinger · 中文" FontSize="9" Opacity="0.45"/>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <Border Width="34" Height="34" CornerRadius="17"
+                            Background="{DynamicResource AccentBrush3}" VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+                      <TextBlock Text="初" FontSize="13" FontWeight="Bold" Foreground="White"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock Text="初音未来" FontSize="12" FontWeight="SemiBold"/>
+                      <TextBlock Text="UTAU · 日语" FontSize="9" Opacity="0.45"/>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <Border Width="34" Height="34" CornerRadius="17"
+                            Background="{DynamicResource NeutralAccentBrush}" VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+                      <TextBlock Text="洛" FontSize="13" FontWeight="Bold" Foreground="White"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock Text="洛天依" FontSize="12" FontWeight="SemiBold"/>
+                      <TextBlock Text="Vocaloid · 中文" FontSize="9" Opacity="0.45"/>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <Border Width="34" Height="34" CornerRadius="17"
+                            Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                            VerticalAlignment="Center" Margin="0,0,10,0">
+                      <TextBlock Text="菱" FontSize="13" FontWeight="Bold"
+                                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                      <TextBlock Text="菱川 遥" FontSize="12" FontWeight="SemiBold"/>
+                      <TextBlock Text="DiffSinger · 日语" FontSize="9" Opacity="0.45"/>
+                    </StackPanel>
+                  </Grid>
+                </Border>
+              </StackPanel>
+              <!-- 采样音频列表 -->
+              <StackPanel Grid.Row="1" x:Name="SamplesPanel" Margin="8,6,8,0" IsVisible="False">
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Border Width="28" Height="28" CornerRadius="6"
+                            Background="{DynamicResource PlusSurfaceControl}" VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+                      <Path Data="{StaticResource icon-music}" Width="12" Height="12" Stretch="Uniform"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="鼓点循环 01.wav" FontSize="12"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="2:14" FontSize="10" Opacity="0.4"
+                               VerticalAlignment="Center"/>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Border Width="28" Height="28" CornerRadius="6"
+                            Background="{DynamicResource PlusSurfaceControl}" VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+                      <Path Data="{StaticResource icon-music}" Width="12" Height="12" Stretch="Uniform"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="钢琴音阶 C5.wav" FontSize="12"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="0:08" FontSize="10" Opacity="0.4"
+                               VerticalAlignment="Center"/>
+                  </Grid>
+                </Border>
+                <Border Classes="sideItem">
+                  <Grid ColumnDefinitions="Auto,*,Auto">
+                    <Border Width="28" Height="28" CornerRadius="6"
+                            Background="{DynamicResource PlusSurfaceControl}" VerticalAlignment="Center"
+                            Margin="0,0,10,0">
+                      <Path Data="{StaticResource icon-music}" Width="12" Height="12" Stretch="Uniform"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="环境氛围 loop.wav" FontSize="12"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="0:45" FontSize="10" Opacity="0.4"
+                               VerticalAlignment="Center"/>
+                  </Grid>
+                </Border>
+              </StackPanel>
+              <!-- VST 乐器音源（占位：未来功能） -->
+              <Grid Grid.Row="1" x:Name="VstPanel" IsVisible="False">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-40,0,0">
+                  <Border Width="56" Height="56" CornerRadius="28"
+                          Background="{DynamicResource PlusSurfaceControl}"
+                          HorizontalAlignment="Center" Margin="0,0,0,10">
+                    <Path Data="{StaticResource icon-cpu}" Width="24" Height="24" Stretch="Uniform"
+                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                          Fill="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                  </Border>
+                  <TextBlock Text="VST 乐器音源" FontSize="12" FontWeight="SemiBold"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="即将推出" FontSize="10" Opacity="0.4"
+                             HorizontalAlignment="Center" Margin="0,3,0,0"/>
+                </StackPanel>
+              </Grid>
+            </Grid>
+          </Grid>
+        </DockPanel>
+      </Border>
+
+      <GridSplitter Grid.Column="1" x:Name="SidebarSplitter" Width="6" Background="Transparent"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Cursor="SizeWestEast"/>
+
+      <!-- ── 编辑区 ── -->
+      <Grid Grid.Column="2" RowDefinitions="24,*,6,220,6,150">
+        <!-- 时间线标尺（4 小节示意） -->
+        <Border Grid.Row="0" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1">
+          <Grid ColumnDefinitions="*,*,*,*" Margin="8,0">
+            <Border Grid.Column="0" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
+              <TextBlock Text="1" FontSize="10" Opacity="0.5" VerticalAlignment="Center" Margin="6,0"/>
+            </Border>
+            <Border Grid.Column="1" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
+              <TextBlock Text="2" FontSize="10" Opacity="0.5" VerticalAlignment="Center" Margin="6,0"/>
+            </Border>
+            <Border Grid.Column="2" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
+              <TextBlock Text="3" FontSize="10" Opacity="0.5" VerticalAlignment="Center" Margin="6,0"/>
+            </Border>
+            <Border Grid.Column="3">
+              <TextBlock Text="4" FontSize="10" Opacity="0.5" VerticalAlignment="Center" Margin="6,0"/>
+            </Border>
+          </Grid>
+        </Border>
+
+        <!-- 轨道头（4 条轨道示意） -->
+        <Border Grid.Row="1" Background="{DynamicResource PlusSurfaceRaised}"
+                BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
+          <Grid RowDefinitions="44,44,44,44">
+            <Border Grid.Row="0" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1" Padding="8,0">
+              <Grid ColumnDefinitions="4,*,Auto,Auto">
+                <Border Width="4" Background="{DynamicResource AccentBrush1}" CornerRadius="2" VerticalAlignment="Stretch"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                  <TextBlock Text="人声 1" FontSize="12" FontWeight="SemiBold"/>
+                  <TextBlock Text="MaiV1" FontSize="9" Opacity="0.45"/>
+                </StackPanel>
+                <Button Grid.Column="2" Content="M" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+                <Button Grid.Column="3" Content="S" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+              </Grid>
+            </Border>
+            <Border Grid.Row="1" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1" Padding="8,0">
+              <Grid ColumnDefinitions="4,*,Auto,Auto">
+                <Border Width="4" Background="{DynamicResource AccentBrush3}" CornerRadius="2" VerticalAlignment="Stretch"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                  <TextBlock Text="人声 2" FontSize="12" FontWeight="SemiBold"/>
+                  <TextBlock Text="MaiV2" FontSize="9" Opacity="0.45"/>
+                </StackPanel>
+                <Button Grid.Column="2" Content="M" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+                <Button Grid.Column="3" Content="S" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+              </Grid>
+            </Border>
+            <Border Grid.Row="2" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,0,1" Padding="8,0">
+              <Grid ColumnDefinitions="4,*,Auto,Auto">
+                <Border Width="4" Background="{DynamicResource NeutralAccentBrush}" CornerRadius="2" VerticalAlignment="Stretch"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                  <TextBlock Text="伴奏" FontSize="12" FontWeight="SemiBold"/>
+                  <TextBlock Text="BGM.wav" FontSize="9" Opacity="0.45"/>
+                </StackPanel>
+                <Button Grid.Column="2" Content="M" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+                <Button Grid.Column="3" Content="S" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+              </Grid>
+            </Border>
+            <Border Grid.Row="3" Padding="8,0">
+              <Grid ColumnDefinitions="4,*,Auto,Auto">
+                <Border Width="4" Background="{DynamicResource SystemControlForegroundBaseLowBrush}" CornerRadius="2" VerticalAlignment="Stretch"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0">
+                  <TextBlock Text="鼓" FontSize="12" FontWeight="SemiBold"/>
+                  <TextBlock Text="Drums.wav" FontSize="9" Opacity="0.45"/>
+                </StackPanel>
+                <Button Grid.Column="2" Content="M" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+                <Button Grid.Column="3" Content="S" FontSize="9" Width="20" Height="18" Padding="0" Margin="2,0"/>
+              </Grid>
+            </Border>
+          </Grid>
+        </Border>
+
+        <!-- 轨道画布：音符块 + 播放头 -->
+        <Border Grid.Row="1" ClipToBounds="True">
+          <Canvas Background="Transparent">
+            <!-- 轨道分隔线 -->
+            <Rectangle Canvas.Top="44" Canvas.Left="0" Canvas.Right="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+            <Rectangle Canvas.Top="88" Canvas.Left="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+            <Rectangle Canvas.Top="132" Canvas.Left="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+            <!-- 人声 1 音符（accent 系） -->
+            <Rectangle Canvas.Top="8" Canvas.Left="30" Width="96" Height="28" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource AccentBrush1Semi}"/>
+            <Rectangle Canvas.Top="8" Canvas.Left="160" Width="70" Height="28" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource AccentBrush1Semi}"/>
+            <Rectangle Canvas.Top="8" Canvas.Left="250" Width="130" Height="28" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource AccentBrush1Semi}"/>
+            <Rectangle Canvas.Top="8" Canvas.Left="410" Width="90" Height="28" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource AccentBrush1Semi}"/>
+            <!-- 人声 2 音符 -->
+            <Rectangle Canvas.Top="52" Canvas.Left="80" Width="110" Height="28" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource AccentBrush3Semi}"/>
+            <Rectangle Canvas.Top="52" Canvas.Left="330" Width="80" Height="28" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource AccentBrush3Semi}"/>
+            <!-- 伴奏（波形示意：中性色长条） -->
+            <Rectangle Canvas.Top="92" Canvas.Left="20" Width="560" Height="30" RadiusX="5" RadiusY="5"
+                       Fill="{DynamicResource NeutralAccentBrushSemi2}"/>
+            <!-- 鼓（点状块） -->
+            <Rectangle Canvas.Top="138" Canvas.Left="60" Width="36" Height="20" RadiusX="4" RadiusY="4"
+                       Fill="{DynamicResource SystemControlForegroundBaseLowBrush}" Opacity="0.7"/>
+            <Rectangle Canvas.Top="138" Canvas.Left="140" Width="24" Height="20" RadiusX="4" RadiusY="4"
+                       Fill="{DynamicResource SystemControlForegroundBaseLowBrush}" Opacity="0.7"/>
+            <Rectangle Canvas.Top="138" Canvas.Left="210" Width="36" Height="20" RadiusX="4" RadiusY="4"
+                       Fill="{DynamicResource SystemControlForegroundBaseLowBrush}" Opacity="0.7"/>
+            <!-- 播放头 -->
+            <Rectangle Canvas.Top="0" Canvas.Left="286" Width="2" Height="180" Fill="{DynamicResource AccentBrush2}"/>
+            <Path Canvas.Top="0" Canvas.Left="280" Data="M 0 0 L 12 0 L 6 8 Z" Fill="{DynamicResource AccentBrush2}"/>
+          </Canvas>
+        </Border>
+
+        <!-- 分隔条（卷帘上方） -->
+        <Border Grid.Row="2" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+
+        <!-- 钢琴卷帘占位 -->
+        <Border Grid.Row="3" Background="{DynamicResource PlusSurfaceDeep}"
+                BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,1,0,0">
+          <Grid>
+          <Grid ColumnDefinitions="44,*">
+            <!-- 琴键区示意 -->
+            <Border Grid.Column="0" Background="{DynamicResource PlusSurfaceRaised}"
+                    BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,0,1,0">
+              <Grid RowDefinitions="36,36,36,36,36" Margin="0,8">
+                <Border Grid.Row="0" Background="#7A1E1E28" CornerRadius="0,4,4,0" Margin="0,2,4,2"/>
+                <Border Grid.Row="1" Background="White" Opacity="0.06" CornerRadius="0,4,4,0" Margin="0,2,4,2"/>
+                <Border Grid.Row="2" Background="White" Opacity="0.06" CornerRadius="0,4,4,0" Margin="0,2,4,2"/>
+                <Border Grid.Row="3" Background="#7A1E1E28" CornerRadius="0,4,4,0" Margin="0,2,4,2"/>
+                <Border Grid.Row="4" Background="White" Opacity="0.06" CornerRadius="0,4,4,0" Margin="0,2,4,2"/>
+              </Grid>
+            </Border>
+            <!-- 音高网格 + 音符条示意 -->
+            <Canvas Grid.Column="1" Background="Transparent">
+              <Rectangle Canvas.Top="40" Canvas.Left="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+              <Rectangle Canvas.Top="80" Canvas.Left="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+              <Rectangle Canvas.Top="120" Canvas.Left="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+              <Rectangle Canvas.Top="160" Canvas.Left="0" Width="2000" Height="1" Fill="{DynamicResource PlusBorderSubtle}"/>
+              <!-- 音符条 -->
+              <Rectangle Canvas.Top="16" Canvas.Left="40" Width="90" Height="12" RadiusX="3" RadiusY="3"
+                         Fill="{DynamicResource AccentBrush1Semi}"/>
+              <Rectangle Canvas.Top="16" Canvas.Left="170" Width="70" Height="12" RadiusX="3" RadiusY="3"
+                         Fill="{DynamicResource AccentBrush1Semi}"/>
+              <Rectangle Canvas.Top="52" Canvas.Left="60" Width="120" Height="12" RadiusX="3" RadiusY="3"
+                         Fill="{DynamicResource AccentBrush3Semi}"/>
+              <Rectangle Canvas.Top="92" Canvas.Left="30" Width="60" Height="12" RadiusX="3" RadiusY="3"
+                         Fill="{DynamicResource AccentBrush1Semi}"/>
+              <Rectangle Canvas.Top="128" Canvas.Left="130" Width="100" Height="12" RadiusX="3" RadiusY="3"
+                         Fill="{DynamicResource AccentBrush3Semi}"/>
+              <!-- 播放头 -->
+              <Rectangle Canvas.Top="0" Canvas.Left="286" Width="2" Height="200" Fill="{DynamicResource AccentBrush2}"/>
+            </Canvas>
+          </Grid>
+          <!-- 面板标签 -->
+          <Border HorizontalAlignment="Left" VerticalAlignment="Top" Margin="52,6,0,0"
+                  Background="{DynamicResource PlusSurfaceControl}" CornerRadius="6" Padding="8,3">
+            <TextBlock Text="钢琴卷帘" FontSize="10" Opacity="0.6"/>
+          </Border>
+          </Grid>
+        </Border>
+
+        <!-- 分隔条（混音器上方） -->
+        <Border Grid.Row="4" Background="{DynamicResource SystemControlBackgroundAltHighBrush}"/>
+
+        <!-- 混音器占位 -->
+        <Border Grid.Row="5" Background="{DynamicResource PlusSurfaceRaised}"
+                BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,1,0,0">
+          <Grid ColumnDefinitions="Auto,*">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0" Spacing="18">
+              <!-- 4 个 fader 组 -->
+              <StackPanel Orientation="Horizontal" Spacing="18">
+                <StackPanel>
+                  <Rectangle Width="26" Height="62" RadiusX="6" RadiusY="6"
+                             Fill="{DynamicResource AccentBrush1Semi}" VerticalAlignment="Bottom"/>
+                  <TextBlock Text="人声 1" FontSize="9" Opacity="0.6" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                  <Rectangle Width="26" Height="46" RadiusX="6" RadiusY="6"
+                             Fill="{DynamicResource AccentBrush3Semi}" VerticalAlignment="Bottom"/>
+                  <TextBlock Text="人声 2" FontSize="9" Opacity="0.6" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                  <Rectangle Width="26" Height="78" RadiusX="6" RadiusY="6"
+                             Fill="{DynamicResource NeutralAccentBrushSemi2}" VerticalAlignment="Bottom"/>
+                  <TextBlock Text="伴奏" FontSize="9" Opacity="0.6" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                  <Rectangle Width="26" Height="54" RadiusX="6" RadiusY="6"
+                             Fill="{DynamicResource SystemControlForegroundBaseLowBrush}" Opacity="0.7" VerticalAlignment="Bottom"/>
+                  <TextBlock Text="鼓" FontSize="9" Opacity="0.6" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+              </StackPanel>
+            </StackPanel>
+            <!-- 面板标签 -->
+            <Border Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,6,0,0"
+                    Background="{DynamicResource PlusSurfaceControl}" CornerRadius="6" Padding="8,3">
+              <TextBlock Text="混音器" FontSize="10" Opacity="0.6"/>
+            </Border>
+          </Grid>
+        </Border>
+      </Grid>
+    </Grid>
+
+    <!-- ══════════ E4 状态条 28px：进度文本 + 进度条 + 版本 ══════════ -->
+    <Border Grid.Row="3" BorderBrush="{DynamicResource PlusBorderSubtle}" BorderThickness="0,1,0,0">
+      <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
+        <TextBlock VerticalAlignment="Center" FontSize="11" Opacity="0.6" Text="渲染中… 12 / 34"/>
+        <ProgressBar Grid.Column="1" Height="4" VerticalAlignment="Center" Margin="16,0"
+                     Minimum="0" Maximum="100" Value="35" Background="Transparent"/>
+        <TextBlock Grid.Column="2" VerticalAlignment="Center" FontSize="11" Opacity="0.35"
+                   Text="OpenUTAU Plus v0.1.0-preview"/>
+      </Grid>
+    </Border>
+  </Grid>
+</suki:SukiWindow>

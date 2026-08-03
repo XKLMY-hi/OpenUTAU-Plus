@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <!-- 与主项目一致：普通绑定（链接的 Styles.axaml 含无 x:DataType 的 {Binding}） -->
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.0" />
+    <PackageReference Include="Avalonia.HarfBuzz" Version="12.1.0" />
+    <PackageReference Include="SukiUI" Version="7.0.2-nightly20260801" />
+  </ItemGroup>
+
+  <!-- 阶段 E 预览：链接 OpenUtau 主题资源（只读复用，主项目改动后预览自动跟随） -->
+  <ItemGroup>
+    <AvaloniaXaml Include="../OpenUtau/Colors/Brushes.axaml" Link="Colors/Brushes.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Colors/LightTheme.axaml" Link="Colors/LightTheme.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Colors/DarkTheme.axaml" Link="Colors/DarkTheme.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Themes/Plus.Resources.axaml" Link="Themes/Plus.Resources.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Assets/Icons.axaml" Link="Assets/Icons.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Styles/Styles.axaml" Link="Styles/Styles.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Styles/SukiOverrides.axaml" Link="Styles/SukiOverrides.axaml"/>
+    <AvaloniaXaml Include="../OpenUtau/Styles/SukiCompactMenu.axaml" Link="Styles/SukiCompactMenu.axaml"/>
+    <AvaloniaResource Include="../OpenUtau/Assets/open-utau.ico" Link="Assets/open-utau.ico"/>
+  </ItemGroup>
+
+</Project>

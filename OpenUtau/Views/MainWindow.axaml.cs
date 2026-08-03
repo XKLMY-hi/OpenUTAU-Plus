@@ -758,7 +758,7 @@ namespace OpenUtau.App.Views {
             var pt = e.GetPosition(this);
             _mixerDragStartY = pt.Y;
             if (c.Parent is Grid g)
-                _mixerStartHeight = g.RowDefinitions[6].ActualHeight;
+                _mixerStartHeight = g.RowDefinitions[5].ActualHeight; // 阶段 E 新网格：Row5 = 混音器行
             if (_mixerStartHeight <= 0) _mixerStartHeight = 150;
             e.Pointer.Capture(c);
             e.Handled = true;
@@ -771,13 +771,72 @@ namespace OpenUtau.App.Views {
             double delta = _mixerDragStartY - pt.Y;
             double newH = Math.Clamp(_mixerStartHeight + delta, 120, 600);
             if (c.Parent is Grid g)
-                g.RowDefinitions[6].Height = new GridLength(newH);
+                g.RowDefinitions[5].Height = new GridLength(newH); // 阶段 E 新网格：Row5 = 混音器行
         }
 
         private void OnMixerSplitterReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
         {
             _draggingMixer = false;
             e.Pointer.Capture(null);
+        }
+
+        // ── 阶段 E：侧栏（项目/素材库 双选项卡 + 折叠） ──────────────────
+        private bool _sidebarCollapsed;
+
+        private void OnToggleSidebar(object? sender, RoutedEventArgs e) {
+            _sidebarCollapsed = !_sidebarCollapsed;
+            if (_sidebarCollapsed) {
+                MainLayout.ColumnDefinitions[0].Width = new GridLength(0);
+                MainLayout.ColumnDefinitions[1].Width = new GridLength(0);
+                SidebarSplitter.IsVisible = false;
+                SidebarCloseIcon.IsVisible = false;
+                SidebarOpenIcon.IsVisible = true;
+            } else {
+                MainLayout.ColumnDefinitions[0].Width = new GridLength(208);
+                MainLayout.ColumnDefinitions[1].Width = new GridLength(6);
+                SidebarSplitter.IsVisible = true;
+                SidebarCloseIcon.IsVisible = true;
+                SidebarOpenIcon.IsVisible = false;
+            }
+        }
+
+        private void OnShowProjects(object? sender, RoutedEventArgs e) {
+            ProjectPanel.IsVisible = true;
+            LibraryPanel.IsVisible = false;
+            SetSidebarTabSelected(ProjectsTab, new[] { ProjectsTab, LibraryTab });
+        }
+
+        private void OnShowLibrary(object? sender, RoutedEventArgs e) {
+            ProjectPanel.IsVisible = false;
+            LibraryPanel.IsVisible = true;
+            SetSidebarTabSelected(LibraryTab, new[] { ProjectsTab, LibraryTab });
+        }
+
+        private void OnShowSingers(object? sender, RoutedEventArgs e) {
+            SingersPanel.IsVisible = true;
+            SamplesPanel.IsVisible = false;
+            VstPanel.IsVisible = false;
+            SetSidebarTabSelected(SingersTab, new[] { SingersTab, SamplesTab, VstTab });
+        }
+
+        private void OnShowSamples(object? sender, RoutedEventArgs e) {
+            SingersPanel.IsVisible = false;
+            SamplesPanel.IsVisible = true;
+            VstPanel.IsVisible = false;
+            SetSidebarTabSelected(SamplesTab, new[] { SingersTab, SamplesTab, VstTab });
+        }
+
+        private void OnShowVst(object? sender, RoutedEventArgs e) {
+            SingersPanel.IsVisible = false;
+            SamplesPanel.IsVisible = false;
+            VstPanel.IsVisible = true;
+            SetSidebarTabSelected(VstTab, new[] { SingersTab, SamplesTab, VstTab });
+        }
+
+        private static void SetSidebarTabSelected(Button selected, Button[] group) {
+            foreach (var button in group) {
+                button.Classes.Set("selected", button == selected);
+            }
         }
 
         private void OnSplitterDragStarted(object? sender, Avalonia.Input.VectorEventArgs e) {
@@ -790,8 +849,9 @@ namespace OpenUtau.App.Views {
             ResizeTooltip.IsVisible = false;
         }
         private void UpdateResizeTooltip(Grid grid) {
-            double trackH = grid.RowDefinitions[2].ActualHeight;
-            double pianoH = grid.RowDefinitions[4].ActualHeight;
+            // 阶段 E 新网格：Row1 = 轨道区、Row3 = 钢琴卷帘
+            double trackH = grid.RowDefinitions[1].ActualHeight;
+            double pianoH = grid.RowDefinitions[3].ActualHeight;
             double total = trackH + pianoH;
             int pct = total > 0 ? (int)Math.Round(pianoH / total * 100) : 50;
             ResizeTooltip.Text = $"PR {pct}%";
