@@ -30,7 +30,6 @@ public partial class PanKnob : UserControl {
     }
     public event EventHandler<double>? ValueChanged;
 
-    private bool isDragging;
     private double dragStartY;
     private double dragStartValue;
     private TopLevel? trackingRoot;
@@ -42,14 +41,15 @@ public partial class PanKnob : UserControl {
 
     /// <summary>
     /// 按下开始全局追踪：控件仅 26px，拖出控件边界后仍跟随鼠标。
-    /// 用 Tunnel + handledEventsToo 挂在窗口根部——混音台内其他控件
-    /// （FaderBox/滑条等）标记 Handled 也不会截断事件。
+    /// 用 Tunnel + handledEventsToo 挂在窗口根部（混音台内其他控件标记
+    /// Handled 也不截断），Tunnel 阶段设 Handled 阻止 ScrollViewer 滚动。
+    /// ⚠️ 不用 Pointer.Capture——ScrollViewer 拖动时会抢捕获，
+    /// CaptureLost 会中断追踪（实测"拖不动"根因）。
     /// </summary>
     private void OnPointerPressed(object? sender, PointerPressedEventArgs e) {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
             return;
         }
-        isDragging = true;
         dragStartValue = value;
         var topLevel = TopLevel.GetTopLevel(this);
         trackingRoot = topLevel;
@@ -59,15 +59,12 @@ public partial class PanKnob : UserControl {
                 RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
             topLevel.AddHandler(PointerReleasedEvent, OnGlobalReleased,
                 RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
-        } else {
-            dragStartY = e.GetPosition(this).Y;
         }
-        e.Pointer.Capture(this);
         e.Handled = true;
     }
 
     private void OnGlobalMoved(object? sender, PointerEventArgs e) {
-        if (!isDragging || trackingRoot == null) {
+        if (trackingRoot == null) {
             return;
         }
         double dy = e.GetPosition(trackingRoot).Y - dragStartY;
@@ -89,7 +86,6 @@ public partial class PanKnob : UserControl {
             trackingRoot.RemoveHandler(PointerReleasedEvent, OnGlobalReleased);
             trackingRoot = null;
         }
-        isDragging = false;
     }
 
     private void OnDoubleTapped(object? sender, TappedEventArgs e) {
