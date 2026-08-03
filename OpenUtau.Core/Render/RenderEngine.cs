@@ -99,12 +99,7 @@ namespace OpenUtau.Core.Render {
                     .Select(part => part.TrimSamples(project)));
                 var trackMix = new WaveMix(trackSources);
 
-                // LevelTracker wraps the raw per-track mix BEFORE fader,
-                // so it measures only this track's un-attenuated signal.
-                var tracker = new LevelTracker(trackMix);
-                TrackLevels.Register(track.TrackNo, tracker);
-
-                var fader = new Fader(tracker);
+                var fader = new Fader(trackMix);
                 fader.Scale = PlaybackManager.DecibelToVolume(track.Muted ? -24 : track.Volume);
                 fader.Pan = (float)track.Pan;
                 fader.SetScaleToTarget();
@@ -121,7 +116,11 @@ namespace OpenUtau.Core.Render {
                     ? EffectChain.Build(fader, track.MixFx, vstEffects.ToArray())
                     : (ISignalSource)fader;
 
-                trackOutputs.Add(trackOut);
+                // LevelTracker wraps the FINAL per-track output (fader + FX),
+                // so the mixer meter shows the actual audible signal.
+                var tracker = new LevelTracker(trackOut);
+                TrackLevels.Register(track.TrackNo, tracker);
+                trackOutputs.Add(tracker);
             }
             var task = Task.Run(() => {
                 RenderRequests(requests, newCancellation, playing: !wait);
@@ -157,11 +156,8 @@ namespace OpenUtau.Core.Render {
         public Tuple<MasterAdapter, List<Fader>> RenderProject(TaskScheduler uiScheduler, ref CancellationTokenSource cancellation) {
             double startMs = project.timeAxis.TickPosToMsPos(startTick);
             var renderMixdownResult = RenderMixdown(uiScheduler, ref cancellation, wait: false);
-            // Wrap the final mix in a master LevelTracker so the mixer window
-            // can display the actual audible master output level
-            var masterTracker = new LevelTracker(renderMixdownResult.Item1);
-            TrackLevels.RegisterMaster(masterTracker);
-            var master = new MasterAdapter(masterTracker);
+            // master 峰值由 MasterAdapter.Read 统计（主推子 Scale 应用之后 = 实际输出）
+            var master = new MasterAdapter(renderMixdownResult.Item1);
             master.SetPosition((int)(startMs * 44100 / 1000) * 2);
             return Tuple.Create(master, renderMixdownResult.Item2);
         }

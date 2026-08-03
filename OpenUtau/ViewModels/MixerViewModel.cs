@@ -40,9 +40,21 @@ namespace OpenUtau.App.ViewModels {
         }
 
         public void OnNext(UCommand cmd, bool isUndo) {
-            if (cmd is LoadProjectNotification || cmd is WillRemoveTrackNotification) {
+            if (cmd is LoadProjectNotification || cmd is WillRemoveTrackNotification || cmd is TrackCommand) {
+                // TrackCommand 覆盖新建/删除/移动/重命名轨道（含撤销重做）
                 RefreshTracks();
             }
+        }
+
+        /// <summary>新建轨道（混音台工具行入口，可撤销）。</summary>
+        public void AddTrack() {
+            var project = DocManager.Inst.Project;
+            if (project == null) {
+                return;
+            }
+            DocManager.Inst.StartUndoGroup("command.track.add");
+            DocManager.Inst.ExecuteCmd(new AddTrackCommand(project, new UTrack(project) { TrackNo = project.tracks.Count }));
+            DocManager.Inst.EndUndoGroup();
         }
 
         public void RefreshTracks() {

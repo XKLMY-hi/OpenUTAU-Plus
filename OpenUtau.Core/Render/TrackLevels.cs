@@ -25,9 +25,10 @@ namespace OpenUtau.Core.Render {
             return -60f;
         }
 
-        /// <summary>Read master bus peak dB (-60..0), then reset.</summary>
+        /// <summary>Read master bus peak dB (-60..0), then reset.
+        /// 峰值由 MasterAdapter.Read 统计（主推子 Scale 之后 = 实际输出）。</summary>
         public static float ReadMasterAndReset() {
-            return _masterTracker?.ReadAndResetPeakDb() ?? -60f;
+            return PlaybackManager.Inst.ReadMasterLevelDb();
         }
 
         public static void Clear() {

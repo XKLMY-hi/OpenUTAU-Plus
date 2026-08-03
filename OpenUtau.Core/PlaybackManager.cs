@@ -216,6 +216,11 @@ namespace OpenUtau.Core {
             }
         }
 
+        /// <summary>主输出峰值 dB（-60..0，主推子后实际输出），混音台主电平表用。</summary>
+        public float ReadMasterLevelDb() {
+            return masterMix?.ReadAndResetPeakDb() ?? -60f;
+        }
+
         public void PlayTestSound() {
             masterMix = null;
             PlayingMaster = false;
