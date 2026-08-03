@@ -61,10 +61,10 @@ namespace OpenUtau.App.Views {
                     return;
                 }
                 if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-                    var mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    desktop.MainWindow = mainWindow;
-                    mainWindow.InitProject();
+                    // 阶段 E3：先显示欢迎窗口（工程管理界面），新建/打开工程后由它创建 MainWindow
+                    var welcomeWindow = new WelcomeWindow();
+                    welcomeWindow.Show();
+                    desktop.MainWindow = welcomeWindow;
                     LoadingWindow.InitializeLoadingWindow();
                     Close();
                 }

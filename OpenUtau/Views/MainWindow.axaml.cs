@@ -129,8 +129,15 @@ namespace OpenUtau.App.Views {
         }
 
         public void InitProject() {
-            viewModel.InitProject(this);
+            viewModel.InitProject();
         }
+
+        // ── 阶段 E3：WelcomeWindow 打开工程后的对接入口 ──
+        public void OpenProjectFiles(string[] files) => viewModel.OpenProject(files);
+        public void OpenTemplateFile(string file) => viewModel.OpenTemplate(file);
+        public void ImportAudio() => OnMenuImportAudio(this, new RoutedEventArgs());
+        public void ShowPreferences() => OnMenuPreferences(this, new RoutedEventArgs());
+        public void ShowPackageManager() => OnMenuPackageManager(this, new RoutedEventArgs());
 
         void OnEditTimeSignature(object sender, PointerPressedEventArgs args) {
             var project = DocManager.Inst.Project;
@@ -239,7 +246,6 @@ namespace OpenUtau.App.Views {
                 return;
             }
             viewModel.NewProject();
-            viewModel.Page = 1;
         }
 
         void OnMenuOpen(object sender, RoutedEventArgs args) => Open();
@@ -261,8 +267,7 @@ namespace OpenUtau.App.Views {
             }
             try {
                 viewModel.OpenProject(files);
-                viewModel.Page = 1;
-            } catch (Exception e) {
+                } catch (Exception e) {
                 Log.Error(e, $"Failed to open files {string.Join("\n", files)}");
                 _ = await MessageBox.ShowError(this, new MessageCustomizableException($"Failed to open files {string.Join("\n", files)}", $"<translate:errors.failed.openfile>:\n{string.Join("\n", files)}", e));
             }
@@ -1122,8 +1127,7 @@ namespace OpenUtau.App.Views {
             //If multiple project/audio files are dropped, open/import them all.
             if (ProjectExts.Contains(FirstExt) || AudioExts.Contains(FirstExt)) {
                 var projectFiles = supportedFiles.Where(file => ProjectExts.Contains(Path.GetExtension(file).ToLower())).ToArray();
-                viewModel.Page = 1;
-                if (projectFiles.Length > 0) {
+                    if (projectFiles.Length > 0) {
                     try {
                         var loadedProjects = Formats.ReadProjects(files);
                         // Imports tempo for new projects, otherwise asks the user.
@@ -1825,11 +1829,6 @@ namespace OpenUtau.App.Views {
             }
         }
 
-        public void OnWelcomeRecovery(object sender, RoutedEventArgs args) {
-            viewModel.OpenProject(new string[] { viewModel.RecoveryPath });
-            viewModel.Page = 1;
-        }
-
         void MergePart(UPart part) {
             List<UPart> selectedParts = viewModel.TracksViewModel.SelectedParts;
             if (!selectedParts.All(p => p.trackNo.Equals(part.trackNo))) {
@@ -1980,21 +1979,6 @@ namespace OpenUtau.App.Views {
         }
 
         // ── Welcome page quick links ──────────────────────────────
-        void OnWelcomePrefs(object sender, RoutedEventArgs args) => OnMenuPreferences(sender, args);
-        void OnWelcomePackages(object sender, RoutedEventArgs args) => OnMenuPackageManager(sender, args);
-
-        void OnWelcomeReleases(object sender, RoutedEventArgs args) {
-            try { OS.OpenWeb("https://github.com/XKLMY-hi/OpenUTAU-Plus/releases"); }
-            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
-        }
-        void OnWelcomeWiki(object sender, RoutedEventArgs args) {
-            try { OS.OpenWeb("https://github.com/stakira/OpenUtau/wiki/Getting-Started"); }
-            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
-        }
-        void OnWelcomeDiffSinger(object sender, RoutedEventArgs args) {
-            try { OS.OpenWeb("https://github.com/openvpi/DiffSinger"); }
-            catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
-        }
         void OnWelcomeTeto(object sender, RoutedEventArgs args) {
             try { OS.OpenWeb("https://kasaneteto.jp/"); }
             catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
