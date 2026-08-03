@@ -20,7 +20,9 @@
       </ControlTheme>
 
       <!-- 顶栏一级菜单项：Popup 无 Placement（MenuItem 逻辑按 Menu 直接子项设 Bottom 向下）。
-           由 Menu.ItemContainerTheme 指定（Menu 容器专用） -->
+           由 Menu.ItemContainerTheme 指定（Menu 容器专用）。
+           ⚠️ PART_Popup 必须有名字：MenuItem 靠模板 Popup 判断"鼠标是否在子菜单上"
+           （IsPointerOverSubMenu），无名则 _popup=null → 鼠标移入子菜单即关闭 -->
       <ControlTheme x:Key="MenuItemTopLevel" TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}">
         <Setter Property="Padding" Value="10,5"/>
         <Setter Property="Template">
@@ -34,7 +36,7 @@
               <TextBlock Grid.Column="2" Text="{TemplateBinding InputGesture}"
                          FontSize="11" Opacity="0.5" Margin="16,0,0,0"
                          VerticalAlignment="Center"/>
-              <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
+              <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsSubMenuOpen}"
                      HorizontalOffset="2">
                 <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
                         BorderBrush="{DynamicResource PlusBrushBorderDefault}"
@@ -75,7 +77,7 @@
                          VerticalAlignment="Center"/>
               <!-- Placement 硬编码向右（右键一级的 MenuItem 逻辑判"顶层"会给 Bottom，
                    需显式向右；二级亦向右） -->
-              <Popup IsOpen="{TemplateBinding IsSubMenuOpen}"
+              <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsSubMenuOpen}"
                      Placement="RightEdgeAlignedTop" HorizontalOffset="2">
                 <Border Background="{DynamicResource PlusBrushSurfaceOverlay}"
                         BorderBrush="{DynamicResource PlusBrushBorderDefault}"
