@@ -114,38 +114,25 @@ namespace OpenUtau.App.Views {
                     RenderEngine engine = new RenderEngine(project);
 
                     if (isMixdown) {
-                        // ── 实时录制模式（静音播放，绝对精确含全部效果） ──
+                        // ── 离线渲染导出（D 阶段统一：与菜单整曲导出同路径 RenderMixdown，
+                        //    尊重 UI 效果勾选，不含主推子——主推子是监听控制） ──
                         Dispatcher.UIThread.Invoke(() => {
                             ProgressLabel.Text = ThemeManager.GetString("render.status.mixdown");
                             ProgressBarControl.Value = 20;
                         });
 
-                        var renderResult = engine.RenderProject(
-                            DocManager.Inst.MainScheduler, ref ctx)
-                            ?? throw new InvalidOperationException("Render cancelled.");
-                        var masterAdapter = renderResult.Item1;
+                        var projectMix = engine.RenderMixdown(
+                            DocManager.Inst.MainScheduler, ref ctx, wait: true, applyMixFx: applyMixFx);
+                        var mix = projectMix.Item1;
 
                         Dispatcher.UIThread.Invoke(() => {
                             ProgressLabel.Text = ThemeManager.GetString("render.status.writing");
                             ProgressBarControl.Value = 70;
                         });
 
-                        using var writer = new WaveFileWriter(
-                            File.Create(path), AudioSettings.CreateIeeeFloatWaveFormat());
-                        var recorder = new RecordingAdapter(masterAdapter, writer, silentOutput: true);
-
-                        float[] buf = new float[AudioSettings.BlockSize];
                         // 导出消费段进入在飞计数（防并发 Flush 释放正在被消费的 VST handle）
                         using (OpenUtau.Core.Vst.RenderGate.Enter()) {
-                            DrainExport(
-                                () => recorder.Read(buf, 0, buf.Length),
-                                totalWritten => {
-                                    var sec = totalWritten / AudioSettings.SampleRate / AudioSettings.Channels;
-                                    Dispatcher.UIThread.Invoke(() => {
-                                        ProgressBarControl.Value = 70 + Math.Min(25, sec / 60.0 * 25);
-                                    });
-                                },
-                                ctx.Token);
+                            WaveFileWriter.CreateWaveFile16(path, new ExportAdapter(mix));
                         }
                     } else {
                         var trackMixes = engine.RenderTracks(
@@ -204,24 +191,6 @@ namespace OpenUtau.App.Views {
             foreach (char c in Path.GetInvalidFileNameChars())
                 name = name.Replace(c.ToString(), "_");
             return name;
-        }
-
-        /// <summary>
-        /// Drain a sample reader into a WAV file until EOF or cancellation.
-        /// Extracted from OnStartRender for testability: the drain loop, cancellation
-        /// check, and accumulated-sample progress tracking are pure logic with no UI deps.
-        /// </summary>
-        /// <param name="readChunk">Reads one chunk; returns sample count, 0 on EOF.</param>
-        /// <param name="onProgress">Receives the running total of samples written.</param>
-        /// <param name="ct">Cancellation token; loop breaks as soon as it is requested.</param>
-        internal static void DrainExport(Func<int> readChunk, Action<long> onProgress, CancellationToken ct) {
-            long totalWritten = 0;
-            int chunkRead;
-            while ((chunkRead = readChunk()) > 0) {
-                if (ct.IsCancellationRequested) break;
-                totalWritten += chunkRead;
-                onProgress(totalWritten);
-            }
         }
 
         public void OnOpenFolder(object? sender, RoutedEventArgs args) {

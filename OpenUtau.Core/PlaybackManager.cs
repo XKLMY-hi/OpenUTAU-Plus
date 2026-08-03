@@ -503,7 +503,8 @@ namespace OpenUtau.Core {
                             DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exporting to {file}."));
 
                             CheckFileWritable(file);
-                            WaveFileWriter.CreateWaveFile16(file, new ExportAdapter(trackMixes[i]).ToMono(1, 0));
+                            // 分轨统一导立体声（D 阶段导出语义统一——mono 化是下游无损可做的事）
+                            WaveFileWriter.CreateWaveFile16(file, new ExportAdapter(trackMixes[i]));
                             DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exported to {file}."));
                         }
                     }
