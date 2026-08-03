@@ -518,6 +518,7 @@
           <Grid Grid.Column="2" ColumnDefinitions="300,*,24" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <Grid.RowDefinitions>
               <RowDefinition Height="24"/>
+              <RowDefinition Height="16"/>
               <RowDefinition Height="*" MinHeight="0.01"/>
               <RowDefinition Height="6"/>
               <RowDefinition Height="3*"
@@ -528,15 +529,15 @@
                              MinHeight="{Binding MixerMinHeight}"
                              MaxHeight="{Binding MixerMaxHeight}"/>
             </Grid.RowDefinitions>
-            <ScrollBar Name="HScrollBar" Classes="music" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                      Margin="0,4,0,4" Orientation="Horizontal" AllowAutoHide="False"
+            <ScrollBar Name="HScrollBar" Classes="music" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      Margin="0,2,0,2" Orientation="Horizontal" AllowAutoHide="False"
                       DataContext="{Binding TracksViewModel}"
                       Maximum="{Binding HScrollBarMax, Mode=OneWay}"
                       Value="{Binding TickOffset}"
                       ViewportSize="{Binding ViewportTicks}"
                       LargeChange="{Binding ViewportTicks}"
                       SmallChange="{Binding SmallChangeX}" PointerWheelChanged="HScrollPointerWheelChanged"/>
-            <ScrollBar Name="VScrollBar" Classes="music" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            <ScrollBar Name="VScrollBar" Classes="music" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                       Margin="4,0,4,0" Orientation="Vertical" AllowAutoHide="False"
                       DataContext="{Binding TracksViewModel}"
                       Maximum="{Binding VScrollBarMax, Mode=OneWay}"
@@ -572,19 +573,19 @@
             <Border Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Width="1"
                     BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
                     BorderThickness="1,0,0,0" IsHitTestVisible="False" ZIndex="10"/>
-            <c:TrackHeaderCanvas Grid.Row="1" Grid.Column="0" ClipToBounds="True" Background="Transparent"
+            <c:TrackHeaderCanvas Grid.Row="2" Grid.Column="0" ClipToBounds="True" Background="Transparent"
                                 DataContext="{Binding TracksViewModel}"
                                 TrackHeight="{Binding TrackHeight}"
                                 TrackOffset="{Binding TrackOffset}"
                                 Items="{Binding Tracks}"
                                 PointerWheelChanged="MainPagePointerWheelChanged"/>
-            <c:TrackBackground Grid.Row="1" Grid.Column="1" Margin="0" IsHitTestVisible="False"
+            <c:TrackBackground Grid.Row="2" Grid.Column="1" Margin="0" IsHitTestVisible="False"
                               Foreground="{DynamicResource TrackBackgroundAltBrush}"
                               DataContext="{Binding TracksViewModel}"
                               Bounds="{Binding Bounds, Mode=OneWayToSource}"
                               TrackHeight="{Binding TrackHeight}"
                               TrackOffset="{Binding TrackOffset}"/>
-            <c:TickBackground Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0" IsHitTestVisible="False"
+            <c:TickBackground Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Margin="0" IsHitTestVisible="False"
                               Foreground="{DynamicResource TickLineBrush}"
                               Background="{DynamicResource TickLineBrushLow}"
                               Resolution="{Binding PlaybackViewModel.Resolution}"
@@ -593,7 +594,7 @@
                               SnapDiv="{Binding TracksViewModel.SnapDiv}"
                               SnapTicks="{Binding TracksViewModel.SnapTicks}"
                               ShowBar="True"/>
-            <c:PartsCanvas x:Name="partsCanvas" Grid.Row="1" Grid.Column="1" ClipToBounds="True" Background="Transparent"
+            <c:PartsCanvas x:Name="partsCanvas" Grid.Row="2" Grid.Column="1" ClipToBounds="True" Background="Transparent"
                           DataContext="{Binding TracksViewModel}"
                           TickWidth="{Binding TickWidth}"
                           TrackHeight="{Binding TrackHeight}"
@@ -662,28 +663,28 @@
                 </ContextMenu>
               </c:PartsCanvas.ContextMenu>
             </c:PartsCanvas>
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"
+            <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"
                     ClipToBounds="True" IsHitTestVisible="False">
               <Border HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,5"
                       IsVisible="{Binding TracksViewModel.PlayPosWaitingRendering}" Background="{DynamicResource BackgroundBrushSemi}">
                 <TextBlock Text="{DynamicResource progress.waitingrendering}" FontSize="15"/>
               </Border>
             </Border>
-            <GridSplitter Grid.Row="2" Grid.ColumnSpan="3"
+            <GridSplitter Grid.Row="3" Grid.ColumnSpan="3"
                           Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                           Background="{DynamicResource SystemControlBackgroundAltHighBrush}" Focusable="False" Cursor="SizeNorthSouth"
                           DragStarted="OnSplitterDragStarted" DragCompleted="OnSplitterDragCompleted"
                           IsVisible="{Binding ShowPianoRoll}"/>
             <!-- Resize tooltip indicator -->
-            <TextBlock Grid.Row="2" Grid.Column="0" Name="ResizeTooltip"
+            <TextBlock Grid.Row="3" Grid.Column="0" Name="ResizeTooltip"
                        IsVisible="False" Background="{DynamicResource SystemControlBackgroundAltHighBrush}" Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                        FontSize="11" Padding="4,2" HorizontalAlignment="Left"
                        VerticalAlignment="Bottom" Margin="4,0,0,0"/>
-            <Canvas Grid.Row="3" Grid.ColumnSpan="3" IsVisible="{Binding ShowPianoRoll}">
+            <Canvas Grid.Row="4" Grid.ColumnSpan="3" IsVisible="{Binding ShowPianoRoll}">
               <ContentControl Name="PianoRollContainer" Width="{Binding $parent[Canvas].Bounds.Width}" Height="{Binding $parent[Canvas].Bounds.Height}"/>
             </Canvas>
             <!-- Mixer resize handle (manual drag) -->
-            <Border Grid.Row="4" Grid.ColumnSpan="3"
+            <Border Grid.Row="5" Grid.ColumnSpan="3"
                     Height="6" HorizontalAlignment="Stretch"
                     Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
                     Cursor="SizeNorthSouth"
@@ -692,7 +693,7 @@
                     PointerReleased="OnMixerSplitterReleased"
                     IsVisible="{Binding ShowMixer}"/>
             <!-- Mixer embedded -->
-            <ContentControl Grid.Row="5" Grid.ColumnSpan="3"
+            <ContentControl Grid.Row="6" Grid.ColumnSpan="3"
                             Name="MixerContainer"
                             IsVisible="{Binding ShowMixer}"/>
           </Grid>

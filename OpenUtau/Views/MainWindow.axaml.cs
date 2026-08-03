@@ -776,7 +776,7 @@ namespace OpenUtau.App.Views {
             var pt = e.GetPosition(this);
             _mixerDragStartY = pt.Y;
             if (c.Parent is Grid g)
-                _mixerStartHeight = g.RowDefinitions[5].ActualHeight; // 阶段 E 新网格：Row5 = 混音器行
+                _mixerStartHeight = g.RowDefinitions[6].ActualHeight; // 阶段 E 新网格：Row6 = 混音器行
             if (_mixerStartHeight <= 0) _mixerStartHeight = 150;
             e.Pointer.Capture(c);
             e.Handled = true;
@@ -789,7 +789,7 @@ namespace OpenUtau.App.Views {
             double delta = _mixerDragStartY - pt.Y;
             double newH = Math.Clamp(_mixerStartHeight + delta, 120, 600);
             if (c.Parent is Grid g)
-                g.RowDefinitions[5].Height = new GridLength(newH); // 阶段 E 新网格：Row5 = 混音器行
+                g.RowDefinitions[6].Height = new GridLength(newH); // 阶段 E 新网格：Row6 = 混音器行
         }
 
         private void OnMixerSplitterReleased(object? sender, Avalonia.Input.PointerReleasedEventArgs e)
@@ -953,8 +953,8 @@ namespace OpenUtau.App.Views {
         }
         private void UpdateResizeTooltip(Grid grid) {
             // 阶段 E 新网格：Row1 = 轨道区、Row3 = 钢琴卷帘
-            double trackH = grid.RowDefinitions[1].ActualHeight;
-            double pianoH = grid.RowDefinitions[3].ActualHeight;
+            double trackH = grid.RowDefinitions[2].ActualHeight;
+            double pianoH = grid.RowDefinitions[4].ActualHeight;
             double total = trackH + pianoH;
             int pct = total > 0 ? (int)Math.Round(pianoH / total * 100) : 50;
             ResizeTooltip.Text = $"PR {pct}%";
