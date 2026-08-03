@@ -13,7 +13,7 @@
 - **亚克力 / Mica 窗口模糊** — 全部窗口统一启用，右键设置中切换模糊类型或关闭；Tint 65% 深冷灰
 - **自绘窗口边框** — 按 Avalonia 12 官方 **WindowDrawnDecorations** 规范统一实现（1px 描边 + 阴影分层，图标 + 标题 + Min/Max/Close 标题栏），全部 30+ 窗口统一
 - **HarmonyOS Sans SC 字体** — 四字重（Light/Regular/Medium/Bold），全局应用
-- **Heroicons Solid 图标** — 52 枚 MIT 许可矢量图标，替换 Lucide
+- **Phosphor 图标** — 54 枚 MIT 许可饱满圆润实心矢量图标（HarmonyOS 风），替换 Lucide
 - **8px 统一圆角** — 按钮 / 文本框 / 卡片 / 弹出层全局 8px 圆角 · 32px 控件高度
 - **左右分栏欢迎页** — 最近项目列表 + 快捷操作卡片 + 模板文件，移除旧版侧栏切换
 - **Card 分组偏好设置** — 纯文本窄导航 + 右区独立圆角卡片，胶囊形开关，细边镶嵌下拉菜单
@@ -60,7 +60,7 @@ OpenUTAU Plus 的愿景是将 OpenUTAU 从歌声合成编辑器逐步扩展为�
 - ✅ VST3 效果器插件支持（加载、GUI、实时参数）
 - ✅ `.ustxp` 项目格式（VST 参数持久化）
 - ✅ 导出带 VST 效果的音频（实时录制静音播放）
-- ✅ 现代化 UI 全面翻新（自定义暖灰主题 · 亚克力模糊 · 自绘边框 · Heroicons · HarmonyOS Sans SC · 8px 统一圆角）
+- ✅ 现代化 UI 全面翻新（自定义暖灰主题 · 亚克力模糊 · 自绘边框 · Phosphor · HarmonyOS Sans SC · 8px 统一圆角）
 - 🚧 VST 音源插件支持（加载合成器/采样器作为音源）
 - 🚧 macOS / Linux 跨平台支持
 
@@ -203,7 +203,7 @@ dotnet run --project VstTest                  # VST 兼容性测试
 | 信号链 | 自定义 ISignalSource / IEffect 接口 |
 | VST3 宿主 | C++ / Steinberg VST3 SDK v3.8.0 |
 | AI 推理 | ONNX Runtime (DirectML GPU 加速) |
-| 图标 | Heroicons Solid |
+| 图标 | Phosphor |
 | 序列化 | YamlDotNet / Newtonsoft.Json |
 | 日志 | Serilog |
 | 测试 | xUnit |
@@ -241,7 +241,7 @@ dotnet run --project VstTest                  # VST 兼容性测试
 | 库 | 版本 | 许可 | 用途 |
 |----|------|------|------|
 | [HarmonyOS Sans SC](https://developer.harmonyos.com/) | — | OFL | 全局 UI 字体 |
-| [Heroicons Solid](https://heroicons.com/) | — | MIT | 界面图标 |
+| [Phosphor](https://phosphoricons.com) | — | MIT | 界面图标 |
 | [Dotnet.Bundle](https://github.com/egramtel/dotnet-bundle) | 0.9.13 | MIT | macOS 应用打包 |
 
 ### 文件格式 / MIDI
@@ -282,7 +282,7 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 | 资源 | 许可 | 来源 |
 |------|------|------|
-| Heroicons Solid | MIT | https://heroicons.com/ |
+| Phosphor | MIT | https://phosphoricons.com |
 | HarmonyOS Sans SC | OFL | https://developer.harmonyos.com/ |
 
 ---
@@ -293,7 +293,7 @@ dotnet run --project VstTest                  # VST 兼容性测试
 
 VST3 桥接基于 [Steinberg VST3 SDK v3.8.0](https://github.com/steinbergmedia/vst3sdk)，MIT / GPL-3 双许可（本项目使用 MIT 许可部分）。
 
-Heroicons Solid 图标使用 MIT License。
+Phosphor 图标使用 MIT License。
 
 ---
 
