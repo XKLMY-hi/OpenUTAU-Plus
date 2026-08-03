@@ -460,54 +460,30 @@ namespace OpenUtau.Core {
 
         // Exporting mixdown
         public async Task RenderMixdown(UProject project, string exportPath) {
-            await Task.Run(() => {
-                try {
-                    RenderEngine engine = new RenderEngine(project);
-                    var projectMix = engine.RenderMixdown(DocManager.Inst.MainScheduler, ref renderCancellation, wait: true).Item1;
-                    DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exporting to {exportPath}."));
-
-                    CheckFileWritable(exportPath);
-                    // 导出消费段进入在飞计数——防止并发 Flush 释放正在被消费的 VST handle
-                    using (Vst.RenderGate.Enter()) {
-                        WaveFileWriter.CreateWaveFile16(exportPath, new ExportAdapter(projectMix));
-                    }
-                    // 安全点：导出消费段已退出
-                    Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
-                    DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exported to {exportPath}."));
-                } catch (IOException ioe) {
-                    var customEx = new MessageCustomizableException($"Failed to export {exportPath}.", $"<translate:errors.failed.export>: {exportPath}", ioe);
-                    DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(customEx));
-                    DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Failed to export {exportPath}."));
-                } catch (Exception e) {
-                    var customEx = new MessageCustomizableException("Failed to render.", $"<translate:errors.failed.render>: {exportPath}", e);
-                    DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(customEx));
-                    DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Failed to render."));
-                }
-            });
+            var session = new Export.ExportSession(project, exportPath,
+                new Export.ExportSession.Options { PerTrack = false, ApplyMixFx = true }, PhraseCache);
+            await RunExportSession(session, exportPath);
         }
 
         // Exporting each tracks
         public async Task RenderToFiles(UProject project, string exportPath) {
+            var session = new Export.ExportSession(project, exportPath,
+                new Export.ExportSession.Options { PerTrack = true, ApplyMixFx = false }, PhraseCache);
+            await RunExportSession(session, exportPath);
+        }
+
+        /// <summary>统一导出入口（D 阶段：菜单整曲/分轨共用 ExportSession）。</summary>
+        private async Task RunExportSession(Export.ExportSession session, string exportPath) {
             await Task.Run(() => {
                 string file = "";
                 try {
-                    RenderEngine engine = new RenderEngine(project);
-                    var trackMixes = engine.RenderTracks(DocManager.Inst.MainScheduler, ref renderCancellation);
-                    // 分轨写文件循环：消费段在飞计数（防并发 Flush）
-                    using (Vst.RenderGate.Enter()) {
-                        for (int i = 0; i < trackMixes.Count; ++i) {
-                            if (trackMixes[i] == null || i >= project.tracks.Count || project.tracks[i].Muted) {
-                                continue;
-                            }
-                            file = PathManager.Inst.GetExportPath(exportPath, project.tracks[i]);
-                            DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exporting to {file}."));
-
-                            CheckFileWritable(file);
-                            // 分轨统一导立体声（D 阶段导出语义统一——mono 化是下游无损可做的事）
-                            WaveFileWriter.CreateWaveFile16(file, new ExportAdapter(trackMixes[i]));
-                            DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Exported to {file}."));
-                        }
-                    }
+                    session.RunAsync(new Progress<Export.ExportSession.ProgressInfo>(info => {
+                        string msg = info.Percent >= 1
+                            ? $"Exported to {info.CurrentFile}."
+                            : $"Exporting to {info.CurrentFile}.";
+                        DocManager.Inst.ExecuteCmd(new ProgressBarNotification(info.Percent * 100, msg));
+                    })).GetAwaiter().GetResult();
+                    file = exportPath;
                     // 安全点：导出消费段已退出
                     Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
                 } catch (IOException ioe) {
@@ -520,15 +496,6 @@ namespace OpenUtau.Core {
                     DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Failed to render."));
                 }
             });
-        }
-
-        private void CheckFileWritable(string filePath) {
-            if (!File.Exists(filePath)) {
-                return;
-            }
-            using (FileStream fp = File.Open(filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-                return;
-            }
         }
 
         void SchedulePreRender() {

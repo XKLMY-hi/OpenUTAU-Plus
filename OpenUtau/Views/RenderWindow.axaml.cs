@@ -11,6 +11,7 @@ using Avalonia.Layout;
 using Avalonia.Threading;
 using OpenUtau.App.Controls;
 using OpenUtau.Core;
+using OpenUtau.Core.Export;
 using OpenUtau.Core.Render;
 using OpenUtau.Core.SignalChain;
 using NAudio.Wave;
@@ -111,61 +112,30 @@ namespace OpenUtau.App.Views {
 
             Task.Run(() => {
                 try {
-                    RenderEngine engine = new RenderEngine(project);
+                    var session = new ExportSession(project, path,
+                        new ExportSession.Options {
+                            PerTrack = !isMixdown,
+                            ApplyMixFx = applyMixFx,
+                        }, PlaybackManager.Inst.PhraseCache);
 
-                    if (isMixdown) {
-                        // ── 离线渲染导出（D 阶段统一：与菜单整曲导出同路径 RenderMixdown，
-                        //    尊重 UI 效果勾选，不含主推子——主推子是监听控制） ──
+                    session.RunAsync(new Progress<ExportSession.ProgressInfo>(info => {
                         Dispatcher.UIThread.Invoke(() => {
-                            ProgressLabel.Text = ThemeManager.GetString("render.status.mixdown");
-                            ProgressBarControl.Value = 20;
-                        });
-
-                        var projectMix = engine.RenderMixdown(
-                            DocManager.Inst.MainScheduler, ref ctx, wait: true, applyMixFx: applyMixFx);
-                        var mix = projectMix.Item1;
-
-                        Dispatcher.UIThread.Invoke(() => {
-                            ProgressLabel.Text = ThemeManager.GetString("render.status.writing");
-                            ProgressBarControl.Value = 70;
-                        });
-
-                        // 导出消费段进入在飞计数（防并发 Flush 释放正在被消费的 VST handle）
-                        using (OpenUtau.Core.Vst.RenderGate.Enter()) {
-                            WaveFileWriter.CreateWaveFile16(path, new ExportAdapter(mix));
-                        }
-                    } else {
-                        var trackMixes = engine.RenderTracks(
-                            DocManager.Inst.MainScheduler, ref ctx);
-
-                        int total = project.tracks.Count;
-                        for (int i = 0; i < Math.Min(trackMixes.Count, total); i++) {
-                            if (ctx.IsCancellationRequested) break;
-                            if (trackMixes[i] == null || project.tracks[i].Muted) continue;
-                            if (!selTrackNos.Contains(i)) continue;
-
-                            var track = project.tracks[i];
-                            int idx = i;
-                            Dispatcher.UIThread.Invoke(() => {
-                                ProgressLabel.Text = string.Format(ThemeManager.GetString("render.status.exporting"), idx + 1, total, track.TrackName);
-                                ProgressBarControl.Value = 20 + (60 * idx / total);
-                            });
-
-                            string trackPath = Path.Combine(
-                                Path.GetDirectoryName(path) ?? "",
-                                $"{Path.GetFileNameWithoutExtension(path)}_{Sanitize(track.TrackName)}.wav");
-                            // 导出消费段进入在飞计数（防并发 Flush）
-                            using (OpenUtau.Core.Vst.RenderGate.Enter()) {
-                                WriteWavFile(trackPath, trackMixes[i]);
+                            if (info.Percent >= 1) {
+                                ProgressLabel.Text = ThemeManager.GetString("render.status.done");
+                                ProgressSubLabel.IsVisible = false;
+                                ProgressBarControl.Value = 100;
+                            } else if (info.TrackIndex >= 0) {
+                                var track = project.tracks[info.TrackIndex];
+                                ProgressLabel.Text = string.Format(ThemeManager.GetString("render.status.exporting"), info.TrackIndex + 1, info.TrackCount, track.TrackName);
+                                ProgressBarControl.Value = 20 + (60 * info.TrackIndex / Math.Max(1, info.TrackCount));
+                            } else {
+                                ProgressLabel.Text = info.Percent < 0.4
+                                    ? ThemeManager.GetString("render.status.mixdown")
+                                    : ThemeManager.GetString("render.status.writing");
+                                ProgressBarControl.Value = info.Percent * 100;
                             }
-                        }
-                    }
-
-                    Dispatcher.UIThread.Invoke(() => {
-                        ProgressLabel.Text = ThemeManager.GetString("render.status.done");
-                        ProgressSubLabel.IsVisible = false;
-                        ProgressBarControl.Value = 100;
-                    });
+                        });
+                    }), ctx.Token).GetAwaiter().GetResult();
                 } catch (Exception ex) {
                     Log.Error(ex, "[RenderWindow] Render failed");
                     Dispatcher.UIThread.Invoke(() => {
@@ -181,17 +151,6 @@ namespace OpenUtau.App.Views {
         // ═══════════════════════════════════════════════════════════════
         //  Helpers
         // ═══════════════════════════════════════════════════════════════
-
-        static void WriteWavFile(string path, ISignalSource source) {
-            var adapter = new ExportAdapter(source);
-            WaveFileWriter.CreateWaveFile16(path, adapter);
-        }
-
-        static string Sanitize(string name) {
-            foreach (char c in Path.GetInvalidFileNameChars())
-                name = name.Replace(c.ToString(), "_");
-            return name;
-        }
 
         public void OnOpenFolder(object? sender, RoutedEventArgs args) {
             string path = OutputPathBox.Text ?? "";
