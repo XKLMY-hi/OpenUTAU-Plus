@@ -23,7 +23,18 @@ namespace OpenUtau.Classic {
         public override string Version => voicebank.Version;
         public override string OtherInfo => voicebank.OtherInfo;
         public override IList<string> Errors => errors;
-        public override string Avatar => voicebank.Image == null ? null : Path.Combine(Location, voicebank.Image);
+        // image 缺失时用 portrait 兜底（很多声库只声明 portrait）
+        public override string Avatar {
+            get {
+                if (!string.IsNullOrEmpty(voicebank.Image)) {
+                    return Path.Combine(Location, voicebank.Image);
+                }
+                if (!string.IsNullOrEmpty(voicebank.Portrait)) {
+                    return Path.Combine(Location, voicebank.Portrait);
+                }
+                return null;
+            }
+        }
         public override byte[] AvatarData => avatarData;
         public override string Portrait => voicebank.Portrait == null ? null : Path.Combine(Location, voicebank.Portrait);
         public override float PortraitOpacity => voicebank.PortraitOpacity;

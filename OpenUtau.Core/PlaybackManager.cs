@@ -238,7 +238,50 @@ namespace OpenUtau.Core {
                 return;
             }
             AudioOutput.Play();
-        } 
+        }
+
+        // ── 独立试听通道（NAudio WaveOutEvent，不影响主 AudioOutput/工程播放）──
+
+        private WaveOutEvent? previewOutput;
+        private string? previewPath;
+        /// <summary>当前试听文件（null = 无试听）。</summary>
+        public string? PreviewPath => previewPath;
+        /// <summary>试听状态变化（开始/停止/播完）——参数为当前试听文件或 null。</summary>
+        public event Action<string?>? PreviewChanged;
+
+        public void PlayPreview(string file) {
+            StopPreview();
+            try {
+                var playSound = Wave.OpenFile(file);
+                var output = new WaveOutEvent();
+                output.Init(playSound);
+                output.PlaybackStopped += (_, _) => {
+                    if (ReferenceEquals(previewOutput, output)) {
+                        previewOutput = null;
+                        previewPath = null;
+                        PreviewChanged?.Invoke(null);
+                    }
+                    output.Dispose();
+                };
+                previewOutput = output;
+                previewPath = file;
+                output.Play();
+                PreviewChanged?.Invoke(previewPath);
+            } catch (Exception ex) {
+                Log.Error(ex, $"Failed to play preview {file}.");
+                StopPreview();
+            }
+        }
+
+        public void StopPreview() {
+            if (previewOutput is { } output) {
+                previewOutput = null;
+                previewPath = null;
+                output.Stop();
+                output.Dispose();
+                PreviewChanged?.Invoke(null);
+            }
+        }
 
         public void PlayOrPause(int tick = -1, int endTick = -1, int trackNo = -1) {
             if (PlayingMaster) {
