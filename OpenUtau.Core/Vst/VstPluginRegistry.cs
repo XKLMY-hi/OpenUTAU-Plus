@@ -24,9 +24,6 @@ namespace OpenUtau.Core.Vst {
     public class VstPluginRegistry {
         public static VstPluginRegistry Inst { get; } = new();
 
-        /// <summary>Test seam: inject a fake bridge for unit-testing VST scanning.</summary>
-        public IVstBridge Bridge { get; set; } = RealVstBridge.Instance;
-
         private readonly Dictionary<string, VstPluginEntry> _entries = new();
         private bool _scanned;
 

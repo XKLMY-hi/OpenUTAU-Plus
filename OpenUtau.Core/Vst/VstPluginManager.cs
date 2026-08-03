@@ -102,10 +102,6 @@ namespace OpenUtau.Core.Vst {
                 _tracks.Clear();
             }
         }
-        // Obsolete: use LoadEffect(trackNo, slot) directly.
-        public bool LoadPlugin(VstPluginSlot slot) => slot.IsLoaded;
-        // Obsolete: use UnloadEffect(trackNo, slotIndex) directly.
-        public void UnloadPlugin(VstPluginSlot slot) { }
         public static List<VstPluginSlot> CreateDefaultSlots(int count = 3) {
             var s = new List<VstPluginSlot>();
             for (int i = 0; i < count; i++) s.Add(new VstPluginSlot(i));

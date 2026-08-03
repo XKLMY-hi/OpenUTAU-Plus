@@ -156,7 +156,6 @@ namespace OpenUtau.Core.Util {
             public List<string> SingerSearchPaths = new List<string>();
             public string PlaybackDevice = string.Empty;
             public int PlaybackDeviceNumber;
-            public int? PlaybackDeviceIndex;
             public bool ShowPrefs = true;
             public bool ShowTips = true;
             public string ThemeName = "Dark";

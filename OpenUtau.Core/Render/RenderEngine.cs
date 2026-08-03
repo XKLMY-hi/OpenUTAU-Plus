@@ -145,9 +145,7 @@ namespace OpenUtau.Core.Render {
             if (wait) {
                 task.Wait();
             }
-            // Build the final mix.  All tracks (FX-wrapped or dry) sum into
-            // a single WaveMix.  Bypass-as-pointer-identity in WrapWith keeps
-            // disabled tracks zero-cost.
+            // Build the final mix.  All tracks (FX-wrapped or dry) sum into a single WaveMix.
             var resultMix = new WaveMix(trackOutputs);
             return Tuple.Create(resultMix, faders);
         }

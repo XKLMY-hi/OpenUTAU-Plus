@@ -5,7 +5,8 @@ namespace OpenUtau.Core.Vst {
     /// <summary>
     /// Lightweight VST2 DLL probe for scanning.
     /// Checks whether a DLL exports VSTPluginMain (or main) to confirm it is a VST2 plugin.
-    /// Full VST2 hosting happens via the C++ bridge in the VstEffect layer (Step 4).
+    /// 注意：VST2 仅支持扫描收录（注册表/UI 显示），不支持宿主——加载走 VST3 SDK
+    /// Module::create，VST2 DLL 会加载失败（"no Audio Module Class"）。
     /// </summary>
     internal sealed class Probe : IDisposable {
         private IntPtr _module;
