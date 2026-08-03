@@ -89,14 +89,6 @@
       </Button>
     </Grid>
 
-    <!-- ══ 恢复条 ══ -->
-    <Button Grid.Row="1" VerticalAlignment="Top" Margin="0,14,0,0"
-            Content="{Binding RecoveryString}" IsVisible="{Binding HasRecovery}"
-            Click="OnRecovery" HorizontalAlignment="Stretch" Height="34"
-            Background="{DynamicResource WarningBrush}"
-            Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-            CornerRadius="8"/>
-
     <!-- ══ 主区：左动作 · 右最近/模板 ══ -->
     <Grid Grid.Row="1" ColumnDefinitions="1.1*,1.6*" Margin="0,16,0,0">
       <!-- 左：动作 -->
@@ -160,10 +152,16 @@
         </Border>
       </StackPanel>
 
-      <!-- 右：最近项目 + 模板 -->
-      <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,*">
+      <!-- 右：最近项目 + 恢复条 + 模板 -->
+      <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*,Auto,*">
         <TextBlock Classes="sectionTitle" Grid.Row="0" Text="{DynamicResource welcome.recent}"/>
-        <ListBox Grid.Row="1" ItemsSource="{Binding RecentFiles}" Classes="recentList"
+        <!-- 恢复条（嵌入最近栏：标题下、列表上，不再悬浮重叠） -->
+        <Button Grid.Row="1" Content="{Binding RecoveryString}" IsVisible="{Binding HasRecovery}"
+                Click="OnRecovery" HorizontalAlignment="Stretch" Height="34" Margin="0,0,0,4"
+                Background="{DynamicResource WarningBrush}"
+                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                CornerRadius="8"/>
+        <ListBox Grid.Row="2" ItemsSource="{Binding RecentFiles}" Classes="recentList"
                  IsVisible="{Binding RecentFiles.Count}">
           <ListBox.ItemTemplate>
             <DataTemplate x:DataType="vm:RecentFileInfo">
@@ -195,14 +193,14 @@
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock Grid.Row="1" FontSize="12" Opacity="0.5" Margin="4,12,0,0"
+        <TextBlock Grid.Row="2" FontSize="12" Opacity="0.5" Margin="4,12,0,0"
                    Text="{DynamicResource welcome.open.description}"
                    IsVisible="{Binding !RecentFiles.Count}"/>
 
-        <TextBlock Classes="sectionTitle" Grid.Row="2" Margin="0,18,0,8"
+        <TextBlock Classes="sectionTitle" Grid.Row="3" Margin="0,18,0,8"
                    Text="{DynamicResource welcome.template}"
                    IsVisible="{Binding TemplateFiles.Count}"/>
-        <ListBox Grid.Row="3" ItemsSource="{Binding TemplateFiles}" Classes="recentList"
+        <ListBox Grid.Row="4" ItemsSource="{Binding TemplateFiles}" Classes="recentList"
                  IsVisible="{Binding TemplateFiles.Count}">
           <ListBox.ItemTemplate>
             <DataTemplate x:DataType="vm:RecentFileInfo">
