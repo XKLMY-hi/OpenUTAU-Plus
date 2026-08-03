@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using OpenUtau.Core;
@@ -15,33 +16,66 @@ using Serilog;
 namespace OpenUtau.App.ViewModels {
 
     /// <summary>侧栏歌手卡片：歌手 + 懒加载头像 + 引擎铭牌（仅 Classic/DiffSinger）。</summary>
-    public class SingerItem {
+    public class SingerItem : ReactiveObject {
         public USinger Singer { get; }
         public string Name => Singer.LocalizedName;
-        public bool ShowBadge => Singer.SingerType is USingerType.Classic or USingerType.DiffSinger;
-        public string BadgeText => Singer.SingerType == USingerType.DiffSinger ? "DiffSinger" : "Classic";
+        public string SingerTypeText => Singer.SingerType switch {
+            USingerType.Classic => "UTAU",
+            USingerType.Enunu => "ENUNU",
+            USingerType.Vogen => "Vogen",
+            USingerType.DiffSinger => "DiffSinger",
+            USingerType.Voicevox => "VOICEVOX",
+            _ => Singer.SingerType.ToString(),
+        };
         public string AvatarFallback => string.IsNullOrEmpty(Name) ? "?" : Name[..1].ToUpperInvariant();
-        public bool ShowAvatarFallback => Avatar == null;
 
         private Bitmap? avatar;
-        public Bitmap? Avatar => avatar ??= LoadAvatar(Singer);
+        private bool avatarLoaded;
+        private bool avatarLoading;
+        /// <summary>加载中/无图时返回 null（显示首字符回退），头像就绪后通知刷新。</summary>
+        public Bitmap? Avatar {
+            get {
+                if (!avatarLoaded && !avatarLoading) {
+                    avatarLoading = true;
+                    LoadAvatarAsync();
+                }
+                return avatar;
+            }
+        }
+
+        public bool ShowAvatarFallback => !avatarLoaded || avatar == null;
 
         public SingerItem(USinger singer) {
             Singer = singer;
         }
 
-        private static Bitmap? LoadAvatar(USinger singer) {
-            if (singer.AvatarData == null) {
-                return null;
-            }
-            try {
-                using (var stream = new MemoryStream(singer.AvatarData)) {
-                    return new Bitmap(stream);
+        /// <summary>
+        /// 头像异步加载：歌手需 EnsureLoaded 才填充 AvatarData（轨道头选歌手后已加载，
+        /// 侧栏直接读未加载实例为 null）——后台线程加载，解码回 UI 线程。
+        /// </summary>
+        private void LoadAvatarAsync() {
+            Task.Run(() => {
+                try {
+                    Singer.EnsureLoaded();
+                } catch (Exception e) {
+                    Log.Error(e, $"Failed to load singer {Singer.Id}");
                 }
-            } catch (Exception e) {
-                Log.Error(e, "Failed to load avatar.");
-                return null;
-            }
+                byte[] data = Singer.AvatarData;
+                Dispatcher.UIThread.Post(() => {
+                    if (data != null) {
+                        try {
+                            using (var stream = new MemoryStream(data)) {
+                                avatar = new Bitmap(stream);
+                            }
+                        } catch (Exception e) {
+                            Log.Error(e, "Failed to load avatar.");
+                        }
+                    }
+                    avatarLoaded = true;
+                    this.RaisePropertyChanged(nameof(Avatar));
+                    this.RaisePropertyChanged(nameof(ShowAvatarFallback));
+                });
+            });
         }
     }
 
