@@ -26,7 +26,13 @@ namespace OpenUtau.App {
             InitLogging();
             string processName = Process.GetCurrentProcess().ProcessName;
             if (processName != "dotnet") {
-                var exists = Process.GetProcessesByName(processName).Count() > 1;
+                // 按 exe 完整路径匹配单实例——原版与 Plus 进程名同为 OpenUtau，
+                // 按进程名判断会把两个版本互相视为"已在运行"（无法共存）。
+                // 仅拦截同目录实例：原版在不同路径，可同时运行。
+                string myPath = GetExePath(Process.GetCurrentProcess());
+                bool exists = Process.GetProcessesByName(processName)
+                    .Where(p => p.Id != Environment.ProcessId)
+                    .Any(p => string.Equals(GetExePath(p), myPath, StringComparison.OrdinalIgnoreCase));
                 if (exists) {
                     Log.Information($"Process {processName} already open. Exiting.");
                     return;
@@ -89,6 +95,15 @@ namespace OpenUtau.App {
             => BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(
                     args, ShutdownMode.OnMainWindowClose);
+
+        /// <summary>进程 exe 完整路径（其他进程可能无权限读取，失败返回空串不匹配）。</summary>
+        static string GetExePath(Process p) {
+            try {
+                return p.MainModule?.FileName ?? string.Empty;
+            } catch {
+                return string.Empty;
+            }
+        }
 
         public static void InitLogging() {
             Log.Logger = new LoggerConfiguration()
