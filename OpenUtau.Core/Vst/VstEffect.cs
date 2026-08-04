@@ -15,6 +15,8 @@ namespace OpenUtau.Core.Vst {
         private IntPtr _handle;
         private bool _isSetup;
         private bool _isActivated;
+        // 原生编辑器窗口是否打开——Dispose 时必须先关闭（否则窗口悬空引用已卸载 handle）
+        private bool _editorOpen;
         public VstPluginSlot Slot => _slot;
         public VstPluginEntry Entry => _entry;
         public string DisplayName => _entry.Name;
@@ -93,10 +95,12 @@ namespace OpenUtau.Core.Vst {
         public bool OpenNativeEditor() {
             if (_handle == IntPtr.Zero) return false;
             bool ok = _bridge.OpenEditorWindow(_handle);
-            if (ok)
+            if (ok) {
+                _editorOpen = true;
                 Log.Information($"[VstEffect] Native editor opened for '{_entry.Name}'");
-            else
+            } else {
                 Log.Warning($"[VstEffect] Editor failed for '{_entry.Name}': {_bridge.LastError()}");
+            }
             return ok;
         }
 
@@ -118,6 +122,12 @@ namespace OpenUtau.Core.Vst {
 
         public void Dispose() {
             if (_handle != IntPtr.Zero) {
+                // 先关闭原生编辑器窗口——GUI 打开时直接 vst_unload 会让窗口
+                // 悬空引用已卸载的 handle → 原生崩溃（LoadProject ClearAll 场景）
+                if (_editorOpen) {
+                    _bridge.CloseEditor(_handle);
+                    _editorOpen = false;
+                }
                 if (_isActivated) {
                     _bridge.Activate(_handle, false);
                     _isActivated = false;

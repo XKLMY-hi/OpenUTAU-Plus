@@ -197,7 +197,18 @@ namespace OpenUtau.Core.Render {
                 // Collect VST effects — lock-free read from pre-loaded instances
                 var vstEffects = new System.Collections.Generic.List<SignalChain.Effects.IEffect>();
                 if (applyMixFx && track.VstSlots != null) {
-                    foreach (var fx in Vst.VstPluginManager.Inst.GetActiveEffects(track.TrackNo))
+                    var active = Vst.VstPluginManager.Inst.GetActiveEffects(track.TrackNo);
+                    if (active.Count == 0 && track.VstSlots.Any(s => s.IsLoaded && !s.Bypassed)) {
+                        // 兜底：槽位有插件但实例未加载（异步加载未触发/未完成/工程
+                        // 恢复路径未走到）——渲染前同步补加载，保证 VST 生效
+                        foreach (var s in track.VstSlots) {
+                            if (s.IsLoaded && !s.Bypassed) {
+                                Vst.VstPluginManager.Inst.LoadEffect(track.TrackNo, s);
+                            }
+                        }
+                        active = Vst.VstPluginManager.Inst.GetActiveEffects(track.TrackNo);
+                    }
+                    foreach (var fx in active)
                         vstEffects.Add(fx);
                 }
 
