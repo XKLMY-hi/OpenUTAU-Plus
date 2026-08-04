@@ -147,6 +147,7 @@ struct VstBridgeInstance {
     IPtr<IPlugView> editorView;
     bool            stateSynced = false;
     bool            editorWindowOpen = false;
+    HWND            editorWindowHwnd = nullptr;   // vst_open_editor_window 的弹出窗口句柄
 
     // Per-instance param channel: GUI writes, audio thread reads
     ParamQueue   paramQueue;
@@ -506,10 +507,22 @@ extern "C" void* vst_open_editor(VstBridgeInstance* inst, void* parentHwnd) {
 }
 
 extern "C" void vst_close_editor(VstBridgeInstance* inst) {
-    if (!inst || !inst->editorView) return;
-    inst->editorView->setFrame(nullptr);
-    inst->editorView->removed();
-    inst->editorView = nullptr;
+    if (!inst) return;
+    // 关闭自托管弹出窗口（vst_open_editor_window 创建，独立消息循环线程）。
+    // 此前从不关闭——vst_unload 释放 inst 后窗口线程访问悬空内存 → use-after-free 崩溃
+    //（复现：打开 VST 原生 GUI 后再次打开项目）。SendMessageW 同步等待窗口线程
+    // 处理完 WM_CLOSE（→DestroyWindow→PostQuitMessage→消息循环退出），
+    // WM_NCDESTROY 在 inst 释放前把 editorWindowOpen 置 false。
+    if (inst->editorWindowOpen && inst->editorWindowHwnd) {
+        HWND hwnd = inst->editorWindowHwnd;
+        inst->editorWindowHwnd = nullptr;
+        SendMessageW(hwnd, WM_CLOSE, 0, 0);
+    }
+    if (inst->editorView) {
+        inst->editorView->setFrame(nullptr);
+        inst->editorView->removed();
+        inst->editorView = nullptr;
+    }
 }
 
 // ═════════════════════════════════════════════════════════════════════
@@ -591,6 +604,7 @@ extern "C" int vst_open_editor_window(VstBridgeInstance* inst) {
     if (pv->getSize(&vr2) == kResultTrue && (vr2.getWidth() != w || vr2.getHeight() != h))
         pv->onSize(&vr2);
     inst->editorWindowOpen = true;
+    inst->editorWindowHwnd = hwnd;
     ShowWindow(hwnd, SW_SHOW); UpdateWindow(hwnd);
 
     std::thread([hwnd]() {

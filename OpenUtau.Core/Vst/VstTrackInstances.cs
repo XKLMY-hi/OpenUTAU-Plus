@@ -119,6 +119,19 @@ namespace OpenUtau.Core.Vst {
             lock (_writeLock) { UnloadAtLocked(index); }
         }
 
+        /// <summary>
+        /// Unload all slots（延迟销毁——旧实例进 pendingDispose，原生 Dispose 在
+        /// 安全点 Flush 执行，不在调用线程）。工程切换时替代 ClearAll 使用：
+        /// ClearAll 在 UI 线程同步 vst_unload（原生 GUI 打开时会 native 崩溃）。
+        /// </summary>
+        public void UnloadAll() {
+            lock (_writeLock) {
+                for (int i = 0; i < _effects.Length; i++) {
+                    UnloadAtLocked(i);
+                }
+            }
+        }
+
         private void UnloadAtLocked(int index) {
             if (index < 0 || index >= _effects.Length) return;
             var fx = _effects[index];

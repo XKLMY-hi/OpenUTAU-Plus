@@ -115,6 +115,16 @@ namespace OpenUtau.Core.Vst {
             return true;
         }
 
+        /// <summary>
+        /// Unload all tracks' slots（延迟销毁，无 UI 线程原生 Dispose）。
+        /// 工程切换时替代 ClearAll——原生 Dispose 收敛到安全点（Flush）。
+        /// </summary>
+        public void UnloadAllTracks() {
+            lock (_lock) {
+                foreach (var kv in _tracks) kv.Value.UnloadAll();
+            }
+        }
+
         public void ClearAll() {
             lock (_lock) {
                 foreach (var kv in _tracks) kv.Value.Dispose();

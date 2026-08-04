@@ -633,8 +633,10 @@ namespace OpenUtau.Core {
                 renderCancellation?.Cancel();
                 // 工程切换：内存短语缓存整体失效（hash 含 Timestamp 已兜底，这里显式清空防膨胀）
                 PhraseCache.Clear();
-                // 工程切换 VST 实例清场——旧工程实例残留会继续出声，且异步加载可"跨工程落地"
-                Vst.VstPluginManager.Inst.ClearAll();
+                // 工程切换卸载全部槽位实例（延迟销毁：无 UI 线程原生 Dispose——
+                // ClearAll 同步 vst_unload 在原生 GUI 打开时会 native 崩溃退出进程；
+                // 原生 Dispose 收敛到安全点 Flush）
+                Vst.VstPluginManager.Inst.UnloadAllTracks();
                 DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(0));
             }
             if (cmd is PreRenderNotification || cmd is LoadProjectNotification) {
