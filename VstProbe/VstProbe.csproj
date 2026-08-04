@@ -5,5 +5,8 @@
     <SatelliteResourceLanguages>none</SatelliteResourceLanguages>
     <Nullable>enable</Nullable>
     <AssemblyName>vst_probe</AssemblyName>
+    <!-- publish 主项目时 CopyVstProbe 的 MSBuild 调用会继承 RID——资产文件需含 win-x64
+         目标（NETSDK1047），否则主项目 publish 失败 -->
+    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
   </PropertyGroup>
 </Project>
