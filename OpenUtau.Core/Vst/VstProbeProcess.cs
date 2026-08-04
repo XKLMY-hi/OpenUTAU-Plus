@@ -16,11 +16,15 @@ namespace OpenUtau.Core.Vst {
         static string GetExePath() {
             if (_exePath != null && File.Exists(_exePath)) return _exePath;
             var dir = Path.GetDirectoryName(typeof(VstProbeProcess).Assembly.Location) ?? ".";
+            // 1) 独立子目录（发布布局：self-contained vst_probe——与主程序运行时隔离，
+            //    避免 framework-dependent 探针被同目录 hostfxr 干扰而无法启动）
+            _exePath = Path.Combine(dir, "vst_probe", "vst_probe.exe");
+            if (File.Exists(_exePath)) return _exePath;
+            // 2) 顶层（旧发布布局）
             _exePath = Path.Combine(dir, "vst_probe.exe");
-            if (!File.Exists(_exePath)) {
-                // Fallback: search runtimes/win-x64/native (dev layout)
-                _exePath = Path.Combine(dir, "runtimes", "win-x64", "native", "vst_probe.exe");
-            }
+            if (File.Exists(_exePath)) return _exePath;
+            // 3) runtimes/win-x64/native（dev layout）
+            _exePath = Path.Combine(dir, "runtimes", "win-x64", "native", "vst_probe.exe");
             return _exePath;
         }
 

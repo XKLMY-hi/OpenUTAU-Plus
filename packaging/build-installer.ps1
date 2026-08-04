@@ -32,12 +32,16 @@ foreach ($dir in @($publishDir, $distDir)) {
 }
 New-Item -ItemType Directory -Force -Path $publishDir, $distDir | Out-Null
 
-# ── 3. 补 vst_probe 缺口（先构建 VstProbe Release） ───────
-Write-Host "构建 VstProbe (Release)..." -ForegroundColor Yellow
+# ── 3. vst_probe 独立子目录 + self-contained 发布 ──────────
+# 与主程序运行时隔离：framework-dependent 探针与 self-contained 主程序的
+# hostfxr 同目录会被干扰而无法启动（VST3 扫描失败的根因）。self-contained
+# 探针自带运行时，无 .NET 机器也能跑；vst_bridge.dll 副本供 ProbeVst3 加载。
+Write-Host "publish vst_probe (self-contained, 独立子目录)..." -ForegroundColor Yellow
 Push-Location $root
-dotnet build VstProbe -c Release | Out-Null
+dotnet publish VstProbe -c Release -r win-x64 --self-contained true -o (Join-Path $publishDir "vst_probe") | Out-Null
 Assert-LastExit
 Pop-Location
+Copy-Item (Join-Path $root "runtimes\win-x64\native\vst_bridge.dll") (Join-Path $publishDir "vst_probe\vst_bridge.dll")
 
 # ── 4. 重新编译主程序并发布（干净编译，不用旧产物） ───────
 Write-Host "publish OpenUtau (Release win-x64, 重新编译)..." -ForegroundColor Yellow
@@ -46,9 +50,7 @@ dotnet publish OpenUtau -c Release -r win-x64 --self-contained true -o $publishD
 Assert-LastExit
 Pop-Location
 
-# ── 5. 补 vst_probe.* 三件套到发布目录（CopyVstProbe target 只写构建目录） ──
-Write-Host "复制 vst_probe.* ..."
-Copy-Item (Join-Path $root "VstProbe\bin\Release\net8.0\vst_probe.*") $publishDir
+# ── 5. （vst_probe 已由步骤 3 以 self-contained 子目录发布） ──
 
 # ── 6. 补 DirectML.dll（GPU 推理；缺失仅 warning 降级 CPU） ──
 $directMl = Get-ChildItem "$env:USERPROFILE\.nuget\packages\microsoft.ai.directml\*\bin\x64-win\DirectML.dll" -ErrorAction SilentlyContinue |
