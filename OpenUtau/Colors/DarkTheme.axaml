@@ -46,7 +46,7 @@
   <Color x:Key="WhiteKeyNameColor">#c8c8d0</Color>
 
   <Color x:Key="CenterKeyColorLeft">#B0C4DE</Color>
-  <Color x:Key="CenterKeyColorRight">#CCc73a3f</Color>
+  <Color x:Key="CenterKeyColorRight">#CCFFFFFF</Color>
   <Color x:Key="CenterKeyNameColor">#f0f0f0</Color>
 
   <Color x:Key="BlackKeyColorLeft">#181820</Color>
