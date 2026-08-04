@@ -6,7 +6,11 @@ using NAudio.Wave;
 using Xunit;
 
 namespace OpenUtau.Audio {
-    /// <summary>CallbackTrackedSampleProvider 的在飞标志语义（B1 drain 屏障的载体）。</summary>
+    /// <summary>
+    /// CallbackTrackedSampleProvider 的在飞标志语义（B1 drain 屏障的载体）。
+    /// 轮询断言在重负载并行下会超时——纳入 VstShared 串行集合。
+    /// </summary>
+    [Xunit.Collection("VstShared")]
     public class CallbackTrackedSampleProviderTest {
         // 提供已知样本的 provider：Read 期间并发检查 InCallback
         sealed class ProbeProvider : ISampleProvider {
