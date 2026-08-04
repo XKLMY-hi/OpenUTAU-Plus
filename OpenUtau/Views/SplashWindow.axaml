@@ -8,18 +8,23 @@
         Icon="/Assets/open-utau.ico"
         CanResize="False"
         WindowDecorations="None"
+        Background="Transparent"
         WindowStartupLocation="CenterScreen">
-  <Grid>
-    <Image Margin="20" Width="96" Height="96"
-           VerticalAlignment="Top" HorizontalAlignment="Center"
-           Source="/Assets/open-utau.ico"/>
-    <Image x:Name="LogoTypeDark" Height="16" Margin="0,136,0,10"
-           VerticalAlignment="Top" HorizontalAlignment="Center"
-           Source="/Assets/logotype-w.png" IsVisible="{Binding IsDarkMode}"/>
-    <Image x:Name="LogoTypeLight" Height="16" Margin="0,136,0,10"
-           VerticalAlignment="Top" HorizontalAlignment="Center"
-           Source="/Assets/logotype.png" IsVisible="{Binding !IsDarkMode}"/>
-    <ProgressBar VerticalAlignment="Bottom" HorizontalAlignment="Stretch"
-           IsIndeterminate="True"/>
-  </Grid>
+  <!-- 圆角边框 + 主题背景配色（暖灰暗色） -->
+  <Border CornerRadius="12" Background="{DynamicResource SystemRegionBrush}"
+          BorderBrush="{DynamicResource PlusBrushBorderDefault}" BorderThickness="1">
+    <Grid>
+      <Image Margin="20" Width="96" Height="96"
+             VerticalAlignment="Top" HorizontalAlignment="Center"
+             Source="/Assets/OpenUtau.png"/>
+      <Image x:Name="LogoTypeDark" Height="16" Margin="0,136,0,10"
+             VerticalAlignment="Top" HorizontalAlignment="Center"
+             Source="/Assets/logotype-w.png" IsVisible="{Binding IsDarkMode}"/>
+      <Image x:Name="LogoTypeLight" Height="16" Margin="0,136,0,10"
+             VerticalAlignment="Top" HorizontalAlignment="Center"
+             Source="/Assets/logotype.png" IsVisible="{Binding !IsDarkMode}"/>
+      <ProgressBar VerticalAlignment="Bottom" HorizontalAlignment="Stretch"
+             IsIndeterminate="True"/>
+    </Grid>
+  </Border>
 </Window>
