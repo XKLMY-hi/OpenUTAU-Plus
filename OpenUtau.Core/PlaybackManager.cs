@@ -462,7 +462,19 @@ namespace OpenUtau.Core {
 
         // Exporting mixdown
         public async Task RenderMixdown(UProject project, string exportPath) {
-            await RecordMixdown(project, exportPath, 0, -1, null, default);
+            try {
+                await RecordMixdown(project, exportPath, 0, -1, null, default);
+            } catch (IOException ioe) {
+                var customEx = new MessageCustomizableException($"Failed to export {exportPath}.", $"<translate:errors.failed.export>: {exportPath}", ioe);
+                DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(customEx));
+            } catch (Exception e) {
+                // 渲染取消/无设备/路径不可写等——async void 菜单入口无捕获，这里必须转用户可见错误
+                var customEx = new MessageCustomizableException("Failed to render.", $"<translate:errors.failed.render>: {exportPath}", e);
+                DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(customEx));
+                try {
+                    if (File.Exists(exportPath)) File.Delete(exportPath);
+                } catch { }
+            }
         }
 
         /// <summary>导出录制中（禁止播放操作，防止打断录制通道）。</summary>
@@ -509,12 +521,16 @@ namespace OpenUtau.Core {
                     output.Init(new NAudio.Wave.SampleProviders.SampleToWaveProvider16(recorder));
                     output.Play();
 
-                    // 等待录制完成（时长或取消）
-                    var sw = System.Diagnostics.Stopwatch.StartNew();
-                    while (sw.ElapsedMilliseconds < totalMs && !ct.IsCancellationRequested) {
-                        Thread.Sleep(50);
-                        if (progress != null) {
-                            progress.Report(Math.Min(1.0, sw.ElapsedMilliseconds / totalMs));
+                    // 录制消费段进入在飞计数——Flush 不得释放正在被录制回调消费的 VST handle
+                    //（TryFlush 另有 IsRecording 条件，双保险）
+                    using (Vst.RenderGate.Enter()) {
+                        // 等待录制完成（时长或取消）
+                        var sw = System.Diagnostics.Stopwatch.StartNew();
+                        while (sw.ElapsedMilliseconds < totalMs && !ct.IsCancellationRequested) {
+                            Thread.Sleep(50);
+                            if (progress != null) {
+                                progress.Report(Math.Min(1.0, sw.ElapsedMilliseconds / totalMs));
+                            }
                         }
                     }
                     output.Stop();

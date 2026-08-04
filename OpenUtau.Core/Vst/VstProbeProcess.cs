@@ -50,8 +50,20 @@ namespace OpenUtau.Core.Vst {
                 };
 
                 proc.Start();
-                string stdout = proc.StandardOutput.ReadToEnd();
-                proc.WaitForExit(5000); // 5s timeout
+                // 先等退出（带超时），超时 Kill——禁止同步 ReadToEnd 先于超时：
+                // 挂死插件永不关 stdout → ReadToEnd 永久阻塞 → 冻结调用线程
+                if (!proc.WaitForExit(5000)) {
+                    Log.Warning($"[VstProbe] Timed out probing '{dllPath}' — killing subprocess.");
+                    try { proc.Kill(entireProcessTree: true); } catch { }
+                    proc.WaitForExit();
+                    return null;
+                }
+                // 进程已退出，stdout 已关闭——ReadToEnd 立即返回（限长防刷屏）
+                var stdout = proc.StandardOutput.ReadToEnd();
+                if (stdout.Length > 65536) {
+                    Log.Warning($"[VstProbe] Oversized output from probe of '{dllPath}' ({stdout.Length} bytes) — discarding.");
+                    return null;
+                }
 
                 if (proc.ExitCode != 0 || string.IsNullOrWhiteSpace(stdout))
                     return null;
@@ -106,8 +118,18 @@ namespace OpenUtau.Core.Vst {
                 };
 
                 proc.Start();
-                string stdout = proc.StandardOutput.ReadToEnd();
-                proc.WaitForExit(5000); // 5s timeout
+                // 先等退出（带超时），超时 Kill——见 ProbeVst2 注释
+                if (!proc.WaitForExit(5000)) {
+                    Log.Warning($"[VstProbe] Timed out probing VST3 '{dllPath}' — killing subprocess.");
+                    try { proc.Kill(entireProcessTree: true); } catch { }
+                    proc.WaitForExit();
+                    return null;
+                }
+                var stdout = proc.StandardOutput.ReadToEnd();
+                if (stdout.Length > 65536) {
+                    Log.Warning($"[VstProbe] Oversized output from VST3 probe of '{dllPath}' ({stdout.Length} bytes) — discarding.");
+                    return null;
+                }
 
                 if (proc.ExitCode != 0 || string.IsNullOrWhiteSpace(stdout))
                     return null;
