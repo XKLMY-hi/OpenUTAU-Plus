@@ -346,3 +346,6 @@ runtimes/vst_bridge/build/
 # VstTest
 VstTest/bin/
 VstTest/obj/
+packaging/publish/
+packaging/dist/
+packaging/vc_redist.x64.exe
