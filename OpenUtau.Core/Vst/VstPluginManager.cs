@@ -82,10 +82,10 @@ namespace OpenUtau.Core.Vst {
             return null;
         }
 
-        /// <summary>Save state for all active effects on a track.</summary>
+        /// <summary>Save state for all loaded effects on a track（含旁通槽——旁通时 GUI 调参也必须持久化）。</summary>
         public void SaveAllStates(int trackNo) {
             if (!_tracks.TryGetValue(trackNo, out var ti)) return;
-            var all = ti.GetActiveEffects();
+            var all = ti.GetAllEffects();
             foreach (var fx in all) {
                 var state = fx.SaveState();
                 if (state != null) fx.Slot.StateData = state;

@@ -204,20 +204,11 @@ namespace OpenUtau.Core.Ustx {
             foreach (var part in parts) {
                 part.AfterLoad(this, tracks[part.trackNo]);
             }
-            // Restore VST plugin instances from saved slots
-            foreach (var track in tracks) {
-                if (track.VstSlots != null) {
-                    foreach (var slot in track.VstSlots) {
-                        if (!string.IsNullOrEmpty(slot.PluginUid)) {
-                            try {
-                                Vst.VstPluginManager.Inst.LoadEffect(track.TrackNo, slot);
-                            } catch (Exception e) {
-                                Log.Error(e, "[AfterLoad] Failed to load VST {0} for track {1}", slot.PluginUid, track.TrackNo);
-                            }
-                        }
-                    }
-                }
-            }
+            // 注意：不再在此同步 LoadEffect 恢复 VST 实例——
+            // (1) UI 线程同步原生加载（秒级）冻结界面
+            // (2) LoadProject 的 UnloadAllTracks 会随即卸载（加载即卸载白做）
+            // 实例由渲染建链前的兜底加载（RenderEngine.BuildTrackOutputs）按需恢复，
+            // 状态经 slot.StateData（文件 state_data_base64）RestoreState 还原。
         }
 
         public void Validate(ValidateOptions options) {

@@ -549,7 +549,11 @@ namespace OpenUtau.App.Views {
             if (FxPresets.Reverb.TryGetValue(k, out var p)) { fx.ReverbSize = p.RoomSize; fx.ReverbDamp = p.Damp; fx.ReverbWet = 1.0; fx.ReverbPreDelayMs = p.PreDelayMs; }
         }
 
-        void NotifyChanged() => MessageBus.Current.SendMessage(new MixFxChangedNotification(track.TrackNo));
+        void NotifyChanged() {
+            // MixFx 滑杆直接改模型（不进 undo 队列）——标记工程已修改（防退出丢改动）
+            DocManager.Inst.MarkProjectModified();
+            MessageBus.Current.SendMessage(new MixFxChangedNotification(track.TrackNo));
+        }
 
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);

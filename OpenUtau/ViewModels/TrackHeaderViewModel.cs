@@ -130,6 +130,8 @@ namespace OpenUtau.App.ViewModels {
                 .Subscribe(volume => {
                     if (_syncing) return;
                     track.Volume = volume;
+                    // 直接改模型（不进 undo 队列）——标记工程已修改（防退出/autosave 丢改动）
+                    DocManager.Inst.MarkProjectModified();
                     var vn = new VolumeChangeNotification(track.TrackNo, Muted ? -24 : volume);
                     DocManager.Inst.ExecuteCmd(vn);
                     MessageBus.Current.SendMessage(vn);
@@ -137,6 +139,7 @@ namespace OpenUtau.App.ViewModels {
             this.WhenAnyValue(x => x.Pan)
                 .Subscribe(pan => {
                     track.Pan = pan / 100.0;
+                    DocManager.Inst.MarkProjectModified();
                     var pn = new PanChangeNotification(track.TrackNo, pan);
                     DocManager.Inst.ExecuteCmd(pn);
                     MessageBus.Current.SendMessage(pn);
@@ -164,10 +167,12 @@ namespace OpenUtau.App.ViewModels {
             this.WhenAnyValue(x => x.Mute)
                 .Subscribe(mute => {
                     track.Mute = mute;
+                    DocManager.Inst.MarkProjectModified();
                 });
             this.WhenAnyValue(x => x.Muted)
                 .Subscribe(muted => {
                     track.Muted = muted;
+                    DocManager.Inst.MarkProjectModified();
                     var vnm = new VolumeChangeNotification(track.TrackNo, muted ? -24 : Volume);
                     DocManager.Inst.ExecuteCmd(vnm);
                     MessageBus.Current.SendMessage(vnm);
@@ -175,6 +180,7 @@ namespace OpenUtau.App.ViewModels {
             this.WhenAnyValue(x => x.Solo)
                 .Subscribe(solo => {
                     track.Solo = solo;
+                    DocManager.Inst.MarkProjectModified();
                 });
             this.WhenAnyValue(x => x.MixFxEnabled)
                 .Subscribe(enabled => {

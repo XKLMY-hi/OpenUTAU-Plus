@@ -508,15 +508,20 @@ extern "C" void* vst_open_editor(VstBridgeInstance* inst, void* parentHwnd) {
 
 extern "C" void vst_close_editor(VstBridgeInstance* inst) {
     if (!inst) return;
-    // 关闭自托管弹出窗口（vst_open_editor_window 创建，独立消息循环线程）。
+    // 关闭自托管弹出窗口（vst_open_editor_window 创建，独立窗口线程）。
     // 此前从不关闭——vst_unload 释放 inst 后窗口线程访问悬空内存 → use-after-free 崩溃
     //（复现：打开 VST 原生 GUI 后再次打开项目）。SendMessageW 同步等待窗口线程
     // 处理完 WM_CLOSE（→DestroyWindow→PostQuitMessage→消息循环退出），
     // WM_NCDESTROY 在 inst 释放前把 editorWindowOpen 置 false。
-    if (inst->editorWindowOpen && inst->editorWindowHwnd) {
-        HWND hwnd = inst->editorWindowHwnd;
-        inst->editorWindowHwnd = nullptr;
-        SendMessageW(hwnd, WM_CLOSE, 0, 0);
+    if (inst->editorWindowOpen) {
+        // 窗口线程化后：初始化（attached 等）在窗口线程进行——此处等待 hwnd
+        // 就绪（最长 5s），防"初始化中卸载"的 use-after-free 竞态
+        for (int i = 0; i < 50 && inst->editorWindowHwnd == nullptr; i++) Sleep(100);
+        if (inst->editorWindowHwnd) {
+            HWND hwnd = inst->editorWindowHwnd;
+            inst->editorWindowHwnd = nullptr;
+            SendMessageW(hwnd, WM_CLOSE, 0, 0);
+        }
     }
     if (inst->editorView) {
         inst->editorView->setFrame(nullptr);
@@ -564,51 +569,62 @@ extern "C" int vst_open_editor_window(VstBridgeInstance* inst) {
     if (!inst || !inst->controller) { setError("no controller"); return 0; }
     if (inst->editorWindowOpen) { setError("window already open"); return 0; }
 
-    if (!inst->isActivated && vst_activate(inst, 1) != 0) { setError("activate fail"); return 0; }
-    syncComponentToController(inst);
+    // 窗口线程化：插件 GUI 初始化（activate/createView/attached/ShowWindow——
+    // 皮肤/字体/重型初始化可能秒级，如 EQ 类插件）全部在专用窗口线程执行，
+    // 调用线程（UI）立即返回不卡死。此前在 UI 线程同步执行 → 重插件冻结应用。
+    inst->editorWindowOpen = true;   // 同步置位——防重复打开
+    std::thread([inst]() {
+        auto fail = [inst](const char* msg) { setError(msg); inst->editorWindowOpen = false; };
 
-    auto* view = inst->controller->createView(Vst::ViewType::kEditor);
-    if (!view) { setError("createView null"); return 0; }
-    IPtr<IPlugView> pv = owned(view);
+        if (!inst->isActivated && vst_activate(inst, 1) != 0) { fail("activate fail"); return; }
+        syncComponentToController(inst);
 
-    if (pv->isPlatformTypeSupported(kPlatformTypeHWND) != kResultTrue) { setError("no HWND"); return 0; }
+        auto* view = inst->controller->createView(Vst::ViewType::kEditor);
+        if (!view) { fail("createView null"); return; }
+        IPtr<IPlugView> pv = owned(view);
 
-    ViewRect vr {};
-    if (pv->getSize(&vr) != kResultTrue) { setError("getSize fail"); return 0; }
-    int w = vr.getWidth() > 0 ? vr.getWidth() : 500;
-    int h = vr.getHeight() > 0 ? vr.getHeight() : 400;
+        if (pv->isPlatformTypeSupported(kPlatformTypeHWND) != kResultTrue) { fail("no HWND"); return; }
 
-    static bool s_reg = false;
-    if (!s_reg) {
-        WNDCLASSEXW wc {}; wc.cbSize = sizeof(wc);
-        wc.lpfnWndProc = EditorWndProc; wc.hInstance = GetModuleHandleW(nullptr);
-        wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-        wc.lpszClassName = L"OUVstEditor"; RegisterClassExW(&wc); s_reg = true;
-    }
+        ViewRect vr {};
+        if (pv->getSize(&vr) != kResultTrue) { fail("getSize fail"); return; }
+        int w = vr.getWidth() > 0 ? vr.getWidth() : 500;
+        int h = vr.getHeight() > 0 ? vr.getHeight() : 400;
 
-    auto* st = new EditorWinState{inst, nullptr, pv, {}};
-    DWORD style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-    RECT rect = {0,0,w,h}; AdjustWindowRect(&rect, style, FALSE);
-    HWND hwnd = CreateWindowExW(0, L"OUVstEditor", L"VST Editor", style,
-        CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
-        nullptr, nullptr, GetModuleHandleW(nullptr), st);
-    if (!hwnd) { delete st; setError("CreateWindow %lu", GetLastError()); return 0; }
-    st->hwnd = hwnd;
+        static bool s_reg = false;
+        if (!s_reg) {
+            WNDCLASSEXW wc {}; wc.cbSize = sizeof(wc);
+            wc.lpfnWndProc = EditorWndProc; wc.hInstance = GetModuleHandleW(nullptr);
+            wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+            wc.lpszClassName = L"OUVstEditor"; RegisterClassExW(&wc); s_reg = true;
+        }
 
-    pv->setFrame(&st->plugFrame);
-    if (pv->attached((void*)hwnd, kPlatformTypeHWND) != kResultTrue) {
-        setError("attach fail"); pv->setFrame(nullptr); DestroyWindow(hwnd); return 0;
-    }
+        auto* st = new EditorWinState{inst, nullptr, pv, {}};
+        DWORD style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+        RECT rect = {0,0,w,h}; AdjustWindowRect(&rect, style, FALSE);
+        HWND hwnd = CreateWindowExW(0, L"OUVstEditor", L"VST Editor", style,
+            CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
+            nullptr, nullptr, GetModuleHandleW(nullptr), st);
+        if (!hwnd) { delete st; fail("CreateWindow"); return; }
+        st->hwnd = hwnd;
+        inst->editorWindowHwnd = hwnd;   // 尽早设置——vst_close_editor 有限等待它
 
-    ViewRect vr2 {};
-    if (pv->getSize(&vr2) == kResultTrue && (vr2.getWidth() != w || vr2.getHeight() != h))
-        pv->onSize(&vr2);
-    inst->editorWindowOpen = true;
-    inst->editorWindowHwnd = hwnd;
-    ShowWindow(hwnd, SW_SHOW); UpdateWindow(hwnd);
+        pv->setFrame(&st->plugFrame);
+        if (pv->attached((void*)hwnd, kPlatformTypeHWND) != kResultTrue) {
+            pv->setFrame(nullptr); DestroyWindow(hwnd);
+            inst->editorWindowHwnd = nullptr;
+            fail("attach fail"); return;
+        }
 
-    std::thread([hwnd]() {
+        ViewRect vr2 {};
+        if (pv->getSize(&vr2) == kResultTrue && (vr2.getWidth() != w || vr2.getHeight() != h))
+            pv->onSize(&vr2);
+        ShowWindow(hwnd, SW_SHOW); UpdateWindow(hwnd);
+
+        // 本线程消息循环——Win32 窗口消息必须由创建线程处理
         MSG msg; while (GetMessageW(&msg, nullptr, 0, 0)) { TranslateMessage(&msg); DispatchMessageW(&msg); }
+        // 注意：消息循环退出后不得再访问 inst——WM_NCDESTROY 已复位
+        // editorWindowOpen，而 vst_unload 可能在 SendMessage(WM_CLOSE) 返回后
+        // 立刻释放 inst（use-after-free 竞态）
     }).detach();
 
     return 1;

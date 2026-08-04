@@ -184,6 +184,21 @@ namespace OpenUtau.Core.Vst {
             return list;
         }
 
+        /// <summary>
+        /// Get ALL loaded effects snapshot (including bypassed)——保存状态用：
+        /// 旁通槽的 GUI 调参也必须捕获（GetActiveEffects 过滤 bypassed 会静默丢参）。
+        /// </summary>
+        public IReadOnlyList<VstEffect> GetAllEffects() {
+            var src = _effects; // volatile read, snapshot
+            var list = new List<VstEffect>(src.Length);
+            for (int i = 0; i < src.Length; i++) {
+                var fx = src[i];
+                if (fx != null)
+                    list.Add(fx);
+            }
+            return list;
+        }
+
         /// <summary>Get effect at slot index (null if empty).</summary>
         public VstEffect? this[int i] {
             get {

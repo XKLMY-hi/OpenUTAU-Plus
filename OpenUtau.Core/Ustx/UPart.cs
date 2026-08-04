@@ -382,6 +382,9 @@ namespace OpenUtau.Core.Ustx {
                 relativePath = relativePath,
                 skip = skip,
                 trim = trim,
+                // 补 fades——此前复制/重复波形件静默丢渐入渐出
+                fadein = fadein,
+                fadeout = fadeout,
             };
             part.Load(DocManager.Inst.Project);
             return part;

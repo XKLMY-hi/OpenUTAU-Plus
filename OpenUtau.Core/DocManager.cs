@@ -136,6 +136,18 @@ namespace OpenUtau.Core {
             }
         }
 
+        /// <summary>
+        /// 标记工程已修改——混音台推子/声像/Mute/Solo、MixFx 滑杆等**直接改模型**
+        /// （不进 undo 队列）的路径必须调用：否则 ChangesSaved 误判 true →
+        /// 退出不提示保存、30s autosave 跳过 → 静默丢 mixer 改动。
+        /// </summary>
+        public void MarkProjectModified() {
+            if (Project == null) return;
+            Project.Saved = false;
+            // 哨兵：使 autosave 跳过条件（undoQueue.LastOrDefault() == autosavedPoint）失效
+            autosavedPoint = new UCommandGroup(null, false);
+        }
+
 
         private void CrashSave() {
             try {
