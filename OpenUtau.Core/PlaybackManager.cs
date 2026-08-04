@@ -263,7 +263,18 @@ namespace OpenUtau.Core {
             AudioOutput.Play();
         }
 
+        /// <summary>
+        /// Windows 自带钢琴音源（MIDI 合成器 GM 钢琴）——可用时优先；无 MIDI 设备
+        /// 时回退默认正弦波（ToneGenerator）。
+        /// </summary>
+        private readonly MidiTonePlayer _midiTone = new();
+
         public void PlayTone(double freq) {
+            if (_midiTone.IsAvailable) {
+                // MIDI 路径独立发声，无需 editingMix 音频链
+                _midiTone.PlayTone(FreqToNote(freq));
+                return;
+            }
             toneGenerator.StartTone(freq);
 
             // If nothing is playing, start editing mix
@@ -275,11 +286,24 @@ namespace OpenUtau.Core {
         }
 
         public void EndTone(double freq) {
+            if (_midiTone.IsAvailable) {
+                _midiTone.EndTone(FreqToNote(freq));
+                return;
+            }
             toneGenerator.EndTone(freq);
         }
 
         public void EndAllTones() {
+            if (_midiTone.IsAvailable) {
+                _midiTone.EndAllTones();
+                return;
+            }
             toneGenerator.EndAllTones();
+        }
+
+        static int FreqToNote(double freq) {
+            // MIDI note = 69 + 12*log2(freq/440)
+            return (int)Math.Clamp(Math.Round(69 + 12 * Math.Log2(freq / 440.0)), 0, 127);
         }
 
         public void PlayFile(string file) {
