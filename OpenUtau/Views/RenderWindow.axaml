@@ -1,10 +1,10 @@
-<controls:WindowEx xmlns="https://github.com/avaloniaui"
+﻿<controls:WindowEx xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:OpenUtau.App.Controls"
         x:Class="OpenUtau.App.Views.RenderWindow"
         Icon="/Assets/open-utau.ico"
         Title="{DynamicResource menu.file.render}"
-        Width="680" Height="580" MinWidth="520" MinHeight="440"
+        Width="780" Height="660" MinWidth="560" MinHeight="500"
         WindowStartupLocation="CenterOwner">
   <Window.Styles>
     <!-- 阶段 E 风格：卡片圆角 10 + Surface 系 -->
