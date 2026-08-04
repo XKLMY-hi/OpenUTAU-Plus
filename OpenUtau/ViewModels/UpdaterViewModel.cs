@@ -23,7 +23,8 @@ namespace OpenUtau.App.ViewModels {
 #pragma warning restore 0649
         }
 
-        public string AppVersion => $"v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version}";
+        // 版本号规则：v{上游主线版本} p{Plus版本}
+        public string AppVersion => $"v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version} p{OpenUtau.Core.PlusInfo.PlusVersion}";
         public bool IsDarkMode => ThemeManager.IsDarkMode;
         [Reactive] public string UpdaterStatus { get; set; }
         [Reactive] public bool UpdateAvailable { get; set; }

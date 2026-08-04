@@ -73,7 +73,8 @@ namespace OpenUtau.App.ViewModels {
 
         [Reactive] public string ClearCacheHeader { get; set; }
         public bool ProjectSaved => !string.IsNullOrEmpty(DocManager.Inst.Project.FilePath) && DocManager.Inst.Project.Saved;
-        public string AppVersion => $"OpenUTAU Plus v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version}";
+        // 版本号规则：OpenUTAU Plus v{上游主线版本} p{Plus版本}
+        public string AppVersion => $"OpenUTAU Plus v{System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version} p{Core.PlusInfo.PlusVersion}";
         [Reactive] public bool IsDarkMode { get; set; }
         [Reactive] public double Progress { get; set; }
         [Reactive] public string ProgressText { get; set; }
