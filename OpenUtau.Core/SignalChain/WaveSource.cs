@@ -15,7 +15,9 @@ namespace OpenUtau.Core.SignalChain {
         public int Channels => AudioSettings.Channels; // 混音目标声道（交织布局）
 
         private readonly object lockObj = new object();
-        private float[] data;
+        // volatile：批 2 渲染线程锁内 SetSamples 与音频线程锁外 Mix/IsReady 并发
+        //（C-3 两批策略热路径——非 volatile 可见性延迟会致残留静音）
+        private volatile float[] data;
 
         public WaveSource(double offsetMs, double estimatedLengthMs, double skipOverMs, int channels,
                           int? sampleRate = null) {

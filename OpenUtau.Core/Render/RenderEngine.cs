@@ -245,6 +245,12 @@ namespace OpenUtau.Core.Render {
 
         // for pre render
         public void PreRenderProject(ref CancellationTokenSource cancellation) {
+            // 播放/录制中不预渲染：此前 PreRender 无条件 Exchange+Cancel 共享的
+            // renderCancellation——播放中编辑/撤销会杀掉播放批 2 的渲染
+            //（播放头后方短语永不渲染 → 后半段静音直到重新播放）
+            if (PlaybackManager.Inst.OutputActive || PlaybackManager.Inst.PlayingMaster || PlaybackManager.Inst.IsRecording) {
+                return;
+            }
             var newCancellation = new CancellationTokenSource();
             var oldCancellation = Interlocked.Exchange(ref cancellation, newCancellation);
             if (oldCancellation != null) {
@@ -405,8 +411,14 @@ namespace OpenUtau.Core.Render {
                 }
                 return;
             }
-            // 批 2 后台继续；完成时收尾（进度清零 + 机会性 Flush）
-            _ = RenderBatchAsync(batch2, cancellation, progress).ContinueWith(_ => {
+            // 批 2 后台继续；完成时收尾（进度清零 + 机会性 Flush）。
+            // 异常必须观察：批 2 渲染失败此前被静默吞掉（播放头后方无提示静音）
+            _ = RenderBatchAsync(batch2, cancellation, progress).ContinueWith(t => {
+                if (t.IsFaulted && !cancellation.IsCancellationRequested) {
+                    Log.Error(t.Exception.Flatten(), "Failed to render background batch.");
+                    DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(
+                        new MessageCustomizableException("Failed to render.", "<translate:errors.failed.render>", t.Exception.Flatten())));
+                }
                 if (!cancellation.IsCancellationRequested) progress.Clear();
                 if (!PlaybackManager.Inst.OutputActive) {
                     Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
