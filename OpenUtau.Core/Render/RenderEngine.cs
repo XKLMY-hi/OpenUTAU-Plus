@@ -303,8 +303,6 @@ namespace OpenUtau.Core.Render {
             RenderPartRequest[] requests,
             CancellationTokenSource cancellation,
             bool playing = false) {
-            // 渲染合成段进入在飞计数——防止并发 Flush 释放正在被消费的 VST handle
-            using var gate = Vst.RenderGate.Enter();
             if (requests.Length == 0 || cancellation.IsCancellationRequested) {
                 return;
             }
@@ -324,12 +322,16 @@ namespace OpenUtau.Core.Render {
             // 短语级并行：DOP = NumRenderThreads（默认 2，渲染器线程安全未验证前保守）
             int dop = Math.Clamp(Preferences.Default.NumRenderThreads, 1, 8);
             using var sem = new SemaphoreSlim(dop);
-            var tasks = tuples.Select(tuple => RenderOneAsync(tuple, cancellation, progress, sem)).ToArray();
-            await Task.WhenAll(tasks);
+            // 渲染合成段进入在飞计数——防止并发 Flush 释放正在被消费的 VST handle
+            using (Vst.RenderGate.Enter()) {
+                var tasks = tuples.Select(tuple => RenderOneAsync(tuple, cancellation, progress, sem)).ToArray();
+                await Task.WhenAll(tasks);
+            }
             if (!cancellation.IsCancellationRequested) {
                 progress.Clear();
             }
-            // 机会性 Flush：输出未播放时释放延迟销毁的旧 VST handle（B1 竞态修复）
+            // 机会性 Flush：渲染段已退出计数、输出未播放时释放延迟销毁的旧 VST handle
+            //（此前在 gate 作用域内调用恒被拒绝——死代码）
             if (!PlaybackManager.Inst.OutputActive) {
                 Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
             }

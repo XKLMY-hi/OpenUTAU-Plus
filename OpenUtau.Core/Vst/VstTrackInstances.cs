@@ -27,6 +27,9 @@ namespace OpenUtau.Core.Vst {
         // 串行化同 track 的并发原生加载（Load/Setup/RestoreState 秒级，锁外执行）
         private readonly SemaphoreSlim _loadGate = new(1, 1);
 
+        // Dispose 标记——在飞的 LoadAtAsync 完成后复查，禁止写入已销毁的实例
+        private bool _disposed;
+
         public VstTrackInstances(int trackNo) => _trackNo = trackNo;
 
         /// <summary>
@@ -67,14 +70,15 @@ namespace OpenUtau.Core.Vst {
         /// </summary>
         public async Task<VstEffect?> LoadAtAsync(int index, VstPluginSlot slot, CancellationToken ct = default) {
             await _loadGate.WaitAsync(ct).ConfigureAwait(false);
+            VstEffect? fx = null;
             try {
                 if (ct.IsCancellationRequested) return null;
-                if (!slot.IsLoaded || slot.Bypassed) {
+                if (_disposed || !slot.IsLoaded || slot.Bypassed) {
                     UnloadAt(index);
                     return null;
                 }
 
-                var fx = new VstEffect(slot, Bridge);
+                fx = new VstEffect(slot, Bridge);
                 await Task.Run(() => {
                     fx.Load();
                     fx.Setup(AudioSettings.SampleRate, AudioSettings.BlockSize);
@@ -83,8 +87,8 @@ namespace OpenUtau.Core.Vst {
                 }, ct).ConfigureAwait(false);
 
                 lock (_writeLock) {
-                    // 复查：加载期间可能被撤销/清空（uid 已空）——丢弃实例
-                    if (ct.IsCancellationRequested || !slot.IsLoaded || slot.Bypassed) {
+                    // 复查：加载期间可能被撤销/清空（uid 已空）/轨道已删除——丢弃实例
+                    if (ct.IsCancellationRequested || _disposed || !slot.IsLoaded || slot.Bypassed) {
                         fx.Dispose();
                         return null;
                     }
@@ -94,7 +98,12 @@ namespace OpenUtau.Core.Vst {
                 }
                 Log.Information($"[VstTrack] T{_trackNo}S{index}: {fx.DisplayName} (async)");
                 return fx;
+            } catch (OperationCanceledException) {
+                // 加载中被取消：已构造的原生实例必须释放（防 handle 泄漏）
+                fx?.Dispose();
+                return null;
             } catch (Exception ex) {
+                fx?.Dispose();
                 Log.Warning($"[VstTrack] T{_trackNo}S{index} load failed: {ex.Message}");
                 return null;
             } finally {
@@ -168,6 +177,9 @@ namespace OpenUtau.Core.Vst {
         }
 
         public void Dispose() {
+            lock (_writeLock) {
+                _disposed = true;
+            }
             FlushPendingDispose();
             lock (_writeLock) {
                 for (int i = 0; i < _effects.Length; i++) {
