@@ -569,62 +569,58 @@ extern "C" int vst_open_editor_window(VstBridgeInstance* inst) {
     if (!inst || !inst->controller) { setError("no controller"); return 0; }
     if (inst->editorWindowOpen) { setError("window already open"); return 0; }
 
-    // 窗口线程化：插件 GUI 初始化（activate/createView/attached/ShowWindow——
-    // 皮肤/字体/重型初始化可能秒级，如 EQ 类插件）全部在专用窗口线程执行，
-    // 调用线程（UI）立即返回不卡死。此前在 UI 线程同步执行 → 重插件冻结应用。
-    inst->editorWindowOpen = true;   // 同步置位——防重复打开
-    std::thread([inst]() {
-        auto fail = [inst](const char* msg) { setError(msg); inst->editorWindowOpen = false; };
+    // 窗口在调用线程（UI）创建：插件 controller 在 vst_load 的 UI 线程创建，
+    // createView/attached 期望同线程——窗口线程化会让线程敏感插件
+    //（Persistent Q 等）打不开 / TDR Nova 卡死。UI 线程创建兼容所有插件；
+    // 重插件（EQ 类）attached 初始化时 UI 短暂卡是插件固有成本。
+    // 窗口消息由 Avalonia 的 UI 消息泵驱动（detach 线程仅兜底，收不到
+    // 跨线程窗口消息——窗口消息实际由创建线程的消息队列处理）。
+    if (!inst->isActivated && vst_activate(inst, 1) != 0) { setError("activate fail"); return 0; }
+    syncComponentToController(inst);
 
-        if (!inst->isActivated && vst_activate(inst, 1) != 0) { fail("activate fail"); return; }
-        syncComponentToController(inst);
+    auto* view = inst->controller->createView(Vst::ViewType::kEditor);
+    if (!view) { setError("createView null"); return 0; }
+    IPtr<IPlugView> pv = owned(view);
 
-        auto* view = inst->controller->createView(Vst::ViewType::kEditor);
-        if (!view) { fail("createView null"); return; }
-        IPtr<IPlugView> pv = owned(view);
+    if (pv->isPlatformTypeSupported(kPlatformTypeHWND) != kResultTrue) { setError("no HWND"); return 0; }
 
-        if (pv->isPlatformTypeSupported(kPlatformTypeHWND) != kResultTrue) { fail("no HWND"); return; }
+    ViewRect vr {};
+    if (pv->getSize(&vr) != kResultTrue) { setError("getSize fail"); return 0; }
+    int w = vr.getWidth() > 0 ? vr.getWidth() : 500;
+    int h = vr.getHeight() > 0 ? vr.getHeight() : 400;
 
-        ViewRect vr {};
-        if (pv->getSize(&vr) != kResultTrue) { fail("getSize fail"); return; }
-        int w = vr.getWidth() > 0 ? vr.getWidth() : 500;
-        int h = vr.getHeight() > 0 ? vr.getHeight() : 400;
+    static bool s_reg = false;
+    if (!s_reg) {
+        WNDCLASSEXW wc {}; wc.cbSize = sizeof(wc);
+        wc.lpfnWndProc = EditorWndProc; wc.hInstance = GetModuleHandleW(nullptr);
+        wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+        wc.lpszClassName = L"OUVstEditor"; RegisterClassExW(&wc); s_reg = true;
+    }
 
-        static bool s_reg = false;
-        if (!s_reg) {
-            WNDCLASSEXW wc {}; wc.cbSize = sizeof(wc);
-            wc.lpfnWndProc = EditorWndProc; wc.hInstance = GetModuleHandleW(nullptr);
-            wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-            wc.lpszClassName = L"OUVstEditor"; RegisterClassExW(&wc); s_reg = true;
-        }
+    auto* st = new EditorWinState{inst, nullptr, pv, {}};
+    DWORD style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+    RECT rect = {0,0,w,h}; AdjustWindowRect(&rect, style, FALSE);
+    HWND hwnd = CreateWindowExW(0, L"OUVstEditor", L"VST Editor", style,
+        CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
+        nullptr, nullptr, GetModuleHandleW(nullptr), st);
+    if (!hwnd) { delete st; setError("CreateWindow %lu", GetLastError()); return 0; }
+    st->hwnd = hwnd;
+    inst->editorWindowHwnd = hwnd;   // vst_close_editor 用它关闭窗口
 
-        auto* st = new EditorWinState{inst, nullptr, pv, {}};
-        DWORD style = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-        RECT rect = {0,0,w,h}; AdjustWindowRect(&rect, style, FALSE);
-        HWND hwnd = CreateWindowExW(0, L"OUVstEditor", L"VST Editor", style,
-            CW_USEDEFAULT, CW_USEDEFAULT, rect.right-rect.left, rect.bottom-rect.top,
-            nullptr, nullptr, GetModuleHandleW(nullptr), st);
-        if (!hwnd) { delete st; fail("CreateWindow"); return; }
-        st->hwnd = hwnd;
-        inst->editorWindowHwnd = hwnd;   // 尽早设置——vst_close_editor 有限等待它
+    pv->setFrame(&st->plugFrame);
+    if (pv->attached((void*)hwnd, kPlatformTypeHWND) != kResultTrue) {
+        setError("attach fail"); pv->setFrame(nullptr); DestroyWindow(hwnd);
+        inst->editorWindowHwnd = nullptr; return 0;
+    }
 
-        pv->setFrame(&st->plugFrame);
-        if (pv->attached((void*)hwnd, kPlatformTypeHWND) != kResultTrue) {
-            pv->setFrame(nullptr); DestroyWindow(hwnd);
-            inst->editorWindowHwnd = nullptr;
-            fail("attach fail"); return;
-        }
+    ViewRect vr2 {};
+    if (pv->getSize(&vr2) == kResultTrue && (vr2.getWidth() != w || vr2.getHeight() != h))
+        pv->onSize(&vr2);
+    inst->editorWindowOpen = true;
+    ShowWindow(hwnd, SW_SHOW); UpdateWindow(hwnd);
 
-        ViewRect vr2 {};
-        if (pv->getSize(&vr2) == kResultTrue && (vr2.getWidth() != w || vr2.getHeight() != h))
-            pv->onSize(&vr2);
-        ShowWindow(hwnd, SW_SHOW); UpdateWindow(hwnd);
-
-        // 本线程消息循环——Win32 窗口消息必须由创建线程处理
+    std::thread([hwnd]() {
         MSG msg; while (GetMessageW(&msg, nullptr, 0, 0)) { TranslateMessage(&msg); DispatchMessageW(&msg); }
-        // 注意：消息循环退出后不得再访问 inst——WM_NCDESTROY 已复位
-        // editorWindowOpen，而 vst_unload 可能在 SendMessage(WM_CLOSE) 返回后
-        // 立刻释放 inst（use-after-free 竞态）
     }).detach();
 
     return 1;
