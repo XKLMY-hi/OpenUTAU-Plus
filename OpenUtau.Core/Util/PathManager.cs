@@ -47,7 +47,9 @@ namespace OpenUtau.Core {
                     DataPath = exePath;
                 } else {
                     string dataHome = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-                    DataPath = Path.Combine(dataHome, "OpenUtau");
+                    // Plus 数据目录独立于原版 OpenUtau——prefs/缓存/日志零冲突，
+                    // 可与原版共存安装（声库共享见 SingersPaths）
+                    DataPath = Path.Combine(dataHome, "OpenUtau Plus");
                 }
                 CachePath = Path.Combine(DataPath, "Cache");
                 HomePathIsAscii = true;
@@ -93,6 +95,16 @@ namespace OpenUtau.Core {
                 var list = new List<string> { SingersPath };
                 if (Directory.Exists(SingersPathOld)) {
                     list.Add(SingersPathOld);
+                }
+                // 原版 OpenUTAU 声库共享（共存设计：歌手文件共用，必要文件独立）——
+                // %Personal%\OpenUtau\Singers 存在时自动加入搜索，用户零配置看到原版声库
+                if (IsInstalled) {
+                    string legacySingers = Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                        "OpenUtau", "Singers");
+                    if (Directory.Exists(legacySingers)) {
+                        list.Add(legacySingers);
+                    }
                 }
                 if (Directory.Exists(AdditionalSingersPath)) {
                     list.Add(AdditionalSingersPath);
