@@ -35,10 +35,16 @@ namespace OpenUtau.App.Views {
 
         // ── 创建主编辑窗口（desktop.MainWindow 必须指向 MainWindow：TrackHeaderViewModel 等依赖） ──
         private MainWindow CreateMainWindow() {
+            // 复用已有主编辑器：Avalonia 的 MainWindow setter 会关闭旧 MainWindow
+            //（OnMainWindowClose 语义）——再次打开项目时旧主编辑器会被自动关闭
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+                && desktop.MainWindow is MainWindow existing && existing.IsVisible) {
+                return existing;
+            }
             var mainWindow = new MainWindow();
             mainWindow.Show();
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-                desktop.MainWindow = mainWindow;
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop2) {
+                desktop2.MainWindow = mainWindow;
             }
             return mainWindow;
         }
