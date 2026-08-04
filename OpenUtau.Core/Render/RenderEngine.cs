@@ -402,7 +402,11 @@ namespace OpenUtau.Core.Render {
                 .OrderBy(tuple => tuple.Item1.end)
                 .Concat(allTuples.Where(tuple => tuple.Item1.end <= startTick))
                 .ToArray();
-            int batch1Count = tuples.Count(t => t.Item1.end > startTick);
+            // 批 1 = 播放头前方 10 秒窗口内的短语——曲首播放不再等整曲渲染完才出声
+            //（此前批 1 = 播放头前方全部短语，冷缓存曲首播放要等全曲）
+            double startMs = project.timeAxis.TickPosToMsPos(startTick);
+            int windowEndTick = project.timeAxis.MsPosToTickPos(startMs + 10000);
+            int batch1Count = tuples.Count(t => t.Item1.end > startTick && t.Item1.end <= windowEndTick);
             var progress = new Progress(tuples.Sum(t => t.Item1.phones.Length));
 
             await RenderBatchAsync(tuples.Take(batch1Count).ToArray(), cancellation, progress);

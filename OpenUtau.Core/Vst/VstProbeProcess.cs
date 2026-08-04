@@ -41,13 +41,14 @@ namespace OpenUtau.Core.Vst {
                 using var proc = new Process {
                     StartInfo = new ProcessStartInfo {
                         FileName = exe,
-                        Arguments = $"\"{dllPath}\"",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,
                     },
                 };
+                // ArgumentList 免引号转义（文件名含引号/换行时防参数注入）
+                proc.StartInfo.ArgumentList.Add(dllPath);
 
                 proc.Start();
                 // 先等退出（带超时），超时 Kill——禁止同步 ReadToEnd 先于超时：
@@ -109,13 +110,14 @@ namespace OpenUtau.Core.Vst {
                 using var proc = new Process {
                     StartInfo = new ProcessStartInfo {
                         FileName = exe,
-                        Arguments = $"--vst3 \"{dllPath}\"",
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         CreateNoWindow = true,
                     },
                 };
+                proc.StartInfo.ArgumentList.Add("--vst3");
+                proc.StartInfo.ArgumentList.Add(dllPath);
 
                 proc.Start();
                 // 先等退出（带超时），超时 Kill——见 ProbeVst2 注释
