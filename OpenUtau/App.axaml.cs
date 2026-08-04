@@ -7,6 +7,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
+using Avalonia.Media.Fonts;
 using Avalonia.Styling;
 using OpenUtau.App.Views;
 using OpenUtau.Colors;
@@ -24,6 +26,16 @@ namespace OpenUtau.App {
 
         public override void OnFrameworkInitializationCompleted() {
             Log.Information("Framework initialization completed.");
+            // 注册打包的 HarmonyOS Sans SC 字体（Assets/Fonts 内嵌资源）——
+            // 系统未装该字体的机器也能完整呈现设计字体；DefaultFamilyName
+            // 仍为 "HarmonyOS Sans SC"，匹配本集合
+            try {
+                FontManager.Current.AddFontCollection(new EmbeddedFontCollection(
+                    new Uri("fonts:HarmonyOS", UriKind.Absolute),
+                    new Uri("avares://OpenUtau/Assets/Fonts/#HarmonyOS Sans SC")));
+            } catch (Exception e) {
+                Log.Warning(e, "[Font] 打包字体注册失败，回退系统字体");
+            }
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
                 desktop.MainWindow = new SplashWindow();
             }
