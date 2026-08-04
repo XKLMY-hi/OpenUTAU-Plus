@@ -1061,6 +1061,7 @@ Curve Type
   <system:String x:Key="vsteditor.close">关闭</system:String>
   <system:String x:Key="vsteditor.noplugin">无插件实例。</system:String>
   <system:String x:Key="vsteditor.guiopened">原生 GUI 已打开！参数更改实时影响音频。</system:String>
+  <system:String x:Key="vsteditor.nativeopened">原生编辑器已打开</system:String>
   <system:String x:Key="vsteditor.noeditor">无编辑器</system:String>
   <system:String x:Key="vsteditor.nogui">此插件没有 GUI</system:String>
   <system:String x:Key="vsteditor.error">错误</system:String>

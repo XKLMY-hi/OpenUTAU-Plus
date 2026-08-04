@@ -556,7 +556,7 @@ static LRESULT CALLBACK EditorWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         if (s && s->plugView) { s->plugView->setFrame(nullptr); s->plugView->removed(); s->plugView = nullptr; }
         DestroyWindow(hwnd);
         return 0;
-    case WM_DESTROY: PostQuitMessage(0); return 0;
+    case WM_DESTROY: return 0;  // 线程生命周期由宿主(VstThread)管理——窗口销毁不杀线程
     case WM_NCDESTROY:
         if (s && s->inst) s->inst->editorWindowOpen = false;
         delete s; return 0;
@@ -618,11 +618,9 @@ extern "C" int vst_open_editor_window(VstBridgeInstance* inst) {
         pv->onSize(&vr2);
     inst->editorWindowOpen = true;
     ShowWindow(hwnd, SW_SHOW); UpdateWindow(hwnd);
-
-    std::thread([hwnd]() {
-        MSG msg; while (GetMessageW(&msg, nullptr, 0, 0)) { TranslateMessage(&msg); DispatchMessageW(&msg); }
-    }).detach();
-
+    // 窗口消息由宿主的 VST 专用线程消息泵处理（本函数调用线程 = controller
+    // 创建线程 = 消息泵线程：createView/attached 的线程敏感检查通过，
+    // 插件 PostMessage 等待的消息由同一线程泵出，无死锁）。
     return 1;
 }
 #else

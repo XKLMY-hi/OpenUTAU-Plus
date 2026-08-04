@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using OpenUtau.Core.Util;
 using OpenUtau.Core.Vst;
@@ -48,10 +49,12 @@ namespace OpenUtau.App.ViewModels {
             OpenEditorCommand = ReactiveCommand.Create(OpenEditor);
         }
 
-        void OpenEditor() {
+        async void OpenEditor() {
             if (_fx == null) return;
             try {
-                bool ok = _fx.OpenNativeEditor();
+                // attached 在 VST 专用线程执行（秒级初始化不卡 UI），await 后回到 UI 线程更新状态
+                StatusText = ThemeManager.GetString("vsteditor.loading");
+                bool ok = await _fx.OpenNativeEditorAsync();
                 StatusText = ok ? ThemeManager.GetString("vsteditor.nativeopened")
                     : $"{ThemeManager.GetString("vsteditor.noeditor")}: {VstBridge.LastError() ?? ThemeManager.GetString("vsteditor.nogui")}";
             } catch (Exception ex) {

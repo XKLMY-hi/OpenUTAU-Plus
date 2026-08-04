@@ -898,6 +898,7 @@ General
   <system:String x:Key="vsteditor.close">Close</system:String>
   <system:String x:Key="vsteditor.noplugin">No plugin instance.</system:String>
   <system:String x:Key="vsteditor.guiopened">Native GUI opened! Changes affect audio in real-time.</system:String>
+  <system:String x:Key="vsteditor.nativeopened">Native editor opened</system:String>
   <system:String x:Key="vsteditor.noeditor">No editor</system:String>
   <system:String x:Key="vsteditor.nogui">this plugin has no GUI</system:String>
   <system:String x:Key="vsteditor.error">Error</system:String>
