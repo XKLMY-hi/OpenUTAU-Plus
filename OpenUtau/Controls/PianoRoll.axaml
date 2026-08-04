@@ -581,6 +581,11 @@
                        PointerPressed="PhonemeCanvasPointerPressed"
                        PointerMoved="PhonemeCanvasPointerMoved"
                        PointerReleased="PhonemeCanvasPointerReleased"/>
+      <!-- 频谱条：音素带位置（比曲线编辑器高一点），z 序在音素带之上、35% 透明——
+           音素文字依然清晰，视觉上是音素显示下方的动态背景层。仅播放时显示 -->
+      <c:SpectrumCanvas Grid.Row="3" Grid.Column="1" HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom" Margin="0" Height="60"
+                        Opacity="0.35" IsHitTestVisible="False" IsVisible="False"/>
       <GridSplitter Grid.Row="4" Grid.ColumnSpan="3" Height="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                     Background="{DynamicResource SystemControlBackgroundAltHighBrush}" IsVisible="{Binding NotesViewModel.ShowExpressions}"
                     Focusable="False" Cursor="SizeNorthSouth"/>

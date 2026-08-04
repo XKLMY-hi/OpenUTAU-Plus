@@ -384,6 +384,8 @@ namespace OpenUtau.Core {
             AudioOutput.Stop();
             // 旧回调线程退出后才允许释放其引用的资源（VST 延迟销毁的 Flush 安全点之一）
             WaitForCallbackDrain();
+            // 频谱总线清零（drain 后安全——无在飞 AddSamples）
+            SignalChain.SpectrumBus.Inst.Reset();
             PlayingMaster = false;
             loopEndTick = -1;
             TrackLevels.Clear();
@@ -395,6 +397,8 @@ namespace OpenUtau.Core {
 
         public void PausePlayback() {
             AudioOutput.Pause();
+            // 暂停期间回调已停——清频谱，避免恢复时显示旧帧
+            SignalChain.SpectrumBus.Inst.Reset();
             PlayingMaster = false;
             loopEndTick = -1;
         }
@@ -410,6 +414,8 @@ namespace OpenUtau.Core {
             AudioOutput.Stop();
             // 换源前确认旧回调线程已退出（B1 竞态屏障——旧链上的 VST handle 可安全延迟销毁）
             WaitForCallbackDrain();
+            // 频谱总线清零（seek/循环重渲染——清掉旧链残块，避免新播放头显示上一渲染的频谱）
+            SignalChain.SpectrumBus.Inst.Reset();
             // 安全点：换源完成、新链 Init 前，释放旧链延迟销毁的 VST handle
             Vst.VstPluginManager.Inst.TryFlushAllPendingDispose();
             InitOutput(masterMix);

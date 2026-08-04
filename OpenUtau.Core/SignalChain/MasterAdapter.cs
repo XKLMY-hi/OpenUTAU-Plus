@@ -26,6 +26,8 @@ namespace OpenUtau.Core.SignalChain {
             if (!source.IsReady(position, count)) {
                 Waited += count;
                 IsWaiting = true;
+                // 频谱 tap：buffer 已在函数开头清零 → 频谱自然衰减归零
+                SpectrumBus.Inst.AddSamples(buffer, offset, count, waveFormat.Channels);
                 return count;
             } else {
                 int pos = source.Mix(position, buffer, offset, count);
@@ -44,6 +46,8 @@ namespace OpenUtau.Core.SignalChain {
                     if (v > max) max = v;
                 }
                 if (max > peak) peak = max;
+                // 频谱 tap：Scale 之后 = 最终可听混音（含效果器链）；用 n（实际有数据的长度）
+                SpectrumBus.Inst.AddSamples(buffer, offset, n, waveFormat.Channels);
                 return n;
             }
         }
