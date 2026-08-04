@@ -48,11 +48,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "publish\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pdb,createdump.exe,Microsoft.DiaSymReader.Native.amd64.dll,onnxruntime.lib,*.dylib"
 Source: "..\THIRD-PARTY-NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
 [Icons]
-Name: "{autoprograms}\OpenUTAU Plus.lnk"; Filename: "{app}\OpenUtau.exe"; WorkingDir: "{app}"
-Name: "{autodesktop}\OpenUTAU Plus.lnk"; Filename: "{app}\OpenUtau.exe"; WorkingDir: "{app}"; Tasks: desktopicon
+; Name 不带 .lnk——Inno 自动附加；写了会双后缀（.lnk.lnk）
+Name: "{autoprograms}\OpenUTAU Plus"; Filename: "{app}\OpenUtau.exe"; WorkingDir: "{app}"
+Name: "{autodesktop}\OpenUTAU Plus"; Filename: "{app}\OpenUtau.exe"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Registry]
 ; 仅注册 .ustxp（Plus 专属格式，原版无此扩展——注册/卸载零冲突）。
@@ -61,6 +63,9 @@ Root: HKCR; Subkey: ".ustxp"; ValueType: string; ValueData: "OpenUtauPlusFile"; 
 Root: HKCR; Subkey: "OpenUtauPlusFile"; ValueType: string; ValueData: "OpenUTAU Plus 工程文件"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "OpenUtauPlusFile\DefaultIcon"; ValueType: string; ValueData: "{app}\OpenUtau.exe,0"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "OpenUtauPlusFile\shell\open\command"; ValueType: string; ValueData: """{app}\OpenUtau.exe"" ""%1"""; Flags: uninsdeletekey
+; 卸载键补 InstallLocation——帮助 Geek 等第三方卸载器识别主目录（数据目录在
+; Documents，名称启发式扫描无法根治，但主目录信息完整可减少误判）
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#emit SetupSetting("AppId")}_is1"; ValueType: string; ValueName: "InstallLocation"; ValueData: "{app}"; Flags: uninsdeletevalue
 
 [Run]
 ; VC++ 运行库：检测缺失才静默安装（上游 OpenUTAU 官方做法）
