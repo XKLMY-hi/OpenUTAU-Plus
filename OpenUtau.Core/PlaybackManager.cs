@@ -489,18 +489,26 @@ namespace OpenUtau.Core {
         /// </summary>
         public Task RecordMixdown(UProject project, string exportPath, int startTick = 0, int endTick = -1,
                                   IProgress<double>? progress = null, CancellationToken ct = default) {
-            return Task.Run(() => {
-                IsRecording = true;
+            // 同步置位（Task.Run 调度窗口内 PlayOrPause 可能放行一次播放渲染互踩）
+            IsRecording = true;
+            var task = Task.Run(() => {
                 var savedOutput = AudioOutput;
                 try {
                     StopPlayback();
                     // ── 直接禁用前台音频管线：主输出换 Dummy（彻底静音） ──
                     AudioOutput = new Audio.DummyAudioOutput();
 
+                    if (ct.IsCancellationRequested) {
+                        throw new OperationCanceledException(ct);
+                    }
                     var engine = new RenderEngine(project, startTick: startTick, endTick: endTick, cache: PhraseCache);
                     var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
                     if (result == null) {
                         throw new Exception("Render cancelled.");
+                    }
+                    if (ct.IsCancellationRequested) {
+                        // 渲染阶段取消（等批 1 完成才返回）——不写文件
+                        throw new OperationCanceledException(ct);
                     }
                     faders = result.Item2;
                     StartingToPlay = false;
@@ -523,6 +531,7 @@ namespace OpenUtau.Core {
 
                     // 录制消费段进入在飞计数——Flush 不得释放正在被录制回调消费的 VST handle
                     //（TryFlush 另有 IsRecording 条件，双保险）
+                    bool cancelled = false;
                     using (Vst.RenderGate.Enter()) {
                         // 等待录制完成（时长或取消）
                         var sw = System.Diagnostics.Stopwatch.StartNew();
@@ -532,14 +541,22 @@ namespace OpenUtau.Core {
                                 progress.Report(Math.Min(1.0, sw.ElapsedMilliseconds / totalMs));
                             }
                         }
+                        cancelled = ct.IsCancellationRequested;
                     }
                     output.Stop();
+                    if (cancelled) {
+                        // 取消：删除半成品文件 + 抛取消（UI 显示失败而非"完成"）
+                        try { if (File.Exists(exportPath)) File.Delete(exportPath); } catch { }
+                        throw new OperationCanceledException(ct);
+                    }
                     progress?.Report(1.0);
                 } finally {
                     AudioOutput = savedOutput;
-                    IsRecording = false;
                 }
             }, ct);
+            // ct 已取消时 lambda 不执行——continuation 确保 IsRecording 复位
+            _ = task.ContinueWith(_ => IsRecording = false, TaskScheduler.Default);
+            return task;
         }
 
         // Exporting each tracks
@@ -606,6 +623,8 @@ namespace OpenUtau.Core {
                 renderCancellation?.Cancel();
                 // 工程切换：内存短语缓存整体失效（hash 含 Timestamp 已兜底，这里显式清空防膨胀）
                 PhraseCache.Clear();
+                // 工程切换 VST 实例清场——旧工程实例残留会继续出声，且异步加载可"跨工程落地"
+                Vst.VstPluginManager.Inst.ClearAll();
                 DocManager.Inst.ExecuteCmd(new SetPlayPosTickNotification(0));
             }
             if (cmd is PreRenderNotification || cmd is LoadProjectNotification) {

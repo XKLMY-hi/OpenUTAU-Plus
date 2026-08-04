@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NAudio.Wave;
@@ -22,6 +23,8 @@ namespace OpenUtau.Core.Export {
             public bool PerTrack = false;
             /// <summary>整曲导出是否含效果链（分轨恒为干轨）。</summary>
             public bool ApplyMixFx = true;
+            /// <summary>分轨导出的轨道过滤（null = 全部轨道）。</summary>
+            public System.Collections.Generic.IReadOnlyCollection<int>? TrackFilter;
             public int? StartTick;
             public int? EndTick;
         }
@@ -76,6 +79,7 @@ namespace OpenUtau.Core.Export {
                             for (int i = 0; i < trackMixes.Count; ++i) {
                                 if (ct.IsCancellationRequested) break;
                                 if (trackMixes[i] == null || i >= total || project.tracks[i].Muted) continue;
+                                if (options.TrackFilter != null && !options.TrackFilter.Contains(i)) continue;
 
                                 string file = PathManager.Inst.GetExportPath(basePath, project.tracks[i]);
                                 progress.Report(new ProgressInfo {

@@ -224,22 +224,25 @@ namespace OpenUtau.Core.Render {
             }
             var trackMixes = new List<WaveMix>();
             var requests = PrepareRequests();
-            if (requests.Length == 0) {
-                return trackMixes;
+            // 遍历全部轨道——纯音频轨（UWavePart）/空轨也在列表中（null 或混入 wave part），
+            // 此前只覆盖"有 voice part 的轨道"→ 分轨导出静默丢轨
+            for (int i = 0; i < project.tracks.Count; ++i) {
+                var trackRequests = requests.Where(req => req.trackNo == i).ToArray();
+                if (trackRequests.Length == 0) {
+                    var waveSources = project.parts
+                        .Where(part => part is UWavePart && part.trackNo == i)
+                        .Select(part => part as UWavePart)
+                        .Where(part => part.Samples != null)
+                        .Select(part => part.TrimSamples(project))
+                        .OfType<ISignalSource>()
+                        .ToList();
+                    trackMixes.Add(waveSources.Count > 0 ? new WaveMix(waveSources) : null);
+                } else {
+                    // RenderTracks 由后台导出任务线程调用（无 UI 上下文依赖），同步等待安全
+                    RenderRequestsAsync(trackRequests, newCancellation).GetAwaiter().GetResult();
+                    trackMixes.Add(new WaveMix(trackRequests.Select(req => req.mix).ToArray()));
+                }
             }
-            Enumerable.Range(0, requests.Max(req => req.trackNo) + 1)
-                .Select(trackNo => requests.Where(req => req.trackNo == trackNo).ToArray())
-                .ToList()
-                .ForEach(trackRequests => {
-                    if (trackRequests.Length == 0) {
-                        trackMixes.Add(null);
-                    } else {
-                        // RenderTracks 由后台导出任务线程调用（无 UI 上下文依赖），同步等待安全
-                        RenderRequestsAsync(trackRequests, newCancellation).GetAwaiter().GetResult();
-                        var mix = new WaveMix(trackRequests.Select(req => req.mix).ToArray());
-                        trackMixes.Add(mix);
-                    }
-                });
             return trackMixes;
         }
 

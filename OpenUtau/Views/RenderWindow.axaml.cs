@@ -133,6 +133,7 @@ namespace OpenUtau.App.Views {
                             new ExportSession.Options {
                                 PerTrack = true,
                                 ApplyMixFx = false,
+                                TrackFilter = selTrackNos,
                             }, PlaybackManager.Inst.PhraseCache);
 
                         session.RunAsync(new Progress<ExportSession.ProgressInfo>(info => {
