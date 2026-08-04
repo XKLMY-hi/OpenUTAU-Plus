@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -23,6 +25,37 @@ namespace OpenUtau.App.Views {
             // B3：SettingsLayout.Items 只读 DirectProperty，XamlIl 集合填充会 NRE——
             // item 声明在隐藏容器，构造后统一赋值（setter → SetAndRaise）
             PrefsLayout.Items = PrefsItemsHost.Children.Cast<SukiUI.Controls.SettingsLayoutItem>().ToArray();
+            BuildPlusFooter();
+        }
+
+        void BuildPlusFooter() {
+            var ver = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Version;
+            string versionText = ver == null ? "" : $"v{ver.Major}.{ver.Minor}.{ver.Build} p{OpenUtau.Core.PlusInfo.PlusVersion}";
+            PlusFooter1.Text = string.Format(ThemeManager.GetString("prefs.plus.footer1"), versionText);
+            PlusFooter2.Text = ThemeManager.GetString("prefs.plus.footer2");
+        }
+
+        void OpenReadme(object sender, RoutedEventArgs e) {
+            // 默认关联打开本地 README（安装版在安装目录，开发/便携版经 csproj 复制到输出）
+            string path = System.IO.Path.Combine(OpenUtau.Core.PathManager.Inst.RootPath, "README.md");
+            if (File.Exists(path)) {
+                try {
+                    Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+                    return;
+                } catch (Exception ex) {
+                    Log.Error(ex, "[Prefs] Failed to open README");
+                }
+            }
+            // 缺失时降级打开 GitHub 页
+            OpenGithub(sender, e);
+        }
+
+        void OpenGithub(object sender, RoutedEventArgs e) {
+            try {
+                Process.Start(new ProcessStartInfo("https://github.com/XKLMY-hi/OpenUTAU-Plus") { UseShellExecute = true });
+            } catch (Exception ex) {
+                Log.Error(ex, "[Prefs] Failed to open GitHub");
+            }
         }
 
         void OpenSingersFolder(object sender, RoutedEventArgs e) {

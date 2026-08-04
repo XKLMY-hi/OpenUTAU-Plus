@@ -451,6 +451,14 @@
             <Button Grid.Column="1" Content="{DynamicResource prefs.vst.rescan}" Click="RescanVstPlugins"/>
           </Grid>
           <ListBox Name="VstPluginsList" MinHeight="80" MaxHeight="150" ItemsSource="{Binding VstKnownPlugins}"/>
+          <!-- ── 项目信息：README / GitHub + 页脚 ── -->
+          <Border Height="1" Background="{DynamicResource PlusBorderSubtle}" Margin="0,16,0,10"/>
+          <Grid ColumnDefinitions="Auto,Auto" Margin="0,0,0,10">
+            <Button Grid.Column="0" Content="README" Margin="0,0,8,0" Click="OpenReadme"/>
+            <Button Grid.Column="1" Content="GitHub" Click="OpenGithub"/>
+          </Grid>
+          <TextBlock Name="PlusFooter1" FontSize="10" Opacity="0.55" TextWrapping="Wrap" Margin="0,0,0,2"/>
+          <TextBlock Name="PlusFooter2" FontSize="10" Opacity="0.55" TextWrapping="Wrap"/>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
         </suki:SettingsLayoutItem>

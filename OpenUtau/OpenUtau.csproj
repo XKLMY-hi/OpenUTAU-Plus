@@ -53,6 +53,7 @@
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <None Include="..\README.md" CopyToOutputDirectory="PreserveNewest" Link="README.md"/>
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="OpenUtau.Test" />

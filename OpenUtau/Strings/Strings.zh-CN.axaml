@@ -1086,6 +1086,8 @@ Curve Type
   <system:String x:Key="prefs.vst.remove">移除</system:String>
   <system:String x:Key="prefs.vst.discovered">已发现的插件</system:String>
   <system:String x:Key="prefs.vst.rescan">重新扫描</system:String>
+  <system:String x:Key="prefs.plus.footer1">OpenUTAU Plus {0} · 分支作者：XKLMY</system:String>
+  <system:String x:Key="prefs.plus.footer2">本项目使用 vibe coding（deepseek-v4）</system:String>
 
   <!-- ============================================================
        Plus 专属新增 keys — 调试窗口
