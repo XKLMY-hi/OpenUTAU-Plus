@@ -371,6 +371,7 @@ namespace OpenUtau.Core.Render {
                     cache?.Put(phrase.hash, samples);
                 } else {
                     // 缓存命中：renderer 未运行，手动推进进度（total 含全部短语）
+                    if (cancellation.IsCancellationRequested) return;
                     progress.Complete(phrase.phones.Length, "Cached");
                 }
                 source.SetSamples(samples);

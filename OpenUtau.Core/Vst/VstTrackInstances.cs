@@ -79,6 +79,9 @@ namespace OpenUtau.Core.Vst {
                 }
 
                 fx = new VstEffect(slot, Bridge);
+                // 捕获加载起始 uid——锁内复查一致性（undo Clear 与复查之间无同步，
+                // 不清 uid 可能把实例装上已清空的槽——幽灵实例）
+                string startUid = slot.PluginUid;
                 await Task.Run(() => {
                     fx.Load();
                     fx.Setup(AudioSettings.SampleRate, AudioSettings.BlockSize);
@@ -87,8 +90,8 @@ namespace OpenUtau.Core.Vst {
                 }, ct).ConfigureAwait(false);
 
                 lock (_writeLock) {
-                    // 复查：加载期间可能被撤销/清空（uid 已空）/轨道已删除——丢弃实例
-                    if (ct.IsCancellationRequested || _disposed || !slot.IsLoaded || slot.Bypassed) {
+                    // 复查：加载期间可能被撤销/清空（uid 已空）/轨道已删除/uid 被替换——丢弃实例
+                    if (ct.IsCancellationRequested || _disposed || !slot.IsLoaded || slot.Bypassed || slot.PluginUid != startUid) {
                         fx.Dispose();
                         return null;
                     }

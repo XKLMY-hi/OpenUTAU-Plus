@@ -36,6 +36,9 @@ namespace OpenUtau.Core.Render {
 
         public void Put(ulong hash, float[] samples) {
             if (samples == null || samples.Length == 0) return;
+            // 单条超限不入缓存——淘汰守卫（_lru.Count > 1）会永久保留最后一条，
+            // 超限单条会使容量上限被突破且后续 Put 空转
+            if (samples.Length > MaxTotalSamples) return;
             lock (_lock) {
                 if (_index.ContainsKey(hash)) return;
                 var node = _lru.AddFirst((hash, samples));

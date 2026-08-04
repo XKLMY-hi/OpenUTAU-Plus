@@ -104,6 +104,17 @@ namespace OpenUtau.App.Views {
             bool isMixdown = RadioMixdown.IsChecked == true;
             bool applyMixFx = (ChkVst.IsChecked == true) || (ChkBuiltinFx.IsChecked == true);
             var project = DocManager.Inst.Project;
+
+            // 渲染范围 → tick（此前范围单选是死 UI——恒整曲）
+            int rangeStart = 0, rangeEnd = -1;
+            if (RadioLoop.IsChecked == true) {
+                rangeStart = DocManager.Inst.rangeStartTick;
+                rangeEnd = DocManager.Inst.rangeEndTick;
+            } else if (RadioCustom.IsChecked == true
+                       && ParseRange(CustomRangeBox.Text, out double rStartMs, out double rEndMs)) {
+                rangeStart = project.timeAxis.MsPosToTickPos(rStartMs);
+                rangeEnd = project.timeAxis.MsPosToTickPos(rEndMs);
+            }
             var selTrackNos = _trackChecks.Where(x => x.cb.IsChecked == true)
                 .Select(x => x.track.TrackNo).ToHashSet();
 
@@ -115,7 +126,7 @@ namespace OpenUtau.App.Views {
                     if (isMixdown) {
                         // ── 录制式混音导出：设备播放驱动，与预览完全同路径 ──
                         //（同一信号链/VST 激活时序——导出的就是预览听到的）
-                        await PlaybackManager.Inst.RecordMixdown(project, path, 0, -1,
+                        await PlaybackManager.Inst.RecordMixdown(project, path, rangeStart, rangeEnd,
                             new Progress<double>(p => Dispatcher.UIThread.Invoke(() => {
                                 if (p >= 1) {
                                     ProgressLabel.Text = ThemeManager.GetString("render.status.done");
@@ -134,6 +145,8 @@ namespace OpenUtau.App.Views {
                                 PerTrack = true,
                                 ApplyMixFx = false,
                                 TrackFilter = selTrackNos,
+                                StartTick = rangeStart,
+                                EndTick = rangeEnd,
                             }, PlaybackManager.Inst.PhraseCache);
 
                         session.RunAsync(new Progress<ExportSession.ProgressInfo>(info => {
@@ -170,6 +183,30 @@ namespace OpenUtau.App.Views {
         // ═══════════════════════════════════════════════════════════════
         //  Helpers
         // ═══════════════════════════════════════════════════════════════
+
+        /// <summary>解析自定义范围 "0:00 ~ 3:45"（分:秒 或 时:分:秒）。</summary>
+        static bool ParseRange(string? text, out double startMs, out double endMs) {
+            startMs = 0; endMs = 0;
+            if (string.IsNullOrWhiteSpace(text)) return false;
+            var parts = text.Split('~');
+            if (parts.Length != 2) return false;
+            return TryParseTime(parts[0], out startMs) && TryParseTime(parts[1], out endMs) && endMs > startMs;
+        }
+
+        static bool TryParseTime(string s, out double ms) {
+            ms = 0;
+            var parts = s.Trim().Split(':');
+            if (parts.Length == 2 && int.TryParse(parts[0], out int m) && double.TryParse(parts[1], out double sec)) {
+                ms = (m * 60 + sec) * 1000;
+                return true;
+            }
+            if (parts.Length == 3 && int.TryParse(parts[0], out int h)
+                && int.TryParse(parts[1], out int mm) && double.TryParse(parts[2], out double ss)) {
+                ms = ((h * 60 + mm) * 60 + ss) * 1000;
+                return true;
+            }
+            return false;
+        }
 
         public void OnOpenFolder(object? sender, RoutedEventArgs args) {
             string path = OutputPathBox.Text ?? "";

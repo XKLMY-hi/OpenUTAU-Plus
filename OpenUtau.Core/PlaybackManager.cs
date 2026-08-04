@@ -190,6 +190,8 @@ namespace OpenUtau.Core {
         double startMs;
         public int StartTick => DocManager.Inst.Project.timeAxis.MsPosToTickPos(startMs);
         CancellationTokenSource renderCancellation;
+        // 播放渲染周期号：旧周期完成时校验是否已被更新请求取代（TOCTOU 防护）
+        int renderEpoch;
 
         // Loop playback state
         private int loopStartTick = 0;
@@ -417,10 +419,16 @@ namespace OpenUtau.Core {
         private void Render(UProject project, int tick, int endTick, int trackNo) {
             Task.Run(() => {
                 try {
+                    // 周期号：并发/连续 Play 时，旧周期晚到不得覆盖新周期（TOCTOU）
+                    int myEpoch = Interlocked.Increment(ref renderEpoch);
                     RenderEngine engine = new RenderEngine(project, startTick: tick, endTick: endTick, trackNo: trackNo, cache: PhraseCache);
                     var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
                     if (result == null) {
                         // 被新渲染周期取消——不启动旧链（C-3 两批策略的取消保护）
+                        return;
+                    }
+                    // 周期校验：本周期开始后有更新的播放请求（周期号前进）→ 不启动旧链
+                    if (myEpoch != Volatile.Read(ref renderEpoch)) {
                         return;
                     }
                     faders = result.Item2;
@@ -552,6 +560,8 @@ namespace OpenUtau.Core {
                     progress?.Report(1.0);
                 } finally {
                     AudioOutput = savedOutput;
+                    // 失效导出链的 faders 引用（防 Volume/Pan 通知写入死链）
+                    faders = null;
                 }
             }, ct);
             // ct 已取消时 lambda 不执行——continuation 确保 IsRecording 复位
