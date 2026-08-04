@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using OpenUtau.Core.Ustx;
@@ -171,12 +172,27 @@ namespace OpenUtau.App.Controls {
         }
 
         void TrackSettingsButtonClicked(object sender, RoutedEventArgs args) {
-            if (track?.Singer != null && track.Singer.Found) {
-                if (VisualRoot is Window window) {
-                    var dialog = new Views.TrackSettingsDialog(track);
-                    dialog.ShowDialog(window);
-                }
+            // Avalonia 12：VisualRoot 是 TopLevelHost 而非 Window——遍历查找宿主窗口
+            //（移除 Singer 条件——无歌手/歌手未加载时也要能打开轨道设置）
+            if (track == null) {
+                return;
             }
+            var window = FindWindow(this);
+            if (window != null) {
+                var dialog = new Views.TrackSettingsDialog(track);
+                dialog.ShowDialog(window);
+            }
+        }
+
+        /// <summary>向上遍历 VisualParent 找宿主 Window（Avalonia 12 的 VisualRoot 是 TopLevelHost）。</summary>
+        static Window? FindWindow(Visual? v) {
+            while (v != null) {
+                if (v is Window w) {
+                    return w;
+                }
+                v = v.GetVisualParent();
+            }
+            return null;
         }
 
         void VolumePointerPressed(object sender, PointerPressedEventArgs args) {
