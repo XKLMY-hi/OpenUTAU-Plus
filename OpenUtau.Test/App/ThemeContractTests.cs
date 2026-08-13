@@ -186,14 +186,19 @@ namespace OpenUtau.Test.App {
             return v;
         }
 
-        /// <summary>诊断：WindowEx 背景画刷 alpha 不得为 0（防"背景全透明"回归）。</summary>
+        /// <summary>
+        /// 回归：阶段 E（722597bc）窗口收敛后 WindowEx 外层背景为透明（圆角外 OS 合成），
+        /// 可见面由 BackgroundStyle=GradientDarker 渐变承担——防"渐变面丢失退化为 Suki 默认"回归。
+        /// </summary>
         [AvaloniaFact]
-        public void WindowBackground_IsOpaque() {
+        public void WindowBackground_RoundedCornerContract() {
             ThemeManager.Apply("Dark");
             var win = new OpenUtau.App.Controls.WindowEx();
-            Assert.NotNull(win.Background);
+            // 圆角外透明：外层画刷必须为 Transparent（阶段 E 设计，非"全透明"缺陷）
             var brush = Assert.IsAssignableFrom<ISolidColorBrush>(win.Background);
-            Assert.True(brush.Color.A >= 0xE0, $"Window bg alpha too low: {brush.Color}");
+            Assert.Equal((byte)0, brush.Color.A);
+            // 可见渐变面：Suki 渐变承担窗口可见背景（丢失则窗口退化为 Suki 默认外观）
+            Assert.Equal(SukiUI.Enums.SukiBackgroundStyle.GradientDarker, win.BackgroundStyle);
         }
 
         /// <summary>
