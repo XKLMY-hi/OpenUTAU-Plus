@@ -8,9 +8,5 @@
     <!-- 唱片外环 -->
     <circle cx="120" cy="120" r="86" fill="none" stroke="#fff" stroke-width="14"/>
     <circle cx="120" cy="120" r="56" fill="none" stroke="#ff71a3" stroke-width="6"/>
-    <!-- 音符符头 -->
-    <path fill="#fff" d="M108,168h18l20-96h-18Z"/>
-    <ellipse cx="142" cy="168" rx="15" ry="11" fill="#fff" transform="rotate(-20 142 168)"/>
-    <ellipse cx="120" cy="168" rx="15" ry="11" fill="#fff" transform="rotate(-20 120 168)"/>
   </g>
 </svg>
