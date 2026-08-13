@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -272,7 +272,8 @@ namespace OpenUtau.App.Views {
                 return;
             }
             try {
-                var tempFile = Path.Combine(PathManager.Inst.CachePath, "temp.tmp");
+                // 固定 temp.tmp 与 PluginRunner 共用同名文件会争用 → GUID 唯一化
+                var tempFile = Path.Combine(PathManager.Inst.CachePath, $"temp-{Guid.NewGuid():N}.tmp");
                 Ust.WriteForSetParam(DocManager.Inst.Project, tempFile, new List<UOto> { oto });
 
                 var startInfo = new ProcessStartInfo() {
@@ -282,6 +283,9 @@ namespace OpenUtau.App.Views {
                 };
                 using (var process = Process.Start(startInfo)) {
                     process!.WaitForExit();
+                }
+                if (File.Exists(tempFile)) {
+                    File.Delete(tempFile);
                 }
             } catch (Exception e) {
                 MessageBox.Show(

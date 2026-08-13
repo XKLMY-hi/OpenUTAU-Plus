@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,8 +49,10 @@ namespace OpenUtau.Classic {
             if (first == null || last == null) {
                 return;
             }
+            // 固定 temp.tmp 文件名在并行执行（测试并行类）时会互相争用 →
+            // 用 GUID 唯一化；用后清理防缓存堆积
+            var tempFile = Path.Combine(PathManager.CachePath, $"temp-{Guid.NewGuid():N}.tmp");
             try {
-                var tempFile = Path.Combine(PathManager.CachePath, "temp.tmp");
                 var sequence = Ust.WritePlugin(project, part, first, last, tempFile, encoding: plugin.Encoding);
                 byte[]? beforeHash = HashFile(tempFile);
                 await plugin.Run(tempFile);
@@ -68,6 +70,10 @@ namespace OpenUtau.Classic {
                 OnReplaceNote(new ReplaceNoteEventArgs(part, toRemove, toAdd));
             } catch (Exception e) {
                 OnError(new PluginErrorEventArgs("Failed to execute plugin", e));
+            } finally {
+                if (File.Exists(tempFile)) {
+                    File.Delete(tempFile);
+                }
             }
         }
 
