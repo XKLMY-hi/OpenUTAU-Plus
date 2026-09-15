@@ -306,7 +306,7 @@ namespace OpenUtau.App.Views {
             g.Children.Add(new TextBlock { Text = label, FontSize = 10,
                 VerticalAlignment = VerticalAlignment.Center, Opacity = 0.6 });
             var s = new Slider { Classes = { "param" }, Minimum = min, Maximum = max, Value = val };
-            var vl = new TextBlock { Text = val.ToString(fmt), FontSize = 9, FontFamily = "monospace",
+            var vl = new TextBlock { Text = val.ToString(fmt), FontSize = 9, FontFamily = ThemeManager.MonoFontFamily,
                 VerticalAlignment = VerticalAlignment.Center, TextAlignment = TextAlignment.Right, Opacity = 0.6 };
             s.PropertyChanged += (_, e) => {
                 if (e.Property == RangeBase.ValueProperty) { onChange(s.Value); vl.Text = s.Value.ToString(fmt); }
@@ -326,7 +326,7 @@ namespace OpenUtau.App.Views {
                 VerticalAlignment = VerticalAlignment.Center };
             leftStack.Children.Add(new TextBlock {
                 Text = $"{slot.SlotIndex + 1}", FontSize = 11, Opacity = 0.35,
-                VerticalAlignment = VerticalAlignment.Center, FontFamily = "monospace",
+                VerticalAlignment = VerticalAlignment.Center, FontFamily = ThemeManager.MonoFontFamily,
                 Margin = new(0, 0, 6, 0),
             });
 

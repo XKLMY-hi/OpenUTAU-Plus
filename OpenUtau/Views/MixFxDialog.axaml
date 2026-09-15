@@ -22,7 +22,7 @@
     <Style Selector="TextBlock.val">
       <Setter Property="HorizontalAlignment" Value="Right"/>
       <Setter Property="FontSize" Value="11"/>
-      <Setter Property="FontFamily" Value="monospace"/>
+      <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamilyMono}"/>
       <Setter Property="Opacity" Value="0.8"/>
     </Style>
     <Style Selector="Slider">

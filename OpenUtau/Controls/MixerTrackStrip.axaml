@@ -51,7 +51,7 @@
     </Style>
     <Style Selector="TextBox.volEdit">
       <Setter Property="FontSize" Value="10"/>
-      <Setter Property="FontFamily" Value="monospace"/>
+      <Setter Property="FontFamily" Value="{DynamicResource PlusFontFamilyMono}"/>
       <Setter Property="TextAlignment" Value="Center"/>
       <Setter Property="Padding" Value="0"/>
       <Setter Property="Margin" Value="0,2"/>

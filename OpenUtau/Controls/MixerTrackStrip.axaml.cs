@@ -199,7 +199,7 @@ namespace OpenUtau.App.Controls {
             if (track == null) return;
             VolValueLabel.IsVisible = false;
             var tb = new TextBox {
-                Text = $"{track.Volume:F1}", FontSize = 11, FontFamily = "monospace",
+                Text = $"{track.Volume:F1}", FontSize = 11, FontFamily = ThemeManager.MonoFontFamily,
                 TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Stretch,
                 Margin = new Thickness(8, 2),
             };

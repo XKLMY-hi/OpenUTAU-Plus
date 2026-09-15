@@ -171,7 +171,7 @@
 
   <!-- 字体（Language 文件可覆写本地化栈） -->
   <FontFamily x:Key="PlusFontFamily">HarmonyOS Sans SC, Segoe UI, Microsoft YaHei UI, sans-serif</FontFamily>
-  <FontFamily x:Key="PlusFontFamilyMono">Cascadia Code, Consolas, Fira Code, monospace</FontFamily>
+  <FontFamily x:Key="PlusFontFamilyMono">Cascadia Code, Consolas, Fira Code, Courier New</FontFamily>
 
   <!-- ══════════ Layer 2 · 固定阴影/焦点/辉光（BoxShadows 资源，Control.BoxShadow 为复数类型）══════════ -->
   <BoxShadows x:Key="PlusElevationContact">0 0 2 0 #40000000</BoxShadows>

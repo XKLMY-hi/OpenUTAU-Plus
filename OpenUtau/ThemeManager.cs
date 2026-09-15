@@ -16,6 +16,22 @@ namespace OpenUtau.App {
 
     public class ThemeManager {
         public static bool IsDarkMode = false;
+        public static FontFamily UiFontFamily {
+            get {
+                if (Application.Current?.TryFindResource("PlusFontFamily", out var res) == true && res is FontFamily ff) {
+                    return ff;
+                }
+                return FontFamily.Parse("Segoe UI");
+            }
+        }
+        public static FontFamily MonoFontFamily {
+            get {
+                if (Application.Current?.TryFindResource("PlusFontFamilyMono", out var res) == true && res is FontFamily ff) {
+                    return ff;
+                }
+                return FontFamily.Parse("Consolas, Courier New");
+            }
+        }
         public static IBrush ForegroundBrush = Brushes.Black;
         public static IBrush BackgroundBrush = Brushes.White;
         public static IBrush NeutralAccentBrush = Brushes.Gray;

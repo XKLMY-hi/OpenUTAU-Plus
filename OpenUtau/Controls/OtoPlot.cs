@@ -94,11 +94,11 @@ namespace OpenUtau.App.Controls {
             ClipToBounds = true;
             ovlText = new TextLayout(
                 "OVL",
-                new Typeface(FontFamily.Default, weight: FontWeight.Normal),
+                new Typeface(ThemeManager.UiFontFamily, weight: FontWeight.Normal),
                 12, ThemeManager.AccentBrush1, TextAlignment.Left, TextWrapping.NoWrap);
             preText = new TextLayout(
                 "PRE",
-                new Typeface(FontFamily.Default, weight: FontWeight.Normal),
+                new Typeface(ThemeManager.UiFontFamily, weight: FontWeight.Normal),
                 12, ThemeManager.AccentBrush3, TextAlignment.Left, TextWrapping.NoWrap);
 
             PointerPressed += OtoPlot_PointerPressed;

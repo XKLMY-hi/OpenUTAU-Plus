@@ -172,7 +172,7 @@
                     PointerPressed="VolumeFaderPointerPressed" ValueChanged="VolumeOrPanSliderValueChanged"
                     ContextRequested="VolumeFaderContextRequested" IsEnabled="{Binding !Muted}"/>
             <TextBlock Grid.Column="2" HorizontalAlignment="Left" Background="Transparent" Margin="2,0"
-                       TextAlignment="Center" FontSize="9" FontFamily="monospace"
+                       TextAlignment="Center" FontSize="9" FontFamily="{DynamicResource PlusFontFamilyMono}"
                        PointerPressed="VolumePointerPressed">
               <TextBlock.Text>
                 <MultiBinding StringFormat="{}{0:+#00.0;-#00.0}">
@@ -182,7 +182,7 @@
             </TextBlock>
             <TextBox Grid.Column="2" Name="VolumeTextBox" MinWidth="28"
                      HorizontalAlignment="Left" BorderThickness="0" IsVisible="False" IsEnabled="False"
-                     TextAlignment="Right" FontSize="9" FontFamily="monospace"
+                     TextAlignment="Right" FontSize="9" FontFamily="{DynamicResource PlusFontFamilyMono}"
                      KeyDown="VolumeOrPanTextBoxKeyDown" LostFocus="VolumeOrPanTextBoxLostFocus"/>
 
             <!-- Pan -->
@@ -191,7 +191,7 @@
                     PointerPressed="PanFaderPointerPressed" ValueChanged="VolumeOrPanSliderValueChanged"
                     ContextRequested="PanFaderContextRequested" IsEnabled="{Binding !Muted}"/>
             <TextBlock Grid.Column="4" HorizontalAlignment="Stretch" Background="Transparent" Margin="1,0"
-                       TextAlignment="Center" FontSize="9" FontFamily="monospace"
+                       TextAlignment="Center" FontSize="9" FontFamily="{DynamicResource PlusFontFamilyMono}"
                        PointerPressed="PanPointerPressed">
               <TextBlock.Text>
                 <MultiBinding StringFormat="{}{0:00R;00L;C}">
@@ -201,7 +201,7 @@
             </TextBlock>
             <TextBox Grid.Column="4" Name="PanTextBox" MinWidth="26" HorizontalAlignment="Center"
                      BorderThickness="0" IsVisible="False" IsEnabled="False" TextAlignment="Center" FontSize="9"
-                     FontFamily="monospace" KeyDown="VolumeOrPanTextBoxKeyDown" LostFocus="VolumeOrPanTextBoxLostFocus"/>
+                     FontFamily="{DynamicResource PlusFontFamilyMono}" KeyDown="VolumeOrPanTextBoxKeyDown" LostFocus="VolumeOrPanTextBoxLostFocus"/>
           </Grid>
         </Grid>
 

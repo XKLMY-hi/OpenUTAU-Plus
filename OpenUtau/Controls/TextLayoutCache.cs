@@ -18,7 +18,7 @@ namespace OpenUtau.App.Controls {
                 var fontWeight = bold ? FontWeight.Bold : FontWeight.Normal;
                 textLayout = new TextLayout(
                     text,
-                    new Typeface(FontFamily.Default, weight: fontWeight),
+                    new Typeface(ThemeManager.UiFontFamily, weight: fontWeight),
                     fontSize,
                     brush,
                     TextAlignment.Left,
