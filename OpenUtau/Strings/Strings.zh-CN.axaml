@@ -344,6 +344,7 @@ Syntax: prefix,suffix</system:String>-->
   <system:String x:Key="pianoroll.menu.lyrics.movesuffixtovoicecolor">将音符后缀解析为音色</system:String>
   <system:String x:Key="pianoroll.menu.lyrics.removelettersuffix">去除字母后缀</system:String>
   <system:String x:Key="pianoroll.menu.lyrics.removephonetichint">去除发音提示</system:String>
+  <system:String x:Key="pianoroll.menu.lyrics.addphonetichints">添加发音提示</system:String>
   <system:String x:Key="pianoroll.menu.lyrics.removetonesuffix">去除音阶后缀</system:String>
   <system:String x:Key="pianoroll.menu.lyrics.romajitohiragana">罗马音转平假名</system:String>
   <system:String x:Key="pianoroll.menu.notedefaults">音符设置</system:String>
