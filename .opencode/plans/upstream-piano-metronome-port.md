@@ -1,5 +1,15 @@
 # 上游定向移植计划：节拍器 + 钢琴窗增强（2026-09-15）
 
+## 进度快照（2026-09-16）
+
+- ✅ **目标一 节拍器**：已提交 **762e8be1**，用户实机验收通过（click/重音/变速跟随/导出无残留）；VST/导出结构隔离已确认
+- ✅ **字体崩溃加固**：22de6533（$Default 全路径令牌化 + [FontDiag] 诊断）
+- 🚧 **目标二 钢琴窗批次 A**：A1 b65d1f8f · A2+A3+A4+A5 d7ac5f82 · A6 eb5ba981 · A7 c9a04174
+  - ⏳ **A8 bed088a4 播放音符弹跳**：分析完成待写码（实施清单见记忆 [[metronome-piano-port]]）
+  - ⏳ **A9 fd4fc950 辉光改进**：待做
+  - 🆕 **81637a33 #2416**（2026-09-16 上游新推）：钢琴窗显示范围内高亮，待做
+- ⏳ 批次 B（B1/B2）待 A 批次完成后做
+
 ## Context
 
 上游 `upstream/master` 自 2026-08-01 合并点（29e0e16d）后新增 **132 提交**（Newtonsoft→System.Text.Json 迁移、frozen slot 音频重构、渲染管线重构、UI 改动）。`merge-tree` dry-run 显示 **42 处冲突**，其中音频/渲染核心是两套独立架构的碰撞——全量合并需要架构决策，暂缓。
@@ -41,17 +51,18 @@
 
 ### 批次 A：旧架构可移植（按时间序逐个 pick + 适配）
 
-| 序 | 提交 | 内容 | Plus 侧风险 |
+| 序 | 提交 | 内容 | 状态 |
 |---|---|---|---|
-| A1 | a66fc11d | #2230 钢琴窗 UI：工具栏关闭键、双击关闭、分离窗 UX | PianoRoll.axaml(+32)/MainWindow 需适配 |
-| A2 | afbdedf8 | #2266 ctrl 拖移修复 | 低（PianoRoll.axaml.cs 4 行） |
-| A3 | 64fedd61 | #2377 EditTools 快捷键修复 | 低 |
-| A4 | d5a5d2c0 | #2196 resizeNeighbor 初始化逻辑 | 低（2 文件 6 行） |
-| A5 | 7a67e052 | #2332 PitchPointTool | 中（NotesViewModelHitTest +14） |
-| A6 | a14212cd | #2362 歌词音素提示 | 中（NotesViewModel/Canvas 103 行） |
-| A7 | 68a3bd97 | 悬停辉光 + 播放音符高亮（399 行，含 ToneGenerator 引入） | 中（Plus 已有 ToneGenerator，注意合并） |
-| A8 | bed088a4 | 播放音符弹跳 | 低 |
-| A9 | fd4fc950 | 辉光改进 | 低 |
+| A1 | a66fc11d | #2230 钢琴窗 UI：工具栏关闭键、双击关闭、分离窗 UX | ✅ b65d1f8f |
+| A2 | afbdedf8 | #2266 ctrl 拖移修复 | ✅ d7ac5f82 |
+| A3 | 64fedd61 | #2377 EditTools 快捷键修复 | ✅ d7ac5f82（须在 A5 后应用） |
+| A4 | d5a5d2c0 | #2196 resizeNeighbor 初始化逻辑 | ✅ d7ac5f82 |
+| A5 | 7a67e052 | #2332 PitchPointTool | ✅ d7ac5f82 |
+| A6 | a14212cd | #2362 歌词音素提示 | ✅ eb5ba981 |
+| A7 | 68a3bd97 | 悬停辉光 + 播放音符高亮 | ✅ c9a04174 |
+| A8 | bed088a4 | 播放音符弹跳（默认关） | ⏳ 分析完成待写码 |
+| A9 | fd4fc950 | 辉光改进 | ⏳ 待做 |
+| A10 | 81637a33 | #2416 钢琴窗显示范围内高亮（2026-09-16 上游新推） | ⏳ 待做 |
 
 ### 批次 B：需适配的上游中间态
 

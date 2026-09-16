@@ -1,6 +1,6 @@
 ---
 name: metronome-piano-port
-description: 上游定向移植进度 — 节拍器与钢琴窗增强（2026-09-15 开始，节拍器分析完成待写码）
+description: 上游定向移植进度 — 节拍器已完成验收；钢琴窗批次 A 进行至 A7，A8/A9 待做（2026-09-16）
 metadata:
   node_type: memory
   type: project
@@ -8,58 +8,56 @@ metadata:
 
 # 上游定向移植：节拍器 + 钢琴窗增强
 
-计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（完整批次表与验证约定）
+计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A7 已完成）
 
-## 背景结论（2026-09-15 评估）
+## 已完成（全部提交在 plus-develop）
 
-- upstream/master 领先 plus-develop **132 提交**；全量合并 dry-run（`git merge-tree`）**42 冲突**
-- 三大碰撞区：①音频/渲染双架构碰撞（Plus 音频管线重构 vs 上游 frozen slot planner，`WaveSource.cs` modify/delete）②Newtonsoft→System.Text.Json 迁移（Plus 侧仍有 18 文件用 Newtonsoft）③UI 层（SukiUI+12 vs 上游 UI 改动）
-- **决策：先定向移植节拍器+钢琴窗增强，全量合并后置**
+### 节拍器（762e8be1）✅ 用户实机验收通过
+- click/每小节重音/播放中变速拍号跟随正常；导出无残留
+- **架构隔离已被问及并解答**：节拍器只在 PlaybackOverlay（播放输出层，PlaybackManager.cs:232）注入，导出走 RenderEngine 产物不经过 overlay；VST 在渲染链内部（渲染产物之前）→ 双向隔离。已知行为：主推子静音时 click 仍响；频谱不含 click
+- 上游参考源码：`E:\home\Temp\metro\`（可能被清，可从 23779f5d 重新提取）
+- 关键适配：MetronomeEngine 删 const SampleRate/Channels 改 AudioSettings；PlaybackOverlay 替代上游 PlaybackMix（扣除 master.Waited 换算全局位置）
 
-## 已完成
+### 字体崩溃修复（8e0041bf + 22de6533）✅ 本机已实测消除
+- 22de6533：AccessText / ToolTip / ContextMenu / MenuFlyoutPresenter / FlyoutPresenter 显式 PlusFontFamily；Window 字体改 PlusFontFamily；Program.cs UnhandledException 加 [FontDiag] 视觉树 $Default 控件 dump
+- 崩溃背景：$Default（FontFamily.Default）在本机 Skia 解析失败 → glyphTypeface 异常；TextBlock 子类不吃 TextBlock 选择器、PopupRoot 不继承 Window 字体是两条残留路径
 
-- **字体可移植化修复已提交 8e0041bf**：裸 `monospace` 与 `$Default` → Plus 字体令牌（本机 Skia 对两者均解析失败，渲染即崩）；10 文件
-- **构建环境修复**：176 个 NuGet 包已还原到 `E:\home\.nuget\packages`（此后离线 `dotnet build` 可用）
-  - 运行 app 需清 `DOTNET_ROOT`（便携 SDK 9 无 net8 运行时；系统 `C:\Program Files\dotnet` 有 8.0.11）
-  - `dotnet test` 需完整权限（testhost 句柄要求）
+### 钢琴窗批次 A（进行中）
 
-## 节拍器移植（上游 23779f5d / #2341）— 分析完成，代码未写
+| 序 | 提交 | 本地提交 |
+|---|---|---|
+| A1 #2230 关闭按钮/双击隐藏/分离窗开关 | a66fc11d | b65d1f8f |
+| A2 #2266 ctrl 拖移 | afbdedf8 | d7ac5f82（合并） |
+| A3 #2377 快捷键 | 64fedd61 | d7ac5f82（合并） |
+| A4 #2196 resizeNeighbor | d5a5d2c0 | d7ac5f82（合并） |
+| A5 #2332 音高节点工具 | 7a67e052 | d7ac5f82（合并） |
+| A6 #2362 发音提示批量编辑 | a14212cd | eb5ba981 |
+| A7 悬停辉光+播放高亮 | 68a3bd97 | c9a04174 |
 
-上游参考文件已提取到 `E:\home\Temp\metro\`（MetronomeScheduler.cs / MetronomeEngine.cs / pref.diff / playback.diff / ui.diff）
+**顺序教训**：A3 快捷键修复依赖 A5 的工具索引（PitchPointTool=40 插入后 Shift 映射才成立），已按 A2→A4→A5→A3 适配应用。
 
-**可直接移植（已验证依赖）**：
-- `MetronomeScheduler.cs` 逐字用（`TimeAxis` 在 `OpenUtau.Core.Util` ✓；`BpmCommand` 等 6 个命令类型存在 ✓；`playPosTick` 为 DocManager 公开字段 ✓）
-- `MetronomeEngine.cs` 适配点：删掉 `const SampleRate/Channels`，改用 `ISignalSource` 默认成员（= `AudioSettings`，Plus 全局音频事实来源）
+**A7 适配点**：Plus RenderNoteBody 配色与上游不同（Error→Accent2Semi 而非 Accent3）；`.OfType<UVoicePart>()` 在 Plus nullable 下不支持，改 `.Where(p => p != null)`（NotesCanvas 需 using System.Reactive.Linq）。
 
-**Plus 集成设计（与上游不同，原因已验证）**：
-- Plus `RenderEngine.RenderProject` 返回 `MasterAdapter`（ISampleProvider），上游 `PlaybackMix : ISignalSource` 无法照搬
-- 方案：新增 **ISampleProvider 叠加层**（暂名 `PlaybackOverlay`）：包住 `masterMix`；`Read` 先调 `master.Read`，再按 `readSamples - masterMix.Waited` 得到时间轴位置调用 `metronomeEngine.Mix(position, ...)`，**返回 master 的 n**（n=0 时输出自然停止 = 保持现状，无需上游 `MasterExhausted`/`playbackEndTick` 逻辑）
-- `StartPlayback`：加 `metronomeEngine.StartPlayback(project.timeAxis, StartTick)`，`InitOutput(overlay)` 替代 `InitOutput(masterMix)`
-- `Play()` 暂停恢复分支 + `StopPlayback`/`PausePlayback`：加 metronome StartPlayback/Stop（照上游）
-- `OnNext`：加 `BpmCommand/TimeSignatureCommand/Add·DelTempoChange/Add·DelTimeSig` → `metronomeEngine.UpdateSchedule`
-- 预览 `PlayMetronomeClick`：照上游（NAudio `MixingSampleProvider` + `OffsetSampleProvider` + `SineGenerator(freq, gain, 5, 80)`，延迟 0/300ms，Take 120ms）；Plus 侧走 `InitOutput`
-- **ToneGenerator/SineGenerator 扩展**（PlaybackManager.cs 内，上游 playback.diff 行 44-160 为准）：
-  - `SineGenerator`：+`startSampleOffset`（Read 内 `i < startSampleOffset ? 0 : GetNextSample()`，读后递减）、+`SetGain`、+5 参构造
-  - `ToneGenerator`：`gain` 去 readonly、+`SetGain`（含活动/非活动 generator）、+`StartTone(freq,attack,release,offset)`、+`StartTones`、+`EndTones`；`StartTone/EndTone/EndAllTones` 字典操作移入锁内
+## 剩余工作（恢复时按序）
 
-**Preferences.cs 插入点**（Plus 文件）：
-- L177 `DiffSingerLangCodeHide` 后：`public bool Metronome = false;`
-- L194 `PlayPosMarkerMargin` 后：`MetronomeVolume=60` / `MetronomeHighFrequency=2200` / `MetronomeLowFrequency=1320`
+1. **A8 bed088a4 播放音符弹跳**（分析已完成，代码未写；`git show bed088a4` 取 diff）：
+   - Preferences + `ShowPlaybackNoteBounce = false`
+   - NotesCanvas：DirectProperty + 字段 `showPlaybackNoteBounce/activeBounceElapsed` + 常量 `PlaybackNoteBounceDuration=0.25f / PlaybackNoteBounceHeight=12.0`；OnPropertyChanged 两处条件加 `|| ShowPlaybackNoteBounce`；UpdatePlaybackHighlight（target 条件、activeBounceElapsed 重置、bouncing 块、needed）；`GetPlaybackBounceOffset(note)`（0.25s 半正弦、高度 min(12, TrackHeight*0.4)）；RenderNoteBody 在 `size` 调整后 `leftTop += GetPlaybackBounceOffset(note);`
+   - PianoRoll.axaml 绑定 `ShowPlaybackNoteBounce="{Binding NotesViewModel.ShowPlaybackNoteBounce}"`
+   - NotesViewModel（属性/初始化/case "PlaybackNoteBounce"）/ PreferencesViewModel（同）/ PreferencesDialog（ToggleSwitch）/ Strings ×2（`prefs.appearance.playbacknotebounce` 中译"播放时音符弹跳"）
+2. **A9 fd4fc950 辉光改进**（未分析；`git show fd4fc950`）
+3. **81637a33 #2416 钢琴窗显示范围高亮**（上游 2026-09-16 推送，最晚并入）
+4. **批次 B**：B1 0c934958 Alt 拖拽复制（NoteEditStates 47 行）；B2 2645b69a 曲线编辑扩展（613 行，最大项，需 A 批次落地后做）
+5. **暂缓**：ef037d8e 实时波形 / 2a1c8d5f 实时曲线刷新 / 984e53d5 DiffSinger 局部重绘（依赖渲染重构，随全量合并）
+6. 每个特性完成后：构建 0 错误 + 测试全绿 → 用户实机预览（UI 不可自动交互）
 
-**UI 插入点（待做）**：
-- `PlaybackViewModel`：+`Metronome` bool 属性（照上游 ui.diff）
-- `MainWindow.axaml`：运输栏在 ~L250（`Classes="playBtn"`，Plus 已改版，上游 ui.diff 的按钮布局不可照搬，需手工加 ToggleButton）
-- `PreferencesDialog.axaml` 回放节 + `.axaml.cs` 右键复位 handler（`OnMetronomeSliderPointerPressed`）+ `PreferencesViewModel` 3 属性/订阅/`TestMetronome`/`ResetMetronome*`
-- `Strings.axaml` + `Strings.zh-CN.axaml`：`prefs.playback.metronome` / `.volume` / `.highfrequency` / `.lowfrequency`
+## 环境/工具注意（2026-09-16 实测）
 
-## 下一步（恢复时按序）
+- **构建**：`export DOTNET_ROOT=; dotnet build OpenUtau.sln --no-restore -m:1`
+  - ⚠️ 先关掉运行中的 OpenUtau.exe（`taskkill //PID <pid> //F`），否则 dll 锁定 MSB3027/MSB3021
+  - ⚠️ 构建异常后可能产出双份 avares 损坏 dll（`Key: /Assets/Icons.axaml` 重复报错）→ 删 `OpenUtau/obj/Debug/net8.0-windows` 重建
+- **测试**：`export DOTNET_ROOT="E:\tools\dotnet"; export DOTNET_ROLL_FORWARD=Major; dotnet test OpenUtau.Test --no-build` → 基线 **284/284**（若单次失败先重跑，flaky；连续失败再查）
+- **启动**：`DOTNET_ROOT= ./OpenUtau/bin/Debug/net8.0-windows/OpenUtau.exe > 输出文件 2>&1 &`（后台；清 DOTNET_ROOT 用系统 8.0.11）
+- 上游提交均在本地 `upstream/master` 可 `git show`；提取参考 diff 已不需要网络
 
-1. 新建 `MetronomeScheduler.cs` + `MetronomeEngine.cs`
-2. Preferences 4 字段
-3. ToneGenerator/SineGenerator 扩展
-4. PlaybackManager 集成（overlay + 生命周期 + OnNext）
-5. UI 五处
-6. 构建 0 错误 + 测试全绿 → 用户实机验证（click/重音/变速跟随）
-7. 钢琴窗批次（计划文档批次 A/B）
-
-**How to apply:** 恢复会话时先读本文件 + 计划文档，从"下一步"第 1 项继续。
+**How to apply:** 恢复会话先读本文件 + 计划文档；从"剩余工作"第 1 项（A8）继续。

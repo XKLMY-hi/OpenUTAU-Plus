@@ -19,6 +19,10 @@ OpenUTAU Plus 是开源歌声合成平台 OpenUTAU 的增强分支，基于 .NET
 - fork 默认分支 = plus-develop；origin 无 master 分支（合理）
 
 ## 近期主要工作
+- **2026-09-16 节拍器完成验收 + 字体崩溃加固 + 钢琴窗批次 A 过半**：
+  - 节拍器移植验收通过（762e8be1，click/重音/变速跟随/导出无残留/与 VST+导出结构隔离）
+  - 字体 $Default 崩溃全路径加固（22de6533，本机实测消除；Program.cs 内置 [FontDiag] 崩溃现场 dump）
+  - 钢琴窗批次 A：A1 关闭按钮/双击隐藏 b65d1f8f · A2-A5 编辑工具链 d7ac5f82 · A6 发音提示 eb5ba981 · A7 悬停辉光+播放高亮 c9a04174；**A8/A9/批次 B 待做**，详见 [[metronome-piano-port]]
 - **2026-09-15 上游合并评估 + 定向移植启动**：upstream/master 领先 132 提交，全量合并 42 冲突（音频架构碰撞/JSON 迁移/UI）→ 决策先定向移植节拍器+钢琴窗，计划在 `.opencode/plans/upstream-piano-metronome-port.md`，进度见 [[metronome-piano-port]]
 - **2026-09-15 字体可移植化修复**（8e0041bf）：裸 `monospace` 与 `$Default` 在部分机器上 Skia 解析失败导致崩溃，统一改走 PlusFontFamily/PlusFontFamilyMono 令牌 + ThemeManager.UiFontFamily/MonoFontFamily
 - **2026-08-12 UI 改造全部结束**（用户确认）：SukiUI 迁移 A-E 全收官（含欢迎页 Suki 化、VST 侧栏选项卡），所有待办清空；ThemeEditorWindow 崩溃已解决
