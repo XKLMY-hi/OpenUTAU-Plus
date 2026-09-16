@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using OpenUtau.App.Controls;
@@ -26,6 +27,28 @@ namespace OpenUtau.App.Views {
             // item 声明在隐藏容器，构造后统一赋值（setter → SetAndRaise）
             PrefsLayout.Items = PrefsItemsHost.Children.Cast<SukiUI.Controls.SettingsLayoutItem>().ToArray();
             BuildPlusFooter();
+        }
+
+        void OnMetronomeSliderPointerPressed(object? sender, PointerPressedEventArgs e) {
+            if (sender is not Slider slider || viewModel == null) {
+                return;
+            }
+            var point = e.GetCurrentPoint(slider);
+            if (!point.Properties.IsRightButtonPressed) {
+                return;
+            }
+            switch (slider.Tag as string) {
+                case "MetronomeVolume":
+                    viewModel.ResetMetronomeVolume();
+                    break;
+                case "MetronomeHighFrequency":
+                    viewModel.ResetMetronomeHighFrequency();
+                    break;
+                case "MetronomeLowFrequency":
+                    viewModel.ResetMetronomeLowFrequency();
+                    break;
+            }
+            e.Handled = true;
         }
 
         void BuildPlusFooter() {

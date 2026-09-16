@@ -19,6 +19,8 @@ OpenUTAU Plus 是开源歌声合成平台 OpenUTAU 的增强分支，基于 .NET
 - fork 默认分支 = plus-develop；origin 无 master 分支（合理）
 
 ## 近期主要工作
+- **2026-09-15 上游合并评估 + 定向移植启动**：upstream/master 领先 132 提交，全量合并 42 冲突（音频架构碰撞/JSON 迁移/UI）→ 决策先定向移植节拍器+钢琴窗，计划在 `.opencode/plans/upstream-piano-metronome-port.md`，进度见 [[metronome-piano-port]]
+- **2026-09-15 字体可移植化修复**（8e0041bf）：裸 `monospace` 与 `$Default` 在部分机器上 Skia 解析失败导致崩溃，统一改走 PlusFontFamily/PlusFontFamilyMono 令牌 + ThemeManager.UiFontFamily/MonoFontFamily
 - **2026-08-12 UI 改造全部结束**（用户确认）：SukiUI 迁移 A-E 全收官（含欢迎页 Suki 化、VST 侧栏选项卡），所有待办清空；ThemeEditorWindow 崩溃已解决
 - **2026-08-04 0.0.3-beta 发布**（b1d4c891）：Inno Setup 安装器 + 构建流水线、与原版共存（数据目录独立+声库共享）、vst_probe 独立部署修复发布版扫描、HarmonyOS Sans SC 字体打包、单实例按 exe 路径匹配、README/偏好设置署名
 - **2026-08-02 SukiUI 阶段 B1 完成**（f3b23f52 → ae5a1e5c 共 3 提交）：WindowEx 基类迁移 SukiWindow（34 窗口零 xaml 改动，装饰经继承自动生效）；x:Name 坑实证排除（编译路径正常）；音符属性面板透明化；顶部留白 8px；测试 252/253。期间踩坑：失败构建产出双份 avares 损坏 dll（AssemblyDescriptor 崩溃）。详见 [[sukiui-replacement]]

@@ -16,3 +16,4 @@
 - [音频管线重构](audio-pipeline-refactor.md) — 2026-08-04 四阶段完成 · B1 竞态/RenderGate/两批播放/ExportSession/VST 命令化 · 踩坑清单
 - [VST GUI 卡死重大修复](vst-gui-thread-fix.md) — 2026-08-04 VST 专用线程方案 · 四轮失败方案教训 · MsgWait 漏 SendMessage 坑 · VstTest 桥接测试工具
 - [git 推送 SSL](git-push-ssl.md) — 本机推送 GitHub 需 -c http.sslVerify=false
+- [节拍器&钢琴窗移植](metronome-piano-port.md) — 上游定向移植进度：节拍器分析完成待写码 · 集成设计已定 · 字体修复 8e0041bf

@@ -481,6 +481,10 @@ Syntax: prefix,suffix</system:String>-->
   <system:String x:Key="prefs.playback.lockstarttime.off">什么都不做</system:String>
   <system:String x:Key="prefs.playback.lockstarttime.on">将播放标记和视图移回开始播放处</system:String>
   <system:String x:Key="prefs.playback.lockstarttime.onlycursor">将播放标记移回开始播放处，不回滚视图</system:String>
+  <system:String x:Key="prefs.playback.metronome">节拍器</system:String>
+  <system:String x:Key="prefs.playback.metronome.volume">节拍器音量</system:String>
+  <system:String x:Key="prefs.playback.metronome.highfrequency">节拍器高频（重拍）</system:String>
+  <system:String x:Key="prefs.playback.metronome.lowfrequency">节拍器低频（弱拍）</system:String>
   <system:String x:Key="prefs.playback.test">测试</system:String>
   <system:String x:Key="prefs.rendering">渲染</system:String>
   <system:String x:Key="prefs.rendering.defaultrenderer">传统音源的默认渲染器</system:String>

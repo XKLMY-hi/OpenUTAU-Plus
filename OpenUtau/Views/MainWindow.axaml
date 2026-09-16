@@ -43,6 +43,25 @@
     <Style Selector="Button.playBtn:pointerover">
       <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
     </Style>
+    <!-- 节拍器开关：与 playBtn 同尺寸，图标 accent 色表开启态 -->
+    <Style Selector="ToggleButton.metroBtn">
+      <Setter Property="Width" Value="30"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="15"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    <Style Selector="ToggleButton.metroBtn Path">
+      <Setter Property="Fill" Value="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+    </Style>
+    <Style Selector="ToggleButton.metroBtn:pointerover">
+      <Setter Property="Background" Value="{DynamicResource PlusSurfaceHover}"/>
+    </Style>
+    <Style Selector="ToggleButton.metroBtn:checked Path">
+      <Setter Property="Fill" Value="{DynamicResource AccentBrush1}"/>
+    </Style>
     <!-- 阶段 E：侧栏主选项卡（项目/素材库） -->
     <Style Selector="Button.sideTab">
       <Setter Property="Height" Value="30"/>
@@ -263,6 +282,10 @@
                 <Path Data="{StaticResource icon-skip-forward}" Width="12" Height="12" Stretch="Uniform"
                       Fill="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
               </Button>
+              <ToggleButton Classes="metroBtn" IsChecked="{Binding PlaybackViewModel.Metronome}"
+                            ToolTip.Tip="{DynamicResource prefs.playback.metronome}">
+                <Path Data="{StaticResource icon-metronome}" Width="13" Height="13" Stretch="Uniform"/>
+              </ToggleButton>
             </StackPanel>
           </StackPanel>
         </Grid>
