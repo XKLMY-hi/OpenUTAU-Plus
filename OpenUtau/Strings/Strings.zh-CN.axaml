@@ -916,6 +916,10 @@ Curve Type
     鼠标左键绘制直线
     鼠标右键重置
     按住 Ctrl 选择</system:String>
+  <system:String x:Key="pianoroll.tool.pitchpoint">音高节点工具 (5)
+    鼠标左键添加节点
+    拖拽仅移动该节点
+    按住 Ctrl 选择</system:String>
   <system:String x:Key="pianoroll.tool.pitchscurve">S曲线音高工具 (Shift + 3)
     拖拽绘制S曲线，释放进入调整模式
     移动鼠标调整强度，点击应用
