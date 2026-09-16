@@ -171,6 +171,8 @@
                      ShowPitch="{Binding NotesViewModel.ShowPitch}"
                      ShowFinalPitch="{Binding NotesViewModel.ShowFinalPitch}"
                      ShowPhonemizerTags="{Binding ShowPhonemizerTags}"
+                     ShowPlaybackNoteHighlight="{Binding NotesViewModel.ShowPlaybackNoteHighlight}"
+                     PlayPosTick="{Binding NotesViewModel.PlayPosTick, Mode=OneWay}"
                      Part="{Binding NotesViewModel.Part}"
                      PointerPressed="NotesCanvasPointerPressed"
                      PointerMoved="NotesCanvasPointerMoved"

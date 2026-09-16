@@ -371,6 +371,14 @@
             <ToggleSwitch IsChecked="{Binding ShowGhostNotes}"/>
           </Grid>
           <Grid Margin="0,4,0,0">
+            <TextBlock Text="{DynamicResource prefs.appearance.notehoverglow}" HorizontalAlignment="Left"/>
+            <ToggleSwitch IsChecked="{Binding NoteHoverGlow}"/>
+          </Grid>
+          <Grid Margin="0,4,0,0">
+            <TextBlock Text="{DynamicResource prefs.appearance.playbacknotehighlight}" HorizontalAlignment="Left"/>
+            <ToggleSwitch IsChecked="{Binding ShowPlaybackNoteHighlight}"/>
+          </Grid>
+          <Grid Margin="0,4,0,0">
             <TextBlock Text="{DynamicResource prefs.appearance.detachpianoroll}" HorizontalAlignment="Left"/>
             <ToggleSwitch IsChecked="{Binding DetachPianoRoll}"/>
           </Grid>

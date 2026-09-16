@@ -110,6 +110,8 @@ namespace OpenUtau.App.ViewModels {
         [Reactive] public bool ShowPortrait { get; set; }
         [Reactive] public bool ShowIcon { get; set; }
         [Reactive] public bool ShowGhostNotes { get; set; }
+        [Reactive] public bool NoteHoverGlow { get; set; }
+        [Reactive] public bool ShowPlaybackNoteHighlight { get; set; }
         [Reactive] public bool DetachPianoRoll { get; set; }
         [Reactive] public bool ThemeEditable { get; set; }
         public List<string> ThemeItems => ThemeManager.GetAvailableThemes();
@@ -198,6 +200,8 @@ namespace OpenUtau.App.ViewModels {
             ShowPortrait = Preferences.Default.ShowPortrait;
             ShowIcon = Preferences.Default.ShowIcon;
             ShowGhostNotes = Preferences.Default.ShowGhostNotes;
+            NoteHoverGlow = Preferences.Default.NoteHoverGlow;
+            ShowPlaybackNoteHighlight = Preferences.Default.ShowPlaybackNoteHighlight;
             DetachPianoRoll = Preferences.Default.DetachPianoRoll;
             LyricsHelper = LyricsHelpers.FirstOrDefault(option => option.klass.Equals(ActiveLyricsHelper.Inst.GetPreferred()));
             LyricsHelperBrackets = Preferences.Default.LyricsHelperBrackets;
@@ -329,6 +333,18 @@ namespace OpenUtau.App.ViewModels {
                     Preferences.Default.ShowGhostNotes = showGhostNotes;
                     Preferences.Save();
                     MessageBus.Current.SendMessage(new PianorollRefreshEvent("Part"));
+                });
+            this.WhenAnyValue(vm => vm.NoteHoverGlow)
+                .Subscribe(noteHoverGlow => {
+                    Preferences.Default.NoteHoverGlow = noteHoverGlow;
+                    Preferences.Save();
+                    MessageBus.Current.SendMessage(new NotesRefreshEvent());
+                });
+            this.WhenAnyValue(vm => vm.ShowPlaybackNoteHighlight)
+                .Subscribe(showPlaybackNoteHighlight => {
+                    Preferences.Default.ShowPlaybackNoteHighlight = showPlaybackNoteHighlight;
+                    Preferences.Save();
+                    MessageBus.Current.SendMessage(new PianorollRefreshEvent("PlaybackNoteHighlight"));
                 });
             this.WhenAnyValue(vm => vm.DetachPianoRoll)
                 .Subscribe(detachPianoRoll => {
