@@ -144,8 +144,9 @@ namespace OpenUtau.App.ViewModels {
 
             this.WhenAnyValue(vm => vm.ShowPianoRoll)
                 .Subscribe(x => {
-                    PianoRollMaxHeight = x ? double.PositiveInfinity : 0;
-                    PianoRollMinHeight = x ? ViewConstants.PianoRollMinHeight : 0;
+                    // 0.01：隐藏时保留可拖拽/双击的极窄行条（上游 #2230）
+                    PianoRollMaxHeight = x ? double.PositiveInfinity : 0.01;
+                    PianoRollMinHeight = x ? ViewConstants.PianoRollMinHeight : 0.01;
                 });
             this.WhenAnyValue(vm => vm.ShowMixer)
                 .Subscribe(x => {

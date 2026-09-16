@@ -370,6 +370,10 @@
             <TextBlock Text="{DynamicResource prefs.appearance.showghostnotes}" HorizontalAlignment="Left"/>
             <ToggleSwitch IsChecked="{Binding ShowGhostNotes}"/>
           </Grid>
+          <Grid Margin="0,4,0,0">
+            <TextBlock Text="{DynamicResource prefs.appearance.detachpianoroll}" HorizontalAlignment="Left"/>
+            <ToggleSwitch IsChecked="{Binding DetachPianoRoll}"/>
+          </Grid>
         </StackPanel>
         </suki:SettingsLayoutItem.Content>
         </suki:SettingsLayoutItem>

@@ -441,6 +441,7 @@ Syntax: prefix,suffix</system:String>-->
   <system:String x:Key="prefs.appearance.showghostnotes">在钢琴窗上显示其他音轨的音符</system:String>
   <system:String x:Key="prefs.appearance.showicon">在钢琴窗上显示歌手图标</system:String>
   <system:String x:Key="prefs.appearance.showportrait">在钢琴窗上显示歌手背景图</system:String>
+  <system:String x:Key="prefs.appearance.detachpianoroll">在单独窗口中显示钢琴窗</system:String>
   <system:String x:Key="prefs.appearance.sortorder">歌手名称显示语言</system:String>
   <system:String x:Key="prefs.appearance.theme">主题</system:String>
   <system:String x:Key="prefs.appearance.theme.dark">暗</system:String>
@@ -907,9 +908,8 @@ Curve Type
   <system:String x:Key="pianoroll.menu.searchnote.note">音符</system:String>
   <system:String x:Key="pianoroll.menu.searchnote.searchalias">搜索别名</system:String>
   <system:String x:Key="pianoroll.menu.view.pianoroll">钢琴卷帘</system:String>
-  <system:String x:Key="pianoroll.menu.view.pianoroll.detach">分离</system:String>
-  <system:String x:Key="pianoroll.menu.view.pianoroll.hide">隐藏</system:String>
   <system:String x:Key="pianoroll.toggle.expressions">显示表情 (L)</system:String>
+  <system:String x:Key="pianoroll.toggle.hidepianoroll">隐藏钢琴窗</system:String>
   <system:String x:Key="pianoroll.toggle.overwritepitch">切换覆盖音高模式</system:String>
   <system:String x:Key="pianoroll.toggle.phonemizer">显示音素器标签</system:String>
   <system:String x:Key="pianoroll.tool.pitchline">直线音高工具 (Shift + 2)

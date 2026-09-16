@@ -1596,26 +1596,26 @@ namespace OpenUtau.App.Views {
             }
         }
 
+        /// <summary>按偏好当前值附着/分离钢琴窗（偏好翻转与保存由调用方处理，上游 #2230 语义）。</summary>
         public void SetPianoRollAttachment() {
             if (pianoRoll == null) {
                 return;
             }
             if (Preferences.Default.DetachPianoRoll) {
-                pianoRollWindow?.ForceClose();
-                pianoRollWindow = null;
-                PianoRollContainer.Content = pianoRoll;
-                viewModel.ShowPianoRoll = true;
-                Preferences.Default.DetachPianoRoll = false;
-            } else {
+                // 分离：移出容器，打开独立窗口
                 PianoRollContainer.Content = null;
                 viewModel.ShowPianoRoll = false;
                 if (pianoRollWindow == null) {
                     pianoRollWindow = new(pianoRoll);
                     pianoRollWindow.Show();
                 }
-                Preferences.Default.DetachPianoRoll = true;
+            } else {
+                // 内嵌：关闭独立窗口，放回容器
+                pianoRollWindow?.ForceClose();
+                pianoRollWindow = null;
+                PianoRollContainer.Content = pianoRoll;
+                viewModel.ShowPianoRoll = true;
             }
-            Preferences.Save();
         }
 
         public void MainPagePointerWheelChanged(object sender, PointerWheelEventArgs args) {
