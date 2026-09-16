@@ -7,8 +7,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.ReactiveUI;
+using Avalonia.VisualTree;
 using OpenUtau.App.ViewModels;
 using OpenUtau.Core;
 using Serilog;
@@ -118,8 +120,51 @@ namespace OpenUtau.App {
                 .CreateLogger();
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler((sender, args) => {
                 Log.Error((Exception)args.ExceptionObject, "Unhandled exception");
+                DumpDefaultFontControls();
             });
             Log.Information("Logging initialized.");
+        }
+
+        /// <summary>
+        /// 诊断：崩溃时打印视觉树中 FontFamily 仍为 $Default 的文本控件。
+        /// $Default 在部分设备上 Skia 解析失败即渲染崩溃——此 dump 用于定位漏网控件。
+        /// </summary>
+        static void DumpDefaultFontControls() {
+            try {
+                if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) {
+                    return;
+                }
+                var sb = new StringBuilder();
+                foreach (var window in desktop.Windows) {
+                    WalkVisual(window, window.GetType().Name, sb);
+                }
+                if (sb.Length > 0) {
+                    Log.Error($"[FontDiag] Text controls resolving $Default font:\n{sb}");
+                } else {
+                    Log.Error("[FontDiag] No $Default text controls found in window visual trees.");
+                }
+            } catch (Exception e) {
+                Log.Error(e, "[FontDiag] Failed to dump font diagnostics.");
+            }
+        }
+
+        static void WalkVisual(Visual visual, string path, StringBuilder sb) {
+            if (visual is TextBlock tb) {
+                var ff = tb.FontFamily;
+                if (ff != null && ff.ToString().Contains("$Default")) {
+                    sb.AppendLine($"  {visual.GetType().Name}(Name={tb.Name}) text='{Truncate(tb.Text, 60)}' path={path}");
+                }
+            }
+            foreach (var child in visual.GetVisualChildren()) {
+                WalkVisual(child, $"{path}/{child.GetType().Name}", sb);
+            }
+        }
+
+        static string Truncate(string? s, int len) {
+            if (string.IsNullOrEmpty(s)) {
+                return "";
+            }
+            return s.Length <= len ? s : s.Substring(0, len) + "…";
         }
     }
 }
