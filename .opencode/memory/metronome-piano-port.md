@@ -1,6 +1,6 @@
 ---
 name: metronome-piano-port
-description: 上游定向移植进度 — 节拍器已完成验收；钢琴窗批次 A 进行至 A8，A9/A10/批次 B 待做（2026-09-18）
+description: 上游定向移植进度 — 节拍器已完成验收；钢琴窗批次 A 进行至 A9，A10/批次 B 待做（2026-09-18）
 metadata:
   node_type: memory
   type: project
@@ -8,7 +8,7 @@ metadata:
 
 # 上游定向移植：节拍器 + 钢琴窗增强
 
-计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A8 已完成）
+计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A9 已完成）
 
 ## 已完成（全部提交在 plus-develop）
 
@@ -27,6 +27,12 @@ metadata:
 - 与「播放时高亮」相互独立：任一开启即维持 30fps 播放帧循环（`UpdatePlaybackHighlight` 的 needed 条件），两者都关时行为与 A7 前完全一致
 - 弹跳偏移在 `RenderNoteBody` 的 size 调整之后叠加，故只动绘制位置、不改命中/编辑几何
 
+### 悬停光晕改进（A9，bdcaf9b4）⏳ 待用户实机验收
+- 光晕颜色改为**音符自身画刷**（选中/错误音符各随其色），不再固定 `ThemeManager.AccentBrush1`
+- 悬停命中统一由 `PianoRoll.axaml.cs::NotesCanvasPointerMoved` 的 `HitTestNote` 判定 → 写入 `NotesViewModel.SelectableNote`；仅光标/画笔/橡皮/刻刀工具或按住 Ctrl 时设值
+- 左键拖拽中不再残留光晕（`NotesCanvas.OnPointerMoved` 见左键按下即 `SetHoveredNote(null)`）
+- 与上游 fd4fc950 逐行等价；Plus 侧无需适配（`HitTestNote` 语义与上游一致）
+
 ### 钢琴窗批次 A（进行中）
 
 | 序 | 提交 | 本地提交 |
@@ -39,6 +45,7 @@ metadata:
 | A6 #2362 发音提示批量编辑 | a14212cd | eb5ba981 |
 | A7 悬停辉光+播放高亮 | 68a3bd97 | c9a04174 |
 | A8 播放音符弹跳 | bed088a4 | 2954a723 |
+| A9 悬停光晕改进 | fd4fc950 | bdcaf9b4 |
 
 **顺序教训**：A3 快捷键修复依赖 A5 的工具索引（PitchPointTool=40 插入后 Shift 映射才成立），已按 A2→A4→A5→A3 适配应用。
 
@@ -48,7 +55,7 @@ metadata:
 
 ## 剩余工作（恢复时按序）
 
-1. **A9 fd4fc950 辉光改进**（未分析；`git show fd4fc950`），接着 A10 81637a33 #2416 钢琴窗显示范围高亮
+1. **A10 81637a33 #2416 钢琴窗显示范围内高亮**（`git show 81637a33`），之后进批次 B
 2. **批次 B**：B1 0c934958 Alt 拖拽复制（NoteEditStates 47 行）；B2 2645b69a 曲线编辑扩展（613 行，最大项，需 A 批次落地后做）
 3. **暂缓**：ef037d8e 实时波形 / 2a1c8d5f 实时曲线刷新 / 984e53d5 DiffSinger 局部重绘（依赖渲染重构，随全量合并）
 4. 每个特性完成后：构建 0 错误 + 测试全绿 → 用户实机预览（UI 不可自动交互）
@@ -71,4 +78,4 @@ dotnet test OpenUtau.Test\OpenUtau.Test.csproj --no-build      # 基线 284/284�
 - ⚠️ 编辑源码工具会吃掉 UTF-8 BOM（.editorconfig 对 *.cs 要求 utf-8-bom）→ 提交前用 `UTF8Encoding($true)` 写回，避免首行噪声 diff
 - 上游提交均在本地 `upstream/master` 可 `git show`；提取参考 diff 不需要网络
 
-**How to apply:** 恢复会话先读本文件 + 计划文档；从"剩余工作"第 1 项（A9）继续。
+**How to apply:** 恢复会话先读本文件 + 计划文档；从"剩余工作"第 1 项（A10）继续。
