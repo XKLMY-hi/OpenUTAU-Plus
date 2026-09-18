@@ -17,4 +17,6 @@
 - [VST GUI 卡死重大修复](vst-gui-thread-fix.md) — 2026-08-04 VST 专用线程方案 · 四轮失败方案教训 · MsgWait 漏 SendMessage 坑 · VstTest 桥接测试工具
 - [git 推送 SSL](git-push-ssl.md) — 本机推送 GitHub 需 -c http.sslVerify=false
 - [环境重启后构建链重建](env-refresh-2026-09-g-drive.md) — E 盘消失 · 系统 SDK 10 编 net8 成功 · 离线 NuGet 在用户目录 · 历史 obj 只读须删除重建
-- [节拍器&钢琴窗移植](metronome-piano-port.md) — 节拍器已验收（762e8be1）· 钢琴窗批次 A 至 A7（含 A8 实施清单）· 字体崩溃加固 22de6533 · 构建/测试命令与坑
+- [节拍器&钢琴窗移植](metronome-piano-port.md) — 节拍器已验收 · 钢琴窗批次 A（A1-A10）+ B（B1/B2）全部完成 · 字体崩溃加固 · 构建/测试命令与坑
+- [上游音频/合成盘点](../plans/upstream-audio-synthesis-audit.md) — 上游领先 153 提交：frozen slot 重写、音素化器大改、DiffSinger 重构；可移植性分级
+- [音频管线接缝](../plans/audio-pipeline-seam.md) — 合成层 = RenderEngine 六个静态门面 · 运输/导出层不得持合成内部状态（14 条契约测试）· Waited 是下一层耦合
