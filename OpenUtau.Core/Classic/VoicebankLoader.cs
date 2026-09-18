@@ -527,29 +527,9 @@ namespace OpenUtau.Classic {
                         writer.Write('\n');
                         continue;
                     }
-                    writer.Write(oto.Wav);
-                    writer.Write('=');
-                    writer.Write(oto.Alias);
-                    writer.Write(',');
-                    if (oto.Offset != 0) {
-                        writer.Write(oto.Offset);
-                    }
-                    writer.Write(',');
-                    if (oto.Consonant != 0) {
-                        writer.Write(oto.Consonant);
-                    }
-                    writer.Write(',');
-                    if (oto.Cutoff != 0) {
-                        writer.Write(oto.Cutoff);
-                    }
-                    writer.Write(',');
-                    if (oto.Preutter != 0) {
-                        writer.Write(oto.Preutter);
-                    }
-                    writer.Write(',');
-                    if (oto.Overlap != 0) {
-                        writer.Write(oto.Overlap);
-                    }
+                    // 参数为 0 时也写 0，不再留空（上游 56eafb70）：空字段虽然能读回 0，
+                    // 但会让 oto.ini 在外部工具/版本间来回读写时格式漂移、难以 diff。
+                    writer.Write($"{oto.Wav}={oto.Alias},{oto.Offset},{oto.Consonant},{oto.Cutoff},{oto.Preutter},{oto.Overlap}");
                     writer.Write('\n');
                 }
                 writer.Flush();

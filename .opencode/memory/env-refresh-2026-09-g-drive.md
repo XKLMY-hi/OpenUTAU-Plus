@@ -46,3 +46,10 @@ dotnet test OpenUtau.Test\OpenUtau.Test.csproj --no-build
 **处置**：`Get-ChildItem -Recurse -Directory -Filter obj | Remove-Item -Recurse -Force` 全部删掉重来（本次已删除并重建，构建恢复）。同理，若 `bin` 或任何历史产物报同类错误，删掉重建即可——这些目录都在 `.gitignore` 内，无损失。
 
 **How to apply:** 恢复会话时不必再找 E 盘或设 DOTNET_ROOT；直接按上面 4 条命令走。遇到 `Access to the path` 且 ACL 正常 → 判为历史只读产物，删除该目录重建。
+
+## 真机验证能力（2026-09-18 用户澄清，勿再假设"无法验证合成"）
+
+- **装有 1 个歌姬**：真实歌声合成链路可以实机验证（渲染 / 播放 / 导出都能出人声）
+- **VST 可测**：VST 是扫描本机插件目录，可以装载测试（此前"本机无可用 VST、跳过测试"的记录作废）
+- 我这边**无法手操 OUP 界面**（无 UI 自动化）：交互行为仍需用户实机确认；数值/音频产物可让用户跑一次导出，我读文件与日志核对
+
