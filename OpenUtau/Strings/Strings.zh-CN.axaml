@@ -726,6 +726,7 @@ Curve Type
   <system:String x:Key="command.import.track">导入轨道</system:String>
   <system:String x:Key="command.note.add">添加音符</system:String>
   <system:String x:Key="command.note.delete">删除音符</system:String>
+  <system:String x:Key="command.note.duplicate">复制音符</system:String>
   <system:String x:Key="command.note.edit">编辑音符</system:String>
   <system:String x:Key="command.note.lyric">编辑歌词</system:String>
   <system:String x:Key="command.note.move">移动音符</system:String>
