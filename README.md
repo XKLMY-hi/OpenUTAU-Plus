@@ -126,8 +126,8 @@ OpenUTAU Plus 的愿景是将 OpenUTAU 从歌声合成编辑器逐步扩展为�
 ## 快速开始
 
 ```bash
-git clone https://github.com/XKLMY-hi/OpenUTAU-Plus.git
-cd OpenUTAU-Plus
+git clone https://github.com/XKLMY-hi/UTvTU.git
+cd UTvTU
 dotnet restore
 dotnet run --project OpenUtau
 ```

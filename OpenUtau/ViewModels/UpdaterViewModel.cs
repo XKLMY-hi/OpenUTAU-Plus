@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -44,18 +44,31 @@ namespace OpenUtau.App.ViewModels {
         }
 
         /// <summary>
-        /// Check if a newer version exists on the Plus repository.
+        /// 迁移期闸门（2026-09-18 迁移至 XKLMY-hi/UTvTU）：新仓库尚无任何 release，
+        /// 此时检查更新毫无意义；旧仓库的 Plus release 已按迁移决策撤下。
+        /// 等 UTvTU 发布首个版本后把返回值改为 true 即可恢复。
+        /// （写成方法而非 const——const 会让编译器把后续代码判为不可达，
+        /// 而本项目 TreatWarningsAsErrors 会把 CS0162 升级成构建失败。）
+        /// </summary>
+        private static bool UpdateCheckEnabled() => false;
+
+        /// <summary>
+        /// Check if a newer version exists on the repository.
         /// Called at startup (non-blocking) and possibly again when the dialog opens.
         /// Returns true if an update is available.
         /// </summary>
         public static async Task<bool> CheckForUpdateAsync() {
+            if (!UpdateCheckEnabled()) {
+                Log.Information("[Updater] Update check disabled during UTvTU migration.");
+                return false;
+            }
             try {
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
-                client.DefaultRequestHeaders.Add("User-Agent", "OpenUTAU-Plus");
+                client.DefaultRequestHeaders.Add("User-Agent", "UTvTU");
                 client.Timeout = TimeSpan.FromSeconds(15);
 
-                var url = "https://api.github.com/repos/XKLMY-hi/OpenUTAU-Plus/releases";
+                var url = "https://api.github.com/repos/XKLMY-hi/UTvTU/releases";
                 Log.Information($"[Updater] Checking releases at {url}");
                 using var response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
@@ -143,7 +156,7 @@ namespace OpenUtau.App.ViewModels {
 
         public void OnGithub() {
             try {
-                string url = releaseUrl ?? "https://github.com/XKLMY-hi/OpenUTAU-Plus/releases";
+                string url = releaseUrl ?? "https://github.com/XKLMY-hi/UTvTU/releases";
                 OS.OpenWeb(url);
             } catch (Exception e) {
                 DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e));

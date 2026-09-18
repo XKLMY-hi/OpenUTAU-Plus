@@ -75,7 +75,7 @@ namespace OpenUtau.App.Views {
 
         void OpenGithub(object sender, RoutedEventArgs e) {
             try {
-                Process.Start(new ProcessStartInfo("https://github.com/XKLMY-hi/OpenUTAU-Plus") { UseShellExecute = true });
+                Process.Start(new ProcessStartInfo("https://github.com/XKLMY-hi/UTvTU") { UseShellExecute = true });
             } catch (Exception ex) {
                 Log.Error(ex, "[Prefs] Failed to open GitHub");
             }

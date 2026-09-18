@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
@@ -130,7 +130,7 @@ namespace OpenUtau.App.Views {
         }
 
         void OnReportIssue(object? sender, PointerPressedEventArgs args) {
-            try { OS.OpenWeb("https://github.com/XKLMY-hi/OpenUTAU-Plus/issues"); }
+            try { OS.OpenWeb("https://github.com/XKLMY-hi/UTvTU/issues"); }
             catch (Exception e) { DocManager.Inst.ExecuteCmd(new ErrorMessageNotification(e)); }
         }
     }

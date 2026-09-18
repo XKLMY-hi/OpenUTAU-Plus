@@ -71,8 +71,8 @@ OpenUTAU Plus aims to evolve OpenUTAU from a vocal synthesis editor into a **voc
 ## Quick Start
 
 ```bash
-git clone https://github.com/XKLMY-hi/OpenUTAU-Plus.git
-cd OpenUTAU-Plus
+git clone https://github.com/XKLMY-hi/UTvTU.git
+cd UTvTU
 dotnet restore
 dotnet run --project OpenUtau
 ```
