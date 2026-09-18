@@ -4,11 +4,16 @@
 
 ## 状态一句话
 
-环境重启后构建链已重建（G 盘、系统 SDK、离线 NuGet）；钢琴窗批次 A+B（A1-A10、B1/B2）全部完成；**合成/渲染管线已完成最小解耦（接缝显式化，为换上游渲染架构铺路）**；测试基线 284 → **308**；全部已推送 origin/plus-develop。
+环境重启后构建链已重建（G 盘、系统 SDK、离线 NuGet）；钢琴窗批次 A+B（A1-A10、B1/B2）全部完成；合成/渲染管线完成最小解耦（接缝显式化）；上游 A 类可移植修复全部落地；测试基线 284 → **310**；全部已推送 origin/plus-develop。
+
+**⏸️ 音频后端工作已由用户叫停（2026-09-18「后端先停一下，能用就行」）**：接缝/A-B 比对/换上游渲染架构**不要主动继续**，除非用户明确要求（续接点见 `.opencode/plans/audio-pipeline-seam.md` 顶部状态说明）。
 
 ## 本次会话提交（均已推送）
 
 ```
+f9a78d37 fix(classic): UST 选择器标记解析 + oto 写回固定写 0
+46cac57c fix(phonemizer): 音素化字典改同步加载 + 工厂线程安全 + 声库释放
+06e16a3b fix(audio): 缓存文件并发串行化 + 播放启动顺序 + 关闭前停播
 88944390 refactor(audio): 合成/渲染管线解耦 — RenderEngine 静态门面 + RenderGate 归位音频层
 d3afb1ed feat(pianoroll): 曲线编辑工具扩展 — 直线/伸缩/移动 + UCurve.ReplaceRange（B2）
 b0d001c0 feat(pianoroll): Alt 拖拽复制音符（B1）
@@ -16,17 +21,22 @@ ff2836ec feat(pianoroll): 音轨区高亮钢琴窗当前显示范围（A10）
 bdcaf9b4 feat(pianoroll): 音符悬停光晕改进（A9）
 2954a723 feat(pianoroll): 播放音符弹跳（A8）
 c8532db6 test(vst): RenderGate 并发用例改为基线相对断言
-230d70ca / 41865f89 / 7379a170 docs(handover): 交接与记忆更新
+230d70ca / 41865f89 / 7379a170 / e1963ca2 / 7f9ef118 / c51522aa docs(handover): 交接与记忆更新
 ```
 
-（A8-A10、B1/B2 仍待用户实机验收；接缝重构行为零变化，但**播放/导出建议再跑一次实机确认**）
+（A8-A10、B1/B2 待用户实机验收；接缝重构与三批修复行为零变化或纯修复，播放/导出建议抽空实机跑一次）
 
-## 接缝与后续路线
+## 环境能力（别再假设"无法验证合成"）
+
+- 装有 **1 个歌姬** → 真实合成链路可实测；**VST 可测**（扫本机目录）
+- 我**无法手操 OUP 界面**：交互行为需用户确认；数值/音频产物可"用户导出一次 + 我读文件核对"
+- 构建/测试命令见下方与 `.opencode/memory/env-refresh-2026-09-g-drive.md`
+
+## 接缝与后续路线（暂停，仅备查）
 
 详见 `.opencode/plans/audio-pipeline-seam.md`：
 - 合成层对外 = `RenderEngine` 六个静态门面；运输/导出层不得持有合成内部状态（14 条契约测试锁定）
-- 下一层耦合（换合成实现前必须处理）：`MasterAdapter.Waited` 搬到运输层、VST 延迟销毁安全点保留
-- 之后：A/B 音频比对 → 正式引入上游 `MixPlanner`/`SampleSlot`/`RenderPriority`；四条忠实行为回归清单见该文档
+- 下一层耦合（真正换合成实现前必须处理）：`MasterAdapter.Waited` 搬到运输层、VST 延迟销毁安全点保留
 
 ## 环境变更（重要，上一次会话的命令已失效）
 
