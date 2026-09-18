@@ -1,13 +1,5 @@
 # OpenUTAU Plus
 
-> ## ⚠️ 本项目已迁移（2026-09-18）
->
-> **本项目已停更并归档，后续开发迁移至 → [XKLMY-hi/UTvTU](https://github.com/XKLMY-hi/UTvTU)**
->
-> - 本仓库的发布包（Release 附件）与版本标签**已撤下**，不再提供下载；请勿在此仓库下载或安装旧版。
-> - 代码与提交历史已完整迁移到新仓库，请在新仓库提交 issue 与 PR。
-> - 本仓库保留为历史归档。
-
 **OpenUTAU** 的增强分支 —— 带 DAW 混音台、VST3 效果器插件和侧栏素材库的歌声合成工作站。
 
 基于 [OpenUTAU](https://github.com/openutau/OpenUtau) (MIT License)
