@@ -13,22 +13,27 @@ metadata:
 | 项 | 结果 |
 |---|---|
 | 新仓库 | **https://github.com/XKLMY-hi/UTvTU**（public，默认分支 `plus-develop`），已推 `plus-develop` + `master`，**保留全部提交历史**（`.git` 128 MB，历史可直接推） |
-| 旧仓库 | `XKLMY-hi/OpenUTAU-Plus` → 2 个 Plus release **已删除**、3 个 Plus 标签**已删除**；该仓库只剩上游带来的历史 release（fork 时继承），按用户决定**保留** |
+| 旧仓库 | `XKLMY-hi/OpenUTAU-Plus` → 2 个 Plus release **已删除**、3 个 Plus 标签**已删除**；上游继承来的历史 release 按用户决定**保留**；README 顶部已加**迁移横幅**（只推旧仓库，新仓库无横幅；本地用 revert 抵消，故本地历史多一个 revert 提交但内容与 origin 一致） |
 | 本地远程 | `origin` = **UTvTU**（新）；`old-origin` = OpenUTAU-Plus（旧，归档）；`upstream` = openutau/OpenUtau（不变） |
 | 部署产物 | `packaging/dist/**`（178 MB 安装包）与 `packaging/publish/**`（约 1 GB 发布产物）已删除（**均未跟踪**，git 历史不受影响） |
+| 撤下生成器（commit `6c4f0207`，**两个仓库都已推**） | 删：`.github/workflows/build.yml`（唯一会自动创建 release 的流水线）、`packaging/{OpenUtauPlus.iss, build-installer.ps1, ChineseSimplified.isl}`（安装包生成器与语言包） |
+| 迁移期 URL | `UpdaterViewModel`（API/页面 URL → UTvTU，并加 `UpdateCheckEnabled()` 闸门返回 false）、`PreferencesDialog`、`WelcomeWindow`、两个 README 的 clone 地址 |
+
+**用户口径（2026-09-18）**：只删"生成 release"和"生成安装包"的东西。据此**保留**：`pr-test.yml`、`stale.yml`、`worldline-build.yml`（C++ 构建）、`release-cleanup.yml`（只删旧 release、不生成）、`packaging/release-notes-*.md`（文档）。
 
 ## 关键坑
 
 - **`gh` 默认认 upstream 仓库**：不带 `--repo` 时 `gh release list` 读的是 `openutau/OpenUtau`，会看到 33 个上游 release（全是假的"我们的 release"）。**查本仓库必须显式 `--repo XKLMY-hi/<repo>`**。
 - 旧仓库的 release 表面上有 2026-09 的 `0.1.570.x-alpha`，那也是 fork 时从上游继承的，不是我们发的。
 
-## 待决/未做（用户明确"先不急"）
+## 待决/未做
 
-1. **更名范围**（用户强调重要、暂缓）：产品显示名/程序集名/命名空间/文件扩展名要改到哪一层。当前代码与文案**仍是 OpenUTAU Plus**，暂存扫描结果：
+1. **更名范围**（用户强调重要、暂缓，且要求"和后面操作一起做"）：产品显示名/程序集名/命名空间/文件扩展名要改到哪一层。当前代码与文案**仍是 OpenUTAU Plus**，扫描结果：
    - 品牌文本 **157 处 / 53 文件**（`OpenUTAU Plus` / `OpenUtau Plus` / `UTAU Plus`）
-   - 仓库 URL **19 处 / 12 文件**（README、更新检查、CI、issue 模板）
-   - `PlusInfo.cs`（7 处引用）、`OpenUtau/Themes/Plus.Resources.axaml`、`packaging/OpenUtauPlus.iss`
+   - `PlusInfo.cs`（7 处引用）、`OpenUtau/Themes/Plus.Resources.axaml`
    - ⚠️ `runtimes/vst3sdk/**/plus.svg` 是 VST3 SDK 自带文件，**不可改名**
-2. **舍弃部署器**（待执行）：删除跟踪中的 `packaging/{OpenUtauPlus.iss, build-installer.ps1, ChineseSimplified.isl, release-notes-*.md}`，以及上游带来的 `.github/workflows/{build.yml, release-cleanup.yml, stale.yml, pr-test.yml, worldline-build.yml}`；`packaging/vc_redist.x64.exe`（未跟踪）一并删
-3. **更新检查 URL 漂移风险（用户可感知）**：程序内 updater 仍查 `XKLMY-hi/OpenUTAU-Plus`，而该仓库已无 Plus release → 装 0.0.3-beta 的用户会被提示"有更新"并降级。要么改 URL、要么暂时关闭更新检查
-4. 旧仓库 README 加**迁移标识**（计划用"归档版 README + 在 GitHub 上 archive 仓库"两步，旧 tag 缺失导致的旧版附件链接会失效，需在公告里说明）
+   - 建议分期：① 用户可见文案+标题+数据目录显示名 ② 仓库侧文案/关于对话框 ③ 程序集名与文件扩展名（要动 VstProbe、单实例匹配、内部路径，风险最高）
+2. **更新检查闸门需在首发后打开**：`UpdaterViewModel.UpdateCheckEnabled()` 现在返回 false；UTvTU 发布首个 release 后改回 true（写成方法而非 const 是因为 const 会触发 CS0162 不可达错误，与 `TreatWarningsAsErrors` 冲突）
+3. **旧仓库是否在 GitHub 上 archive**：README 横幅已加，仓库尚未归档为只读（等用户决定；归档后 issue/PR 会冻结）
+4. 旧仓库仍保留 `release-cleanup.yml`（按"只删生成器"口径未动）；若将来彻底停用可一并撤
+5. 本地历史比 origin 多一个 revert 提交（`9f1d4582`，抵消新仓库不需要的横幅）；两边**文件内容一致**，不必处理
