@@ -4,8 +4,9 @@
 
 - ✅ **目标一 节拍器**：已提交 **762e8be1**，用户实机验收通过（click/重音/变速跟随/导出无残留）；VST/导出结构隔离已确认
 - ✅ **字体崩溃加固**：22de6533（$Default 全路径令牌化 + [FontDiag] 诊断）
-- 🚧 **目标二 钢琴窗批次 A ✅ 全部完成**：A1 b65d1f8f · A2+A3+A4+A5 d7ac5f82 · A6 eb5ba981 · A7 c9a04174 · A8 2954a723 · A9 bdcaf9b4 · **A10 ff2836ec**（A8-A10 待用户实机验收）
-- ⏳ 下一步 **批次 B**：B1 0c934958 Alt 拖拽复制 → B2 2645b69a 曲线编辑扩展
+- 🚧 **目标二 钢琴窗批次 A ✅ 全部完成**：A1 b65d1f8f · A2+A3+A4+A5 d7ac5f82 · A6 eb5ba981 · A7 c9a04174 · A8 2954a723 · A9 bdcaf9b4 · A10 ff2836ec（A8-A10 待用户实机验收）
+- ✅ **批次 B 完成**：B1 0c934958 Alt 拖拽复制 → b0d001c0 · B2 2645b69a 曲线编辑扩展（含 UCurve.ReplaceRange + 10 个新测试）→ d3afb1ed（待用户实机验收）
+- 🧪 测试基线 284 → **294**（UCurveTest.ReplaceRange 用例）
 - 🧪 环境重启后构建链重建（G 盘/系统 SDK/离线 NuGet），并修掉 RenderGate 并发用例对全局零值的硬断言（c8532db6）；测试基线保持 **284/284**
 - ⏳ 批次 B（B1/B2）待 A 批次完成后做
 
@@ -67,8 +68,8 @@
 
 | 序 | 提交 | 内容 | 说明 |
 |---|---|---|---|
-| B1 | 0c934958 | #2267 Alt 拖拽复制音符（NoteEditStates 47 行） | 依赖新架构提交祖先，但改动本体为编辑逻辑，可适配 |
-| B2 | 2645b69a | #2393 曲线编辑扩展（UCurve/PianoRoll/CurveViewModel/NoteEditStates，613 行） | 最大单项；无新架构类型引用（已 grep 验证）；依赖 A 批次先落地以减少冲突 |
+| B1 | 0c934958 | #2267 Alt 拖拽复制音符（NoteEditStates 47 行） | ✅ b0d001c0（待用户验收） |
+| B2 | 2645b69a | #2393 曲线编辑扩展（UCurve/PianoRoll/CurveViewModel/NoteEditStates，613 行） | ✅ d3afb1ed（Plus 适配：Reactive 旧式写法 / 内联偏好订阅） |
 
 ### 暂缓（依赖渲染重构，随全量合并）
 

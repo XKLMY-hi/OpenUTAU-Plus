@@ -1,6 +1,6 @@
 ---
 name: metronome-piano-port
-description: 上游定向移植进度 — 节拍器已验收；钢琴窗批次 A 全部完成（A1-A10），下一步批次 B（2026-09-18）
+description: 上游定向移植进度 — 节拍器已验收；钢琴窗批次 A（A1-A10）与批次 B（B1/B2）已完成待验收（2026-09-18）
 metadata:
   node_type: memory
   type: project
@@ -8,7 +8,7 @@ metadata:
 
 # 上游定向移植：节拍器 + 钢琴窗增强
 
-计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A10 全部完成）
+计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A10 + B1/B2 全部完成）
 
 ## 已完成（全部提交在 plus-develop）
 
@@ -54,6 +54,24 @@ metadata:
 | A9 悬停光晕改进 | fd4fc950 | bdcaf9b4 |
 | A10 音轨区显示范围高亮 | 81637a33 | ff2836ec |
 
+### 批次 B（✅ 全部完成）
+
+| 序 | 上游提交 | 本地提交 |
+|---|---|---|
+| B1 Alt 拖拽复制音符 | 0c934958 | b0d001c0 |
+| B2 曲线编辑工具扩展 | 2645b69a | d3afb1ed |
+
+**B1 要点**：`NoteMoveEditState` 增加 `duplicate` 参数（首次拖动才 Clone + AddNoteCommand，随后 MoveNoteCommand）；撤销名 `command.note.duplicate`（新增 EN/zh-CN 字符串）。
+
+**B2 要点（本次唯一需要手工解冲突的移植）**：
+- 用 `git show 2645b69a > b2.patch` + `git apply -3` 三方合并；3 处冲突全在 Plus 已定型的部分：
+  - `Preferences.cs`：Plus 无 `UseWayland` 字段 → 只加 `DefaultSnapCurve`
+  - `Strings.axaml`：保留 Plus 自己的 `pianoroll.toggle.expressions/hidepianoroll` 键，插入上游 8 条曲线工具提示
+  - `PreferencesViewModel.cs`：Plus 用**内联 WhenAnyValue 订阅**（上游已重构为 `PersistOn`）→ 取 ours 并手加 `DefaultSnapCurve` 订阅
+- **编译坑**：上游 `[Reactive] public partial bool DefaultSnapCurve { get; set; }` 是 C# 13 分部属性语法，Plus 用 C# 12（net8.0）+ 旧式 ReactiveUI.Fody 写法 → 必须改回 `[Reactive] public bool ... { get; set; }`
+- 偏好 UI：上游那个提交没带 PreferencesDialog 改动 → Plus 手工在「高级」页加 `ToggleSwitch`（`prefs.advanced.defaultsnapcurve`）
+- 新增 `OpenUtau.Test/Core/USTx/UCurveTest.cs` 10 个用例（ReplaceRange 语义）→ 测试基线 284 → **294**
+
 **顺序教训**：A3 快捷键修复依赖 A5 的工具索引（PitchPointTool=40 插入后 Shift 映射才成立），已按 A2→A4→A5→A3 适配应用。
 
 **A7 适配点**：Plus RenderNoteBody 配色与上游不同（Error→Accent2Semi 而非 Accent3）；`.OfType<UVoicePart>()` 在 Plus nullable 下不支持，改 `.Where(p => p != null)`（NotesCanvas 需 using System.Reactive.Linq）。
@@ -62,9 +80,10 @@ metadata:
 
 ## 剩余工作（恢复时按序）
 
-1. **批次 B**：B1 0c934958 Alt 拖拽复制（NoteEditStates 47 行）；B2 2645b69a 曲线编辑扩展（613 行，最大项）——A 批次已全部落地，现在做冲突最小
-2. **暂缓**：ef037d8e 实时波形 / 2a1c8d5f 实时曲线刷新 / 984e53d5 DiffSinger 局部重绘（依赖渲染重构，随全量合并）
-3. 每个特性完成后：构建 0 错误 + 测试全绿 → 用户实机预览（UI 不可自动交互）
+1. **等用户实机验收** A8/A9/A10/B1/B2（清单在 `.opencode/HANDOVER.md`）
+2. **验收后可选**：(a) 继续盯上游新的钢琴窗/编辑类提交做定向移植；(b) 转入全量合并评估（upstream 领先 130+ 提交，音频/渲染架构冲突需决策）
+3. **暂缓**：ef037d8e 实时波形 / 2a1c8d5f 实时曲线刷新 / 984e53d5 DiffSinger 局部重绘（依赖渲染重构，随全量合并）
+4. 每个特性完成后：构建 0 错误 + 测试全绿 → 用户实机预览（UI 不可自动交互）
 
 ## 环境/工具注意（2026-09-18 重测；旧命令已失效）
 
@@ -74,7 +93,7 @@ metadata:
 dotnet restore OpenUtau.sln -m:1 -p:TreatWarningsAsErrors=false --ignore-failed-sources
 dotnet restore VstProbe\VstProbe.csproj -m:1 -p:RuntimeIdentifiers= -p:TreatWarningsAsErrors=false --ignore-failed-sources
 dotnet build OpenUtau.sln --no-restore -m:1 -p:RuntimeIdentifiers= -p:UsedAvaloniaProducts=
-dotnet test OpenUtau.Test\OpenUtau.Test.csproj --no-build      # 基线 284/284（约 2-4 分钟）
+dotnet test OpenUtau.Test\OpenUtau.Test.csproj --no-build      # 基线 294/294（约 2-4 分钟）
 .\OpenUtau\bin\Debug\net8.0-windows\OpenUtau.exe
 ```
 
