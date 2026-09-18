@@ -66,6 +66,11 @@ namespace OpenUtau.App.Controls {
                 nameof(ShowPlaybackNoteHighlight),
                 o => o.ShowPlaybackNoteHighlight,
                 (o, v) => o.ShowPlaybackNoteHighlight = v);
+        public static readonly DirectProperty<NotesCanvas, bool> ShowPlaybackNoteBounceProperty =
+            AvaloniaProperty.RegisterDirect<NotesCanvas, bool>(
+                nameof(ShowPlaybackNoteBounce),
+                o => o.ShowPlaybackNoteBounce,
+                (o, v) => o.ShowPlaybackNoteBounce = v);
         public static readonly DirectProperty<NotesCanvas, int> PlayPosTickProperty =
             AvaloniaProperty.RegisterDirect<NotesCanvas, int>(
                 nameof(PlayPosTick),
@@ -112,6 +117,10 @@ namespace OpenUtau.App.Controls {
             get => showPlaybackNoteHighlight;
             private set => SetAndRaise(ShowPlaybackNoteHighlightProperty, ref showPlaybackNoteHighlight, value);
         }
+        public bool ShowPlaybackNoteBounce {
+            get => showPlaybackNoteBounce;
+            private set => SetAndRaise(ShowPlaybackNoteBounceProperty, ref showPlaybackNoteBounce, value);
+        }
         public int PlayPosTick {
             get => playPosTick;
             private set => SetAndRaise(PlayPosTickProperty, ref playPosTick, value);
@@ -127,12 +136,14 @@ namespace OpenUtau.App.Controls {
         private bool showVibrato = true;
         private bool showPhonemizerTags = true;
         private bool showPlaybackNoteHighlight;
+        private bool showPlaybackNoteBounce;
         private int playPosTick = int.MinValue;
 
         private UNote? activePlaybackNote;
         private UNote? fadingPlaybackNote;
         private float activeHighlight;
         private float fadingHighlight;
+        private float activeBounceElapsed;
         private DateTime highlightLastFrame = DateTime.UtcNow;
         private readonly DispatcherTimer highlightTimer;
         private readonly Dictionary<(Color from, Color to, byte amount), IBrush> highlightBrushes = new();
@@ -143,6 +154,8 @@ namespace OpenUtau.App.Controls {
         private const double HoverGlowDuration = 0.12;
         private const float PlaybackHighlightFadeInPerSecond = 8.0f;
         private const float PlaybackHighlightFadeOutPerSecond = 6.2f;
+        private const float PlaybackNoteBounceDuration = 0.25f;
+        private const double PlaybackNoteBounceHeight = 12.0;
         private UNote? hoverNote;
         private UNote? fadingHoverNote;
         private float hoverGlow;
@@ -208,14 +221,15 @@ namespace OpenUtau.App.Controls {
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change) {
             base.OnPropertyChanged(change);
             if (change.Property == PlayPosTickProperty) {
-                if (!ShowPlaybackNoteHighlight) {
+                if (!ShowPlaybackNoteHighlight && !ShowPlaybackNoteBounce) {
                     return;
                 }
                 playbackSeekPending = true;
                 UpdatePlaybackHighlight(true);
                 return;
             }
-            if (change.Property == ShowPlaybackNoteHighlightProperty) {
+            if (change.Property == ShowPlaybackNoteHighlightProperty ||
+                change.Property == ShowPlaybackNoteBounceProperty) {
                 playbackSeekPending = true;
                 UpdatePlaybackHighlight(false);
                 InvalidateVisual();
@@ -429,7 +443,7 @@ namespace OpenUtau.App.Controls {
             var now = DateTime.UtcNow;
             float dt = (float)Math.Clamp((now - highlightLastFrame).TotalSeconds, 0, 0.1);
             highlightLastFrame = now;
-            var target = (!ShowPlaybackNoteHighlight || !PlaybackManager.Inst.PlayingMaster)
+            var target = ((!ShowPlaybackNoteHighlight && !ShowPlaybackNoteBounce) || !PlaybackManager.Inst.PlayingMaster)
                 ? null
                 : seek || activePlaybackNote == null ? FindPlaybackNote() : activePlaybackNote;
             bool changed = false;
@@ -440,6 +454,7 @@ namespace OpenUtau.App.Controls {
                 }
                 activePlaybackNote = target;
                 activeHighlight = 0;
+                activeBounceElapsed = 0;
                 changed = true;
             }
             float newActive = MoveTowards(activeHighlight, !ShowPlaybackNoteHighlight || activePlaybackNote == null ? 0 : 1,
@@ -458,7 +473,13 @@ namespace OpenUtau.App.Controls {
                 fadingPlaybackNote = null;
                 fadingHighlight = 0;
             }
-            bool needed = activeHighlight > 0.001f || fadingHighlight > 0.001f;
+            bool bouncing = ShowPlaybackNoteBounce && activePlaybackNote != null &&
+                activeBounceElapsed < PlaybackNoteBounceDuration;
+            if (bouncing) {
+                activeBounceElapsed += dt;
+                changed = true;
+            }
+            bool needed = activeHighlight > 0.001f || fadingHighlight > 0.001f || bouncing;
             if (needed) {
                 if (!highlightTimer.IsEnabled) {
                     highlightTimer.Start();
@@ -484,6 +505,15 @@ namespace OpenUtau.App.Controls {
         private UNote? FindPlaybackNote() {
             var viewModel = ((PianoRollViewModel?)DataContext)?.NotesViewModel;
             return viewModel?.FindVoiceNoteAtTick(PlayPosTick);
+        }
+
+        private Vector GetPlaybackBounceOffset(UNote note) {
+            if (!ShowPlaybackNoteBounce || note != activePlaybackNote || !PlaybackManager.Inst.PlayingMaster) {
+                return default;
+            }
+            double progress = Math.Clamp(activeBounceElapsed / PlaybackNoteBounceDuration, 0, 1);
+            double height = Math.Min(PlaybackNoteBounceHeight, TrackHeight * 0.4);
+            return new Vector(0, -Math.Sin(progress * Math.PI) * height);
         }
 
         private IBrush BlendBrush(IBrush from, IBrush to, float amount) {
@@ -512,6 +542,7 @@ namespace OpenUtau.App.Controls {
             leftTop = leftTop.WithX(leftTop.X + 1).WithY(Math.Round(leftTop.Y + 1));
             Size size = viewModel.TickToneToSize(note.duration, 1);
             size = size.WithWidth(size.Width - 1).WithHeight(Math.Floor(size.Height - 2));
+            leftTop += GetPlaybackBounceOffset(note);
             Point rightBottom = new Point(leftTop.X + size.Width, leftTop.Y + size.Height);
             var brush = selectedNotes.Contains(note)
                 ? (note.Error ? ThemeManager.AccentBrush2Semi : ThemeManager.AccentBrush2)

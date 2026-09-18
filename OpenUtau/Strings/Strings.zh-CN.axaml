@@ -442,6 +442,7 @@ Syntax: prefix,suffix</system:String>-->
   <system:String x:Key="prefs.appearance.showghostnotes">在钢琴窗上显示其他音轨的音符</system:String>
   <system:String x:Key="prefs.appearance.notehoverglow">音符悬停光晕</system:String>
   <system:String x:Key="prefs.appearance.playbacknotehighlight">播放时高亮当前音符</system:String>
+  <system:String x:Key="prefs.appearance.playbacknotebounce">播放时音符弹跳</system:String>
   <system:String x:Key="prefs.appearance.showicon">在钢琴窗上显示歌手图标</system:String>
   <system:String x:Key="prefs.appearance.showportrait">在钢琴窗上显示歌手背景图</system:String>
   <system:String x:Key="prefs.appearance.detachpianoroll">在单独窗口中显示钢琴窗</system:String>

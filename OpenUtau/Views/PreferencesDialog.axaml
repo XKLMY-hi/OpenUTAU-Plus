@@ -379,6 +379,10 @@
             <ToggleSwitch IsChecked="{Binding ShowPlaybackNoteHighlight}"/>
           </Grid>
           <Grid Margin="0,4,0,0">
+            <TextBlock Text="{DynamicResource prefs.appearance.playbacknotebounce}" HorizontalAlignment="Left"/>
+            <ToggleSwitch IsChecked="{Binding ShowPlaybackNoteBounce}"/>
+          </Grid>
+          <Grid Margin="0,4,0,0">
             <TextBlock Text="{DynamicResource prefs.appearance.detachpianoroll}" HorizontalAlignment="Left"/>
             <ToggleSwitch IsChecked="{Binding DetachPianoRoll}"/>
           </Grid>
