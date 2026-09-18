@@ -40,16 +40,17 @@ Newtonsoft→System.Text.Json 迁移（535e6857）· 内存泄漏修复（bfb010
 
 ## 三、可独立移植（不动架构）
 
-**A 类 — 已验证存在的风险/修复**
-1. `9138af6e` Worldline 渲染缓存文件按路径串行化（12 行）——Plus 同样有 Worldline 缓存文件与并行渲染
-2. `e34dbb43` 首次播放立即被停（PlaybackManager 1 行 + MainWindow 1 行）
-3. `2c283d2b` 父级表达式取值守卫：Plus `Phonemizer.GetParentVoiceColor()` 仍是对 `track.VoiceColorExp.options[(int)trackCLR.CustomDefaultValue]` 的**无边界检查**索引
-4. `7684d706` PhonemizerFactory 工厂缓存线程安全（Plus 仍是普通 Dictionary，`factories[type] = factory` 无锁）
-5. `7a083786` ClassicSinger FreeMemory 状态未清（2 文件 3 行）
-6. `3602d9a1` KoreanCV kocvS 判空（4 行）
-7. `a46de4e0` UstFlagParser 修复
-8. `57567b5b` / `56eafb70` 旧版校验与 Oto 空白输出
-9. `49daf1ed` / `a8ddc510` 音素化 API 简化（需与 runner/调用点一起看）
+**A 类 — 已移植（2026-09-18，提交 06e16a3b / 46cac57c）**
+1. ✅ `9138af6e` Worldline 渲染缓存文件按路径串行化 —— Plus 同样有缓存文件与并行渲染
+2. ✅ `e34dbb43` 首次播放立即被停（PlaybackManager 顺序 + MainWindow 关闭前停播）
+3. ✅ `7a083786` 父级表达式取值守卫：`GetParentVoiceColor` 改走 `trackCLR.options` + null/边界检查
+4. ✅ `7684d706` PhonemizerFactory 工厂缓存线程安全（ConcurrentDictionary）
+5. ✅ `7a083786` ClassicSinger FreeMemory：**Plus 此前完全未覆写**（比上游缺口更大），已补（复位 loaded + 断开 oto 监视；真正释放待 83e02c7e 的原子 oto 快照）
+6. ✅ `3602d9a1` KoreanCV kocvS 判空
+7. ✅ `a8ddc510` 音素化字典同步加载 + runner 进度条 + OnAsyncInit* 转 Obsolete no-op（去掉 `Phonemizer.Testing`）
+8. ⏳ `a46de4e0` UstFlagParser 修复（未移植）
+9. ⏳ `57567b5b` / `56eafb70` 旧版校验与 Oto 空白输出（未移植）
+10. ✅ `49daf1ed` 父级表达式 getter 简化（与第 3 项同批处理）
 
 **B 类 — 成本中等，需适配**
 - `eaee391a` 播放循环开关（PlaybackManager + MasterAdapter，Plus 结构不同但概念对应）
