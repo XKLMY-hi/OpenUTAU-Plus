@@ -473,6 +473,10 @@
             <CheckBox IsChecked="{Binding RememberVsqx}" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
             <TextBlock Text=" .vsqx" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
           </Grid>
+          <Grid Margin="0,4,0,0">
+            <TextBlock Text="{DynamicResource prefs.advanced.defaultsnapcurve}" HorizontalAlignment="Left"/>
+            <ToggleSwitch IsChecked="{Binding DefaultSnapCurve}"/>
+          </Grid>
           <Border IsVisible="{OnPlatform Windows=False, Default=True}" Margin="0,8,0,0">
             <StackPanel>
               <TextBlock Text="{DynamicResource prefs.advanced.winepath}" Margin="0,4,0,0"/>

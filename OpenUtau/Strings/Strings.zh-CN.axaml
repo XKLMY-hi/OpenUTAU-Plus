@@ -398,6 +398,28 @@ Syntax: prefix,suffix</system:String>-->
   <system:String x:Key="pianoroll.toggle.tone">开关音符音 (Y)</system:String>
   <system:String x:Key="pianoroll.toggle.vibrato">显示颤音 (U)</system:String>
   <system:String x:Key="pianoroll.toggle.waveform">显示波形 (W)</system:String>
+  <system:String x:Key="pianoroll.tool.curve.cursor">光标工具
+    左键点击以选择</system:String>
+  <system:String x:Key="pianoroll.tool.curve.pen">画笔工具
+    左键拖动以绘制
+    右键重置</system:String>
+  <system:String x:Key="pianoroll.tool.curve.line">直线工具
+    左键拖动绘制直线
+    右键重置</system:String>
+  <system:String x:Key="pianoroll.tool.curve.eraser">橡皮工具
+    点击以重置</system:String>
+  <system:String x:Key="pianoroll.tool.curve.verticalstretch">垂直伸缩工具
+    左键拖动垂直伸缩选中的曲线
+    右键重置</system:String>
+  <system:String x:Key="pianoroll.tool.curve.horizontalstretch">水平伸缩工具
+    左键拖动水平伸缩选中的曲线
+    右键重置</system:String>
+  <system:String x:Key="pianoroll.tool.curve.verticalshift">垂直移动工具
+    左键拖动垂直移动选中的曲线
+    右键重置</system:String>
+  <system:String x:Key="pianoroll.tool.curve.horizontalshift">水平移动工具
+    左键拖动水平移动选中的曲线
+    右键重置</system:String>
   <system:String x:Key="pianoroll.tool.drawlinepitch">直线音高工具 (Shift + 4)
     鼠标左键绘制音高线
     鼠标右键擦除音高线
@@ -424,6 +446,7 @@ Syntax: prefix,suffix</system:String>-->
 
   <system:String x:Key="prefs.advanced">高级</system:String>
   <system:String x:Key="prefs.advanced.beta">Beta测试版</system:String>
+  <system:String x:Key="prefs.advanced.defaultsnapcurve">默认吸附曲线</system:String>
   <system:String x:Key="prefs.advanced.lyricshelper">歌词助手</system:String>
   <system:String x:Key="prefs.advanced.lyricshelper.brackets">歌词助手添加方括号</system:String>
   <system:String x:Key="prefs.advanced.rememberfiletypes">在"最近打开"中记住以下文件格式</system:String>

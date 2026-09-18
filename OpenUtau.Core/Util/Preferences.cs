@@ -227,6 +227,7 @@ namespace OpenUtau.Core.Util {
             public bool RememberUst = true;
             public bool RememberVsqx = true;
             public string WinePath = string.Empty;
+            public bool DefaultSnapCurve = true;
             public string PhoneticAssistant = string.Empty;
             public string RecentOpenSingerDirectory = string.Empty;
             public string RecentOpenProjectDirectory = string.Empty;
