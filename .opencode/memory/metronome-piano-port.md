@@ -1,6 +1,6 @@
 ---
 name: metronome-piano-port
-description: 上游定向移植进度 — 节拍器已完成验收；钢琴窗批次 A 进行至 A9，A10/批次 B 待做（2026-09-18）
+description: 上游定向移植进度 — 节拍器已验收；钢琴窗批次 A 全部完成（A1-A10），下一步批次 B（2026-09-18）
 metadata:
   node_type: memory
   type: project
@@ -8,7 +8,7 @@ metadata:
 
 # 上游定向移植：节拍器 + 钢琴窗增强
 
-计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A9 已完成）
+计划文档：`.opencode/plans/upstream-piano-metronome-port.md`（批次表；A1-A10 全部完成）
 
 ## 已完成（全部提交在 plus-develop）
 
@@ -33,7 +33,13 @@ metadata:
 - 左键拖拽中不再残留光晕（`NotesCanvas.OnPointerMoved` 见左键按下即 `SetHoveredNote(null)`）
 - 与上游 fd4fc950 逐行等价；Plus 侧无需适配（`HitTestNote` 语义与上游一致）
 
-### 钢琴窗批次 A（进行中）
+### 音轨区显示范围高亮（A10，ff2836ec）⏳ 待用户实机验收
+- 链路：NotesViewModel 的 `Part` / `TickOffset+ViewportTicks+Bounds` 变化 → `PianoRollOpenPartChangedEvent` / `PianoRollViewportChangedEvent` → TracksViewModel 三个 `[Reactive]` 属性 → MainWindow.axaml 绑定到 PartsCanvas 三个新 DirectProperty → PartControl 经 `canvas.GetObservable(...)` 绑定后重绘
+- 绘制：仅对「钢琴窗当前打开的 voice part」在其可见区间画 `Color.FromArgb(28,255,255,255)` 填充 + 2px 白框圆角框；**空片段（无音符）也会画**（上游把 Notes 绘制收进 `notes.Count > 0` 分支，highlight 在其外层）
+- 切换片段靠 `PianoRollOpenPartChangedEvent`；载入工程时 `PianoRollOpenPart = null`
+- 与上游 81637a33 逐行等价；浅色主题下白框对比度可能偏低（待用户实机反馈再决定是否改用主题令牌）
+
+### 钢琴窗批次 A（✅ 全部完成）
 
 | 序 | 提交 | 本地提交 |
 |---|---|---|
@@ -46,6 +52,7 @@ metadata:
 | A7 悬停辉光+播放高亮 | 68a3bd97 | c9a04174 |
 | A8 播放音符弹跳 | bed088a4 | 2954a723 |
 | A9 悬停光晕改进 | fd4fc950 | bdcaf9b4 |
+| A10 音轨区显示范围高亮 | 81637a33 | ff2836ec |
 
 **顺序教训**：A3 快捷键修复依赖 A5 的工具索引（PitchPointTool=40 插入后 Shift 映射才成立），已按 A2→A4→A5→A3 适配应用。
 
@@ -55,10 +62,9 @@ metadata:
 
 ## 剩余工作（恢复时按序）
 
-1. **A10 81637a33 #2416 钢琴窗显示范围内高亮**（`git show 81637a33`），之后进批次 B
-2. **批次 B**：B1 0c934958 Alt 拖拽复制（NoteEditStates 47 行）；B2 2645b69a 曲线编辑扩展（613 行，最大项，需 A 批次落地后做）
-3. **暂缓**：ef037d8e 实时波形 / 2a1c8d5f 实时曲线刷新 / 984e53d5 DiffSinger 局部重绘（依赖渲染重构，随全量合并）
-4. 每个特性完成后：构建 0 错误 + 测试全绿 → 用户实机预览（UI 不可自动交互）
+1. **批次 B**：B1 0c934958 Alt 拖拽复制（NoteEditStates 47 行）；B2 2645b69a 曲线编辑扩展（613 行，最大项）——A 批次已全部落地，现在做冲突最小
+2. **暂缓**：ef037d8e 实时波形 / 2a1c8d5f 实时曲线刷新 / 984e53d5 DiffSinger 局部重绘（依赖渲染重构，随全量合并）
+3. 每个特性完成后：构建 0 错误 + 测试全绿 → 用户实机预览（UI 不可自动交互）
 
 ## 环境/工具注意（2026-09-18 重测；旧命令已失效）
 
@@ -78,4 +84,4 @@ dotnet test OpenUtau.Test\OpenUtau.Test.csproj --no-build      # 基线 284/284�
 - ⚠️ 编辑源码工具会吃掉 UTF-8 BOM（.editorconfig 对 *.cs 要求 utf-8-bom）→ 提交前用 `UTF8Encoding($true)` 写回，避免首行噪声 diff
 - 上游提交均在本地 `upstream/master` 可 `git show`；提取参考 diff 不需要网络
 
-**How to apply:** 恢复会话先读本文件 + 计划文档；从"剩余工作"第 1 项（A10）继续。
+**How to apply:** 恢复会话先读本文件 + 计划文档；从"剩余工作"第 1 项（批次 B）继续。
