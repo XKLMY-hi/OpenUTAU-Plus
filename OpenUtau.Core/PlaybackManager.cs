@@ -584,8 +584,10 @@ namespace OpenUtau.Core {
                         return;
                     }
                     faders = result.Item2;
-                    StartingToPlay = false;
+                    // 顺序修正（上游 e34dbb43）：先切输出、后落 StartingToPlay——反序会让
+                    // "首次播放瞬间被判已停止"（UI 立刻回落停止态，表现为按下播放立即停）。
                     StartPlayback(project.timeAxis.TickPosToMsPos(tick), result.Item1);
+                    StartingToPlay = false;
                 } catch (Exception e) {
                     Log.Error(e, "Failed to render.");
                     StopPlayback();

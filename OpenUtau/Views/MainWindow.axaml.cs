@@ -2170,6 +2170,9 @@ namespace OpenUtau.App.Views {
                     PathManager.Inst.ClearCache();
                     Log.Information("Cache cleared.");
                 }
+                // 关闭前停播（上游 e34dbb43）：否则退出过程中音频回调仍在消费信号链，
+                // 缓存目录刚被清空 / 延迟销毁的 VST handle 可能正被读取 → 退出期崩溃。
+                PlaybackManager.Inst.StopPlayback();
                 Preferences.Default.MainWindowSize.Set(Width, Height, Position.X, Position.Y, (int)WindowState);
                 Preferences.Default.RecoveryPath = string.Empty;
                 Preferences.Save();

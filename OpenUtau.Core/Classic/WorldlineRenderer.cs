@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,12 @@ namespace OpenUtau.Classic {
         readonly int version;
         readonly double frameMs;
         byte[]? vocoderBytes;
+
+        /// <summary>按缓存文件路径串行化读写（上游 9138af6e 同款修复）。同一乐句可能被
+        /// 多个渲染任务同时认领（并行短语渲染 / 批 2 后台继续 / 导出与播放并发），而缓存
+        /// 文件按短语 hash 命名——不加锁会"读到半截文件"（samples 为空 → 重复合成）或
+        /// 读写交错（读到损坏数据）。</summary>
+        static readonly ConcurrentDictionary<string, object> cacheFileLocks = new();
 
         public WorldlineRenderer(int version) {
             if (version != 1 && version != 2) {
@@ -74,9 +81,12 @@ namespace OpenUtau.Classic {
                 phrase.AddCacheFile(wavPath);
                 string progressInfo = $"Track {trackNo + 1}: {this} {string.Join(" ", phrase.phones.Select(p => p.phoneme))}";
                 progress.Complete(0, progressInfo);
-                if (File.Exists(wavPath)) {
-                    using (var waveStream = Wave.OpenFile(wavPath)) {
-                        result.samples = Wave.GetSamples(waveStream.ToSampleProvider().ToMono(1, 0));
+                var cacheLock = cacheFileLocks.GetOrAdd(wavPath, _ => new object());
+                lock (cacheLock) {
+                    if (File.Exists(wavPath)) {
+                        using (var waveStream = Wave.OpenFile(wavPath)) {
+                            result.samples = Wave.GetSamples(waveStream.ToSampleProvider().ToMono(1, 0));
+                        }
                     }
                 }
                 if (result.samples == null) {
@@ -178,7 +188,9 @@ namespace OpenUtau.Classic {
                     AddDirects(phrase, resamplerItems, result);
                     var source = new WaveSource(0, 0, 0, 1);
                     source.SetSamples(result.samples);
-                    WaveFileWriter.CreateWaveFile16(wavPath, new ExportAdapter(source).ToMono(1, 0));
+                    lock (cacheLock) {
+                        WaveFileWriter.CreateWaveFile16(wavPath, new ExportAdapter(source).ToMono(1, 0));
+                    }
                 }
                 progress.Complete(phrase.phones.Length, progressInfo);
                 if (result.samples != null) {
