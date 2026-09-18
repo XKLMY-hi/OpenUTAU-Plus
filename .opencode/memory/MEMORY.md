@@ -16,4 +16,5 @@
 - [音频管线重构](audio-pipeline-refactor.md) — 2026-08-04 四阶段完成 · B1 竞态/RenderGate/两批播放/ExportSession/VST 命令化 · 踩坑清单
 - [VST GUI 卡死重大修复](vst-gui-thread-fix.md) — 2026-08-04 VST 专用线程方案 · 四轮失败方案教训 · MsgWait 漏 SendMessage 坑 · VstTest 桥接测试工具
 - [git 推送 SSL](git-push-ssl.md) — 本机推送 GitHub 需 -c http.sslVerify=false
+- [环境重启后构建链重建](env-refresh-2026-09-g-drive.md) — E 盘消失 · 系统 SDK 10 编 net8 成功 · 离线 NuGet 在用户目录 · 历史 obj 只读须删除重建
 - [节拍器&钢琴窗移植](metronome-piano-port.md) — 节拍器已验收（762e8be1）· 钢琴窗批次 A 至 A7（含 A8 实施清单）· 字体崩溃加固 22de6533 · 构建/测试命令与坑
