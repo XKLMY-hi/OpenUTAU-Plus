@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenUtau.Audio;
 using Xunit;
 
 namespace OpenUtau.Core.Vst {

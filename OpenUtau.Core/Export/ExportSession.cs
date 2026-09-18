@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NAudio.Wave;
+using OpenUtau.Audio;
 using OpenUtau.Core.Render;
 using OpenUtau.Core.SignalChain;
 using OpenUtau.Core.Ustx;
@@ -40,13 +41,11 @@ namespace OpenUtau.Core.Export {
         readonly UProject project;
         readonly string basePath;
         readonly Options options;
-        readonly PhraseRenderCache? cache;
 
-        public ExportSession(UProject project, string basePath, Options options, PhraseRenderCache? cache = null) {
+        public ExportSession(UProject project, string basePath, Options options) {
             this.project = project;
             this.basePath = basePath;
             this.options = options;
-            this.cache = cache;
         }
 
         public Task RunAsync(IProgress<ProgressInfo> progress, CancellationToken ct = default) {
@@ -56,15 +55,15 @@ namespace OpenUtau.Core.Export {
                 // **反向传播**取消用户的 token（写文件循环的 ct 检查直接 break → 文件残缺）。
                 var cts = new CancellationTokenSource();
                 ct.Register(() => cts.Cancel());
-                var engine = new RenderEngine(project,
-                    startTick: options.StartTick ?? 0,
-                    endTick: options.EndTick ?? -1,
-                    cache: cache);
+                int startTick = options.StartTick ?? 0;
+                int endTick = options.EndTick ?? -1;
                 try {
                     if (!options.PerTrack) {
                         progress.Report(new ProgressInfo { Percent = 0.2, CurrentFile = basePath });
-                        var mix = engine.RenderMixdown(
-                            DocManager.Inst.MainScheduler, ref cts, wait: true, applyMixFx: options.ApplyMixFx).Item1;
+                        var mix = RenderEngine.RenderMixdown(
+                            project, DocManager.Inst.MainScheduler, ref cts,
+                            wait: true, applyMixFx: options.ApplyMixFx,
+                            startTick: startTick, endTick: endTick).Item1;
 
                         progress.Report(new ProgressInfo { Percent = 0.7, CurrentFile = basePath });
                         using (RenderGate.Enter()) {
@@ -73,7 +72,9 @@ namespace OpenUtau.Core.Export {
                         }
                         progress.Report(new ProgressInfo { Percent = 1.0, CurrentFile = basePath });
                     } else {
-                        var trackMixes = engine.RenderTracks(DocManager.Inst.MainScheduler, ref cts);
+                        var trackMixes = RenderEngine.RenderTracks(
+                            project, DocManager.Inst.MainScheduler, ref cts,
+                            startTick: startTick, endTick: endTick);
                         int total = project.tracks.Count;
                         using (RenderGate.Enter()) {
                             for (int i = 0; i < trackMixes.Count; ++i) {

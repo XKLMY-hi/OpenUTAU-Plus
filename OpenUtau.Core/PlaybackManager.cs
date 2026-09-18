@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using OpenUtau.Audio;
 using OpenUtau.Core.Render;
 using OpenUtau.Core.SignalChain;
 using OpenUtau.Core.Ustx;
@@ -253,8 +254,8 @@ namespace OpenUtau.Core {
 
         public readonly ToneGenerator toneGenerator;
         private readonly MetronomeEngine metronomeEngine;
-        /// <summary>内存短语渲染缓存（seek/循环复用，LRU 封顶，LoadProject 清空）。</summary>
-        public readonly Render.PhraseRenderCache PhraseCache = new();
+        // 短语渲染缓存由合成层（RenderEngine）自己持有——播放层只通过静态门面触发
+        // 整体失效（RenderEngine.InvalidatePhraseCache），不再持有合成内部状态。
         List<Fader> faders;
         MasterAdapter masterMix;
         MasterAdapter editingMix;
@@ -570,8 +571,10 @@ namespace OpenUtau.Core {
                 try {
                     // 周期号：并发/连续 Play 时，旧周期晚到不得覆盖新周期（TOCTOU）
                     int myEpoch = Interlocked.Increment(ref renderEpoch);
-                    RenderEngine engine = new RenderEngine(project, startTick: tick, endTick: endTick, trackNo: trackNo, cache: PhraseCache);
-                    var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
+                    // 合成层静态门面：不构造引擎、不持有缓存（两批策略在合成层内部）
+                    var result = RenderEngine.RenderProject(
+                        project, DocManager.Inst.MainScheduler, ref renderCancellation,
+                        startTick: tick, endTick: endTick, trackNo: trackNo);
                     if (result == null) {
                         // 被新渲染周期取消——不启动旧链（C-3 两批策略的取消保护）
                         return;
@@ -658,8 +661,9 @@ namespace OpenUtau.Core {
                     if (ct.IsCancellationRequested) {
                         throw new OperationCanceledException(ct);
                     }
-                    var engine = new RenderEngine(project, startTick: startTick, endTick: endTick, cache: PhraseCache);
-                    var result = engine.RenderProject(DocManager.Inst.MainScheduler, ref renderCancellation);
+                    var result = RenderEngine.RenderProject(
+                        project, DocManager.Inst.MainScheduler, ref renderCancellation,
+                        startTick: startTick, endTick: endTick);
                     if (result == null) {
                         throw new Exception("Render cancelled.");
                     }
@@ -689,7 +693,7 @@ namespace OpenUtau.Core {
                     // 录制消费段进入在飞计数——Flush 不得释放正在被录制回调消费的 VST handle
                     //（TryFlush 另有 IsRecording 条件，双保险）
                     bool cancelled = false;
-                    using (Vst.RenderGate.Enter()) {
+                    using (RenderGate.Enter()) {
                         // 等待录制完成（时长或取消）
                         var sw = System.Diagnostics.Stopwatch.StartNew();
                         while (sw.ElapsedMilliseconds < totalMs && !ct.IsCancellationRequested) {
@@ -721,7 +725,7 @@ namespace OpenUtau.Core {
         // Exporting each tracks
         public async Task RenderToFiles(UProject project, string exportPath) {
             var session = new Export.ExportSession(project, exportPath,
-                new Export.ExportSession.Options { PerTrack = true, ApplyMixFx = false }, PhraseCache);
+                new Export.ExportSession.Options { PerTrack = true, ApplyMixFx = false });
             await RunExportSession(session, exportPath);
         }
 
@@ -753,8 +757,7 @@ namespace OpenUtau.Core {
 
         void SchedulePreRender() {
             Log.Information("SchedulePreRender");
-            var engine = new RenderEngine(DocManager.Inst.Project);
-            engine.PreRenderProject(ref renderCancellation);
+            RenderEngine.PreRender(DocManager.Inst.Project);
         }
 
         #region ICmdSubscriber
@@ -789,8 +792,8 @@ namespace OpenUtau.Core {
             } else if (cmd is LoadProjectNotification) {
                 StopPlayback();
                 renderCancellation?.Cancel();
-                // 工程切换：内存短语缓存整体失效（hash 含 Timestamp 已兜底，这里显式清空防膨胀）
-                PhraseCache.Clear();
+                // 工程切换：合成层短语缓存整体失效（hash 含 Timestamp 已兜底，这里显式清空防膨胀）
+                RenderEngine.InvalidatePhraseCache();
                 // 工程切换卸载全部槽位实例（延迟销毁：无 UI 线程原生 Dispose——
                 // ClearAll 同步 vst_unload 在原生 GUI 打开时会 native 崩溃退出进程；
                 // 原生 Dispose 收敛到安全点 Flush）

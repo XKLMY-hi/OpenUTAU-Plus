@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenUtau.Audio;
 using Serilog;
 
 namespace OpenUtau.Core.Vst {

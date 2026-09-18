@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenUtau.Audio;
 using OpenUtau.Core.SignalChain;
 using OpenUtau.Core.Ustx;
 using OpenUtau.Core.Util;
@@ -343,7 +344,7 @@ namespace OpenUtau.Core.Render {
             int dop = Math.Clamp(Preferences.Default.NumRenderThreads, 1, 8);
             using var sem = new SemaphoreSlim(dop);
             // 渲染合成段进入在飞计数——防止并发 Flush 释放正在被消费的 VST handle
-            using (Vst.RenderGate.Enter()) {
+            using (RenderGate.Enter()) {
                 var tasks = tuples.Select(tuple => RenderOneAsync(tuple, cancellation, progress, sem)).ToArray();
                 await Task.WhenAll(tasks);
             }
@@ -451,7 +452,7 @@ namespace OpenUtau.Core.Render {
             CancellationTokenSource cancellation,
             Progress progress) {
             if (tuples.Length == 0) return;
-            using var gate = Vst.RenderGate.Enter();
+            using var gate = RenderGate.Enter();
             int dop = Math.Clamp(Preferences.Default.NumRenderThreads, 1, 8);
             using var sem = new SemaphoreSlim(dop);
             var tasks = tuples.Select(tuple => RenderOneAsync(tuple, cancellation, progress, sem)).ToArray();
@@ -460,6 +461,59 @@ namespace OpenUtau.Core.Render {
 
         public static void ReleaseSourceTemp() {
             VoicebankFiles.Inst.ReleaseSourceTemp();
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // 合成层对外门面（接缝）
+        //
+        // 调用方（播放/导出层）只依赖这四个静态成员，不构造 RenderEngine、不持有
+        // PhraseRenderCache、不知道两批播放策略与乐句缓存的存在。将来把本类整体
+        // 换成上游的渲染实现（frozen slot planner + 优先级调度）时，只需保持这四
+        // 个签名不变，运输/混音/导出层零改动。
+        //
+        // 对应约定：PlaybackManager 与 ExportSession 不得直接 new RenderEngine、
+        // 不得引用 PhraseCache/PhraseRenderCache 类型（有契约测试锁定）。
+        // ─────────────────────────────────────────────────────────────────────
+
+        /// <summary>乐句渲染缓存（进程内单例；由合成层自己持有，外部只可整体失效）。</summary>
+        private static readonly PhraseRenderCache phraseCache = new PhraseRenderCache();
+
+        /// <summary>预热全曲乐句（后台预渲染入口）。</summary>
+        public static void PreRender(UProject project) {
+            var engine = new RenderEngine(project);
+            engine.PreRenderProject(ref preRenderCancellation);
+        }
+
+        private static CancellationTokenSource preRenderCancellation = new CancellationTokenSource();
+
+        /// <summary>播放渲染：同步建链 → 等批 1 完成即返回 master。null = 被新周期取消。</summary>
+        public static Tuple<MasterAdapter, List<Fader>>? RenderProject(
+            UProject project, TaskScheduler uiScheduler, ref CancellationTokenSource cancellation,
+            int startTick = 0, int endTick = -1, int trackNo = -1) {
+            var engine = new RenderEngine(project, startTick, endTick, trackNo, phraseCache);
+            return engine.RenderProject(uiScheduler, ref cancellation);
+        }
+
+        /// <summary>离线混音渲染（播放/导出共用；导出干轨传 applyMixFx:false）。</summary>
+        public static Tuple<WaveMix, List<Fader>> RenderMixdown(
+            UProject project, TaskScheduler uiScheduler, ref CancellationTokenSource cancellation,
+            bool wait = false, bool applyMixFx = true,
+            int startTick = 0, int endTick = -1, int trackNo = -1) {
+            var engine = new RenderEngine(project, startTick, endTick, trackNo, phraseCache);
+            return engine.RenderMixdown(uiScheduler, ref cancellation, wait, applyMixFx);
+        }
+
+        /// <summary>逐轨混音渲染（分轨导出用）。</summary>
+        public static List<WaveMix> RenderTracks(
+            UProject project, TaskScheduler uiScheduler, ref CancellationTokenSource cancellation,
+            int startTick = 0, int endTick = -1) {
+            var engine = new RenderEngine(project, startTick, endTick, -1, phraseCache);
+            return engine.RenderTracks(uiScheduler, ref cancellation);
+        }
+
+        /// <summary>整体失效短语缓存（编辑/换工程/清缓存用）。</summary>
+        public static void InvalidatePhraseCache() {
+            phraseCache.Clear();
         }
     }
 }

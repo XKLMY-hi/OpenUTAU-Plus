@@ -147,7 +147,7 @@ namespace OpenUtau.App.Views {
                                 TrackFilter = selTrackNos,
                                 StartTick = rangeStart,
                                 EndTick = rangeEnd,
-                            }, PlaybackManager.Inst.PhraseCache);
+                            });
 
                         session.RunAsync(new Progress<ExportSession.ProgressInfo>(info => {
                             Dispatcher.UIThread.Invoke(() => {
