@@ -20,3 +20,4 @@
 - [节拍器&钢琴窗移植](metronome-piano-port.md) — 节拍器已验收 · 钢琴窗批次 A（A1-A10）+ B（B1/B2）全部完成 · 字体崩溃加固 · 构建/测试命令与坑
 - [上游音频/合成盘点](../plans/upstream-audio-synthesis-audit.md) — 上游领先 153 提交：frozen slot 重写、音素化器大改、DiffSinger 重构；可移植性分级
 - [音频管线接缝](../plans/audio-pipeline-seam.md) — 合成层 = RenderEngine 六个静态门面 · 运输/导出层不得持合成内部状态（14 条契约测试）· Waited 是下一层耦合
+- [UTvTU 迁移](utvtu-migration.md) — 新仓库 XKLMY-hi/UTvTU（origin）· 旧 OUP 撤包归档（old-origin）· gh 默认认 upstream 的坑 · 更名范围待定
