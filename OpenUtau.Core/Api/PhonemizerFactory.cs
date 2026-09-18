@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 
@@ -23,24 +23,27 @@ namespace OpenUtau.Api {
             ? $"[{tag}] {name}"
             : $"[{tag}] {name} (Contributed by {author})";
 
-        private static Dictionary<Type, PhonemizerFactory> factories = new Dictionary<Type, PhonemizerFactory>();
+        // 工厂缓存必须线程安全（上游 7684d706 同款修复）：BuildList/Get 会在插件扫描线程、
+        // 渲染线程与 UI 线程并发调用——普通 Dictionary 并发写会损坏内部结构（无限循环/
+        // 抛异常），并发读-写枚举也会抛 InvalidOperationException。
+        private static readonly ConcurrentDictionary<Type, PhonemizerFactory> factories = new();
         private static PhonemizerFactory[] orderedFactories = [];
         public static PhonemizerFactory Get(Type type) {
-            if (!factories.TryGetValue(type, out var factory)) {
-                var attr = type.GetCustomAttribute<PhonemizerAttribute>();
-                if (attr == null || string.IsNullOrEmpty(attr.Name) || string.IsNullOrEmpty(attr.Tag)) {
-                    return null;
-                }
-                factory = new PhonemizerFactory() {
-                    type = type,
-                    name = attr.Name,
-                    tag = attr.Tag,
-                    author = attr.Author,
-                    language = attr.Language,
-                };
-                factories[type] = factory;
+            if (factories.TryGetValue(type, out var factory)) {
+                return factory;
             }
-            return factory;
+            var attr = type.GetCustomAttribute<PhonemizerAttribute>();
+            if (attr == null || string.IsNullOrEmpty(attr.Name) || string.IsNullOrEmpty(attr.Tag)) {
+                return null;
+            }
+            factory = new PhonemizerFactory() {
+                type = type,
+                name = attr.Name,
+                tag = attr.Tag,
+                author = attr.Author,
+                language = attr.Language,
+            };
+            return factories.GetOrAdd(type, factory);
         }
 
         public static PhonemizerFactory? Get(string typeFullName) {

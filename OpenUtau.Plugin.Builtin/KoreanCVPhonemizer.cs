@@ -192,6 +192,12 @@ namespace OpenUtau.Plugin.Builtin {
             string thisMidVowelHead;
             string thisMidVowelTail;
 
+            // kocvS 为 null（声库缺少 kocv 设置文件/反序列化失败）时不得继续：
+            // 下方 kocvS.settings.* 会 NullReference 崩溃（上游 3602d9a1 同款修复）。
+            if (kocvS == null) {
+                return GenerateResult(FindInOto(notes[0].lyric, notes[0]));
+            }
+
             int totalDuration = notes.Sum(n => n.duration);
             Note note = notes[0];
             bool isItNeedsFrontCV;

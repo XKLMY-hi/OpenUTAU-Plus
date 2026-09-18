@@ -72,6 +72,37 @@ namespace OpenUtau.Api {
             }
         }
 
+        /// <summary>
+        /// 调 SetSinger，只在耗时明显时显示"Initializing phonemizer..."，避免常见的
+        /// 空操作调用让进度条闪烁（上游 a8ddc510）。配合 SetSinger 内的**同步**加载：
+        /// 异步加载会让 Process 跑到半初始化状态上（#2407 崩因）。
+        /// </summary>
+        static void SetSingerWithProgress(Phonemizer p, USinger singer) {
+            const int showAfterMs = 300;
+            var gate = new object();
+            bool shown = false;
+            bool done = false;
+            using var timer = new Timer(_ => {
+                lock (gate) {
+                    if (done) {
+                        return;
+                    }
+                    shown = true;
+                    DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, $"Initializing {p.Name}..."));
+                }
+            }, null, showAfterMs, Timeout.Infinite);
+            try {
+                p.SetSinger(singer);
+            } finally {
+                lock (gate) {
+                    done = true;
+                    if (shown) {
+                        DocManager.Inst.ExecuteCmd(new ProgressBarNotification(0, ""));
+                    }
+                }
+            }
+        }
+
         void SendResponse(PhonemizerResponse response) {
             Task.Factory.StartNew(_ => {
                 if (DocManager.Inst.Project.parts.Contains(response.part)) {
@@ -101,7 +132,7 @@ namespace OpenUtau.Api {
             foreach (var p in phonemizers) {
                 p.SetUpException = null;
                 try {
-                    p.SetSinger(request.singer);
+                    SetSingerWithProgress(p, request.singer);
                 } catch (Exception e) {
                     Log.Error(e, $"phonemizer failed to set singer.");
                     p.SetUpException = e;

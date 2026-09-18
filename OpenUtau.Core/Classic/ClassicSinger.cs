@@ -172,6 +172,25 @@ namespace OpenUtau.Classic {
             }
         }
 
+        /// <summary>
+        /// 释放声库常驻数据。此前**完全未覆写**（基类空实现），于是
+        /// <c>SingerManager.ReleaseSingersNotInUse</c> 对经典歌手是空操作：
+        /// loaded 永远为 true、oto 映射永不释放，换工程/删轨后内存只涨不落
+        /// （上游 #2408 修的是"loaded 未复位"，Plus 连这一步都缺）。
+        ///
+        /// 这里只复位 loaded 并断开文件监视，**不清空 subbanks/otos/otoMap**：
+        /// 清空会与并发渲染线程正在遍历这些集合的读取相撞（上游用后来的
+        /// "原子 oto 快照"提交 83e02c7e 才安全地做到真释放）。复位 loaded 后，
+        /// 下次 EnsureLoaded → Reload → Load 会原地重建全部集合，不依赖旧内容。
+        /// </summary>
+        public override void FreeMemory() {
+            Log.Information($"Freeing memory for singer {Id}");
+            loaded = false;
+            // 断开 oto 目录监视（下次 Reload 会按需重建）；不置 null 是避免后续
+            // Save() 的空引用。这里只停用监视器，不触碰正在被渲染线程读取的集合。
+            otoWatcher?.Dispose();
+        }
+
         public override bool TryGetOto(string phoneme, out UOto oto) {
             if (otoMap.TryGetValue(phoneme, out oto)) {
                 return true;

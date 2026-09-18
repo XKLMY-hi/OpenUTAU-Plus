@@ -1178,17 +1178,11 @@ namespace OpenUtau.Plugin.Builtin {
                 return;
             }
             dictionaries[GetType()] = null;
-            if (Testing) {
-                ReadDictionary(dictionaryName);
-                Init();
-                return;
-            }
-            OnAsyncInitStarted();
-            Task.Run(() => {
-                ReadDictionary(dictionaryName);
-                Init();
-                OnAsyncInitFinished();
-            });
+            // 同步加载（上游 a8ddc510）：SetSinger / SetUp / Process 都在 phonemizer
+            // runner 的同一后台线程上串行调用，所以这里阻塞是安全的；此前用 Task.Run
+            // 异步加载，会让 Process 在半初始化的字典上跑（#2407 崩因）。
+            ReadDictionary(dictionaryName);
+            Init();
         }
 
         private void ReadDictionary(string dictionaryName) {
