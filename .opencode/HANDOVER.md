@@ -4,19 +4,29 @@
 
 ## 状态一句话
 
-环境重启后构建链已重建（G 盘、系统 SDK、离线 NuGet）；**上游定向移植的钢琴窗批次 A + 批次 B（A1-A10、B1/B2）全部完成**，测试基线 284 → **294**（新增 UCurve.ReplaceRange 用例）；全部已推送 origin/plus-develop。下一步：等用户实机验收，或转入全量合并评估。
+环境重启后构建链已重建（G 盘、系统 SDK、离线 NuGet）；钢琴窗批次 A+B（A1-A10、B1/B2）全部完成；**合成/渲染管线已完成最小解耦（接缝显式化，为换上游渲染架构铺路）**；测试基线 284 → **308**；全部已推送 origin/plus-develop。
 
 ## 本次会话提交（均已推送）
 
 ```
-d3afb1ed feat(pianoroll): 曲线编辑工具扩展 — 直线/伸缩/移动 + UCurve.ReplaceRange（B2，待验收）
-b0d001c0 feat(pianoroll): Alt 拖拽复制音符（B1，待验收）
-ff2836ec feat(pianoroll): 音轨区高亮钢琴窗当前显示范围（A10，待验收）
-bdcaf9b4 feat(pianoroll): 音符悬停光晕改进（A9，待验收）
-2954a723 feat(pianoroll): 播放音符弹跳（A8，待验收）
+88944390 refactor(audio): 合成/渲染管线解耦 — RenderEngine 静态门面 + RenderGate 归位音频层
+d3afb1ed feat(pianoroll): 曲线编辑工具扩展 — 直线/伸缩/移动 + UCurve.ReplaceRange（B2）
+b0d001c0 feat(pianoroll): Alt 拖拽复制音符（B1）
+ff2836ec feat(pianoroll): 音轨区高亮钢琴窗当前显示范围（A10）
+bdcaf9b4 feat(pianoroll): 音符悬停光晕改进（A9）
+2954a723 feat(pianoroll): 播放音符弹跳（A8）
 c8532db6 test(vst): RenderGate 并发用例改为基线相对断言
 230d70ca / 41865f89 / 7379a170 docs(handover): 交接与记忆更新
 ```
+
+（A8-A10、B1/B2 仍待用户实机验收；接缝重构行为零变化，但**播放/导出建议再跑一次实机确认**）
+
+## 接缝与后续路线
+
+详见 `.opencode/plans/audio-pipeline-seam.md`：
+- 合成层对外 = `RenderEngine` 六个静态门面；运输/导出层不得持有合成内部状态（14 条契约测试锁定）
+- 下一层耦合（换合成实现前必须处理）：`MasterAdapter.Waited` 搬到运输层、VST 延迟销毁安全点保留
+- 之后：A/B 音频比对 → 正式引入上游 `MixPlanner`/`SampleSlot`/`RenderPriority`；四条忠实行为回归清单见该文档
 
 ## 环境变更（重要，上一次会话的命令已失效）
 
